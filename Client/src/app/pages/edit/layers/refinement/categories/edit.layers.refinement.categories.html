@@ -1,0 +1,24 @@
+<div>
+    <button type="button" class="btn btn-sm btn-primary" ng-click="vm.newCategory()">Add New Category</button>
+</div>
+
+<smart-inner-table table-data='vm.parentCategoriesSmartTableData' category-name="parent" ctrl-module='vm' page-name='vm.pageName' load-select-data-structure='true' view-only=true></smart-inner-table>
+
+<div
+        ba-panel
+        ba-panel-title="Search Form"
+        ba-panel-class="with-scroll">
+    <div ng-include="'app/pages/form/layouts/widgets/search.html'"></div>
+</div>
+<div class="row" id="categories-table">
+    <div class="col-md-12">
+        <div ba-panel ba-panel-title="Categories Table" ba-panel-class="with-scroll">
+            <div include-with-scope="app/pages/tables/widgets/smartTable.html"></div>
+        </div>
+    </div>
+</div>
+
+<div class="col-xs-12">
+    <button type="submit" class="btn btn-primary" ng-click="vm.save();">Submit</button>
+    <button type="button" class="btn btn-danger" ng-click="vm.back();">Cancel</button>
+</div>

@@ -1,0 +1,10 @@
+<div class="modal-content">
+    <div class="modal-header bg-danger">
+        <i class="ion-flame modal-icon"></i><span> Error</span>
+    </div>
+    <div class="modal-body text-center">This unit appears {{message}} times as a remote unit, by deleting this unit, all remote instance of this unit will be deleted.</div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" ng-click="deleteAllRemoteInstanceOfThisUnit();$dismiss()">OK</button>
+        <button type="button" class="btn btn-danger" ng-click="$dismiss()">Abort</button>
+    </div>
+</div>

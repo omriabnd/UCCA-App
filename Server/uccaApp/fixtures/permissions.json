@@ -1,0 +1,73 @@
+[
+	{
+	  "model": "auth.permission",
+	  "pk": 1,
+	  "fields": {
+	    "id": 85,
+	    "name": "Can view users",
+	    "content_type_id":8,
+	    "codename":"view_users"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 2,
+	  "fields": {
+	    "id": 86,
+	    "name": "Can view categories",
+	    "content_type_id":9,
+	    "codename":"view_categories"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 3,
+	  "fields": {
+	    "id": 87,
+	    "name": "Can view tasks",
+	    "content_type_id":10,
+	    "codename":"view_tasks"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 4,
+	  "fields": {
+	    "id": 88,
+	    "name": "Can view passages",
+	    "content_type_id":12,
+	    "codename":"view_passages"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 5,
+	  "fields": {
+	    "id": 89,
+	    "name": "Can view projects",
+	    "content_type_id":13,
+	    "codename":"view_projects"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 6,
+	  "fields": {
+	    "id": 90,
+	    "name": "Can view layers",
+	    "content_type_id":14,
+	    "codename":"view_layers"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 7,
+	  "fields": {
+	    "id": 91,
+	    "name": "Can view sources",
+	    "content_type_id":23,
+	    "codename":"view_sources"
+	  }
+	}
+
+]

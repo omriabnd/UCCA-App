@@ -1,0 +1,7 @@
+{
+  "status_code":"200",
+  "Data":{
+    "message": "User created",
+    "user_id": "90"
+  }
+}

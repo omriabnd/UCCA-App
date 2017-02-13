@@ -1,0 +1,282 @@
+[
+  {
+    "model": "uccaApp.categories",
+    "pk": 1,
+    "fields": {
+      "name": "Sonya category",
+      "description": "Cervantes description",
+      "tooltip": "dolor tooltip",
+      "abbreviation": "AAA",
+      "is_default": true,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 2,
+    "fields": {
+      "name": "Hutchinson category",
+      "description": "Bean description",
+      "tooltip": "duis tooltip",
+      "abbreviation": "BBB",
+      "is_default": true,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 3,
+    "fields": {
+      "name": "Ivy category",
+      "description": "Sawyer description",
+      "tooltip": "adipisicing tooltip",
+      "abbreviation": "CCC",
+      "is_default": false,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 4,
+    "fields": {
+      "name": "Rios category",
+      "description": "Mendoza description",
+      "tooltip": "duis tooltip",
+      "abbreviation": "DDD",
+      "is_default": true,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 5,
+    "fields": {
+      "name": "Battle category",
+      "description": "Peters description",
+      "tooltip": "id tooltip",
+      "abbreviation": "EEE",
+      "is_default": false,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 6,
+    "fields": {
+      "name": "FFF category",
+      "description": "FFF description",
+      "tooltip": "FFF tooltip",
+      "abbreviation": "FFF",
+      "is_default": false,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 7,
+    "fields": {
+      "name": "TTT category",
+      "description": "TTT description",
+      "tooltip": "TTT tooltip",
+      "abbreviation": "TTT",
+      "is_default": false,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 8,
+    "fields": {
+      "name": "HHH category",
+      "description": "HHH description",
+      "tooltip": "HHH tooltip",
+      "abbreviation": "HHH",
+      "is_default": false,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 9,
+    "fields": {
+      "name": "RRR category",
+      "description": "RRR description",
+      "tooltip": "RRR tooltip",
+      "abbreviation": "RRR",
+      "is_default": false,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 10,
+    "fields": {
+      "name": "NNN category",
+      "description": "NNN description",
+      "tooltip": "id tooltip",
+      "abbreviation": "NNN",
+      "is_default": false,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 11,
+    "fields": {
+      "name": "LKJ category",
+      "description": "LKJ description",
+      "tooltip": "LKJ tooltip",
+      "abbreviation": "LKJ",
+      "is_default": false,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 12,
+    "fields": {
+      "name": "YIQ category",
+      "description": "YIQ description",
+      "tooltip": "YIQ tooltip",
+      "abbreviation": "YIQ",
+      "is_default": false,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 13,
+    "fields": {
+      "name": "UIO category",
+      "description": "UIO description",
+      "tooltip": "UIO tooltip",
+      "abbreviation": "UIO",
+      "is_default": false,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 14,
+    "fields": {
+      "name": "VYS category",
+      "description": "VYS description",
+      "tooltip": "VYS tooltip",
+      "abbreviation": "VYS",
+      "is_default": false,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 15,
+    "fields": {
+      "name": "LJN category",
+      "description": "LJN description",
+      "tooltip": "LJN tooltip",
+      "abbreviation": "LJN",
+      "is_default": false,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 16,
+    "fields": {
+      "name": "WYW category",
+      "description": "WYW description",
+      "tooltip": "WYW tooltip",
+      "abbreviation": "WYW",
+      "is_default": false,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 17,
+    "fields": {
+      "name": "IOP category",
+      "description": "IOP description",
+      "tooltip": "IOP tooltip",
+      "abbreviation": "IOP",
+      "is_default": false,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 18,
+    "fields": {
+      "name": "LKJ category",
+      "description": "LKJ description",
+      "tooltip": "LKJ tooltip",
+      "abbreviation": "LKJ",
+      "is_default": false,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 19,
+    "fields": {
+      "name": "NMC category",
+      "description": "NMC description",
+      "tooltip": "NMC tooltip",
+      "abbreviation": "NMC",
+      "is_default": false,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.categories",
+    "pk": 20,
+    "fields": {
+      "name": "POK category",
+      "description": "POK description",
+      "tooltip": "POK tooltip",
+      "abbreviation": "POK",
+      "is_default": false,
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  }
+]

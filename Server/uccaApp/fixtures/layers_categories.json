@@ -1,0 +1,114 @@
+[
+  {
+    "model": "uccaApp.layers_categories",
+    "pk": 1,
+    "fields": {
+      "id" : 1,
+      "layer_id" : 1,
+      "category_id": 1,
+      "shortcut_key": "a",
+      "was_default": false
+    }
+  },
+  {
+    "model": "uccaApp.layers_categories",
+    "pk": 2,
+    "fields": {
+      "id" : 2,
+      "layer_id" : 1,
+      "category_id": 2,
+      "shortcut_key": "b",
+      "was_default": false
+    }
+  },
+  {
+    "model": "uccaApp.layers_categories",
+    "pk": 3,
+    "fields": {
+      "id" : 3,
+      "layer_id" : 1,
+      "category_id": 3,
+      "shortcut_key": "c",
+      "was_default": false
+    }
+  },
+  {
+    "model": "uccaApp.layers_categories",
+    "pk": 4,
+    "fields": {
+      "id" : 4,
+      "layer_id" : 1,
+      "category_id": 4,
+      "shortcut_key": "d",
+      "was_default": false
+    }
+  },
+  {
+    "model": "uccaApp.layers_categories",
+    "pk": 5,
+    "fields": {
+      "id" : 5,
+      "layer_id" : 1,
+      "category_id": 5,
+      "shortcut_key": "e",
+      "was_default": false
+    }
+  },
+  {
+    "model": "uccaApp.layers_categories",
+    "pk": 6,
+    "fields": {
+      "id" : 6,
+      "layer_id" : 1,
+      "category_id": 6,
+      "shortcut_key": "f",
+      "was_default": false
+    }
+  },
+  {
+    "model": "uccaApp.layers_categories",
+    "pk": 7,
+    "fields": {
+      "id" : 7,
+      "layer_id" : 1,
+      "category_id": 7,
+      "shortcut_key": "g",
+      "was_default": false
+    }
+  },
+  {
+    "model": "uccaApp.layers_categories",
+    "pk": 8,
+    "fields": {
+      "id" : 8,
+      "layer_id" : 1,
+      "category_id": 8,
+      "shortcut_key": "h",
+      "was_default": false
+    }
+  },
+  {
+    "model": "uccaApp.layers_categories",
+    "pk": 9,
+    "fields": {
+      "id" : 9,
+      "layer_id" : 1,
+      "category_id": 9,
+      "shortcut_key": "i",
+      "was_default": false
+    }
+  },
+  {
+    "model": "uccaApp.layers_categories",
+    "pk": 10,
+    "fields": {
+      "id" : 10,
+      "layer_id" : 1,
+      "category_id": 10,
+      "shortcut_key": "j",
+      "was_default": false
+    }
+  }
+]
+
+

@@ -1,0 +1,84 @@
+[
+  {
+    "id": 1,
+    "name": "(Un)group",
+    "description": "",
+    "tooltip": "",
+    "wasDefault": false,
+    "shape": "",
+    "shortKey": "",
+    "color": "#a1a1a1",
+    "parentCategoryId": null,
+    "restrictions": {
+      "forbiddenChildrenCategoriesID": [
+        3
+      ],
+      "forbiddenParentCategoriesID": [
+        1
+      ],
+      "forbiddenAllChildrenCategories": false,
+      "forbiddenAllParentsCategories": false
+    }
+  },
+  {
+    "id": 2,
+    "name": "Link",
+    "description": "",
+    "tooltip": "",
+    "wasDefault": false,
+    "shape": "",
+    "shortKey": "",
+    "color": "#444267",
+    "parentCategoryId": null,
+    "restrictions": {}
+  },
+  {
+    "id": 3,
+    "name": "Implicit",
+    "description": "",
+    "tooltip": "",
+    "wasDefault": false,
+    "shape": "",
+    "shortKey": "",
+    "color": "#0c9640",
+    "parentCategoryId": null,
+    "restrictions": {},
+    "functionToExecute":"addImplicitUnit"
+  },
+  {
+    "id": 4,
+    "name": "Uncertain",
+    "description": "",
+    "tooltip": "",
+    "wasDefault": false,
+    "shape": "",
+    "shortKey": "",
+    "color": "#19b5ce",
+    "parentCategoryId": null,
+    "restrictions": {}
+  },
+  {
+    "id": 5,
+    "name": "Unanalyzable",
+    "description": "",
+    "tooltip": "",
+    "wasDefault": false,
+    "shape": "",
+    "shortKey": "",
+    "color": "#19d5ce",
+    "parentCategoryId": null,
+    "restrictions": {}
+  },
+  {
+    "id": 6,
+    "name": "Combine",
+    "description": "",
+    "tooltip": "",
+    "wasDefault": false,
+    "shape": "",
+    "shortKey": "",
+    "color": "#19d5ce",
+    "parentCategoryId": null,
+    "restrictions": {}
+  }
+]

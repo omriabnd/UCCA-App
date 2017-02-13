@@ -1,0 +1,24 @@
+.no-user-selection {
+	user-select:none;
+}
+
+#set-category-hot-key{
+	.row{
+		margin: 0 0 15px 0;
+	}
+}
+
+#html-content-modal{
+	.modal-body{
+		padding: 15px;
+	}
+}
+
+.button-container{
+	margin-top: 10px;
+}
+
+.ui-sortable-helper{
+	border: 2px solid black;
+	background-color: white;
+}

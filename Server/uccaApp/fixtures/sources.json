@@ -1,0 +1,57 @@
+[
+  {
+    "model": "uccaApp.sources",
+    "pk": 1,
+    "fields": {
+      "name": "Sonya source",
+      "text": "http://www.google.com",
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.sources",
+    "pk": 2,
+    "fields": {
+      "name": "Hutchinson source",
+      "text": "http://www.google.com",
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.sources",
+    "pk": 3,
+    "fields": {
+      "name": "Ivy source",
+      "text": "http://www.google.com",
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.sources",
+    "pk": 4,
+    "fields": {
+      "name": "Rios source",
+      "text": "http://www.google.com",
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model": "uccaApp.sources",
+    "pk": 5,
+    "fields": {
+      "name": "Battle source",
+      "text": "http://www.google.com",
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  }
+]

@@ -1,0 +1,28 @@
+</div>
+<div class="row">
+    <div class="col-md-12 nissim">
+        <div ba-panel ba-panel-title="Restrictions Table" ba-panel-class="with-scroll">
+            <!--<div class="restrictions-main-categories-container">-->
+                <!--<span>Main Categories: </span>-->
+                <!--<button type="button" class="btn btn-sm btn-primary" ng-click="vm.ChooseRestrictionsMainCategories()">Choose</button>-->
+            <!--</div>-->
+            <smart-inner-table table-data='vm.smartTableData' ctrl-module='vm' category-name="category_1" page-name='vm.pageName' load-select-data-structure='true' view-only=true></smart-inner-table>
+
+            <div>
+                <span>Restriction Type: </span>
+                <label for="inputLastName">{{::formElem.name}}</label>
+                <select class="form-control selectpicker" selectpicker
+                        ng-disabled="formElem.disabled" ng-model="vm.restrictionType"
+                        ng-options="item as item.name for item in vm.restrictionsTypes track by item.value">
+                </select>
+            </div>
+
+            <smart-inner-table table-data='vm.affectedSmartTableData' ctrl-module='vm' category-name="category_2" page-name='vm.pageName' load-select-data-structure='true' view-only=true></smart-inner-table>
+
+            <div class="col-xs-12">
+                <button type="submit" class="btn btn-primary" ng-click="vm.save();">Submit</button>
+                <button type="button" class="btn btn-danger" ng-click="vm.back();">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
