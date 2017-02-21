@@ -26,7 +26,8 @@
     'zAdmin.pages.categories',
     'zAdmin.pages.annotation',
     'zAdmin.pages.tokenization',
-    'zAdmin.permissions'
+    'zAdmin.permissions',
+    'zAdmin.restrictionsValidator'
   ])
   .config(routeConfig)
   .run(run);
@@ -41,7 +42,7 @@
         // $state.go("projects");
       // }, 0);
     }
-  }
+  };
   /** @ngInject */
   function routeConfig($urlRouterProvider, baSidebarServiceProvider) {
     

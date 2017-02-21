@@ -16,7 +16,6 @@
     function AnnotationTextService(apiService, ENV_CONST) {
         var textService = {
             getAnnotationTask: getAnnotationTask,
-            getCategories: getCategories,
             getProjectLayer:getProjectLayer,
             assignColorsToCategories: assignColorsToCategories
         };
@@ -31,15 +30,13 @@
             return apiService.annotation.getTaskData(task_id).then(function(response){return response.data});
         }
 
-        function getCategories(){
-            return apiService.annotation.getCategories().then(function(response){return response.data});
-        }
         function getProjectLayer(layer_id){
             return apiService.annotation.getProjectLayer(layer_id).then(function(response){return response.data});
         }
         function assignColorsToCategories(categories){
             categories.forEach(function(category, index){
-                category.color = ENV_CONST.CATEGORIES_COLORS[index % ENV_CONST.CATEGORIES_COLORS.length]
+                category.color = ENV_CONST.CATEGORIES_COLORS[index % ENV_CONST.CATEGORIES_COLORS.length].color
+                category.backgroundColor = ENV_CONST.CATEGORIES_COLORS[index % ENV_CONST.CATEGORIES_COLORS.length].backgroundColor
             })
         }
 

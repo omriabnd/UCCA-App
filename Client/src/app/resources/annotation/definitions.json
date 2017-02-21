@@ -3,7 +3,7 @@
     "id": 1,
     "name": "(Un)group",
     "description": "",
-    "tooltip": "",
+    "tooltip": "Space bar: If one unit is selected, it ungroups it; If two or more, it groups them.",
     "wasDefault": false,
     "shape": "",
     "shortKey": "",
@@ -22,21 +22,9 @@
   },
   {
     "id": 2,
-    "name": "Link",
-    "description": "",
-    "tooltip": "",
-    "wasDefault": false,
-    "shape": "",
-    "shortKey": "",
-    "color": "#444267",
-    "parentCategoryId": null,
-    "restrictions": {}
-  },
-  {
-    "id": 3,
     "name": "Implicit",
     "description": "",
-    "tooltip": "",
+    "tooltip": "adds an implicit unit (active only in remote-unit selection mode).",
     "wasDefault": false,
     "shape": "",
     "shortKey": "",
@@ -44,41 +32,5 @@
     "parentCategoryId": null,
     "restrictions": {},
     "functionToExecute":"addImplicitUnit"
-  },
-  {
-    "id": 4,
-    "name": "Uncertain",
-    "description": "",
-    "tooltip": "",
-    "wasDefault": false,
-    "shape": "",
-    "shortKey": "",
-    "color": "#19b5ce",
-    "parentCategoryId": null,
-    "restrictions": {}
-  },
-  {
-    "id": 5,
-    "name": "Unanalyzable",
-    "description": "",
-    "tooltip": "",
-    "wasDefault": false,
-    "shape": "",
-    "shortKey": "",
-    "color": "#19d5ce",
-    "parentCategoryId": null,
-    "restrictions": {}
-  },
-  {
-    "id": 6,
-    "name": "Combine",
-    "description": "",
-    "tooltip": "",
-    "wasDefault": false,
-    "shape": "",
-    "shortKey": "",
-    "color": "#19d5ce",
-    "parentCategoryId": null,
-    "restrictions": {}
   }
 ]

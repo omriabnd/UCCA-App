@@ -4,6 +4,7 @@
     angular
         .module('zAdmin.annotation.directives')
         .directive('navBarItem',navBarItemDirective);
+        
 
     function navBarItemDirective() {
         var directive = {
@@ -11,8 +12,7 @@
             templateUrl:'app/pages/annotation/directives/nav-bar-item/navBarItem.html',
             scope:{
                 imagePath:'=',
-                toolTip:'=',
-                executeFunction:'='
+                toolTip:'='
             },
             link: linkFunction,
             controller: ItemController,
@@ -23,7 +23,7 @@
 
         return directive;
 
-        function linkFunction($scope, elem, attrs,selectedWords) {
+        function linkFunction($scope, elem, attrs, modelCtrl) {
             // $($(elem).children().children()[0]).css('background-color',$scope.defCtrl.definitionDetails.color);
         }
 
@@ -31,14 +31,19 @@
     }
 
     /** @ngInject */
-    function ItemController($scope,$rootScope) {
+    function ItemController($scope) {
         // Injecting $scope just for comparison
         var vm = this;
+        var annotationPageVM = $scope.$parent.vm;
         vm.itemClicked = itemClicked;
 
         function itemClicked(functionName){
             console.log(functionName);
-            // vm.executeFunction(functionName);
+            if(annotationPageVM[functionName]){
+                annotationPageVM[functionName]()
+            }else{
+                console.log("function not exist",functionName);
+            }
         }
     }
 

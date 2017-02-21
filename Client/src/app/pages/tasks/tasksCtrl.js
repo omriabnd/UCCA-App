@@ -15,7 +15,8 @@
     Core.init(vm,TableStructure,tasksService);
     vm.smartTableCanUseAction = smartTableCanUseAction;
     vm.editRow = editRow;
-
+    vm.previewTask = Core.previewTask;
+    
     function smartTableCanUseAction(functionName,type){
       /*
         logic wehn to show the button

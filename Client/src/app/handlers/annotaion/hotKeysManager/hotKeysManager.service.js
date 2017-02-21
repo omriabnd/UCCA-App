@@ -20,6 +20,8 @@
             setMouseMode:setMouseMode,
             getMouseMode: getMouseMode
         };
+        
+        return HotKeysManager;
 
         function addHotKey(hotKeyName){
             HotKeysManager.hotKeys[hotKeyName] = {};
@@ -53,7 +55,7 @@
         function getMouseMode(){
             return HotKeysManager.mouseDown;
         }
-        return HotKeysManager;
+        
     }
 
 })();

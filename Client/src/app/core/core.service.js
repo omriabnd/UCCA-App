@@ -24,7 +24,9 @@
 			checkDependenciesKeys: checkDependenciesKeys,
 			showNotification: showNotification,
 			validate: validate,
-			hasValue: hasValue
+			hasValue: hasValue,
+			previewTask: previewTask,
+			showAlert: showAlert
 		};
 		
 		return core;
@@ -45,8 +47,25 @@
 			} else {
 				tableScope.selectPage(currentPage + 1);
 			}
+		};
+
+		function previewTask (obj,index){
+
+		  switch(obj.type){
+		    case 'TOKENIZATION':
+		      openInNewTab('#/tokenizationPage/'+obj.id)
+		      break;
+		    default:
+		      openInNewTab('#/annotationPage/'+obj.id)
+		      break;
+		  }
 		}
 
+		function openInNewTab(url) {
+		  var win = window.open(url, '_blank');
+		  win.focus();
+		}
+		
 		function checkForPagePermissions(state_id) {
 			return PermPermissionStore.getStore()[state_id.toString()].validationFunction[2](state_id.toString());
 		}
@@ -195,6 +214,17 @@
                     "preventOpenDuplicates": false
                 })
 		}
+
+		function showAlert(message) {
+		    $uibModal.open({
+		        animation: true,
+		        templateUrl: 'app/pages/annotation/templates/errorModal.html',
+		        size: 'sm',
+		        controller: function($scope){
+		            $scope.message = message;
+		        }
+		    });
+		};
 
 		function validate(structureToValidate){
 			var _core = this;

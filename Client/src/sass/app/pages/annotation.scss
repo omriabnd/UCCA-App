@@ -1,6 +1,11 @@
 .annotation-page-container{
   margin-top: 10px;
-
+  .category-abbreviation {
+      padding: 2px 5px;
+      margin-left: 5px;
+      border-radius: 2px;
+      padding-right: 2px;
+  }
   &.crosshair-cursor *{
     cursor: crosshair !important;
   }
@@ -22,7 +27,7 @@
     padding: 5px;
   }
 
-  .clickedWord{
+  .clickedToken{
     background-color: gray;
     color: white;
   }
@@ -70,6 +75,12 @@
     height: auto !important;
     display: inline-block;
   }
+  button.text-wrapper{
+    width: calc(100% - 55px);
+    -webkit-appearance: none;
+    background: transparent;
+    border: 0px;
+  }
 
   .no-select {
     -webkit-touch-callout: none; /* iOS Safari */
@@ -101,6 +112,7 @@
     height: 522px;
     height: 100%;
     overflow-y: auto;
+    padding-bottom: 10px;
   }
 
   #directive-info-data-container-0{
@@ -111,10 +123,10 @@
 
   .text {
     position: relative;
-    top: 2px;
+    top: 0px;
   }
 
-  selected-tokens.has-elements {
+  annotation-units.has-elements {
     border: 1px solid black;
     box-shadow: 1px 3px 5px black;
     padding: 5px;
@@ -231,19 +243,20 @@
   .categorized-word {
     min-height: 10px;
 
-    &.closed-annotation-unit {
-      max-height: 0;
-      min-height: 0;
-      overflow: hidden;
-      transition: .3s all;
-      // overflow: hidden;
-      // -webkit-transition: .3s all;
-      // transition: .3s all;
-      // max-height: 40px;
-    }
+  }
+  .closed-annotation-unit {
+    max-height: 0;
+    min-height: 0;
+    overflow: hidden;
+    transition: .3s all;
+    // overflow: hidden;
+    // -webkit-transition: .3s all;
+    // transition: .3s all;
+    // max-height: 40px;
   }
   .directive-container {
     min-height: 10px;
+    min-height: 38px;
 
 
     .control-buttons-container {
@@ -379,8 +392,59 @@ textarea.unit-comment-text {
 .modal-content {
 
   .category-info {
-    height: 400px;
+    height: 50%;
   }
 
 }
+.modal-body{
+  .text-center {
+    max-height: 50%;
+    overflow-y: auto;
+    margin-bottom: 25px;
+  }
+}
 
+.annotation-page-container{
+  .disabled {
+    opacity: .3;
+    .text-wrapper{
+      cursor : not-allowed !important;
+    }
+    span{
+      cursor : not-allowed !important;
+    }
+  }
+  .side-bar {
+      direction: rtl;
+      categories-directive {
+          direction: ltr;
+      }
+      .childCategory {
+          width: 90%;
+      }
+      .text-wrapper{
+        text-align: center;
+        overflow-x: hidden;
+        white-space: nowrap;
+      }
+      utility-buttons-directive {
+          direction: ltr;
+      }
+      .categories-container{
+        max-height: 600px;
+        overflow: auto;
+      }
+  }
+
+} 
+.refinedCategory{
+  font-style: italic !important;
+  border-width: 3px !important;
+  border-style: double !important;
+  border-color: black !important;
+  border-radius: 6px !important;
+}
+.shouldRefine{
+  border: 3px !important;
+  border-style: dotted !important;
+}

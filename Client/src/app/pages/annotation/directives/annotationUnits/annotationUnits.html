@@ -1,0 +1,39 @@
+<div class="directive-container">
+
+
+    <div class="directive-info-data-container" id="directive-info-data-container-{{selCtrl.lineId}}">
+        <div class="row control-buttons-container" ng-show="selCtrl.lineId != 0">
+            <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Delete">
+                <i class="fa fa-times delete-btn unit-buttons" aria-hidden="true"  ng-click="selCtrl.removeAnnotationUnit(selCtrl.lineId,$event)"></i>
+            </a>
+            <span ng-if="selCtrl.dataBlock.unitType == 'REGULAR'">
+                <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Finish" ng-click="selCtrl.checkRestrictionForCurrentUnit(selCtrl.lineId)">
+                    <i class="socicon unit-buttons">b</i>
+                </a>
+                <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Comment" ng-click="selCtrl.open('app/pages/annotation/templates/commentOnUnitModal.html','sm')">
+                    <i class="socicon unit-buttons">}</i>
+                    <span class="comment-notification" ng-if="selCtrl.dataBlock.comment !=''">!</span>
+                </a>
+                <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Delete">
+                    <i class="ion-plus-round unit-buttons" ng-click="selCtrl.switchToRemoteMode($event)"></i>
+                </a>
+            </span>
+
+        </div>
+        <span ng-if="selCtrl.lineId">{{selCtrl.lineId}}</span>
+        <span class="categories" ng-repeat="cat in selCtrl.dataBlock.categories">
+            <span class="category-abbreviation" 
+                    ng-class="{'shouldRefine': cat.shouldRefine,'refinedCategory':cat.refinedCategory}"
+                    ng-style="{'color':cat.color,'background-color':cat.backgroundColor}">{{cat.abbreviation}}
+            </span>
+        </span>
+        <div class="text-wrapper">
+            <div class="text" id="row-{{selCtrl.lineId}}" >
+                <span class="cursor" id="cursor-{{selCtrl.lineId}}">|</span>
+            </div>
+        </div>
+    </div>
+
+    <div ng-include="'app/pages/annotation/directives/annotationUnits/dataTreeRow.html'" ng-if="selCtrl.lineId != '0'"></div>
+
+</div>

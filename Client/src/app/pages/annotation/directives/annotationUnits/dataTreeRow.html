@@ -1,0 +1,15 @@
+<div class="categorized-word"  ng-repeat="lineObj in selCtrl.dataBlock.AnnotationUnits" 
+    ng-class="{'hidden':lineObj.gui_status=='HIDDEN'}">
+    <div ng-show="lineObj.AnnotationUnits.length" class="expand-btn" ng-click="selCtrl.toggleAnnotationUnitView($event);" ng-if="lineObj.unitType == 'REGULAR'">
+        <!-- <i ng-class="{'ion-minus-round':!selCtrl.unitIsCollapsed, 'ion-plus-round':selCtrl.unitIsCollapsed}"></i> -->
+        <i class='ion-minus-round'></i>
+    </div>
+    <annotation-units
+            class="has-elements"
+            ng-class="{'has-elements': selCtrl.dataBlock.AnnotationUnits.numOfAnnotationUnits > 0,'remote-unit':lineObj.unitType == 'REMOTE' || lineObj.unitType == 'IMPLICIT','highlight-unit':lineObj.unitType == 'REMOTE' || lineObj.unitType == 'IMPLICIT' }"
+            preview-line="lineObj.text"
+            categories="lineObj.categories"
+            control="selCtrl.keyController"
+            line-id="lineObj.annotation_unit_tree_id">
+    </annotation-units>
+</div>

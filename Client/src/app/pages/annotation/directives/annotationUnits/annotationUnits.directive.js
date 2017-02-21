@@ -2,14 +2,14 @@
     'use strict';
 
     angular.module('zAdmin.annotation.directives')
-        .directive('selectedTokens',selectedTokensDirective);
+        .directive('annotationUnits',annotationUnitDirective);
 
     /** @ngInject */
-    function selectedTokensDirective(WordsWrapperService,$rootScope,DataService,HotKeysManager,hotkeys,DefinitionsService, $timeout, $compile) {
+    function annotationUnitDirective($rootScope,DataService,HotKeysManager,hotkeys,DefinitionsService, $timeout, $compile, $uibModal,restrictionsValidatorService, ENV_CONST, Core) {
 
         var directive = {
             restrict:'E',
-            templateUrl:'app/pages/annotation/directives/selectedTokens/selectedTokens.html',
+            templateUrl:'app/pages/annotation/directives/annotationUnits/annotationUnits.html',
             scope:{
                 previewLine: '=',
                 lineId: '=',
@@ -17,8 +17,8 @@
                 categories: '=',
                 control: '='
             },
-            link: selectedTokensDirectiveLink,
-            controller: SelectedWordsController,
+            link: annotationUnitDirectiveLink,
+            controller: AnnotationUnitController,
             controllerAs: 'selCtrl',
             bindToController: true,
             replace:true
@@ -27,17 +27,16 @@
 
         return directive;
 
-        function selectedTokensDirectiveLink($scope, elem, attrs) {
+        function annotationUnitDirectiveLink($scope, elem, attrs) {
 
             var initObject = {
                 scope:$scope,
                 elem:elem,
                 rootScope:$rootScope,
                 HotKeysManager: HotKeysManager,
-                WordsWrapperService:WordsWrapperService,
                 DataService:DataService,
-                wordClicked:wordClicked,
-                rowClicked:rowClicked,
+                tokenClicked:tokenClicked,
+                focusUnit:focusUnit,
                 moveRight: moveRight,
                 moveLeft: moveLeft,
                 moveDown:moveDown,
@@ -52,8 +51,8 @@
                 deleteFromTree:deleteFromTree
             };
 
-            $rootScope.wordClicked = wordClicked;
-            $rootScope.rowClicked = rowClicked;
+            $rootScope.tokenClicked = tokenClicked;
+            $rootScope.focusUnit = focusUnit;
 
             var directiveIndex = initDirective(initObject);
 
@@ -77,54 +76,50 @@
                 });
             }
 
-            $scope.selCtrl.removeRow = removeRow;
+            $scope.selCtrl.removeAnnotationUnit = removeAnnotationUnit;
+            $scope.selCtrl.checkRestrictionForCurrentUnit = checkRestrictionForCurrentUnit;
             $scope.selCtrl.switchToRemoteMode = switchToRemoteMode;
 
-            function removeRow(unit_id,event){
-                var annotaionUnitToDelete = $('#'+unit_id);
-                console.log(annotaionUnitToDelete);
+            function removeAnnotationUnit(unit_id,event){
+                var annotaionUnitToDelete = $('#row-'+unit_id);
+                // console.log(annotaionUnitToDelete);
                 unit_id = unit_id.toString();
                 $rootScope.clickedUnit = 'unit-wrapper-'+DataService.getParentUnitId(unit_id)+'-'+unit_id;
+                deleteFromTree();
                 // deleteFromTree(unit_id);
+                // var unit_to_delete = DataService.getUnitById(unit_id);
+                // DataService.deleteFromTree(unit_id);
 
-                DataService.deleteFromTree(unit_id);
+                // $scope.selCtrl.dataBlock.categories.changed = true;
 
-                $scope.selCtrl.dataBlock.categories.changed = true;
-
+                // if (unit_to_delete.unitType != 'REMOTE'){
+                //     $scope.selCtrl.updateUI(DataService.getUnitById(DataService.getParentUnitId(unit_id)))
+                // }
                 event.stopPropagation();
             }
 
             /**
              * Sets the words hover function.
              */
-            // $('.selectable-word').hover(hoverFunction);
-            // $('.selectable-word').mouseout(hoverOutFunction);
             var IS_MOUSE_DOWN = false;
             $('.directive-info-data-container .text-wrapper').on('mouseup',function(){
                 IS_MOUSE_DOWN = false
             });
 
             $('.selectable-word').on('mouseover',function(){
-                console.log('IS_MOUSE_DOWN: '+IS_MOUSE_DOWN);
+                // console.log('IS_MOUSE_DOWN: '+IS_MOUSE_DOWN);
                 if(IS_MOUSE_DOWN){
-                    if($(this).hasClass('clickedWord')){
-                        $(this).removeClass('clickedWord');
+                    if($(this).hasClass('clickedToken')){
+                        $(this).removeClass('clickedToken');
                         var tokenId = splitStringByDelimiter($(this).attr('data-wordid'),"-")[1];
                         removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
                     }else{
-                        $(this).addClass('clickedWord');
+                        $(this).addClass('clickedToken');
                         $rootScope.selectedTokensArray.push(this.outerHTML);
                     }
                     updateCursorLocation($scope.selCtrl,event.toElement,$rootScope);
                 }else {
-                    // $(this).css({'background-color':'transparent'})
-                    // }
-                    /*
-                     if a token is already selected
-                     AND
-                     mouse is down
 
-                     */
                 }
             });
 
@@ -132,11 +127,13 @@
              * Handle Click on tokens.
              * @param event - The click event.
              */
-            function wordClicked(event){
+            function tokenClicked(event){
                 /**
                  * Initialization phase - checks if ctrl/shift is pressed and update clickedLine variable on rootScope.
                  */
                 IS_MOUSE_DOWN = true
+                $('.highlight-unit').removeClass('highlight-unit'); // unit can not be selected while a token being clicked 
+                $('.selected-row').removeClass('selected-row'); // reset (prev) other selected rows
                 var isShiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
                 var isCtrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 var tokenRowId = $(event.currentTarget.parentElement).attr('id').split('-');
@@ -148,53 +145,51 @@
                  * Checks if the clicked element is indeed a token and not the outer div.
                  */
                 if(event.toElement.localName == 'span'){
-                    if($(event.toElement).hasClass('clickedWord')){
+                    if($(event.toElement).hasClass('clickedToken')){
 
                         handleClickOnAlreadyClickedToken(event,isShiftPressed,isCtrlPressed,$rootScope);
 
                     }else{
-                        if($rootScope.clckedLine != $scope.selCtrl.lineId){
-                            $('.clickedWord').removeClass('clickedWord');
-                        }
-
                         /**If shift is pressed.adds all the token between first token to end token.
                          * else if ctrl is pressed. if true adds the token to the selected token array.
                          * else, clear the selected token array and add the new selected token.
                          */
                         if(isShiftPressed){
-
                             handleClickOnTokenWhenShiftPressed(event,$scope,$rootScope);
-
                         }else if(isCtrlPressed){
-
+                            // if the new token is from a different unit - unselect the last token
+                            preventSelectTokensFromDefferentUnits();
                             handleClickOnTokenWhenCtrlPressed(event,$scope,$rootScope);
-
-                            // updateCursorLocation($scope.selCtrl,event.toElement);
-
                         }else{
-
                             handleClickOnNotClickedToken(event,$scope,$rootScope);
-
-                            // updateCursorLocation($scope.selCtrl,event.toElement);
-
                         }
                         updateCursorLocation($scope.selCtrl,event.toElement,$rootScope);
 
                         var parentContainerId = $(event.toElement.parentElement).attr('id').split('-');
                         parentContainerId = parentContainerId.slice(1,parentContainerId.length).join('-');
-                        // $('.selected-row').removeClass('selected-row');
 
                         var parentContainer = $('#directive-info-data-container-'+parentContainerId).addClass('selected-row');
 
                         event.stopPropagation();
 
-                        rowClicked(parentContainer);
+                        focusUnit(parentContainer);
                     }
 
                     HotKeysManager.checkIfHotKeyIsPressed('shift') == false ? $rootScope.lastSelectedWordWithShiftPressed = undefined : '';
                 }
             }
-
+            function preventSelectTokensFromDefferentUnits(){
+                var needToPrevent = false
+                if($rootScope.selectedTokensArray.length){
+                    needToPrevent = $($rootScope.selectedTokensArray[0]).attr('parent-index') != $rootScope.clckedLine;
+                    if(needToPrevent){
+                        $rootScope.selectedTokensArray = [];
+                        $('.clickedToken').removeClass('clickedToken');
+                        // $scope.selCtrl.open('app/pages/annotation/templates/errorModal.html','md',"Tokens may be selected from the same unit only.");
+                    }
+                }
+                return needToPrevent
+            }
             function updateCursorLocation(selCtrl,element,rootScope){
                 var currentRow = $('#row-'+rootScope.clckedLine)[0];
                 var directiveCursor = $('#cursor-'+rootScope.clckedLine)[0];
@@ -214,13 +209,16 @@
             /**
              * Handle click on row - update the current selected row.
              */
-            function rowClicked(element){
-
-                var dataWordId = $(element.toElement).attr('data-wordid');
+            function focusUnit(element){
+                var currElem = (event && event.type) == "mousedown" ? element.toElement : (event && event.type) == "keydown" ? element : element;
+                var dataWordId = $(currElem).attr('data-wordid');
                 if(dataWordId == undefined){
+                    if(!!!$(currElem).attr('id')){
+                        return;
+                    }
                     var clickedRowId = [];
-                    if(element.toElement){
-                        clickedRowId = $(element.toElement).attr('id').split('-');
+                    if(currElem){
+                        clickedRowId = $(currElem).attr('id').split('-');
                     }
                     else{
                         clickedRowId = $(element).attr('id').split('-');
@@ -228,18 +226,18 @@
                     $rootScope.clckedLine = clickedRowId.slice(4,clickedRowId.length).join('-');
                     /*$rootScope.clckedLine = clickedRowId[clickedRowId.length-1];*/
                 }else{
-                    var clickedRowId = $(element.toElement).attr('parent-index').split('-');
+                    var clickedRowId = $(currElem).attr('parent-index').split('-');
                     clickedRowId.length == 1 ? $rootScope.clckedLine = clickedRowId[0] : $rootScope.clckedLine = clickedRowId.slice(1,clickedRowId.length).join('-');
                     /*$rootScope.clckedLine = clickedRowId[clickedRowId.length-1];*/
                 }
                 $('.highlight-unit').removeClass('highlight-unit');
-                $('.highlight-unit').toggleClass('highlight-unit');
+                // $('.highlight-unit').toggleClass('highlight-unit');
                 $('.selected-row').removeClass('selected-row');
-                if(element.toElement){
-                    if($(element.toElement).hasClass('selectable-word')){
-                        $(element.toElement.parentElement.parentElement.parentElement).addClass('selected-row');
+                if(currElem){
+                    if($(currElem).hasClass('selectable-word')){
+                        $(currElem.parentElement.parentElement.parentElement).addClass('selected-row');
                     }else{
-                        $(element.toElement).addClass('selected-row');
+                        $(currElem).addClass('selected-row');
                     }
                 }else{
                     $(element).addClass('selected-row');
@@ -270,7 +268,7 @@
                         $scope.selCtrl.cursorLocation++;
 
                         if(!isShiftPressed && !isCtrlPressed){
-                            $('.clickedWord ').removeClass('clickedWord ');
+                            $('.clickedToken ').removeClass('clickedToken ');
                             $rootScope.selectedTokensArray = [];
                         }
 
@@ -299,7 +297,7 @@
                 if(unitExists){
                     $scope.selCtrl.selectedRow = $rootScope.clckedLine = unitExists.annotation_unit_tree_id;
                     var currentRow = $('#directive-info-data-container-' + nextUnitId)[0];
-                    rowClicked(currentRow);
+                    focusUnit(currentRow);
 
                     if(DataService.unitType == 'REMOTE'){
                         //Select The first
@@ -334,7 +332,7 @@
                 if(unitExists){
                     $scope.selCtrl.selectedRow = $rootScope.clckedLine = unitExists.annotation_unit_tree_id;
                     var currentRow = $('#directive-info-data-container-' + nextUnitId)[0];
-                    rowClicked(currentRow);
+                    focusUnit(currentRow);
 
                     if(DataService.unitType == 'REMOTE'){
                         //Select The first
@@ -373,15 +371,17 @@
                         var tokenToAdd = currentRow.children[$scope.selCtrl.cursorLocation+1];
 
                         if(!$(tokenToAdd).hasClass('dot-sep')){
-                            if($(tokenToAdd).hasClass('clickedWord')){
-                                $(tokenToAdd).removeClass('clickedWord');
+                            if($(tokenToAdd).hasClass('clickedToken')){
+                                $(tokenToAdd).removeClass('clickedToken');
+                                
 
                                 //The token is already selected, need to remove it.
                                 var tokenId = splitStringByDelimiter($(tokenToAdd).attr('data-wordid'),"-")[1];
                                 removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
                             }else{
                                 $rootScope.selectedTokensArray.push(tokenToAdd.outerHTML);
-                                $(tokenToAdd).addClass('clickedWord');
+                                $(tokenToAdd).addClass('clickedToken');
+                                
                             }
                         }
 
@@ -412,7 +412,7 @@
                         var isCtrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
 
                         if (!isShiftPressed && !isCtrlPressed) {
-                            $('.clickedWord ').removeClass('clickedWord ');
+                            $('.clickedToken ').removeClass('clickedToken ');
                             $rootScope.selectedTokensArray = [];
                         }
 
@@ -443,15 +443,17 @@
                     var tokenToAdd = currentRow.children[$scope.selCtrl.cursorLocation-1];
 
                     if(!$(tokenToAdd).hasClass('dot-sep')){
-                        if($(tokenToAdd).hasClass('clickedWord')){
-                            $(tokenToAdd).removeClass('clickedWord');
+                        if($(tokenToAdd).hasClass('clickedToken')){
+                            $(tokenToAdd).removeClass('clickedToken');
+                            
 
                             //The token is already selected, need to remove it.
                             var tokenId = splitStringByDelimiter($(tokenToAdd).attr('data-wordid'),"-")[1];
                             removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
                         }else{
                             $rootScope.selectedTokensArray.push(tokenToAdd.outerHTML);
-                            $(tokenToAdd).addClass('clickedWord');
+                            $(tokenToAdd).addClass('clickedToken');
+                            
                         }
                     }
 
@@ -465,14 +467,18 @@
             }
 
             function deleteFromTree(unitId){
+                // prevent insert to tree when refinement layer
+                if(DataService.currentTask.project.layer.type == ENV_CONST.LAYER_TYPE.REFINEMENT){
+                    Core.showAlert("Cant delete annotation units from refinement layer")
+                    console.log('ALERT - deleteFromTree -  prevent delete from tree when refinement layer');
+                    return unitId;
+                }
                 var unitIdToDelete, splittedUnitIdToDeleteId;
 
                 var unitToDelete;
                 if(unitId == undefined){
                     unitIdToDelete = $rootScope.clckedLine;
                     unitId = $rootScope.clckedLine;
-                    // unitIdToDelete = $('#'+unitIdToDelete).attr('child-unit-id');
-                    // splittedUnitIdToDeleteId = splitStringByDelimiter(unitIdToDelete,'-');
                     $rootScope.clickedUnit = 'unit-wrapper-'+DataService.getParentUnitId($rootScope.clckedLine)+'-'+$rootScope.clckedLine;
                     unitToDelete = DataService.getUnitById(unitIdToDelete);
                 }else{
@@ -480,76 +486,77 @@
                     unitToDelete = DataService.getUnitById(unitId);
                 }
 
-                var unitChildren  = unitToDelete.Rows;
-
-                $scope.selCtrl.updateUI = function(unitToDelete){
-                    if(unitToDelete.unitType == 'REGULAR'){
-                        if(unitChildren.length == 0){
-                            //unit has no children
-                            var unitDomElementToDelete = $('#'+$rootScope.clickedUnit);
-                            var unitDomElementParent =unitDomElementToDelete[0].parentElement;
-                            var unitDomElementChildrenLength = unitDomElementToDelete.children().length;
-                            for(var i=0; i<unitDomElementChildrenLength; i++){
-                                unitDomElementParent.insertBefore(unitDomElementToDelete.children().get(0),unitDomElementToDelete.get(0))
-                            }
-                            unitDomElementToDelete.remove();
-
-                        }else{
-                            //unit has unit children
-                            // var unitToDeleteId;
-                            // if(splittedUnitIdToDeleteId.length == 2){
-                            //     unitToDeleteId = splittedUnitIdToDeleteId.slice(2,splittedUnitIdToDeleteId.length-1).join("-");
-                            // }else{
-                            //     unitToDeleteId = splittedUnitIdToDeleteId.slice(3,splittedUnitIdToDeleteId.length).join("-");
-                            // }
-                            var unitDomElementToDelete = $('#'+$rootScope.clickedUnit);
-                            var unitDomElementParent =unitDomElementToDelete[0].parentElement;
-
-                            var unitToDeleteChildrenUnits = $('#row-'+unitId).children();
-                            for(var i=0; i<unitToDeleteChildrenUnits.length; i++){
-                                if(!$(unitToDeleteChildrenUnits[i]).hasClass('cursor')){
-                                    unitDomElementParent.insertBefore(unitToDeleteChildrenUnits[i],unitDomElementToDelete.get(0))
-                                }
-                            }
-
-                            unitDomElementToDelete.remove();
-                        }
-
-                        //Update parent unit-wrapper-#-# attribute
-                        var parentDomeElementUnitWrappers = $(unitDomElementParent).find('.unit-wrapper');
-                        unitToDelete = DataService.getUnitById(DataService.getParentUnitId(unitToDelete.annotation_unit_tree_id));
-                    }
-
-                    $timeout(function(){
-                        updateDomElements(unitToDelete);
-                        $compile($('.text-wrapper'))($rootScope);
-
-                        $(unitDomElementParent).find('.selectable-word').attr('onclick','').unbind('click');
-                        $(unitDomElementParent).find('.selectable-word').on('click',wordClicked);
-                    })
-                };
+                var unitChildren  = unitToDelete.AnnotationUnits;
 
                 if(unitToDelete){
-                    if(unitToDelete.usedAsRemote.length > 0){
+                    if(unitToDelete.usedAsRemote && unitToDelete.usedAsRemote.length > 0){
                         $scope.selCtrl.currentUnitRemoteInstancesIds = unitToDelete.usedAsRemote;
                         $scope.selCtrl.currentUnitRemoteInstancesIds.push(unitToDelete.annotation_unit_tree_id.toString());
                         $scope.selCtrl.open('app/pages/annotation/templates/deleteAllRemoteModal.html','md',unitToDelete.usedAsRemote.length-1);
                     }else{
                         $rootScope.clckedLine = DataService.deleteFromTree(unitToDelete.annotation_unit_tree_id);
                         if(unitToDelete.unitType == 'REGULAR'){
+                            console.log("$scope.selCtrl.updateUI(unitToDelete)");
                             $scope.selCtrl.updateUI(unitToDelete)
                         }
                     }
                 }
             }
 
+            // update father unit borders, after the san was deleted
+            $scope.selCtrl.updateUI = function(unitToDelete){
+                if (!unitToDelete) {return console.log('no unit to delete');}
+                if (unitToDelete.usedAsRemote && unitToDelete.usedAsRemote.length > 0) {return console.log('remote unit');}
+                if(unitToDelete.unitType == 'REGULAR'){
+                    if(unitToDelete.AnnotationUnits.length == 0){
+                        //unit has no children
+                        var unitDomElementToDelete = $("[unit-wrapper-id="+$rootScope.clickedUnit+"]");
+                        var unitDomElementParent =unitDomElementToDelete[0].parentElement;
+                        var unitDomElementChildrenLength = unitDomElementToDelete.children().length;
+                        for(var i=0; i<unitDomElementChildrenLength; i++){
+                            unitDomElementParent.insertBefore(unitDomElementToDelete.children().get(0),unitDomElementToDelete.get(0))
+                        }
+                        unitDomElementToDelete.remove();
+
+                    }else{
+                        //unit has unit children
+                        var unitDomElementToDelete = $("[unit-wrapper-id="+$rootScope.clickedUnit+"]");
+                        var unitDomElementParent =unitDomElementToDelete[0].parentElement;
+
+                        var unitToDeleteChildrenUnits = $('#row-'+unitToDelete.annotation_unit_tree_id).children();
+                        for(var i=0; i<unitToDeleteChildrenUnits.length; i++){
+                            if(!$(unitToDeleteChildrenUnits[i]).hasClass('cursor')){
+                                if($(unitToDeleteChildrenUnits[i]).hasClass('selectable-word')){
+                                    unitToDeleteChildrenUnits[i].innerHTML += " "
+                                }
+                                unitDomElementParent.insertBefore(unitToDeleteChildrenUnits[i],unitDomElementToDelete.get(0))
+                            }
+                        }
+
+                        unitDomElementToDelete.remove();
+                    }
+                    //Update parent unit-wrapper-#-# attribute
+                    var parentDomeElementUnitWrappers = $(unitDomElementParent).find('.unit-wrapper');
+                    unitToDelete = DataService.getUnitById(DataService.getParentUnitId(unitToDelete.annotation_unit_tree_id));
+                }
+
+                $timeout(function(){
+                    updateDomElements(unitToDelete);
+                    $compile($('.text-wrapper'))($rootScope);
+
+                    $(unitDomElementParent).find('.selectable-word').attr('mousedown','').unbind('mousedown');
+                    $(unitDomElementParent).find('.selectable-word').on('mousedown',tokenClicked);
+                    
+                    focusUnit($('#directive-info-data-container-'+splitStringByDelimiter($rootScope.clckedLine,'.').join("-")))
+                })
+            };
             function updateDomElements(unitToUpdate){
-                console.log(unitToUpdate.annotation_unit_tree_id);
+                // console.log(unitToUpdate.annotation_unit_tree_id);
                 var unitChildren = $('#row-'+unitToUpdate.annotation_unit_tree_id).find($('.unit-wrapper'));
-                for(var i=0; i<unitToUpdate.Rows.length; i++){
-                    $(unitChildren[i]).attr('child-unit-id',unitToUpdate.Rows[i].annotation_unit_tree_id);
-                    $(unitChildren[i]).attr('id','unit-wrapper-'+unitToUpdate.annotation_unit_tree_id+'-'+unitToUpdate.Rows[i].annotation_unit_tree_id);
-                    updateDomElements(unitToUpdate.Rows[i]);
+                for(var i=0; i<unitToUpdate.AnnotationUnits.length; i++){
+                    $(unitChildren[i]).attr('child-unit-id',unitToUpdate.AnnotationUnits[i].annotation_unit_tree_id);
+                    $(unitChildren[i]).attr('unit-wrapper-id','unit-wrapper-'+unitToUpdate.annotation_unit_tree_id+'-'+unitToUpdate.AnnotationUnits[i].annotation_unit_tree_id);
+                    updateDomElements(unitToUpdate.AnnotationUnits[i]);
                 }
             }
 
@@ -559,12 +566,12 @@
                 if(DataService.unitType == 'REMOTE'){
                         //Select The first
                     var firstUnit = $(currentRow).find('.selected-unit')[0];
-                    $rootScope.onClickForRemote(firstUnit);
+                    onClickForRemote(firstUnit);
                 }else{
                     if($rootScope.selectedTokensArray.length > 0){
                         $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
                         if($rootScope.selectedTokensArray.length > 0){
-                            $rootScope.clckedLine = $rootScope.parseSelectedWords($rootScope.clckedLine);
+                            $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine);
                             $timeout(function(){
                                 // give focus to the new unit
                                 $('.selected-row').toggleClass('selected-row');
@@ -584,7 +591,6 @@
                         }
                     }
                 }
-                $rootScope.selectedTokensArray = [];
             }
 
             function addAsRemoteUnit(category,event){
@@ -603,101 +609,185 @@
 
                     $(document).attr('keyup','').unbind('keyup');
                     $(document).keyup(function(e) {
-                        if (e.keyCode == 27) { // escape key maps to keycode `27`
+                        if (e.keyCode == 27) { // Escape key maps to keycode `27`
                             $timeout(function(){
                                 $scope.$apply();
                                 DataService.unitType = 'REGULAR';
-                                $('#'+$rootScope.clickedUnit).toggleClass('highlight-unit');
+                                $("[unit-wrapper-id="+$rootScope.clickedUnit+"]").toggleClass('highlight-unit');
                                 $('.annotation-page-container').toggleClass('crosshair-cursor');
-                                $( ".unit-wrapper" ).attr('onclick','').unbind('click');
-                                $( ".selectable-word" ).attr('onclick','').unbind('click');
-                                $( ".selectable-word" ).on('click',wordClicked);
-                                $( ".directive-info-data-container" ).attr('onclick','').unbind('click');
-                                $( ".directive-info-data-container" ).on('click',rowClicked);
+                                $( ".unit-wrapper" ).attr('mousedown','').unbind('mousedown');
+                                $( ".selectable-word" ).attr('mousedown','').unbind('mousedown');
+                                $( ".selectable-word" ).on('mousedown',tokenClicked);
+                                $( ".directive-info-data-container" ).attr('mousedown','').unbind('mousedown');
+                                $( ".directive-info-data-container" ).on('mousedown',focusUnit);
                             },0)
                         }
                     });
 
                     var lineToAddRemoteUnit = $rootScope.clckedLine;
                     $('.annotation-page-container').toggleClass('crosshair-cursor');
-                    $( ".selectable-word" ).attr('onclick','').unbind('click');
+                    $( ".selectable-word" ).attr('mousedown','').unbind('mousedown');
 
-                    $( ".selectable-word" ).on('click',function(){
-                        $scope.selCtrl.open('app/pages/annotation/templates/errorModal.html','md',"Only Units can be selected as remote units.");
-                    });
+
+                    // prevent the user from selecting a token as remote unit
+                    bindAlertIfTryingToAddTokenAsRemote();
 
                     var parentUnit = DataService.getParentUnitId($rootScope.clckedLine);
                     $('.highlight-unit').removeClass('highlight-unit');
-                    $('#unit-wrapper-'+(parseInt(parentUnit)+1)+"-"+$rootScope.clckedLine).toggleClass('highlight-unit');
+                    $('[unit-wrapper-id=unit-wrapper-'+(parseInt(parentUnit)+1)+"-"+$rootScope.clckedLine+"]").toggleClass('highlight-unit');
                     $rootScope.clickedUnit = 'unit-wrapper-'+(parseInt(parentUnit))+"-"+$rootScope.clckedLine;
 
-                    $('.directive-info-data-container').attr('onclick','').unbind('click');
+                    $('.directive-info-data-container').attr('mousedown','').unbind('mousedown');
 
                     
-
-
-                    $rootScope.onClickForRemote =function (e){
-                        if($rootScope.clickedUnit == $(e.toElement).attr('id') || $rootScope.clickedUnit == $(e).attr('id')){
-                            $scope.selCtrl.open('app/pages/annotation/templates/errorModal.html','md',"Unit cannot be selected as remote.");
-                        }else{
-                            $rootScope.currentCategoryID = category.id;
-                            $rootScope.currentCategoryColor = category.color;
-                            $rootScope.currentCategoryAbbreviation = category.abbreviation;
-                            $rootScope.selectedTokensArray = [];
-
-                            if($(e.toElement).hasClass('directive-info-data-container')){
-                                var selectedUnitTokens = e.toElement.children[2].children[0].children;
-                                for(var i=0; i<selectedUnitTokens.length; i++){
-                                    if(!$(selectedUnitTokens[i]).hasClass('cursor')){
-                                        $rootScope.selectedTokensArray.push(selectedUnitTokens[i].outerHTML);
-                                    }
-                                }
-                            }else{
-                                var elementChildren = e.toElement ? e.toElement.children : e.children;
-                                for(var i=0; i<elementChildren.length; i++){
-                                    $rootScope.selectedTokensArray.push(elementChildren[i].outerHTML);
-                                }
-                            }
-
-
-                            $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
-                            $rootScope.clckedLine = lineToAddRemoteUnit;
-                            DataService.unitType = 'REMOTE';
-                            $rootScope.clckedLine = $rootScope.parseSelectedWords($rootScope.clckedLine,false);
-                            DataService.getUnitById($(e.currentTarget).attr('child-unit-id')).usedAsRemote.push($rootScope.clckedLine);
-
-                            $timeout(function(){
-                                // give focus to the new unit
-                                $('.selected-row').toggleClass('selected-row');
-                                $('directive-info-data-container-'+$rootScope.clckedLine).toggleClass('selected-row');
-                            });
-
-
-                            e.toElement ? $scope.$apply() : '';
-
-                            DataService.unitType = 'REGULAR';
-                            $('#'+$rootScope.clickedUnit).toggleClass('highlight-unit');
-                            $('.selected-unit').removeClass('selected-unit');
-                            $('.annotation-page-container').toggleClass('crosshair-cursor');
-                            $( ".unit-wrapper" ).attr('onclick','').unbind('click');
-                            $( ".selectable-word" ).attr('onclick','').unbind('click');
-                            $( ".selectable-word" ).on('click',wordClicked);
-                            $( ".directive-info-data-container" ).attr('onclick','').unbind('click');
-                            $( ".directive-info-data-container" ).on('click',rowClicked);
-
-
-                            $compile($('.text-wrapper'))($rootScope)
-                        }
-                    };
-
-                    $('.unit-wrapper').on('click',$rootScope.onClickForRemote);
-                    $('.directive-info-data-container').on('click',$rootScope.onClickForRemote);
+                    $('.unit-wrapper , .directive-info-data-container').on('mousedown',onClickForRemote.bind({category:category,lineToAddRemoteUnit:lineToAddRemoteUnit},event));
 
                 }
             }
 
+            function bindAlertIfTryingToAddTokenAsRemote(){
+                $( ".selectable-word" ).on('mousedown',function(){
+                    $rootScope.preventRemoteAsign = true;
+                    $scope.selCtrl.open('app/pages/annotation/templates/errorModal.html',
+                        'md',"Only Units can be selected as remote units."
+                    );
+                });    
+            }
+            
+            function onClickForRemote(e){
+                if(!!!e){ e = arguments[arguments.length-1]}
+                if($rootScope.preventRemoteAsign){
+                    $rootScope.preventRemoteAsign = false;
+                    return;
+                }
+                if($rootScope.clickedUnit == $(e.toElement).attr('unit-wrapper-id') || $rootScope.clickedUnit == $(e).attr('unit-wrapper-id')){
+                    $scope.selCtrl.open('app/pages/annotation/templates/errorModal.html',
+                        'md',"Unit cannot be selected as remote."
+                    );
+                    resetBindingRemoteEvents()
+                    return;
+                }else{
+                    var category = this.category;
+                    $rootScope.currentCategoryID = category.id;
+                    $rootScope.currentCategoryColor = category.color;
+                    $rootScope.currentCategoryBGColor = category.backgroundColor;
+                    $rootScope.currentCategoryIsRefined = category.refinedCategory;
+                    $rootScope.currentCategoryAbbreviation = category.abbreviation;
+                    $rootScope.selectedTokensArray = [];
+
+                    // unit row selected
+                    if($(e.toElement).hasClass('directive-info-data-container')){
+                        var selectedUnitTokens = e.toElement.children[2].children[0].children;
+                        var originalIdArray = splitStringByDelimiter($(e.toElement).attr('unit-wrapper-id'),'-')
+                        var originalId = originalIdArray.slice(4,originalIdArray.length).join('-');
+                    }else{ // unit bordered in parent selected
+                        var selectedUnitTokens = e.toElement ? e.toElement.children : e.children;
+                        var originalId = $(e.toElement).attr('child-unit-id');
+                    }
+                    
+                    // check if unit is 
+                    if(canAttachTheRemoteUnit(originalId.toString(),this.lineToAddRemoteUnit.toString()) == false){
+                        $scope.selCtrl.open('app/pages/annotation/templates/errorModal.html',
+                            'md',"A remote unit cannot be an ancestor of the parent unit, and cannot be a descendent of the parent unit.");
+                        resetBindingRemoteEvents()
+                        return;
+                    }
+
+                    // check if trying to add the same remote to the already has unit
+                    if(checkIfPreventAddToRemotesForTheSameUnit(originalId,this.lineToAddRemoteUnit)){
+                        $scope.selCtrl.open('app/pages/annotation/templates/errorModal.html',
+                            'md',"Cant use the same remote unit to the same unit.");
+                        resetBindingRemoteEvents()
+                        return;
+                    }
+
+                    DataService.remoteFromUnit = originalId;
+                    for(var i=0; i<selectedUnitTokens.length; i++){
+                        if(!$(selectedUnitTokens[i]).hasClass('cursor')){
+                            $rootScope.selectedTokensArray.push(selectedUnitTokens[i].outerHTML);
+                        }
+                    }
+
+
+                    $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
+                    $rootScope.clckedLine = this.lineToAddRemoteUnit;
+                    DataService.unitType = 'REMOTE';
+                    
+                    $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine,false);
+                    DataService.getUnitById($(e.currentTarget).attr('child-unit-id')).usedAsRemote.push($rootScope.clckedLine);
+
+                    $timeout(function(){
+                        // give focus to the new unit
+                        $('.selected-row').toggleClass('selected-row');
+                        $('directive-info-data-container-'+$rootScope.clckedLine).toggleClass('selected-row');
+                    });
+
+
+                    e.toElement ? $scope.$apply() : '';
+
+                    resetBindingRemoteEvents()
+
+                    $compile($('.text-wrapper'))($rootScope)
+                }
+            };
+
+            function resetBindingRemoteEvents(){
+                DataService.unitType = 'REGULAR';
+                $("[unit-wrapper-id="+$rootScope.clickedUnit+"]").toggleClass('highlight-unit');
+                $('.selected-unit').removeClass('selected-unit');
+                $('.annotation-page-container').toggleClass('crosshair-cursor');
+                $( ".unit-wrapper" ).attr('mousedown','').unbind('mousedown');
+                $( ".selectable-word" ).attr('mousedown','').unbind('mousedown');
+                $( ".selectable-word" ).on('mousedown',tokenClicked);
+                $( ".directive-info-data-container" ).attr('mousedown','').unbind('mousedown');
+                $( ".directive-info-data-container" ).on('mousedown',focusUnit);
+            }
+
+            function getAllParentsTreeIds(nodeId){
+                if(!nodeId) {
+                    return [];
+                }
+                var idsArray = nodeId.split('-');
+                var out = [];
+
+                for(var i=0; i<idsArray.length ; i++){
+                    var str = out.length ? out[i-1]+'-'+idsArray[i] : idsArray[i];
+                    out.push(str)
+                }
+                return out
+            }
+
+            function checkArraysSimilarity(nodeIdA,nodeIdB){
+                var arrA = getAllParentsTreeIds(nodeIdA);
+                var arrB = getAllParentsTreeIds(nodeIdB);
+                var isSimilar = false;
+                var arrLength = arrA.length > arrB.length ? arrB.length : arrA.length;
+                for (var i = 0; i < arrLength; i++) {
+                    if(arrA[0] == arrB[0]){
+                        arrA.shift(0);
+                        arrB.shift(0);
+                    }
+                    if( arrA.length == 0 || arrB.length == 0 ){
+                        isSimilar = true;
+                    }
+                };
+                return isSimilar;
+            }
+
+            function canAttachTheRemoteUnit(nodeIdA,nodeIdB){
+                return !checkArraysSimilarity(nodeIdA,nodeIdB)
+            }
+
+            function checkIfPreventAddToRemotesForTheSameUnit(originalId,lineToAddRemoteUnit){
+                var alreadyUsedAsRemoteInThisUnit = false;
+                if(DataService.getUnitById(originalId).usedAsRemote){
+                    alreadyUsedAsRemoteInThisUnit = DataService.getUnitById(originalId).usedAsRemote.map(function(unitId){return DataService.getParentUnitId(unitId)}).indexOf(lineToAddRemoteUnit.toString()) > -1;
+                }
+                return alreadyUsedAsRemoteInThisUnit;
+            }
             function switchToRemoteMode(event){
-                $rootScope.clckedLine = $(event.toElement.parentElement.parentElement.parentElement).attr('id').split('-')[4];
+                // $rootScope.clckedLine = $(event.toElement.parentElement.parentElement.parentElement).attr('id').split('-')[4];
+                $rootScope.clckedLine = this.lineId;
                 addAsRemoteUnit();
                 event.stopPropagation();
             }
@@ -714,11 +804,11 @@
                     if(HotKeysManager.getMouseMode()){
                         $(event.toElement).attr('parent-index',$scope.selCtrl.lineId);
                         var tokenToPush = event.toElement.outerHTML;
-                        if(!$(tokenToPush).hasClass('clickedWord')){
+                        if(!$(tokenToPush).hasClass('clickedToken')){
                             $(tokenToPush).attr('parent-index',$rootScope.clckedLine);
                             $rootScope.selectedTokensArray.push(tokenToPush);
                         }
-                        $(event.toElement).toggleClass('clickedWord');
+                        $(event.toElement).toggleClass('clickedToken');
                     }
                 }
             }            
@@ -736,11 +826,13 @@
                 if(!(parenUnit.containsAllParentUnits && unitContainsAllParentUnitTokens)){
                     $rootScope.currentCategoryID = category.id;
                     $rootScope.currentCategoryColor = category.color;
+                    $rootScope.currentCategoryBGColor = category.backgroundColor;
+                    $rootScope.currentCategoryIsRefined = category.refinedCategory;
                     $rootScope.currentCategoryAbbreviation = category.abbreviation;
                     $rootScope.currentCategoryName = category.name;
                     $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
                     if($rootScope.selectedTokensArray.length > 0){
-                        $rootScope.clckedLine = $rootScope.parseSelectedWords($rootScope.clckedLine,unitContainsAllParentUnitTokens);
+                        $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine,unitContainsAllParentUnitTokens);
                         $timeout(function(){
                             // give focus to the new unit
                             $('.selected-row').toggleClass('selected-row');
@@ -754,8 +846,9 @@
 
                     delete $rootScope.currentCategoryID;
                     delete $rootScope.currentCategoryColor;
+                    delete $rootScope.currentCategoryBGColor;
+                    delete $rootScope.currentCategoryIsRefined;
                     delete $rootScope.currentCategoryAbbreviation;
-                    $rootScope.selectedTokensArray = [];
 
                     $rootScope.lastSelectedWordWithShiftPressed = undefined;
                 }
@@ -801,9 +894,9 @@
         function getCurrentDataBlock(dataService,directiveIndex){
             var tempObject;
             var splittedDirectiveIndex = directiveIndex.toString().split('-');
-            tempObject = dataService.tree.Rows[parseInt(splittedDirectiveIndex[0]) - 1];
+            tempObject = dataService.tree.AnnotationUnits[parseInt(splittedDirectiveIndex[0]) - 1];
             for (var i=1; i<splittedDirectiveIndex.length; i++){
-                tempObject = tempObject.Rows[parseInt(splittedDirectiveIndex[i]) - 1];
+                tempObject = tempObject.AnnotationUnits[parseInt(splittedDirectiveIndex[i]) - 1];
             }
 
             return tempObject;
@@ -815,7 +908,8 @@
 
             var unitChildren = tempDiv.children;
 
-            $(unitChildren).removeClass('clickedWord');
+            $(unitChildren).removeClass('clickedToken');
+            
             var unitGroupedAdjacentChildrenArray = arrangeUnitAdjacentChildrenInGroups(unitChildren);
 
             for (var i=0; i<unitGroupedAdjacentChildrenArray.length; i++){
@@ -830,7 +924,8 @@
                 startIndex = parseInt($(childrenGroup[0]).attr('data-wordid').split('-')[1]);
                 hasDataWordId = true;
             }else{
-                startIndex = $(childrenGroup[0]).attr('id');
+                startIndex = $("#row-"+DataService.getParentUnitId($rootScope.clckedLine)).find("[unit-wrapper-id=unit-wrapper-"+DataService.getParentUnitId($rootScope.clckedLine)+"-"+$rootScope.clckedLine+"]")
+                // startIndex = $(childrenGroup[0]).attr('id');
             }
             // var endIndex = parseInt($(childrenGroup[childrenGroup.length-1]).attr('data-wordid').split('-')[1]);
             var unitParentIndex = (DataService.getParentUnitId($rootScope.clckedLine)).toString();
@@ -850,7 +945,8 @@
                 var wrappedChildrenSpan = $('<span go-to-unit></span>');
                 $(wrappedChildrenSpan).addClass('unit-wrapper');
 
-                $(wrappedChildrenSpan).attr('id','unit-wrapper-'+(parseInt(rowID.split('-')[1]))+"-"+DataService.lastInsertedUnitIndex);
+                // $(wrappedChildrenSpan).attr('unit-wrapper-id','unit-wrapper-'+(parseInt(rowID.split('-')[1]))+"-"+DataService.lastInsertedUnitIndex);
+                $(wrappedChildrenSpan).attr('unit-wrapper-id','unit-wrapper-'+(rowID.split('row-')[1])+"-"+DataService.lastInsertedUnitIndex);
 
                 $(wrappedChildrenSpan).attr('num-of-tokens',childrenGroup.length);
 
@@ -874,7 +970,7 @@
                     if(hasDataWordId){
                         annotationUnitId[0].insertBefore(wrappedChildrenSpan.get(0),annotationUnitId.find('.word-'+startIndex)[0]);
                     }else{
-                        annotationUnitId[0].insertBefore(wrappedChildrenSpan.get(0),annotationUnitId.find('#'+startIndex)[0]);
+                        annotationUnitId[0].insertBefore(wrappedChildrenSpan.get(0),startIndex);
                     }
                 }catch(e){
                     insertSuccsess = false
@@ -884,7 +980,7 @@
                     for(i=0; i<childrenGroup.length; i++){
                         // var tokenIndex = parseInt($(childrenGroup[i]).attr('data-wordid').split('-')[1]);
                         try{
-                            $(annotationUnitId[0]).find('.clickedWord')[0].remove();
+                            $(annotationUnitId[0]).find('.clickedToken')[0].remove();
                         }catch(e){
                             if($(annotationUnitId[0]).find("#"+$(childrenGroup[i]).attr('id')).length > 0){
                                 $(annotationUnitId[0]).find("#"+$(childrenGroup[i]).attr('id'))[0].remove();
@@ -892,14 +988,14 @@
                                 try{
                                     $(annotationUnitId[0]).find('.'+childrenGroup[i].classList[1])[1].remove();
                                 }catch(e){
-                                    console.log('Remote Unit');
+                                    // console.log('Remote Unit');
                                 }
                             }
                         }
 
                     }
 
-                    paintWrapperSpan($(annotationUnitId[0]).find('#'+$(tempElement).attr('id')),categories,taskCategories);
+                    paintWrapperSpan($(wrappedChildrenSpan),categories,taskCategories); 
 
                     
 
@@ -907,12 +1003,13 @@
                 }
 
 
-            }else{
-                var wrappedChildrenSpan = $('#unit-wrapper-'+(parseInt(rowID.split('-')[1]))+'-'+DataService.lastInsertedUnitIndex);
-                paintWrapperSpan(wrappedChildrenSpan,categories,DefinitionsService);
+            }else{ // excisiting line
+                var wrappedChildrenSpan = $("[unit-wrapper-id = unit-wrapper-"+(rowID.split('row-')[1])+"-"+DataService.lastInsertedUnitIndex+"]");
+                paintWrapperSpan($(wrappedChildrenSpan),categories,DefinitionsService);
             }
 
-            $('.clickedWord').removeClass('clickedWord');
+            $('.clickedToken').removeClass('clickedToken');
+            
 
 
         }
@@ -928,7 +1025,7 @@
                 if(i > 3){
                     break;
                 }else{
-                    var categoryColor = categories[i].color;
+                    var categoryColor = categories[i].backgroundColor;
                     switch(i){
                         case 0:
                             $(wrappedChildrenSpan).css('border','none');
@@ -954,21 +1051,23 @@
                 $(wrappedChildrenSpan).css('border','3px solid gray');
             }
 
-            var rowID = $(wrappedChildrenSpan[0].parentElement).attr('id');
-            if(rowID == undefined){
-                rowID = $(wrappedChildrenSpan[0]).attr('id');
+            if(wrappedChildrenSpan[0]){ // if IMPLICIT will not enter here
+                var rowID = $(wrappedChildrenSpan[0].parentElement).attr('id');
+                if(rowID == undefined){
+                    rowID = $(wrappedChildrenSpan[0]).attr('id');
+                }
+                rowID = rowID.split('-');
+                rowID  = rowID[0] == 'unit' ? rowID.slice(2,rowID.length).join('-') : rowID.slice(1,rowID.length).join('-');
+                var currentAnnotationUnit = DataService.getUnitById(rowID);
+                currentAnnotationUnit.text = wrappedChildrenSpan[0].parentElement.innerHTML;
             }
-            rowID = rowID.split('-');
-            rowID  = rowID[0] == 'unit' ? rowID.slice(2,rowID.length).join('-') : rowID.slice(1,rowID.length).join('-');
-            var currentAnnotationUnit = DataService.getUnitById(rowID);
-            currentAnnotationUnit.text = wrappedChildrenSpan[0].parentElement.innerHTML;
 
         }
 
         function findCategoryColorByID(categoriesObject,categoryID){
             for(var i=0; i<categoriesObject.length; i++){
                 if(categoriesObject[i].id == categoryID){
-                    return categoriesObject[i].color;
+                    return categoriesObject[i].backgroundColor;
                 }
             }
         }
@@ -1015,22 +1114,26 @@
         }
 
         function handleClickOnNotClickedToken(event,scope,rootScope){
-            $('.clickedWord').removeClass('clickedWord');
+            $('.clickedToken').removeClass('clickedToken');
+            
             rootScope.selectedTokensArray = [];
             $(event.toElement).attr('parent-index',scope.selCtrl.lineId);
             var tokenToPush = event.toElement.outerHTML;
             $(tokenToPush).attr('parent-index',rootScope.clckedLine);
 
             rootScope.selectedTokensArray.push(tokenToPush);
-            $(event.toElement).addClass('clickedWord');
+            $(event.toElement).addClass('clickedToken');
+            
         }
 
         function handleClickOnAlreadyClickedToken(event,isShiftPressed,isCtrlPressed,rootScope){
             if(!isShiftPressed && !isCtrlPressed){
                 rootScope.selectedTokensArray = [];
-                $('.clickedWord').removeClass('clickedWord');
+                $('.clickedToken').removeClass('clickedToken');
+                
             }else{
-                $(event.toElement).removeClass('clickedWord')
+                $(event.toElement).removeClass('clickedToken')
+                
                 //The token is already selected, need to remove it.
                 var tokenId = splitStringByDelimiter($(event.toElement).attr('data-wordid'),"-")[1];
                 removeTokensFromSelectedTokensArray(tokenId,rootScope.selectedTokensArray);
@@ -1042,7 +1145,8 @@
             var tokenToPush = event.toElement.outerHTML;
             $(tokenToPush).attr('parent-index',rootScope.clckedLine);
             rootScope.selectedTokensArray.push(tokenToPush);
-            $(event.toElement).addClass('clickedWord');
+            $(event.toElement).addClass('clickedToken');
+            
         }
 
         function handleClickOnTokenWhenShiftPressed(event,scope,rootScope){
@@ -1059,11 +1163,13 @@
 
         function handleFirstClickOnTokenWhenShiftPressed(event,scope,rootScope){
             rootScope.lastSelectedWordWithShiftPressed = parseInt($(event.toElement).attr('data-wordid').split('-')[1]);
-            $('.clickedWord').removeClass('clickedWord');
+            $('.clickedToken').removeClass('clickedToken');
+            
             $(event.toElement).attr('parent-index',scope.selCtrl.lineId);
             rootScope.selectedTokensArray = [];
             rootScope.selectedTokensArray.push(event.toElement.outerHTML);
-            $(event.toElement).addClass('clickedWord');
+            $(event.toElement).addClass('clickedToken');
+            
         }
 
         function handleSecondClickOnTokenWhenShiftPressed(event,scope,rootScope){
@@ -1107,13 +1213,14 @@
             }
 
             for(i = startIndex; i >= endIndex; i--){
-                if($(rowID).find('.'+$(allWordsArray[i]).attr('data-wordid')).hasClass('clickedWord')){
+                if($(rowID).find('.'+$(allWordsArray[i]).attr('data-wordid')).hasClass('clickedToken')){
                     break;
                 }else{
                     $(allWordsArray[i]).attr('parent-index',scope.selCtrl.lineId);
                     rootScope.selectedTokensArray.push(allWordsArray[i].outerHTML);
                     // $(rootScope.selectedTokensArray[rootScope.selectedTokensArray.length-1]).attr('parent-index',rootScope.clckedLine);
-                    $(allWordsArray[i]).addClass('clickedWord');
+                    $(allWordsArray[i]).addClass('clickedToken');
+                    
                 }
             }
         }
@@ -1129,19 +1236,20 @@
                 }
             }
             for(var i = startIndex; i <= endIndex; i++){
-                if($(rowID).find('.'+$(allWordsArray[i]).attr('data-wordid')).hasClass('clickedWord')){
+                if($(rowID).find('.'+$(allWordsArray[i]).attr('data-wordid')).hasClass('clickedToken')){
                     break;
                 }else{
                     $(allWordsArray[i]).attr('parent-index',scope.selCtrl.lineId);
                     rootScope.selectedTokensArray.push(allWordsArray[i].outerHTML);
-                    $(allWordsArray[i]).addClass('clickedWord');
+                    $(allWordsArray[i]).addClass('clickedToken');
+                    
                 }
             }
         }
 
-        // SelectedWordsController.$inject = [];
+        // AnnotationUnitController.$inject = [];
 
-        function SelectedWordsController($uibModal) {
+        function AnnotationUnitController($uibModal) {
             // Injecting $scope just for comparison
             var selCtrl = this;
             selCtrl.toggleAnnotationUnitView = toggleAnnotationUnitView;
@@ -1149,9 +1257,11 @@
 
             function toggleAnnotationUnitView(element){
                 var currentTarget =element.currentTarget;
-                var annotationUnitContainer = $(currentTarget).next().find('.categorized-words');
+                var annotationUnitContainer = $(currentTarget).next()//.find('.categorized-words');
 
-                $(annotationUnitContainer).toggleClass( "closed-annotation-unit" );
+                $(annotationUnitContainer).toggleClass('closed-annotation-unit');
+                $($(currentTarget).find('i')).toggleClass( 'ion-minus-round' );
+                $($(currentTarget).find('i')).toggleClass( 'ion-plus-round' );
                 selCtrl.unitIsCollapsed = !selCtrl.unitIsCollapsed;
             }
             var mouseDown = false;
@@ -1178,7 +1288,7 @@
                             for(var i=0; i<selCtrl.currentUnitRemoteInstancesIds.length ; i++){
                                 DataService.deleteFromTree(selCtrl.currentUnitRemoteInstancesIds[i])
                             }
-                            selCtrl.updateUI();
+                            selCtrl.updateUI(DataService.getUnitById($("[unit-wrapper-id="+$rootScope.clickedUnit+"]").attr('child-unit-id')));
                         };
                     }
                 });
@@ -1201,8 +1311,6 @@
                 }
                 return 0;
             }
-
-
         }
 
 
@@ -1251,33 +1359,27 @@
          * @returns {string} - the directive's data block index.
          */
         function initDirective(initObject){
-            $(initObject.elem).find('.square-color').css('background-color',initObject.rootScope.currentCategoryColor);
+            $(initObject.elem).find('.square-color').css('background-color',initObject.rootScope.currentCategoryBGColor);
 
             /**
              * Append the wrapped line into the container
              */
-            var previewLine = initObject.WordsWrapperService.wrapWords(initObject.scope.selCtrl.previewLine,false,initObject.scope.selCtrl.lineId);
+            var previewLine = initObject.DataService.wrapWords(initObject.scope.selCtrl.previewLine,false,initObject.scope.selCtrl.lineId);
             $(initObject.elem).find('.text').append(previewLine);
 
             /**
              * Set the on click function and parent-color attribute
              */
-            $(initObject.elem).find('.selectable-word').on('mousedown',initObject.wordClicked);
-            $(initObject.elem).on('mousedown',initObject.rowClicked);
+            $(initObject.elem).find('.selectable-word').on('mousedown',initObject.tokenClicked);
+            $(initObject.elem).on('mousedown',initObject.focusUnit);
 
-            $(initObject.elem).find('.selectable-word').attr('parent-color',initObject.rootScope.currentCategoryColor);
+            $(initObject.elem).find('.selectable-word').attr('parent-color',initObject.rootScope.currentCategoryBGColor);
 
             initObject.rootScope.selectedTokensArray = [];
 
             if(initObject.scope.selCtrl.control == undefined){
                 initObject.scope.selCtrl.control = [];
             }
-
-            // $(initObject.elem).find('.selectable-word').mousedown(initObject.wordClicked);
-            // $(initObject.elem).find('.selectable-word').mouseup(function(){
-            //     console.log("vsdvsdv");
-            //     initObject.HotKeysManager.setMouseMode(false)
-            // });
 
             var controlObject = {
                 moveRight: initObject.moveRight,
@@ -1322,13 +1424,23 @@
         }
 
         function splitStringByDelimiter(stringToSplit,del){
-            return stringToSplit.toString().split(del);
+            return stringToSplit ? stringToSplit.toString().split(del) : null;
         }
         function resetSelectedCategoryInfo(){
             delete $rootScope.currentCategoryID;
             delete $rootScope.currentCategoryColor;
+            delete $rootScope.currentCategoryBGColor;
             delete $rootScope.currentCategoryAbbreviation;
             delete $rootScope.currentCategoryName;
+        }
+
+        function checkRestrictionForCurrentUnit(unit_id){
+            var unitToValidate = DataService.getUnitById(unit_id);
+            var isUnitValidated = restrictionsValidatorService.checkRestrictionsOnFinish(unitToValidate);
+            if(isUnitValidated){
+                unitToValidate.gui_status = 'HIDDEN';
+                Core.showNotification('success','Annotation unit ' + unitToValidate.annotation_unit_tree_id + ' has finished successfully' )
+            }
         }
 
 

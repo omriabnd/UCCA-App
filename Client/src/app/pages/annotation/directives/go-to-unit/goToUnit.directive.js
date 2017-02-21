@@ -12,6 +12,7 @@
             bindToController: true,
             link: function ($scope, elem) {
                 $(elem).dblclick(function(){
+                    $('.highlight-unit').removeClass('highlight-unit');
                     var childUnitId = $(this).attr('child-unit-id');
                     var parentContainerId = $(event.toElement).attr('parent-index');
                     // $('.selected-row').removeClass('selected-row');
@@ -20,27 +21,26 @@
 
                     event.stopPropagation();
 
-                    rowClicked(parentContainer,$rootScope,DataService);
+                    focusUnit(parentContainer,$rootScope,DataService);
 
                     DataService.lastInsertedUnitIndex = $rootScope.clckedLine;
                 });
 
                 $(elem).click(function(){
-                    var unitId = $(this).attr('id');
+                    var unitId = $(this).attr('unit-wrapper-id');
                     var splittedUnitID = unitId.split('-');
 
                     var parentContainerId = $(event.toElement).attr('parent-index');
-                    // $('.selected-row').removeClass('selected-row');
 
                     var parentContainer = $(this.parentElement.parentElement.parentElement).addClass('selected-row');
                     $('.highlight-unit').removeClass('highlight-unit');
-                    $(this).toggleClass('highlight-unit');
+                    $("[unit-wrapper-id="+unitId+"]").toggleClass('highlight-unit');
 
                     event.stopPropagation();
 
                     DataService.unitType == 'REGULAR' ? $rootScope.clickedUnit = unitId : '';
 
-                    rowClicked(parentContainer,$rootScope,DataService);
+                    focusUnit(parentContainer,$rootScope,DataService);
                 })
             }
         };
@@ -49,7 +49,7 @@
     /**
      * Handle click on row - update the current selected row.
      */
-    function rowClicked(element,rootScope,DataService){
+    function focusUnit(element,rootScope,DataService){
 
         var dataWordId = $(element).attr('data-wordid');
         if(dataWordId == undefined){
@@ -72,7 +72,10 @@
             $(element.toElement).addClass('selected-row').delay(500);
         }else{
             $(element).addClass('selected-row').delay(500);
-        }        
+        }    
+
+        $('.selectable-word').removeClass('clickedToken');
+        rootScope.selectedTokensArray = [];    
     }
 
 

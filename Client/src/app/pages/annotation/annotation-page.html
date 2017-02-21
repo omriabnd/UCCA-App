@@ -1,15 +1,15 @@
 <div class="annotation-page-container">
 <div class="col-xs-2 side-bar">
-    <categories-directive ng-repeat="category in vm.categories track by $index" definition-details="category" definition-id="$index"></categories-directive>
-    <button ng-click="vm.printTree()">Print Tree</button>
-    <utility-buttons-directive ng-repeat="definition in vm.definitions track by $index" definition-details="definition" definition-id="$index"></utility-buttons-directive>
-    <div  id="saveTaskContainer" class="button-wrapper ng-scope">
-        <button type="button" class="btn btn-primary btn-raised" ng-click="vm.saveTask()">Save Task</button>
+    <div class="categories-container">
+        <categories-directive ng-repeat="category in vm.categories track by $index" definition-details="category" definition-id="$index"></categories-directive>
+    </div>
+    <div class="utility-buttons-container">
+        <utility-buttons-directive ng-repeat="definition in vm.definitions track by $index" definition-details="definition" definition-id="$index"></utility-buttons-directive>
     </div>
 </div>
 <div class="col-xs-10 main-body">
     <div class="nav-bar-container">
-        <nav-bar-item ng-repeat="item in vm.navBarItems track by $index" tool-tip="item.tooltip" execute-function="vm[item.executeFunction]"></nav-bar-item>
+        <nav-bar-item ng-repeat="item in vm.navBarItems track by $index" tool-tip="item.tooltip"></nav-bar-item>
     </div>
     <div class="col-xs-12 manager-comment-container alert bg-info closeable" ng-show="!vm.showManagerComment">
        <div class="title-and-close-container">
@@ -17,26 +17,32 @@
            <i class="ion-close-round" id="hide-manager-comment"  ng-click="vm.showManagerComment = !vm.showManagerComment"></i>
        </div>
     </div>
-    <selected-tokens
+    <!-- passage -->
+    <annotation-units
             class="has-elements"
             preview-line="vm.wrappedText"
             control="vm.keyController"
             line-id="0">
-    </selected-tokens>
-
+    </annotation-units>
+    
+    <!-- passage annotation units -->
     <div class="categorized-words-container">
-
-        <div class="categorized-word" ng-repeat="lineObj in vm.dataTree" ng-class="{'remote-unit':lineObj.unitType == 'REMOTE' || lineObj.unitType == 'IMPLICIT','highlight-unit':lineObj.unitType == 'REMOTE' || lineObj.unitType == 'IMPLICIT'}">
-            <div class="expand-btn" ng-click="vm.toggleAnnotationUnitView($event)" >
+        
+        <div class="categorized-word" ng-repeat="lineObj in vm.dataTree" 
+            ng-class="{ 'remote-unit':lineObj.unitType == 'REMOTE' || lineObj.unitType == 'IMPLICIT',
+                        'highlight-unit':lineObj.unitType == 'REMOTE' || lineObj.unitType == 'IMPLICIT',
+                        'hidden':lineObj.gui_status=='HIDDEN'
+                    }">
+            <div ng-show="lineObj.AnnotationUnits.length" class="expand-btn" ng-click="vm.toggleAnnotationUnitView($event)" >
                 <i ng-class="{'ion-minus-round':!vm.unitIsCollapsed, 'ion-plus-round':vm.unitIsCollapsed}" id="{{lineObj.annotation_unit_tree_id}}"></i>
             </div>
-            <selected-tokens
+            <annotation-units
                     class="has-elements"
                     preview-line="lineObj.text"
                     categories="lineObj.categories"
                     control="vm.keyController"
                     line-id="lineObj.annotation_unit_tree_id">
-            </selected-tokens>
+            </annotation-units>
         </div>
     </div>
 

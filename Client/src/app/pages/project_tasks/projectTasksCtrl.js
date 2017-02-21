@@ -15,28 +15,10 @@
     Core.init(vm,TableStructure,projectTasksService);
 
     vm.editRow = editRow;
-    vm.previewTask = previewTask;
+    vm.previewTask = Core.previewTask;
     vm.projectId = $state.params.id;
 
     vm.projectLayerType = !!$state.params.layerType && ($state.params.layerType.toUpperCase() == ENV_CONST.LAYER_TYPE.ROOT);
-
-    function previewTask (obj,index){
-      console.log("previewTask",obj);
-      // $state.go('tokenizationPage',{})
-      switch(obj.type){
-        case 'TOKENIZATION':
-          openInNewTab('#/tokenizationPage/'+obj.id)
-          break;
-        default:
-          openInNewTab('#/annotationPage/'+obj.id)
-          break;
-      }
-    }
-    
-    function openInNewTab(url) {
-      var win = window.open(url, '_blank');
-      win.focus();
-    }
 
     function editRow (obj,index){
       console.log("editRow",obj);

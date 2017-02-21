@@ -40,8 +40,8 @@
 		        ng-click="vm[formElem.functionName](formElem);">
 		        {{::formElem.placeholder}}
 		</button>
-		<pre ng-if="formElem.value">
-			<span>{{formElem.value}}</span>
+		<pre ng-if="formElem.value" language-align="{{::formElem.value}}">
+			<span>{{::formElem.value}}</span>
 		</pre>
 	</div>
 

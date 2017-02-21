@@ -7,7 +7,7 @@
 		IS_DEV:false,
 		TEST_URL:"http://private-daea0-ucca.apiary-mock.com/api/v1",
 		// PROD_URL:"http://localhost:8000/api/v1",
-		PROD_URL:"http://ucca.staging.cs.huji.ac.il/api/v1",
+		PROD_URL:"http://ucca.staging.cs.huji.ac.il/api/v1", 
 		LOCAL_RESOURCES: "app/resources",
 		TASK_TYPE:{
 			ANNOTATION:"ANNOTATION",
@@ -89,7 +89,22 @@
 			USER_CREATED: "User Created.",
 			GENERAL_ERROR: "Something went wrong. Please try again later."
 		},
-		CATEGORIES_COLORS:["#1c2b36","#209e91","#337ab7","#dd4b39","#4ab6d5","#33560a","#390a56","#8c7367","#c6e4f2","#F58E20","#3C7275","#CF5C42","#3C3CBA","#064447"],
+		CATEGORIES_COLORS:[
+			{color:"white",backgroundColor:"#1c2b36"},
+			{color:"white",backgroundColor:"#209e91"},
+			{color:"white",backgroundColor:"#337ab7"},
+			{color:"white",backgroundColor:"#dd4b39"},
+			{color:"white",backgroundColor:"#4ab6d5"},
+			{color:"white",backgroundColor:"#33560a"},
+			{color:"white",backgroundColor:"#390a56"},
+			{color:"white",backgroundColor:"#8c7367"},
+			{color:"black",backgroundColor:"#c6e4f2"},
+			{color:"white",backgroundColor:"#F58E20"},
+			{color:"white",backgroundColor:"#3C7275"},
+			{color:"white",backgroundColor:"#CF5C42"},
+			{color:"white",backgroundColor:"#3C3CBA"},
+			{color:"white",backgroundColor:"#064447"}
+		],
 		NAV_BAR_ITEMS:[
 			{
 				id:1,
@@ -101,13 +116,13 @@
 				id:1,
 				name:"Save",
 				tooltip:"Alt+s or Ctrl+s: Save",
-				executeFunction:"save"
+				executeFunction:"saveTask"
 			},
 			{
 				id:2,
 				name:"Submit",
-				tooltip:"Alt+b: Submit (unit will be considered completed)",
-				executeFunction:"submit"
+				tooltip:"Submit (unit will be considered completed)",
+				executeFunction:"submitTask"
 			},
 			{
 				id:3,

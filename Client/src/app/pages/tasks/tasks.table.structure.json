@@ -168,7 +168,7 @@
         "name":"Preview",
         "order":3,
         "class":"btn-success",
-        "functionName":"previewRow"
+        "functionName":"previewTask"
       }
     ]
   }

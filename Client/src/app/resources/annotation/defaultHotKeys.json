@@ -87,6 +87,12 @@
   ],
   "ManualHotKeys":[
     {
+      "combo": "ctrl+s",
+      "description": "Save the task",
+      "action": "keydown",
+      "callbackFunction":"saveTask"
+    },
+    {
       "combo": "ctrl+alt+l",
       "description": "Category Linker",
       "callbackFunction":"unitToCategory"

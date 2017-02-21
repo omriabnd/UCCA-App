@@ -6,8 +6,9 @@
       .controller('authCtrl', authCtrl);
 
   /** @ngInject */
-  function authCtrl($scope, $rootScope, $state, $filter, editableOptions, editableThemes, authService, storageService, PermissionsService,Core) {
+  function authCtrl($scope, $rootScope, $state, $filter, editableOptions, editableThemes, authService, storageService, PermissionsService,Core,$timeout) {
   	var vm = this;
+    $rootScope.$hideSideBar = true;
     vm.loginDetails = {
       "password": null,
       "email":null
@@ -50,8 +51,8 @@
       $rootScope.$connected = true;
       Core.user_role = res.profile.role;
       storageService.saveObjectInLocalStorage('user_role',Core.user_role);
-
       PermissionsService.setPermissions(res.profile.role.id).then(function(){
+        $timeout(function(){$rootScope.$hideSideBar = false;}) 
         $state.go('layers');
       });
     }

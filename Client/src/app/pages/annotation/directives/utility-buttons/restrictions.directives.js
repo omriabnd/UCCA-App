@@ -45,15 +45,16 @@
                 var objToPush = {
                     rowId : '',
                     text : '<span>IMPLICIT UNIT</span>',
-                    numOfRows: 0,
-                    categories:[{color:defCtrl.definitionDetails.color}],
+                    numOfAnnotationUnits: 0,
+                    categories:[{color:defCtrl.definitionDetails.backgroundColor}],
                     comment:"",
                     rowShape:'',
                     unitType:'IMPLICIT',
+                    gui_status:'OPEN',
                     usedAsRemote:[],
                     children_tokens:[],
                     containsAllParentUnits: false,
-                    Rows : [
+                    AnnotationUnits : [
 
                     ]
                 };
@@ -64,13 +65,14 @@
                 $timeout(function(){
                     $scope.$apply();
                     DataService.unitType = 'REGULAR';
-                    $('#'+$rootScope.clickedUnit).toggleClass('highlight-unit');
+                    // $('#'+$rootScope.clickedUnit).toggleClass('highlight-unit');
+                    $("[unit-wrapper-id="+$rootScope.clickedUnit+"]").toggleClass('highlight-unit');
                     $('.annotation-page-container').toggleClass('crosshair-cursor');
                     $( ".unit-wrapper" ).attr('onclick','').unbind('click');
                     $( ".selectable-word" ).attr('onclick','').unbind('click');
-                    $( ".selectable-word" ).on('click',$rootScope.wordClicked);
+                    $( ".selectable-word" ).on('click',$rootScope.tokenClicked);
                     $( ".directive-info-data-container" ).attr('onclick','').unbind('click');
-                    $( ".directive-info-data-container" ).on('click',$rootScope.rowClicked);
+                    $( ".directive-info-data-container" ).on('click',$rootScope.focusUnit);
                 },0);
 
                 console.log(newRowId);
@@ -80,13 +82,13 @@
 
         function highLightSelectedWords(color) {
 
-            // $('.clickedWord').css('border','3px solid '+ defCtrl.definitionDetails.color);
-            // $('.clickedWord').removeClass('clickedWord');
+            // $('.clickedToken').css('border','3px solid '+ defCtrl.definitionDetails.color);
+            // $('.clickedToken').removeClass('clickedToken');
 
             $rootScope.currentCategoryID = defCtrl.definitionDetails.id;
             $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
             if($rootScope.selectedTokensArray.length > 0){
-                $rootScope.clckedLine = $rootScope.parseSelectedWords($rootScope.clckedLine);
+                $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine);
                 console.log($rootScope.clckedLine);
             }else{
                 if(checkIfRowWasClicked($rootScope)){
