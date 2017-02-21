@@ -27,9 +27,11 @@ DEBUG = True
 
 # python manage.py runserver 0.0.0.0:8000
 ALLOWED_HOSTS = [
+    'localhost',
     '127.0.0.1',
     '192.168.0.110',
     '192.168.0.118',
+    '192.168.0.114',
     '192.168.0.105',
 ]
 
@@ -61,7 +63,7 @@ REST_FRAMEWORK = {
         # 'rest_framework.permissions.IsAdminUser',
         # 'rest_framework.authentication.BasicAuthentication',
         # 'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework.permissions.IsAuthenticated', # uncomment this line for authentication
+        'rest_framework.permissions.IsAuthenticated', # uncomment this line for authentication
         # 'rest_framework.views.exception_handler'
     ),
     'DEFAULT_AUTHENTICATION_CLASSES':(

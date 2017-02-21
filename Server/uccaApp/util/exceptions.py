@@ -42,3 +42,8 @@ class CreateCoarseningAnnotationTaskDeniedException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = ('Annotation task of coarsening layer, cant have a tokenization task as a parent task')
     default_code = 'error'
+
+class CantChangeSubmittedTaskExeption(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = ('Cant change a submitted task')
+    default_code = 'error'

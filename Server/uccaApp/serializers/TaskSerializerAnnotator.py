@@ -1,6 +1,6 @@
 from rest_framework.generics import get_object_or_404
 
-from uccaApp.util.exceptions import SaveTaskTypeDeniedException
+from uccaApp.util.exceptions import SaveTaskTypeDeniedException, CantChangeSubmittedTaskExeption
 from uccaApp.util.functions import get_value_or_none, active_obj_or_raise_exeption
 from uccaApp.util.tokenizer import isPunct
 from uccaApp.models import Annotation_Remote_Units_Annotation_Units
@@ -17,7 +17,7 @@ from uccaApp.serializers.PassageSerializer import PassageSerializer
 from uccaApp.serializers.ProjectSerializerForAnnotator import ProjectSerializerForAnnotator
 from uccaApp.serializers.TokenSerializer import TokensSerializer
 from uccaApp.serializers.UsersSerializer import DjangoUserSerializer_Simplify
-
+import operator
 
 class TaskSerializerAnnotator(serializers.ModelSerializer):
     created_by = DjangoUserSerializer_Simplify(many=False, read_only=True)
@@ -65,6 +65,14 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         #           AS ARRAY
         # **********************************
         annotation_units = Annotation_Units.objects.all().filter(task_id=obj.id).order_by('id')
+
+        # handle new refinement or extention layer taks - get the parent annotation units - start
+        if( len(annotation_units) == 0  and obj.parent_task is not None): # TODO: check if coarsening task is ok with that
+            # get the parent task annotation units
+            obj = obj.parent_task
+            annotation_units = Annotation_Units.objects.all().filter(task_id=obj.id).order_by('id')
+        # handle new refinement or extention layer taks - get the parent annotation units - end
+
         annotation_units_json = []
         remote_annotation_unit_array = []
         for au in annotation_units:
@@ -84,8 +92,9 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
                 annotation_units_json.append(Annotation_UnitsSerializer(remote_original_unit).data)
 
             annotation_units_json.append(Annotation_UnitsSerializer(au).data)
+        # return all array sorted with all the remote units in the end
+        return sorted(annotation_units_json, key=operator.itemgetter('is_remote_copy'), reverse=False)
 
-        return annotation_units_json
         # **********************************
         #           AS ROOT OBJECT
         # **********************************
@@ -127,6 +136,10 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
 
 
     def update(self, instance, validated_data):
+        # disable saving a SUBMITTED task
+        if instance.status == 'SUBMITTED':
+            raise CantChangeSubmittedTaskExeption
+
         save_type = self.initial_data['save_type']
         if(save_type  == 'draft'):
             self.save_draft(instance)
