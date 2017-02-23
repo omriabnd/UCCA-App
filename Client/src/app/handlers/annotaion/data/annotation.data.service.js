@@ -230,13 +230,13 @@
             newObject.children_tokens.forEach(function(token){
                 delete DataService.tree.children_tokens_hash[token.id]
             })
-            console.log("Passage tokens number after removing : ", Object.keys(DataService.tree.children_tokens_hash).length)
+            // console.log("Passage tokens number after removing : ", Object.keys(DataService.tree.children_tokens_hash).length)
         }
         function insertTokensBackToPassage(unitIndex){
             DataService.tree.AnnotationUnits[unitIndex].children_tokens.forEach(function(token){
                 DataService.tree.children_tokens_hash[token.id] = DataService.hashTables.tokensHashTable[token.id];
             })
-            console.log("Passage tokens number after putting back : ", Object.keys(DataService.tree.children_tokens_hash).length)
+            // console.log("Passage tokens number after putting back : ", Object.keys(DataService.tree.children_tokens_hash).length)
             if( DataService.tree.AnnotationUnits[unitIndex].AnnotationUnits.length > 0){
                 DataService.tree.AnnotationUnits[unitIndex].AnnotationUnits.forEach(function(unit){
                     removeTokensFromPassage(unit);

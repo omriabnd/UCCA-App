@@ -446,17 +446,24 @@ textarea.unit-comment-text {
         overflow: auto;
       }
   }
+  .refinedCategory{
+    font-style: italic !important;
+    border-width: 3px !important;
+    border-style: double !important;
+    border-color: black !important;
+    border-radius: 6px !important;
+  }
+  .shouldRefine{
+    border: 3px !important;
+    border-style: dotted !important;
+  }
+  .unit-wrapper {
+      margin-left: 0px;
+      margin-right: 6px;
+  }
 
+  .selectable-word {
+      margin: 0 1px;
+  }
 } 
-.refinedCategory{
-  font-style: italic !important;
-  border-width: 3px !important;
-  border-style: double !important;
-  border-color: black !important;
-  border-radius: 6px !important;
-}
-.shouldRefine{
-  border: 3px !important;
-  border-style: dotted !important;
-}
 

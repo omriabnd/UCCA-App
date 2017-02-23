@@ -125,7 +125,7 @@
 				tooltip:"Submit (unit will be considered completed)",
 				executeFunction:"submitTask"
 			},
-			{
+			/*{
 				id:4,
 				name:"Reset",
 				tooltip:"Alt+x: Reset annotation",
@@ -142,7 +142,7 @@
 				name:"Settings",
 				tooltip:"Alt+t: Settings",
 				executeFunction:"openSettings"
-			},
+			},*/
 			{
 				id:7,
 				name:"Main Menu",

@@ -191,19 +191,21 @@
             combo: hotKeyObj.combo,
             description: hotKeyObj.description,
             action: 'keyup',
-            callback: function() {
+            callback: function(e) {
               HotKeysManager.updatePressedHotKeys(hotKeyObj,false);
               // if(hotKeyObj.combo == 'shift'){
               //   rootScope.lastSelectedWordWithShiftPressed = undefined;
               // }
+              e.preventDefault()
             }
           })
           .add({
             combo: hotKeyObj.combo,
             description: hotKeyObj.description,
             action: 'keydown',
-            callback: function() {
+            callback: function(e) {
               HotKeysManager.updatePressedHotKeys(hotKeyObj,true);
+              e.preventDefault()
             }
           })
     });
@@ -226,6 +228,7 @@
               //   }
               // }
               vm.keyController[0][functionToExecute]();
+              e.preventDefault()
             }
           })
     });

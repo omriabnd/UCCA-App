@@ -61,6 +61,18 @@
       "callbackFunction":"moveLeftWithCtrl"
     },
     {
+      "combo": "mod+right",
+      "description": "move Right With Ctrl",
+      "action": "keydown",
+      "callbackFunction":"moveRightWithCtrl"
+    },
+    {
+      "combo": "mod+left",
+      "description": "move Left With Ctrl",
+      "action": "keydown",
+      "callbackFunction":"moveLeftWithCtrl"
+    },
+    {
       "combo": "shift+right",
       "description": "move Right With Shift",
       "action": "keydown",
@@ -76,6 +88,11 @@
   "DefaultHotKeysWithClick":[
     {
       "combo": "ctrl",
+      "description": "Select multiple words",
+      "callbackFunction":"addWordToGlobal"
+    },
+    {
+      "combo": "mod",
       "description": "Select multiple words",
       "callbackFunction":"addWordToGlobal"
     },

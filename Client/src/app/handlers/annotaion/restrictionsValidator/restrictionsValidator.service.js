@@ -375,6 +375,8 @@
         function evaluateFinishAll(mainPassage){
             var evaluationResult;
             evaluationResult = checkIfAllPassageTokenThatRequireAnnotationIsInUnit(mainPassage);
+            // var checkUnitsCategories = checkIfAllUnitsHaveAtLeastOneCategory(mainPassage);
+            // console.log("checkUnitsCategories",checkUnitsCategories);
             if(!evaluationResult){
                 showErrorModal("Not all tokens in the main passage in units.")
                 return false
@@ -400,6 +402,32 @@
             })
             return checkIfOk;
         }
+
+        function checkIfAllUnitsHaveAtLeastOneCategory(parentUnit){ // TODO
+            for (var i = 0; i < parentUnit.AnnotationUnits.length; i++) {
+                var unit = parentUnit.AnnotationUnits[i]
+                
+                
+                
+                if(unit.categories.length > 0){
+                    console.log("true",unit);
+                    checkIfAllUnitsHaveAtLeastOneCategory(unit);
+                }else{
+                    console.log("false",unit);
+                    return false;
+                }
+                return true;
+
+            };
+            /*parentUnit.AnnotationUnits.forEach(function(unit){
+                if(unit.categories.length){
+                    return false;
+                }else{
+                    return checkIfAllUnitsHaveAtLeastOneCategory(unit)
+                }
+            })*/
+        }
+
         function showErrorModal(message){
             $uibModal.open({
                 animation: true,

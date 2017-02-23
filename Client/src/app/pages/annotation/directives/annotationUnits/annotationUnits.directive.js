@@ -51,6 +51,10 @@
                 deleteFromTree:deleteFromTree
             };
 
+            $scope.selCtrl.removeAnnotationUnit = removeAnnotationUnit;
+            $scope.selCtrl.checkRestrictionForCurrentUnit = checkRestrictionForCurrentUnit;
+            $scope.selCtrl.switchToRemoteMode = switchToRemoteMode;
+            $scope.selCtrl.addCommentToUnit = addCommentToUnit;
             
 
             $rootScope.tokenClicked = tokenClicked;
@@ -78,9 +82,7 @@
                 });
             }
 
-            $scope.selCtrl.removeAnnotationUnit = removeAnnotationUnit;
-            $scope.selCtrl.checkRestrictionForCurrentUnit = checkRestrictionForCurrentUnit;
-            $scope.selCtrl.switchToRemoteMode = switchToRemoteMode;
+            
 
             function removeAnnotationUnit(unit_id,event){
                 var annotaionUnitToDelete = $('#row-'+unit_id);
@@ -128,6 +130,24 @@
 
                 }
             });
+            
+            /*
+                TODO - new mouse on drag
+
+            $('.selectable-word').on('mouseover',function(event){
+                if(IS_MOUSE_DOWN){
+                    var tokenId = splitStringByDelimiter($(this).attr('data-wordid'),"-")[1];
+                    removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
+                    console.log("last_word:"+$rootScope.lastSelectedTokenMouse+",current_word:"+tokenId);
+                    selectAllTokensBetween(event,tokenId)
+                    updateCursorLocation($scope.selCtrl,event.toElement,$rootScope);
+                }
+            });
+
+            function selectAllTokensBetween(event,lastToken){
+                console.log("TODO",$rootScope.lastSelectedTokenMouse);
+                var allWordsArray = $('#row-'+scope.selCtrl.selectedRow).find('.selectable-word');
+            }*/
 
             /**
              * Handle Click on tokens.
@@ -146,6 +166,9 @@
                 tokenRowId = tokenRowId.slice(1,tokenRowId.length).join('-');
                 $rootScope.clckedLine = tokenRowId;
                 $scope.selCtrl.selectedRow = tokenRowId;
+
+                $rootScope.lastSelectedTokenMouse = parseInt($(event.toElement).attr('data-wordid').split('-')[1]);
+                console.log("last word",$rootScope.lastSelectedTokenMouse);
 
                 /**
                  * Checks if the clicked element is indeed a token and not the outer div.
@@ -178,10 +201,12 @@
 
                         event.stopPropagation();
 
-                        focusUnit(parentContainer);
+                        focusUnit(parentContainer,true);
                     }
 
-                    HotKeysManager.checkIfHotKeyIsPressed('shift') == false ? $rootScope.lastSelectedWordWithShiftPressed = undefined : '';
+                    if(HotKeysManager.checkIfHotKeyIsPressed('shift') == false){
+                        $rootScope.lastSelectedWordWithShiftPressed = undefined 
+                    }
                 }
             }
             function preventSelectTokensFromDefferentUnits(){
@@ -212,10 +237,18 @@
                 currentRow.insertBefore(directiveCursor, currentRow.children[locationToInsertCursor]);
             }
 
+            function restSelectedTokens(){
+                $('.clickedToken ').removeClass('clickedToken ');
+                $rootScope.selectedTokensArray = [];
+            }
+
             /**
              * Handle click on row - update the current selected row.
              */
-            function focusUnit(element){
+            function focusUnit(element,withoutResetSelectedTokens){
+                if(!withoutResetSelectedTokens){
+                    restSelectedTokens()
+                }
                 var currElem = (event && event.type) == "mousedown" ? element.toElement : (event && event.type) == "keydown" ? element : element;
                 var dataWordId = $(currElem).attr('data-wordid');
                 if(dataWordId == undefined){
@@ -791,8 +824,17 @@
                 }
                 return alreadyUsedAsRemoteInThisUnit;
             }
+            function addCommentToUnit(event){
+                var rowElem = $(event.toElement).parents(".directive-info-data-container").first()
+                focusUnit(rowElem)
+                // $timeout(function(){
+                $scope.selCtrl.open('app/pages/annotation/templates/commentOnUnitModal.html','sm')
+                // }, 100)
+            }
             function switchToRemoteMode(event){
                 // $rootScope.clckedLine = $(event.toElement.parentElement.parentElement.parentElement).attr('id').split('-')[4];
+                var rowElem = $(event.toElement).parents(".directive-info-data-container").first()
+                focusUnit(rowElem)
                 $rootScope.clckedLine = this.lineId;
                 addAsRemoteUnit();
                 event.stopPropagation();
@@ -837,7 +879,7 @@
                     $rootScope.currentCategoryAbbreviation = category.abbreviation;
                     $rootScope.currentCategoryName = category.name;
                     $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
-                    if($rootScope.selectedTokensArray.length > 0){
+                    if($rootScope.selectedTokensArray.length > 0 && parenUnit.unitType != 'REMOTE' && parenUnit.unitType != 'IMPLICIT'){
                         $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine,unitContainsAllParentUnitTokens);
                         $timeout(function(){
                             // give focus to the new unit
@@ -1435,7 +1477,9 @@
             delete $rootScope.currentCategoryName;
         }
 
-        function checkRestrictionForCurrentUnit(unit_id){
+        function checkRestrictionForCurrentUnit(unit_id,event){
+            var rowElem = $(event.toElement).parents(".directive-info-data-container").first()
+            $rootScope.focusUnit(rowElem)
             var unitToValidate = DataService.getUnitById(unit_id);
             var parentUnit = DataService.getUnitById(DataService.getParentUnitId(unitToValidate.annotation_unit_tree_id))
             var isUnitValidated = restrictionsValidatorService.checkRestrictionsOnFinish(unitToValidate,parentUnit);

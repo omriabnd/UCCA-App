@@ -7,14 +7,14 @@
                 <i class="fa fa-times delete-btn unit-buttons" aria-hidden="true"  ng-click="selCtrl.removeAnnotationUnit(selCtrl.lineId,$event)"></i>
             </a>
             <span ng-if="selCtrl.dataBlock.unitType == 'REGULAR'">
-                <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Finish" ng-click="selCtrl.checkRestrictionForCurrentUnit(selCtrl.lineId)">
+                <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Finish" ng-click="selCtrl.checkRestrictionForCurrentUnit(selCtrl.lineId,$event)">
                     <i class="socicon unit-buttons">b</i>
                 </a>
-                <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Comment" ng-click="selCtrl.open('app/pages/annotation/templates/commentOnUnitModal.html','sm')">
+                <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Comment" ng-click="selCtrl.addCommentToUnit($event);">
                     <i class="socicon unit-buttons">}</i>
                     <span class="comment-notification" ng-if="selCtrl.dataBlock.comment !=''">!</span>
                 </a>
-                <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Delete">
+                <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Add Remote Unit">
                     <i class="ion-plus-round unit-buttons" ng-click="selCtrl.switchToRemoteMode($event)"></i>
                 </a>
             </span>
