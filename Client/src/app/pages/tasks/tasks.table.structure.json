@@ -141,7 +141,7 @@
     "type":"checkbox",
     "placeholder":"Is Demo...",
     "value":"",
-    "showInTable":false
+    "showInTable":true
   },
   {
     "key":"actions",

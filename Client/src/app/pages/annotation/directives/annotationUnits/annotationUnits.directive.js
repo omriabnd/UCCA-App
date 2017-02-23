@@ -37,19 +37,21 @@
                 DataService:DataService,
                 tokenClicked:tokenClicked,
                 focusUnit:focusUnit,
-                moveRight: moveRight,
-                moveLeft: moveLeft,
+                moveRight:moveRight,
+                moveLeft:moveLeft,
                 moveDown:moveDown,
                 moveUp:moveUp,
                 addAsRemoteUnit:addAsRemoteUnit,
                 spacePressed:spacePressed,
                 toggleCategory:toggleCategory,
-                moveRightWithCtrl: moveRightWithCtrl,
+                moveRightWithCtrl:moveRightWithCtrl,
                 moveLeftWithCtrl:moveLeftWithCtrl,
-                moveRightWithShift: moveRightWithShift,
-                moveLeftWithShift: moveLeftWithShift,
+                moveRightWithShift:moveRightWithShift,
+                moveLeftWithShift:moveLeftWithShift,
                 deleteFromTree:deleteFromTree
             };
+
+            
 
             $rootScope.tokenClicked = tokenClicked;
             $rootScope.focusUnit = focusUnit;
@@ -85,6 +87,10 @@
                 // console.log(annotaionUnitToDelete);
                 unit_id = unit_id.toString();
                 $rootScope.clickedUnit = 'unit-wrapper-'+DataService.getParentUnitId(unit_id)+'-'+unit_id;
+
+                var parentContainer = $('#directive-info-data-container-'+unit_id).addClass('selected-row');
+                focusUnit(parentContainer);
+
                 deleteFromTree();
                 // deleteFromTree(unit_id);
                 // var unit_to_delete = DataService.getUnitById(unit_id);
@@ -249,7 +255,7 @@
             }
 
             function moveRight(){
-                var currentRow = $('#row-'+$scope.selCtrl.lineId)[0];
+                var currentRow = $('#row-'+$rootScope.clckedLine)[0];
                 if(DataService.unitType == 'REMOTE'){
                         //Select The first
                     var firstUnit = $(currentRow).find('.selected-unit')[0];
@@ -276,7 +282,7 @@
                             var tokenToAdd = $(currentRow).find($('.selectable-word').attr('data-wordid'))
                         }
 
-                        var directiveCursor = $('#cursor-'+$scope.selCtrl.lineId)[0];
+                        var directiveCursor = $('#cursor-'+$rootScope.clckedLine)[0];
 
                         currentRow.removeChild(directiveCursor);
                         currentRow.insertBefore(directiveCursor, currentRow.children[$scope.selCtrl.cursorLocation]);
@@ -345,12 +351,12 @@
 
             function moveRightWithCtrl(){
                 if(DataService.unitType = 'REGULAR'){
-                    var currentRow = $('#row-'+$scope.selCtrl.lineId)[0];
+                    var currentRow = $('#row-'+$rootScope.clckedLine)[0];
                     if($scope.selCtrl.cursorLocation < $(currentRow).children().length){
 
                         $scope.selCtrl.cursorLocation++;
 
-                        var directiveCursor = $('#cursor-'+$scope.selCtrl.lineId)[0];
+                        var directiveCursor = $('#cursor-'+$rootScope.clckedLine)[0];
 
                         currentRow.removeChild(directiveCursor);
                         currentRow.insertBefore(directiveCursor, currentRow.children[$scope.selCtrl.cursorLocation]);
@@ -364,7 +370,7 @@
              */
             function moveRightWithShift(){
                 if(DataService.unitType = 'REGULAR'){
-                    var currentRow = $('#row-'+$scope.selCtrl.lineId)[0];
+                    var currentRow = $('#row-'+$rootScope.clckedLine)[0];
                     if($scope.selCtrl.cursorLocation < $(currentRow).children().length){
 
 
@@ -387,7 +393,7 @@
 
                         $scope.selCtrl.cursorLocation++;
 
-                        var directiveCursor = $('#cursor-'+$scope.selCtrl.lineId)[0];
+                        var directiveCursor = $('#cursor-'+$rootScope.clckedLine)[0];
 
                         currentRow.removeChild(directiveCursor);
                         currentRow.insertBefore(directiveCursor, currentRow.children[$scope.selCtrl.cursorLocation]);
@@ -396,7 +402,7 @@
             }
 
             function moveLeft(){
-                var currentRow = $('#row-'+$scope.selCtrl.lineId)[0];
+                var currentRow = $('#row-'+$rootScope.clckedLine)[0];
                 if(DataService.unitType == 'REMOTE'){
                         //Select The first
                     var firstUnit = $(currentRow).find('.selected-unit')[0];
@@ -417,19 +423,19 @@
                         }
 
                         $scope.selCtrl.cursorLocation--;
-                        var directiveCursor = $('#cursor-' + $scope.selCtrl.lineId);
+                        var directiveCursor = $('#cursor-' + $rootScope.clckedLine);
                         currentRow.insertBefore(directiveCursor.get(0), currentRow.children[$scope.selCtrl.cursorLocation]);
                     }
                 }
             }
 
             function moveLeftWithCtrl(){
-                var currentRow = $('#row-'+$scope.selCtrl.lineId)[0];
+                var currentRow = $('#row-'+$rootScope.clckedLine)[0];
                 if($scope.selCtrl.cursorLocation > 0){
 
                     $scope.selCtrl.cursorLocation--;
 
-                    var directiveCursor = $('#cursor-'+$scope.selCtrl.lineId)[0];
+                    var directiveCursor = $('#cursor-'+$rootScope.clckedLine)[0];
 
                     currentRow.removeChild(directiveCursor);
                     currentRow.insertBefore(directiveCursor, currentRow.children[$scope.selCtrl.cursorLocation]);
@@ -437,7 +443,7 @@
             }
 
             function moveLeftWithShift(){
-                var currentRow = $('#row-'+$scope.selCtrl.lineId)[0];
+                var currentRow = $('#row-'+$rootScope.clckedLine)[0];
                 if($scope.selCtrl.cursorLocation > 0){
 
                     var tokenToAdd = currentRow.children[$scope.selCtrl.cursorLocation-1];
@@ -459,7 +465,7 @@
 
                     $scope.selCtrl.cursorLocation--;
 
-                    var directiveCursor = $('#cursor-'+$scope.selCtrl.lineId)[0];
+                    var directiveCursor = $('#cursor-'+$rootScope.clckedLine)[0];
 
                     currentRow.removeChild(directiveCursor);
                     currentRow.insertBefore(directiveCursor, currentRow.children[$scope.selCtrl.cursorLocation]);
@@ -562,7 +568,7 @@
 
             function spacePressed(){
                 resetSelectedCategoryInfo();
-                var currentRow = $('#row-'+$scope.selCtrl.lineId)[0];                
+                var currentRow = $('#row-'+$rootScope.clckedLine)[0];                
                 if(DataService.unitType == 'REMOTE'){
                         //Select The first
                     var firstUnit = $(currentRow).find('.selected-unit')[0];
@@ -802,7 +808,7 @@
                     // $(element.toElement).css('color',$(element.toElement).attr('parent-color'));
                     // $(parentsWordsWithSameWordId).css('color',$(element.toElement).attr('parent-color'));
                     if(HotKeysManager.getMouseMode()){
-                        $(event.toElement).attr('parent-index',$scope.selCtrl.lineId);
+                        $(event.toElement).attr('parent-index',$rootScope.clckedLine);
                         var tokenToPush = event.toElement.outerHTML;
                         if(!$(tokenToPush).hasClass('clickedToken')){
                             $(tokenToPush).attr('parent-index',$rootScope.clckedLine);
@@ -1247,23 +1253,17 @@
             }
         }
 
-        // AnnotationUnitController.$inject = [];
 
-        function AnnotationUnitController($uibModal) {
+        function AnnotationUnitController($uibModal,AnnotationTextService,$rootScope) {
+
             // Injecting $scope just for comparison
             var selCtrl = this;
-            selCtrl.toggleAnnotationUnitView = toggleAnnotationUnitView;
+            selCtrl.toggleAnnotationUnitView = AnnotationTextService.toggleAnnotationUnitView;
             selCtrl.unitIsCollapsed = false;
 
-            function toggleAnnotationUnitView(element){
-                var currentTarget =element.currentTarget;
-                var annotationUnitContainer = $(currentTarget).next()//.find('.categorized-words');
+            selCtrl.isDirRtl = $rootScope.isDirRtl = AnnotationTextService.isRTL($(this.previewLine).text());
+            selCtrl.languageAlign = $rootScope.languageAlign = $rootScope.isDirRtl ? 'rtl' : 'ltr';
 
-                $(annotationUnitContainer).toggleClass('closed-annotation-unit');
-                $($(currentTarget).find('i')).toggleClass( 'ion-minus-round' );
-                $($(currentTarget).find('i')).toggleClass( 'ion-plus-round' );
-                selCtrl.unitIsCollapsed = !selCtrl.unitIsCollapsed;
-            }
             var mouseDown = false;
 
             selCtrl.open = function (page, size,message) {
@@ -1382,20 +1382,21 @@
             }
 
             var controlObject = {
-                moveRight: initObject.moveRight,
-                moveLeft: initObject.moveLeft,
+                moveRight: $rootScope.isDirRtl ? initObject.moveLeft : initObject.moveRight,
+                moveLeft: $rootScope.isDirRtl ? initObject.moveRight : initObject.moveLeft,
                 moveDown: initObject.moveDown,
                 moveUp: initObject.moveUp,
                 spacePressed:initObject.spacePressed,
-                toggleCategory: initObject.toggleCategory,
-                moveRightWithCtrl: initObject.moveRightWithCtrl,
-                moveLeftWithCtrl: initObject.moveLeftWithCtrl,
-                moveRightWithShift: initObject.moveRightWithShift,
+                toggleCategory: initObject.toggleCategory,                
+                moveRightWithCtrl: $rootScope.isDirRtl ? initObject.moveLeftWithCtrl : initObject.moveRightWithCtrl,
+                moveLeftWithCtrl: $rootScope.isDirRtl ? initObject.moveRightWithCtrl : initObject.moveLeftWithCtrl,
+                moveRightWithShift: $rootScope.isDirRtl ? initObject.moveLeftWithShift : initObject.moveRightWithShift,
+                moveLeftWithShift: $rootScope.isDirRtl ? initObject.moveRightWithShift : initObject.moveLeftWithShift,
                 addAsRemoteUnit:initObject.addAsRemoteUnit,
-                moveLeftWithShift: initObject.moveLeftWithShift,
                 deleteFromTree: initObject.deleteFromTree,
                 index: initObject.scope.selCtrl.lineId
             }
+
 
             if(initObject.scope.selCtrl.lineId.toString().split("-").length > 1){
                 var parent = initObject.scope.$parent;
@@ -1404,7 +1405,7 @@
                 }
                 parent.selCtrl.control.push(controlObject)
             }else{
-                initObject.scope.selCtrl.control.push(controlObject);
+                initObject.scope.selCtrl.control[0] = controlObject;
             }
 
 
@@ -1436,7 +1437,8 @@
 
         function checkRestrictionForCurrentUnit(unit_id){
             var unitToValidate = DataService.getUnitById(unit_id);
-            var isUnitValidated = restrictionsValidatorService.checkRestrictionsOnFinish(unitToValidate);
+            var parentUnit = DataService.getUnitById(DataService.getParentUnitId(unitToValidate.annotation_unit_tree_id))
+            var isUnitValidated = restrictionsValidatorService.checkRestrictionsOnFinish(unitToValidate,parentUnit);
             if(isUnitValidated){
                 unitToValidate.gui_status = 'HIDDEN';
                 Core.showNotification('success','Annotation unit ' + unitToValidate.annotation_unit_tree_id + ' has finished successfully' )

@@ -7,7 +7,7 @@
     <button class="text-wrapper" 
 		ng-disabled="defCtrl.definitionDetails.fromParentLayer"
     	ng-click="defCtrl.highLightSelectedWords(defCtrl.definitionDetails.backgroundColor)">
-        <span class="text">{{defCtrl.definitionDetails.name}}</span>
+        <span class="text">{{defCtrl.definitionDetails.name}} ({{defCtrl.definitionDetails.abbreviation}})</span>
     </button>
     <span class="category-info" ng-click="defCtrl.showCategoryInfo($index)"><i class="ion-information"></i></span>
 </div>

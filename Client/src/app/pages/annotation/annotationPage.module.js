@@ -101,9 +101,11 @@
                 restrictionsValidatorService.initRestrictionsTables(taskResponse.project.layer.restrictions);
 
                 setCategoriesColor(AnnotationTextService,allCategories);
+                setCategoriesAbbreviation(AnnotationTextService,allCategories);
                 if(!!DataService.currentTask.annotation_units){
                     DataService.categories = allCategories;
                     DataService.createHashTables();
+                    DataService.createTokensHashByTokensArrayForPassage(taskResponse.tokens);
                     DataService.initTree();
                 }
 
@@ -125,6 +127,9 @@
 
         function setCategoriesColor(AnnotationTextService,categories){
             AnnotationTextService.assignColorsToCategories(categories);
+        }
+        function setCategoriesAbbreviation(AnnotationTextService,categories){
+            AnnotationTextService.assignAbbreviationToCategories(categories);
         }
     }
 

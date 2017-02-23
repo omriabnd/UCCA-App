@@ -27,7 +27,7 @@
                     ng-style="{'color':cat.color,'background-color':cat.backgroundColor}">{{cat.abbreviation}}
             </span>
         </span>
-        <div class="text-wrapper">
+        <div class="text-wrapper" dir="{{selCtrl.languageAlign}}">
             <div class="text" id="row-{{selCtrl.lineId}}" >
                 <span class="cursor" id="cursor-{{selCtrl.lineId}}">|</span>
             </div>

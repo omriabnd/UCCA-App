@@ -7,6 +7,7 @@
 		IS_DEV:false,
 		TEST_URL:"http://private-daea0-ucca.apiary-mock.com/api/v1",
 		// PROD_URL:"http://localhost:8000/api/v1",
+		// PROD_URL:"http://192.168.0.118:8000/api/v1",
 		PROD_URL:"http://ucca.staging.cs.huji.ac.il/api/v1", 
 		LOCAL_RESOURCES: "app/resources",
 		TASK_TYPE:{
@@ -80,9 +81,9 @@
 			REFINEMENT:"REFINEMENT"
 		},
 		ANNOTATION_GUI_STATUS:{
-			OPEN:"Open",
-			HIDDEN:"Hidden",
-			COLLAPSE:"Collapse"
+			OPEN:"OPEN",
+			HIDDEN:"HIDDEN",
+			COLLAPSE:"COLLAPSE"
 		},
 		TABS_ID:["1","2","3","4","5","6","7","8","9"],
 		NOTIFICATIONS:{
@@ -113,49 +114,37 @@
 				executeFunction:"finishAll"
 			},
 			{
-				id:1,
+				id:2,
 				name:"Save",
 				tooltip:"Alt+s or Ctrl+s: Save",
 				executeFunction:"saveTask"
 			},
 			{
-				id:2,
+				id:3,
 				name:"Submit",
 				tooltip:"Submit (unit will be considered completed)",
 				executeFunction:"submitTask"
 			},
 			{
-				id:3,
-				name:"Report",
-				tooltip:"Alt+n: Report this passage as unfit for annotation",
-				executeFunction:"reportAsUnfitForAnnotation"
-			},
-			{
 				id:4,
-				name:"Write comment",
-				tooltip:"Alt+r: Write comments on this passage",
-				executeFunction:"writeComment"
-			},
-			{
-				id:5,
 				name:"Reset",
 				tooltip:"Alt+x: Reset annotation",
 				executeFunction:"resetAnnotation"
 			},
 			{
-				id:6,
+				id:5,
 				name:"Help",
 				tooltip:"?: Help",
 				executeFunction:"help"
 			},
 			{
-				id:7,
+				id:6,
 				name:"Settings",
 				tooltip:"Alt+t: Settings",
 				executeFunction:"openSettings"
 			},
 			{
-				id:8,
+				id:7,
 				name:"Main Menu",
 				tooltip:"Alt+h: Main Menu",
 				executeFunction:"goToMainMenu"

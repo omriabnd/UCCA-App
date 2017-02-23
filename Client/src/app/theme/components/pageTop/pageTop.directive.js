@@ -24,6 +24,8 @@
     this.logout = function(){
       authService.logout().then(function(data){
         $state.go('auth');
+      },function(data){
+        $state.go('auth');
       })
     } 
   }

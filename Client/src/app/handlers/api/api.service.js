@@ -16,6 +16,8 @@
 					return res
 				}).then(function(){
 					storageService.clearLocalStorage();
+				},function(){
+					storageService.clearLocalStorage();
 				});
 			},
 			login: function(doLogin){

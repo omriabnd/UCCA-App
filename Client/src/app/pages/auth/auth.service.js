@@ -16,6 +16,9 @@
           return apiService.logout().then(function(res){
             $rootScope.$connected = false;
             return res
+          },function(){
+            $rootScope.$connected = false;
+            return res
           });
         },
         forgotPassword: function(email){

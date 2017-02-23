@@ -11,20 +11,6 @@
             scope: true,
             bindToController: true,
             link: function ($scope, elem) {
-                $(elem).dblclick(function(){
-                    $('.highlight-unit').removeClass('highlight-unit');
-                    var childUnitId = $(this).attr('child-unit-id');
-                    var parentContainerId = $(event.toElement).attr('parent-index');
-                    // $('.selected-row').removeClass('selected-row');
-
-                    var parentContainer = $('#directive-info-data-container-'+childUnitId).addClass('selected-row');
-
-                    event.stopPropagation();
-
-                    focusUnit(parentContainer,$rootScope,DataService);
-
-                    DataService.lastInsertedUnitIndex = $rootScope.clckedLine;
-                });
 
                 $(elem).click(function(){
                     var unitId = $(this).attr('unit-wrapper-id');
@@ -42,6 +28,27 @@
 
                     focusUnit(parentContainer,$rootScope,DataService);
                 })
+                $(elem).dblclick(function(){
+                    $('.highlight-unit').removeClass('highlight-unit');
+                    var childUnitId = $(this).attr('child-unit-id');
+                    var parentContainerId = $(event.toElement).attr('parent-index');
+                    // $('.selected-row').removeClass('selected-row');
+
+                    var parentContainer = $('#directive-info-data-container-'+childUnitId).addClass('selected-row');
+
+                    // var childUnitId = splittedUnitID.slice(3,splittedUnitID.length).join('-');
+                    var annotationUnit = $('#directive-info-data-container-'+childUnitId).parents('.categorized-word')
+                    // annotationUnit.removeClass('hidden');
+                    $scope.$apply(function(){
+                        DataService.getUnitById(childUnitId).gui_status = 'OPEN';
+                    })
+
+                    event.stopPropagation();
+
+                    focusUnit(parentContainer,$rootScope,DataService);
+
+                    DataService.lastInsertedUnitIndex = $rootScope.clckedLine;
+                });
             }
         };
     }

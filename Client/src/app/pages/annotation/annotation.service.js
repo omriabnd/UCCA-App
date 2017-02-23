@@ -13,11 +13,14 @@
      */
 
     /** @ngInject */
-    function AnnotationTextService(apiService, ENV_CONST) {
+    function AnnotationTextService(apiService, ENV_CONST,$rootScope,DataService) {
         var textService = {
             getAnnotationTask: getAnnotationTask,
             getProjectLayer:getProjectLayer,
-            assignColorsToCategories: assignColorsToCategories
+            assignColorsToCategories: assignColorsToCategories,
+            assignAbbreviationToCategories: assignAbbreviationToCategories,
+            toggleAnnotationUnitView: toggleAnnotationUnitView,
+            isRTL: isRTL,
         };
 
         return textService;
@@ -33,12 +36,56 @@
         function getProjectLayer(layer_id){
             return apiService.annotation.getProjectLayer(layer_id).then(function(response){return response.data});
         }
+        
+        function assignAbbreviationToCategories(categories){
+            var categoriesHash = {}
+            categories.forEach(function(category){
+                if(categoriesHash[category.abbreviation]){
+                    categoriesHash[category.abbreviation].category.abbreviation +="_"+(categoriesHash[category.abbreviation].times)
+                    categoriesHash[category.abbreviation].times += 1;
+                    category.abbreviation+="_"+(categoriesHash[category.abbreviation].times)
+                }else{
+                    categoriesHash[category.abbreviation] = {
+                        "category" : category,
+                        "times" : 1
+                    }
+                }
+            })
+        }
+        
         function assignColorsToCategories(categories){
             categories.forEach(function(category, index){
                 category.color = ENV_CONST.CATEGORIES_COLORS[index % ENV_CONST.CATEGORIES_COLORS.length].color
                 category.backgroundColor = ENV_CONST.CATEGORIES_COLORS[index % ENV_CONST.CATEGORIES_COLORS.length].backgroundColor
             })
         }
+
+        function toggleAnnotationGuiStatus(plusMinusElem){
+            if ($(plusMinusElem).hasClass('ion-minus-round')) {
+                return ENV_CONST.ANNOTATION_GUI_STATUS.COLLAPSE
+            }else{
+                return ENV_CONST.ANNOTATION_GUI_STATUS.OPEN
+            }
+        }
+
+        function toggleAnnotationUnitView(element){
+
+            $rootScope.focusUnit($(element.toElement).closest('.categorized-word').find('.directive-info-data-container').first())
+            
+            
+            var currentTarget =element.currentTarget;
+            var annotationUnitContainer = $(currentTarget).next().find('.categorized-word');
+
+            DataService.getUnitById($rootScope.clckedLine).gui_status = toggleAnnotationGuiStatus($($(currentTarget).find('i')))
+            
+        }
+
+        function isRTL(s){           
+            var ltrChars    = 'A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02B8\u0300-\u0590\u0800-\u1FFF'+'\u2C00-\uFB1C\uFDFE-\uFE6F\uFEFD-\uFFFF',
+                rtlChars    = '\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC',
+                rtlDirCheck = new RegExp('^[^'+ltrChars+']*['+rtlChars+']');
+            return rtlDirCheck.test(s);
+        };
 
     }
 

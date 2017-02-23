@@ -63,10 +63,12 @@
             initTree:initTree,
             createHashTables:createHashTables,
             REMOTE_TEMPS_OBJ_FOR_UPDATE_AFTER_DELETE_UNIT_FOR_UPDATE_AFTER_DELETE_UNIT:{},
-            USED_AS_REMOTE_TEMPS_OBJ_FOR_UPDATE_AFTER_DELETE_UNIT_FOR_UPDATE_AFTER_DELETE_UNIT:{}
+            USED_AS_REMOTE_TEMPS_OBJ_FOR_UPDATE_AFTER_DELETE_UNIT_FOR_UPDATE_AFTER_DELETE_UNIT:{},
+            createTokensHashByTokensArrayForPassage:createTokensHashByTokensArrayForPassage
         };
 
         return DataService;
+
         
         function initTree(){
             DataService.currentTask.annotation_units.forEach(function(unit,index){
@@ -104,7 +106,22 @@
                     }
                     if($rootScope.selectedTokensArray.length > 0){
                         $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
-                        $rootScope.clckedLine = DataService.selectedTokensToUnit($rootScope.selectedTokensArray,DataService.tree.AnnotationUnits+1,unit.parent_id,$rootScope.currentCategoryID,$rootScope.currentCategoryColor,$rootScope.currentCategoryBGColor,$rootScope.currentCategoryIsRefined,$rootScope.currentCategoryAbbreviation,$rootScope.currentCategoryName,false,unitCategoriesArray,true/*isFirstInitTree*/);
+                        var tokenToUnitData = {
+                            selectedTokensArray : $rootScope.selectedTokensArray,
+                            id : DataService.tree.AnnotationUnits+1,
+                            level : unit.parent_id,
+                            rowCategoryID : $rootScope.currentCategoryID,
+                            rowCategoryColor : $rootScope.currentCategoryColor,
+                            rowCategoryBGColor : $rootScope.currentCategoryBGColor,
+                            rowRefinedCategory : $rootScope.currentCategoryIsRefined,
+                            rowCategoryAbbreviation : $rootScope.currentCategoryAbbreviation,
+                            rowCategoryName : $rootScope.currentCategoryName,
+                            containsAllParentUnits : false,
+                            categoriesArray : unitCategoriesArray,
+                            isFirstInitTree : true,
+                            unitGuiStatus : unit.gui_status
+                        }
+                        $rootScope.clckedLine = DataService.selectedTokensToUnit(tokenToUnitData);
 
                         DataService.getUnitById($rootScope.clckedLine).comment = unit.comment;
                     }
@@ -134,6 +151,14 @@
                 }
             })
             DataService.unitType = 'REGULAR';
+        }
+
+        function createTokensHashByTokensArrayForPassage(annotationTokensArray){
+            var hash = {}
+            annotationTokensArray.forEach(function(token){
+                hash[token.id] = token
+            })
+            DataService.tree.children_tokens_hash = hash;
         }
 
         function createHashTables(){
@@ -169,11 +194,14 @@
          * @return newObject.annotation_unit_tree_id - the new row id.
          */
         function insertToTree(newObject,level){
-            // console.log('newObject',newObject);
-            if(level == 0){
+            if(level == 0){ // insert into the main passage new unit as a child
                 DataService.tree.numOfAnnotationUnits++;
                 newObject.annotation_unit_tree_id = DataService.tree.numOfAnnotationUnits;
                 DataService.tree.AnnotationUnits.push(newObject);
+
+                // update the dataseervice hash to be without the tokens
+                removeTokensFromPassage(newObject);
+
             }else{
                 var splittedIndex = level.toString().split('-');
                 var tempObject = null;
@@ -196,6 +224,26 @@
             DataService.lastInsertedUnitIndex = newObject.annotation_unit_tree_id;
             return newObject.annotation_unit_tree_id;
         }
+        
+        function removeTokensFromPassage(newObject){
+            // update the dataseervice hash to be without the tokens
+            newObject.children_tokens.forEach(function(token){
+                delete DataService.tree.children_tokens_hash[token.id]
+            })
+            console.log("Passage tokens number after removing : ", Object.keys(DataService.tree.children_tokens_hash).length)
+        }
+        function insertTokensBackToPassage(unitIndex){
+            DataService.tree.AnnotationUnits[unitIndex].children_tokens.forEach(function(token){
+                DataService.tree.children_tokens_hash[token.id] = DataService.hashTables.tokensHashTable[token.id];
+            })
+            console.log("Passage tokens number after putting back : ", Object.keys(DataService.tree.children_tokens_hash).length)
+            if( DataService.tree.AnnotationUnits[unitIndex].AnnotationUnits.length > 0){
+                DataService.tree.AnnotationUnits[unitIndex].AnnotationUnits.forEach(function(unit){
+                    removeTokensFromPassage(unit);
+                })  
+            }
+            
+        }
 
         /**
          * Delete row from the data tree.
@@ -204,7 +252,7 @@
          * @param row_id - node id.
          */
         function deleteFromTree(row_id){
-            console.log('row_id',row_id);
+            // console.log('row_id',row_id);
             var splittedId = row_id.toString().split('-');
             var tempObject;
             var treeNodeAnnotationUnitsLength;
@@ -212,7 +260,7 @@
             var unitToDelete = DataService.getUnitById(row_id);
             if(splittedId.length == 1){
                 /**
-                 * Node in tree's top level.
+                 * Node in tree's top level - the main passage.
                  */
 
                 var unitToDeleteChildren = DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1].AnnotationUnits;
@@ -232,14 +280,18 @@
                     indexToInsertChild++
                 }
 
+                var unitIndex = parseInt(splittedId[0]) - 1;
+                // update the main passage tokens hash table
+                insertTokensBackToPassage(unitIndex);
 
-                DataService.tree.AnnotationUnits.splice(parseInt(splittedId[0]) - 1,1);
+                // remove the unit from its parent
+                DataService.tree.AnnotationUnits.splice(unitIndex,1);
                 DataService.tree.numOfAnnotationUnits = DataService.tree.AnnotationUnits.length;
+                
 
-                //Remove border from parent
-
-
+                //Remove border from parent + update tree node ids
                 updateTreeNodesIds(DataService.tree,"");
+
             }else{
                 /**
                  * Traverse to the node.
@@ -282,8 +334,8 @@
         function updateRemoteUnitsAndUsedAsRemote(){
             var USED_AS_REMOTE_UNITS = DataService.USED_AS_REMOTE_TEMPS_OBJ_FOR_UPDATE_AFTER_DELETE_UNIT_FOR_UPDATE_AFTER_DELETE_UNIT;
             var REMOTE_TEMPS_OBJ = DataService.REMOTE_TEMPS_OBJ_FOR_UPDATE_AFTER_DELETE_UNIT_FOR_UPDATE_AFTER_DELETE_UNIT;
-            console.log("USED_AS_REMOTE_UNITS",USED_AS_REMOTE_UNITS);
-            console.log("REMOTE_TEMPS_OBJ",REMOTE_TEMPS_OBJ);
+            // console.log("USED_AS_REMOTE_UNITS",USED_AS_REMOTE_UNITS);
+            // console.log("REMOTE_TEMPS_OBJ",REMOTE_TEMPS_OBJ);
             
             Object.keys(USED_AS_REMOTE_UNITS) && Object.keys(USED_AS_REMOTE_UNITS).forEach(function(key,index){
                 // console.log(index,USED_AS_REMOTE_UNITS[key]);
@@ -291,7 +343,7 @@
                 originilUnitToUpdate.usedAsRemote.forEach(function(unitId,index){
                     // update it to be the new remotId
                     if(REMOTE_TEMPS_OBJ[unitId]){
-                        console.log("UPADTE "+unitId+"TO "+REMOTE_TEMPS_OBJ[unitId].newRemoteTreeId);
+                        // console.log("UPADTE "+unitId+"TO "+REMOTE_TEMPS_OBJ[unitId].newRemoteTreeId);
                         originilUnitToUpdate.usedAsRemote[index] = REMOTE_TEMPS_OBJ[unitId].newRemoteTreeId
                     }
                 })
@@ -400,7 +452,20 @@
          * @param level - defines the level to insert the words. if undefined insertion will go the top level.
          * @param rowColor - defines the row color.
          */
-        function selectedTokensToUnit(selectedTokensArray,id,level, rowCategoryID, rowCategoryColor, rowCategoryBGColor, rowRefinedCategory, rowCategoryAbbreviation, rowCategoryName, containsAllParentUnits, categoriesArray, isFirstInitTree){
+        function selectedTokensToUnit(tokenToUnitData){
+            var selectedTokensArray = tokenToUnitData.selectedTokensArray;
+            var id = tokenToUnitData.id;
+            var level = tokenToUnitData.level;
+            var rowCategoryID = tokenToUnitData.rowCategoryID;
+            var rowCategoryColor = tokenToUnitData.rowCategoryColor;
+            var rowCategoryBGColor = tokenToUnitData.rowCategoryBGColor;
+            var rowRefinedCategory = tokenToUnitData.rowRefinedCategory;
+            var rowCategoryAbbreviation = tokenToUnitData.rowCategoryAbbreviation;
+            var rowCategoryName = tokenToUnitData.rowCategoryName;
+            var containsAllParentUnits = tokenToUnitData.containsAllParentUnits;
+            var categoriesArray = tokenToUnitData.categoriesArray;
+            var isFirstInitTree = tokenToUnitData.isFirstInitTree;
+            var unitGuiStatus = tokenToUnitData.unitGuiStatus;
             if(selectedTokensArray.length > 0){
                 var attachedWords = '';
                 // $scope.currentColor = color;
@@ -409,6 +474,7 @@
                 selectedTokensArray.forEach(function(word,index){
                     children_tokens[index] = {
                         id: $(word).attr('token-id')
+                       
                     }
                     var currentTokenId = parseInt(splitStringByDelimiter($(word).attr('data-wordid'),"-")[1]);
                     if(index > 0){
@@ -430,7 +496,7 @@
                     rowShape:'',
                     usedAsRemote:[],
                     children_tokens: children_tokens,
-                    gui_status: 'OPEN',
+                    gui_status: unitGuiStatus ? unitGuiStatus : 'OPEN',
                     unitType:DataService.unitType,
                     containsAllParentUnits: containsAllParentUnits || false,
                     AnnotationUnits : [

@@ -14,7 +14,7 @@
     //Capture variable for this.
     var vm = this;
     vm.printTree = printTree;
-    vm.toggleAnnotationUnitView = toggleAnnotationUnitView;
+    vm.toggleAnnotationUnitView = AnnotationTextService.toggleAnnotationUnitView;
     vm.saveTask = saveTask;
     vm.submitTask = submitTask;
     vm.finishAll = finishAll;
@@ -26,11 +26,18 @@
     vm.definitions = Definitions;
     vm.dataTree = DataService.tree.AnnotationUnits;
     vm.wrappedText = DataService.wrapWords(vm.annotationTokens,true);
-    DataService.tree.text = vm.wrappedText;
     vm.navBarItems = ENV_CONST.NAV_BAR_ITEMS;
     vm.unitIsCollapsed = false;
     vm.keyController = [];
     vm.rootScope = $rootScope;
+    vm.fontSizes = [
+      {preview:"AAA",name:"big",size:1},
+      {preview:"AA",name:"normal",size:0.9},
+      {preview:"A",name:"small",size:0.8}
+    ]
+    vm.setFontSize = setFontSize;
+
+    DataService.tree.text = vm.wrappedText;
 
 
     init();
@@ -40,20 +47,28 @@
       bindReceivedDefaultHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService && !hotkeys.fromParentLayer);
     }
 
-    function callToSelectedTokensToUnit(level,containsAllParentUnits){
-      return DataService.selectedTokensToUnit($rootScope.selectedTokensArray,vm.dataTree.length+1,level,$rootScope.currentCategoryID,$rootScope.currentCategoryColor,$rootScope.currentCategoryBGColor,$rootScope.currentCategoryIsRefined,$rootScope.currentCategoryAbbreviation,$rootScope.currentCategoryName,containsAllParentUnits);
-
+    function setFontSize(fontSize){
+      $('.main-body').css({'font-size':fontSize.size+'em'})
     }
 
-    function toggleAnnotationUnitView(element){
-      var currentTarget =element.currentTarget;
-      var annotationUnitContainer = $(currentTarget).next().find('.categorized-word');
+    function callToSelectedTokensToUnit(level,containsAllParentUnits){
+      var tokenToUnitData = {
+          selectedTokensArray : $rootScope.selectedTokensArray,
+          id : vm.dataTree.length+1,
+          level : level,
+          rowCategoryID : $rootScope.currentCategoryID,
+          rowCategoryColor : $rootScope.currentCategoryColor,
+          rowCategoryBGColor : $rootScope.currentCategoryBGColor,
+          rowRefinedCategory : $rootScope.currentCategoryIsRefined,
+          rowCategoryAbbreviation : $rootScope.currentCategoryAbbreviation,
+          rowCategoryName : $rootScope.currentCategoryName,
+          containsAllParentUnits : containsAllParentUnits,
+          categoriesArray : null,
+          isFirstInitTree : null,
+          unitGuiStatus : 'OPEN'
+      }
+      return DataService.selectedTokensToUnit(tokenToUnitData);
 
-      $(annotationUnitContainer).toggleClass( "closed-annotation-unit" );
-      // vm.unitIsCollapsed = !vm.unitIsCollapsed;
-      $($(currentTarget).find('i')).toggleClass( 'ion-minus-round' );
-      $($(currentTarget).find('i')).toggleClass( 'ion-plus-round' );
-      
     }
 
 
@@ -119,12 +134,13 @@
               callback: function() {
                 var functionToExecute = HotKeysManager.executeOperation(categoryObj);
                 var unitIndex = vm.rootScope.clckedLine == "" ? 0 : vm.rootScope.clckedLine;
-                for(var i = 0; i< vm.keyController.length; i++){
-                  if(vm.keyController[i].index == unitIndex){
-                    vm.keyController[i][functionToExecute](categoryObj);
-                    // executeFunction(functionToExecute,rootScope,dataService,HotKeysManager);
-                  }
-                }
+                // for(var i = 0; i< vm.keyController.length; i++){
+                //   if(vm.keyController[i].index == unitIndex){
+                //     vm.keyController[i][functionToExecute](categoryObj);
+                //     // executeFunction(functionToExecute,rootScope,dataService,HotKeysManager);
+                //   }
+                // }
+                vm.keyController[0][functionToExecute](categoryObj);
               }
             })
 
@@ -137,12 +153,13 @@
               callback: function() {
                 var functionToExecute = HotKeysManager.executeOperation(categoryObj);
                 var unitIndex = vm.rootScope.clckedLine == "" ? 0 : vm.rootScope.clckedLine;
-                for(var i = 0; i< vm.keyController.length; i++){
-                  if(vm.keyController[i].index == unitIndex){
-                    vm.keyController[i]['addAsRemoteUnit'](categoryObj);
-                    // executeFunction(functionToExecute,rootScope,dataService,HotKeysManager);
-                  }
-                }
+                // for(var i = 0; i< vm.keyController.length; i++){
+                //   if(vm.keyController[i].index == unitIndex){
+                //     vm.keyController[i]['addAsRemoteUnit'](categoryObj);
+                //     // executeFunction(functionToExecute,rootScope,dataService,HotKeysManager);
+                //   }
+                // }
+                vm.keyController[0]['addAsRemoteUnit'](categoryObj);
               }
             })
       }
@@ -201,13 +218,14 @@
             callback: function(e) {
               var functionToExecute = HotKeysManager.executeOperation(hotKeyObj);
               var unitIndex = vm.rootScope.clckedLine == "" ? 0 : vm.rootScope.clckedLine;
-              for(var i = 0; i< vm.keyController.length; i++){
-                if(vm.keyController[i].index == unitIndex){
-                  vm.keyController[i][functionToExecute]();
-                  // e.preventDefault()
-                  // executeFunction(functionToExecute,rootScope,dataService,HotKeysManager);
-                }
-              }
+              // for(var i = 0; i< vm.keyController.length; i++){
+              //   if(vm.keyController[i].index == unitIndex && vm.rootScope.clckedLine == unitIndex){
+              //     vm.keyController[i][functionToExecute]();
+              //     // e.preventDefault()
+              //     // executeFunction(functionToExecute,rootScope,dataService,HotKeysManager);
+              //   }
+              // }
+              vm.keyController[0][functionToExecute]();
             }
           })
     });
