@@ -64,11 +64,7 @@
                 
                 if($rootScope.selectedTokensArray.length > 0){
                     $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine,unitContainsAllParentUnitTokens);
-                    $timeout(function(){
-                        // give focus to the new unit
-                        $('.selected-row').toggleClass('selected-row');
-                        $('#directive-info-data-container-'+$rootScope.clckedLine).toggleClass('selected-row');
-                    });
+                    DataService.updateDomWhenInsertFinishes();
                 }else{
                     if(checkIfRowWasClicked($rootScope)){
                         $rootScope.addCategoryToExistingRow();

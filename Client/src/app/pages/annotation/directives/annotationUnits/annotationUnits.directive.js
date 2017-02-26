@@ -130,7 +130,7 @@
 
                 }
             });
-            
+
             /*
                 TODO - new mouse on drag
 
@@ -168,7 +168,7 @@
                 $scope.selCtrl.selectedRow = tokenRowId;
 
                 $rootScope.lastSelectedTokenMouse = parseInt($(event.toElement).attr('data-wordid').split('-')[1]);
-                console.log("last word",$rootScope.lastSelectedTokenMouse);
+                // console.log("last word",$rootScope.lastSelectedTokenMouse);
 
                 /**
                  * Checks if the clicked element is indeed a token and not the outer div.
@@ -206,7 +206,7 @@
 
                     if(HotKeysManager.checkIfHotKeyIsPressed('shift') == false){
                         $rootScope.lastSelectedWordWithShiftPressed = undefined 
-                    }
+					}
                 }
             }
             function preventSelectTokensFromDefferentUnits(){
@@ -238,10 +238,9 @@
             }
 
             function restSelectedTokens(){
-                $('.clickedToken ').removeClass('clickedToken ');
                 $rootScope.selectedTokensArray = [];
+                $('.clickedToken').removeClass('clickedToken')
             }
-
             /**
              * Handle click on row - update the current selected row.
              */
@@ -535,7 +534,7 @@
                     }else{
                         $rootScope.clckedLine = DataService.deleteFromTree(unitToDelete.annotation_unit_tree_id);
                         if(unitToDelete.unitType == 'REGULAR'){
-                            console.log("$scope.selCtrl.updateUI(unitToDelete)");
+                            // console.log("$scope.selCtrl.updateUI(unitToDelete)");
                             $scope.selCtrl.updateUI(unitToDelete)
                         }
                     }
@@ -611,11 +610,7 @@
                         $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
                         if($rootScope.selectedTokensArray.length > 0){
                             $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine);
-                            $timeout(function(){
-                                // give focus to the new unit
-                                $('.selected-row').toggleClass('selected-row');
-                                $('#directive-info-data-container-'+$rootScope.clckedLine).toggleClass('selected-row');
-                            });
+                            DataService.updateDomWhenInsertFinishes();
                         }else{
                             if(checkIfRowWasClicked($rootScope)){
                                 $rootScope.addCategoryToExistingRow();
@@ -651,14 +646,7 @@
                         if (e.keyCode == 27) { // Escape key maps to keycode `27`
                             $timeout(function(){
                                 $scope.$apply();
-                                DataService.unitType = 'REGULAR';
-                                $("[unit-wrapper-id="+$rootScope.clickedUnit+"]").toggleClass('highlight-unit');
-                                $('.annotation-page-container').toggleClass('crosshair-cursor');
-                                $( ".unit-wrapper" ).attr('mousedown','').unbind('mousedown');
-                                $( ".selectable-word" ).attr('mousedown','').unbind('mousedown');
-                                $( ".selectable-word" ).on('mousedown',tokenClicked);
-                                $( ".directive-info-data-container" ).attr('mousedown','').unbind('mousedown');
-                                $( ".directive-info-data-container" ).on('mousedown',focusUnit);
+                                resetBindingRemoteEvents();
                             },0)
                         }
                     });
@@ -754,13 +742,7 @@
                     
                     $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine,false);
                     DataService.getUnitById($(e.currentTarget).attr('child-unit-id')).usedAsRemote.push($rootScope.clckedLine);
-
-                    $timeout(function(){
-                        // give focus to the new unit
-                        $('.selected-row').toggleClass('selected-row');
-                        $('directive-info-data-container-'+$rootScope.clckedLine).toggleClass('selected-row');
-                    });
-
+                    DataService.updateDomWhenInsertFinishes();
 
                     e.toElement ? $scope.$apply() : '';
 
@@ -881,11 +863,7 @@
                     $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
                     if($rootScope.selectedTokensArray.length > 0 && parenUnit.unitType != 'REMOTE' && parenUnit.unitType != 'IMPLICIT'){
                         $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine,unitContainsAllParentUnitTokens);
-                        $timeout(function(){
-                            // give focus to the new unit
-                            $('.selected-row').toggleClass('selected-row');
-                            $('#directive-info-data-container-'+$rootScope.clckedLine).toggleClass('selected-row');
-                        });
+                        DataService.updateDomWhenInsertFinishes();
                     }else{
                         if(checkIfRowWasClicked($rootScope)){
                             $rootScope.addCategoryToExistingRow();
@@ -939,15 +917,18 @@
             return 0;
         }
 
-        function getCurrentDataBlock(dataService,directiveIndex){
+        function getCurrentDataBlock(dataService,unitTreeID){
             var tempObject;
-            var splittedDirectiveIndex = directiveIndex.toString().split('-');
-            tempObject = dataService.tree.AnnotationUnits[parseInt(splittedDirectiveIndex[0]) - 1];
-            for (var i=1; i<splittedDirectiveIndex.length; i++){
-                tempObject = tempObject.AnnotationUnits[parseInt(splittedDirectiveIndex[i]) - 1];
-            }
+            // var splittedunitTreeID = unitTreeID.toString().split('-');
+            // tempObject = dataService.tree.AnnotationUnits[parseInt(splittedunitTreeID[0]) - 1];
+            // for (var i=1; i<splittedunitTreeID.length; i++){
+            //     tempObject = tempObject.AnnotationUnits[parseInt(splittedunitTreeID[i]) - 1];
+            // }
 
-            return tempObject;
+            var parentUnit = dataService.getUnitById(dataService.getParentUnitId(unitTreeID));
+            
+
+            return parentUnit.AnnotationUnits[getDirectivePostionIndex(unitTreeID,dataService)];
         }
 
         function wrapUnitWithBordersInParentUnit(unitDataBlock,taskCategories,newLine,rootScope){
@@ -1045,7 +1026,9 @@
 
                     paintWrapperSpan($(wrappedChildrenSpan),categories,taskCategories); 
 
-                    
+                    var parentUnit = DataService.getUnitById(unitParentIndex)
+
+                    DataService.updateDomUnitWrappers(parentUnit)
 
                     $compile(annotationUnitId[0])($rootScope);
                 }
@@ -1464,6 +1447,14 @@
 
             return directiveIndex;
 
+        }
+
+        function getDirectivePostionIndex(unitId,dataService){
+            var parentUnit = dataService.getUnitById(dataService.getParentUnitId(unitId));
+            var index = parentUnit.AnnotationUnits.findIndex(function(unitObj){
+                return unitObj.annotation_unit_tree_id == unitId;
+            });
+            return index;
         }
 
         function splitStringByDelimiter(stringToSplit,del){

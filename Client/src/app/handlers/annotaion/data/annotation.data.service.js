@@ -21,7 +21,7 @@
      */
 
     /** @ngInject */
-    function DataService($http,apiService,$rootScope,restrictionsValidatorService,ENV_CONST,Core) {
+    function DataService($http,apiService,$rootScope,restrictionsValidatorService,ENV_CONST,Core,$timeout) {
         var lastInsertedUnitIndex = 0;
         var unitType = 'REGULAR';
         var annotation_units = [];
@@ -57,9 +57,11 @@
             getPrevUnit: getPrevUnit,
             getUnitById:getUnitById,
             getParentUnitId:getParentUnitId,
+            updateDomUnitWrappers:updateDomUnitWrappers,
             saveTask: saveTask,
             submitTask: submitTask,
             wrapWords:wrapWords,
+            updateDomWhenInsertFinishes:updateDomWhenInsertFinishes,
             initTree:initTree,
             createHashTables:createHashTables,
             REMOTE_TEMPS_OBJ_FOR_UPDATE_AFTER_DELETE_UNIT_FOR_UPDATE_AFTER_DELETE_UNIT:{},
@@ -193,15 +195,48 @@
          * @param level - defines which level in the data structure to insert the newObject.
          * @return newObject.annotation_unit_tree_id - the new row id.
          */
+        // function insertToTree(newObject,level){
+        //     if(level == 0){ // insert into the main passage new unit as a child
+        //         DataService.tree.numOfAnnotationUnits++;
+        //         newObject.annotation_unit_tree_id = DataService.tree.numOfAnnotationUnits;
+        //         DataService.tree.AnnotationUnits.push(newObject);
+
+        //         // update the dataseervice hash to be without the tokens
+        //         removeTokensFromPassage(newObject);
+
+        //     }else{
+        //         var splittedIndex = level.toString().split('-');
+        //         var tempObject = null;
+
+        //         tempObject = DataService.tree.AnnotationUnits[parseInt(splittedIndex[0]) - 1];
+        //         if(tempObject){
+        //             for (var i=1; i<splittedIndex.length; i++){
+        //                 tempObject = tempObject.AnnotationUnits[parseInt(splittedIndex[i]) - 1];
+        //             }
+        //             tempObject.numOfAnnotationUnits++;
+        //             newObject.annotation_unit_tree_id = level+'-'+(tempObject.AnnotationUnits.length+1)
+                    
+        //             if(newObject.unitType == 'REMOTE'){
+        //                 newObject.remote_located_parent_id = level;                 
+        //                 newObject.remote_original_id = DataService.remoteFromUnit   
+        //             }
+        //             tempObject.AnnotationUnits.push(newObject);
+        //         }
+        //     }
+        //     DataService.lastInsertedUnitIndex = newObject.annotation_unit_tree_id;
+        //     return newObject.annotation_unit_tree_id;
+        // }
+        
         function insertToTree(newObject,level){
-            if(level == 0){ // insert into the main passage new unit as a child
+            // console.log('newObject',newObject);
+            if(level == 0){
+
                 DataService.tree.numOfAnnotationUnits++;
                 newObject.annotation_unit_tree_id = DataService.tree.numOfAnnotationUnits;
                 DataService.tree.AnnotationUnits.push(newObject);
 
                 // update the dataseervice hash to be without the tokens
                 removeTokensFromPassage(newObject);
-
             }else{
                 var splittedIndex = level.toString().split('-');
                 var tempObject = null;
@@ -221,10 +256,142 @@
                     tempObject.AnnotationUnits.push(newObject);
                 }
             }
+
+            
+            var parentUnit = DataService.getUnitById(DataService.getParentUnitId(newObject.annotation_unit_tree_id));
+            parentUnit.AnnotationUnits.sort(sortByOrderNumber)
+            updateTreeNodesIds(parentUnit);
+
             DataService.lastInsertedUnitIndex = newObject.annotation_unit_tree_id;
-            return newObject.annotation_unit_tree_id;
+            
+            return DataService.lastInsertedUnitIndex;
         }
-        
+
+        function updateDomUnitWrappers(parentUnit){
+            // console.log("DataService.duringInit",DataService.duringInit);
+            if(DataService.duringInit){
+                return;
+            }else{
+                for(var i=0; i<parentUnit.AnnotationUnits.length; i++){
+
+                    if(parentUnit.AnnotationUnits[i].AnnotationUnits.length){
+                        updateDomUnitWrappers(parentUnit.AnnotationUnits[i]);
+                    }
+                    var child = parentUnit.AnnotationUnits[i];
+                    var parentLevel = parentUnit.annotation_unit_tree_id;
+
+                    var wordIdToSearch = child.orderNumber;
+                    var unitInParentRow = getUnitInParentRowByWordId(parentLevel,wordIdToSearch);
+                    // update the root units
+                    // console.log("unitInParentRow",unitInParentRow);
+                    if(unitInParentRow[0]){
+                        // update the parent unit 'child-unit-id' , 'unit-wrapper-id'
+                        $(unitInParentRow).attr('child-unit-id',child.annotation_unit_tree_id)
+
+                        // unitToUpdate.annotation_unit_tree_id = (parseInt(unitToUpdate.annotation_unit_tree_id) + 1).toString()
+                        $(unitInParentRow).attr('unit-wrapper-id','unit-wrapper-'+parentLevel+'-'+child.annotation_unit_tree_id)
+                    }
+
+                }
+            }
+        }
+
+        function updateDomWhenInsertFinishes(){
+            $timeout(function(){
+                // give focus to the new unit
+                $('.selected-row').removeClass('selected-row');
+                $('#directive-info-data-container-'+$rootScope.clckedLine).addClass('selected-row');
+                // updateDomUnitWrappers(DataService.tree)
+            });
+        }
+
+        /**
+         * Update the tree nodes. get a sub-tree parent node and updates all the sub tree.
+         * This is a recursive function : if subTreeParentNode has children the function will be
+         * called again for each child where the current child will be the new subTreeParentNode.
+         * @param subTreeParentNode - the sub-tree parent node.
+         * @param nodeNewId - the node new id
+         */
+        function updateTreeNodesIds(subTreeParentNode){
+            // console.log(subTreeParentNode.annotation_unit_tree_id+" -> "+nodeNewId);
+
+            for(var i=0; i<subTreeParentNode.AnnotationUnits.length; i++){
+                var old_tree_id = subTreeParentNode.AnnotationUnits[i].annotation_unit_tree_id
+                if(subTreeParentNode.annotation_unit_tree_id == "0"){
+                    subTreeParentNode.AnnotationUnits[i].annotation_unit_tree_id = String(i+1) 
+                }else{
+                    subTreeParentNode.AnnotationUnits[i].annotation_unit_tree_id = subTreeParentNode.annotation_unit_tree_id+'-'+(i+1);
+                }
+
+                if(subTreeParentNode.AnnotationUnits[i].unitType=='REMOTE'){
+                    // update remote_located_parent_id
+                    subTreeParentNode.AnnotationUnits[i].remote_located_parent_id = DataService.getParentUnitId(subTreeParentNode.AnnotationUnits[i].annotation_unit_tree_id)
+                    // update remote_original_id
+                    var remmeberToUpdateLater = {
+                        newRemoteTreeId : subTreeParentNode.AnnotationUnits[i].annotation_unit_tree_id,
+                        oldRemoteTreeId: old_tree_id,
+                        oldRemoteOriginalId : subTreeParentNode.AnnotationUnits[i].remote_original_id
+                    }
+                    DataService.REMOTE_TEMPS_OBJ_FOR_UPDATE_AFTER_DELETE_UNIT_FOR_UPDATE_AFTER_DELETE_UNIT[remmeberToUpdateLater.oldRemoteTreeId]=remmeberToUpdateLater
+                }
+
+                // need to update the usedAsRemote array after - after the recursion ends
+                if(subTreeParentNode.AnnotationUnits[i].usedAsRemote && subTreeParentNode.AnnotationUnits[i].usedAsRemote.length){
+                    var remmeberToUpdateLater = {
+                        newUnitId : subTreeParentNode.AnnotationUnits[i].annotation_unit_tree_id,
+                        oldUnitId : old_tree_id
+                    }
+                    DataService.USED_AS_REMOTE_TEMPS_OBJ_FOR_UPDATE_AFTER_DELETE_UNIT_FOR_UPDATE_AFTER_DELETE_UNIT[remmeberToUpdateLater.newUnitId] = remmeberToUpdateLater
+                }
+                if(subTreeParentNode.TEMP_LAST_INSERTED_UNIT){
+                    DataService.lastInsertedUnitIndex = subTreeParentNode.annotation_unit_tree_id
+                    delete subTreeParentNode.TEMP_LAST_INSERTED_UNIT;
+                }
+                updateTreeNodesIds(subTreeParentNode.AnnotationUnits[i])
+            }
+            if(subTreeParentNode.TEMP_LAST_INSERTED_UNIT){
+                DataService.lastInsertedUnitIndex = subTreeParentNode.annotation_unit_tree_id
+                delete subTreeParentNode.TEMP_LAST_INSERTED_UNIT;
+            }
+
+        }
+
+        function getUnitInParentRowByWordId(parentLevel,wordIdToSearch){
+            return $('#directive-info-data-container-'+parentLevel).find('[token-id='+wordIdToSearch+']').parent()
+        }
+
+        function updateUnitIdAndDom(unit){
+            console.log("unit",unit);
+            updateDomElements(unit)
+        }
+
+        function updateDomElements(unitToUpdate){
+            // var unitChildren = $('#row-'+unitToUpdate.annotation_unit_tree_id).find($('.unit-wrapper'));
+            var unitChildren = $('#row-'+unitToUpdate.annotation_unit_tree_id);
+            // update its tree_id
+            unitToUpdate.annotation_unit_tree_id = (parseInt(unitToUpdate.annotation_unit_tree_id) + 1).toString()
+
+        }
+
+        function getNewUnitIndex(newUnit,annotationUnitsArray){
+            var index = 0;
+            annotationUnitsArray.forEach(function(unit,i){
+                if( newUnit.orderNumber > unit.orderNumber ){
+                    index = i;
+                }
+            })
+            return index;
+        }
+
+        function sortByOrderNumber(a,b){
+            if (a.orderNumber  < b.orderNumber )
+                return -1;
+            if (a.orderNumber  > b.orderNumber )
+                return 1;
+            return 0;
+
+        }
+
         function removeTokensFromPassage(newObject){
             // update the dataseervice hash to be without the tokens
             newObject.children_tokens.forEach(function(token){
@@ -290,7 +457,7 @@
                 
 
                 //Remove border from parent + update tree node ids
-                updateTreeNodesIds(DataService.tree,"");
+                updateTreeNodesIds(DataService.tree);
 
             }else{
                 /**
@@ -322,7 +489,7 @@
 
                 tempObject.AnnotationUnits.splice(parseInt(splittedId[splittedId.length-1])-1,1);
 
-                updateTreeNodesIds(tempObject,tempObject.annotation_unit_tree_id);
+                updateTreeNodesIds(tempObject);
             }
             if(unitToDelete.unitType == "REMOTE"){
                 updateOriginalRemoteUnitUsedAsRemoteArray(unitToDelete)
@@ -397,53 +564,7 @@
             }
         }
 
-        /**
-         * Update the tree nodes. get a sub-tree parent node and updates all the sub tree.
-         * This is a recursive function : if subTreeParentNode has children the function will be
-         * called again for each child where the current child will be the new subTreeParentNode.
-         * @param subTreeParentNode - the sub-tree parent node.
-         * @param nodeNewId - the node new id
-         */
-        function updateTreeNodesIds(subTreeParentNode,nodeNewId){
-            // console.log(subTreeParentNode.annotation_unit_tree_id+" -> "+nodeNewId);
-
-            for(var i=0; i<subTreeParentNode.AnnotationUnits.length; i++){
-                var old_tree_id = subTreeParentNode.AnnotationUnits[i].annotation_unit_tree_id
-                if(nodeNewId == ""){
-                    subTreeParentNode.AnnotationUnits[i].annotation_unit_tree_id = String(i+1) 
-                }else{
-                    subTreeParentNode.AnnotationUnits[i].annotation_unit_tree_id = nodeNewId+'-'+(i+1);
-                }
-
-                if(subTreeParentNode.AnnotationUnits[i].unitType=='REMOTE'){
-                    // update remote_located_parent_id
-                    subTreeParentNode.AnnotationUnits[i].remote_located_parent_id = DataService.getParentUnitId(subTreeParentNode.AnnotationUnits[i].annotation_unit_tree_id)
-                    // update remote_original_id
-                    var remmeberToUpdateLater = {
-                        newRemoteTreeId : subTreeParentNode.AnnotationUnits[i].annotation_unit_tree_id,
-                        oldRemoteTreeId: old_tree_id,
-                        oldRemoteOriginalId : subTreeParentNode.AnnotationUnits[i].remote_original_id
-                    }
-                    DataService.REMOTE_TEMPS_OBJ_FOR_UPDATE_AFTER_DELETE_UNIT_FOR_UPDATE_AFTER_DELETE_UNIT[remmeberToUpdateLater.oldRemoteTreeId]=remmeberToUpdateLater
-                }
-
-                // need to update the usedAsRemote array after - after the recursion ends
-                if(subTreeParentNode.AnnotationUnits[i].usedAsRemote && subTreeParentNode.AnnotationUnits[i].usedAsRemote.length){
-                    var remmeberToUpdateLater = {
-                        newUnitId : subTreeParentNode.AnnotationUnits[i].annotation_unit_tree_id,
-                        oldUnitId : old_tree_id
-                    }
-                    DataService.USED_AS_REMOTE_TEMPS_OBJ_FOR_UPDATE_AFTER_DELETE_UNIT_FOR_UPDATE_AFTER_DELETE_UNIT[remmeberToUpdateLater.newUnitId] = remmeberToUpdateLater
-                }
-
-                updateTreeNodesIds(
-                        subTreeParentNode.AnnotationUnits[i],
-                        subTreeParentNode.AnnotationUnits[i].annotation_unit_tree_id
-                    )
-            }
-
-
-        }
+        
 
         /**
          * Gets the selected words array turns the into 1 line and insert then into the data structure.
@@ -501,7 +622,9 @@
                     containsAllParentUnits: containsAllParentUnits || false,
                     AnnotationUnits : [
 
-                    ]
+                    ],
+                    orderNumber : children_tokens[0] ? children_tokens[0].id : "-1",
+                    TEMP_LAST_INSERTED_UNIT : true
                 };
                 if(categoriesArray != undefined && categoriesArray.length > 0){
                     objToPush.categories = categoriesArray;
@@ -536,11 +659,13 @@
 
                     $rootScope.selectedTokensArray = [];
                 }else{
+                    var parentUnit = DataService.tree
                     // should insert the unit to the root passage as a child
                     newRowId = DataService.insertToTree(objToPush,0);
 
                     $rootScope.selectedTokensArray = [];
                 }
+
                 DataService.lastInsertedUnitIndex = newRowId;
 
                 return newRowId.toString();

@@ -68,11 +68,11 @@
                     // $('#'+$rootScope.clickedUnit).toggleClass('highlight-unit');
                     $("[unit-wrapper-id="+$rootScope.clickedUnit+"]").toggleClass('highlight-unit');
                     $('.annotation-page-container').toggleClass('crosshair-cursor');
-                    $( ".unit-wrapper" ).attr('onclick','').unbind('click');
-                    $( ".selectable-word" ).attr('onclick','').unbind('click');
-                    $( ".selectable-word" ).on('click',$rootScope.tokenClicked);
-                    $( ".directive-info-data-container" ).attr('onclick','').unbind('click');
-                    $( ".directive-info-data-container" ).on('click',$rootScope.focusUnit);
+                    $( ".unit-wrapper" ).attr('mousedown','').unbind('mousedown');
+                    $( ".selectable-word" ).attr('mousedown','').unbind('mousedown');
+                    $( ".selectable-word" ).on('mousedown',$rootScope.tokenClicked);
+                    $( ".directive-info-data-container" ).attr('mousedown','').unbind('mousedown');
+                    $( ".directive-info-data-container" ).on('mousedown',$rootScope.focusUnit);
                 },0);
 
                 console.log(newRowId);
@@ -89,6 +89,7 @@
             $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
             if($rootScope.selectedTokensArray.length > 0){
                 $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine);
+                DataService.updateDomWhenInsertFinishes();
                 console.log($rootScope.clckedLine);
             }else{
                 if(checkIfRowWasClicked($rootScope)){

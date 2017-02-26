@@ -6,7 +6,7 @@
       .controller('AnnotationPageCtrl', AnnotationPageCtrl);
 
   /** @ngInject */
-  function AnnotationPageCtrl(DefaultHotKeys,TaskMetaData,AnnotationTextService,DataService,$rootScope,$scope,hotkeys,HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService) {
+  function AnnotationPageCtrl(DefaultHotKeys,TaskMetaData,AnnotationTextService,DataService,$rootScope,$scope,hotkeys,HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService,$timeout) {
 
     $rootScope.callToSelectedTokensToUnit = callToSelectedTokensToUnit;
     $rootScope.addCategoryToExistingRow = addCategoryToExistingRow;
@@ -39,8 +39,16 @@
 
     DataService.tree.text = vm.wrappedText;
 
-
-    init();
+    $timeout(function(){
+      init();
+      DataService.duringInit = true;
+    },0).then(
+      $timeout(function(){
+          console.log("PageReady");
+          DataService.duringInit = false;
+      },2000)
+    )
+    
 
     function init(){
       bindCategoriesHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService);
