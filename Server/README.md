@@ -40,6 +40,7 @@ python manage.py loaddata roles
 python manage.py loaddata roles_tabs
 python manage.py loaddata permissions
 python manage.py loaddata groups_permissions_admin
+python manage.py loaddata groups_permissions_guest
 
 
 python manage.py loaddata superuser

@@ -63,7 +63,8 @@ class UsersViewSet(viewsets.ModelViewSet):
             djangoUser.last_name = request.data['last_name']
             djangoUser.username = request.data['first_name'] + get_random_string(length=8)
 
-            random_password = User.objects.make_random_password()
+            # random_password = User.objects.make_random_password() # TODO: unmark this line
+            random_password = djangoUser.first_name # TODO: mark this line
             djangoUser.set_password(random_password)
 
             djangoUser.save()

@@ -763,5 +763,59 @@
       "group_id": 1,
       "permission_id": 85
     }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 86,
+    "fields": {
+      "id": 266,
+      "group_id": 1,
+      "permission_id": 86
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 87,
+    "fields": {
+      "id": 267,
+      "group_id": 1,
+      "permission_id": 87
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 88,
+    "fields": {
+      "id": 268,
+      "group_id": 1,
+      "permission_id": 88
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 89,
+    "fields": {
+      "id": 269,
+      "group_id": 1,
+      "permission_id": 89
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 90,
+    "fields": {
+      "id": 270,
+      "group_id": 1,
+      "permission_id": 90
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 91,
+    "fields": {
+      "id": 271,
+      "group_id": 1,
+      "permission_id": 91
+    }
   }
 ]

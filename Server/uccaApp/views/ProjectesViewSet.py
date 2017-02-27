@@ -7,6 +7,7 @@ from rest_framework import viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
+from uccaApp.models.Tasks import Tasks
 from uccaApp.util.exceptions import DependencyFailedException
 from uccaApp.util.functions import has_permissions_to
 from uccaApp.filters.projects_filter import ProjectsFilter
@@ -25,7 +26,28 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if has_permissions_to(self.request.user.id, 'view_projects'):
-            return self.queryset
+
+            param_user_projects = None
+            my_projects = []
+            # get user_role
+            user_role = self.request.user.groups.first().name
+
+            # get all users projects by user_id
+            if  user_role == 'ADMIN':
+                param_user_projects = Projects.objects.all()
+            elif user_role == 'PM' or user_role == 'PROJECT_MANAGER':
+                param_user_projects = Projects.objects.all().filter(created_by=self.request.user.id)
+            elif user_role == 'ANNOTATOR' or user_role == 'GUEST':
+                # if the current user can see only his own tasks - projects
+                user_tasks = Tasks.objects.all().filter(annotator=self.request.user.id, is_active=True)
+                for task in user_tasks:
+                    my_projects.append(task.project.id)
+
+                param_user_projects = Projects.objects.all().filter(is_active=True,id__in = my_projects)
+
+            return param_user_projects
+
+            # return self.queryset
         else:
             raise PermissionDenied
 
