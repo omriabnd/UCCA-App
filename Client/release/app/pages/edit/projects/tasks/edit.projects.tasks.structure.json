@@ -1,0 +1,56 @@
+[
+  {
+    "key":"id",
+    "name":"Id",
+    "order":1,
+    "type":"text",
+    "filter":true,
+    "search":true,
+    "showInTable":true
+  },
+  {
+    "key":"type",
+    "name":"Type",
+    "order":2,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Type...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"user",
+    "name":"User",
+    "order":3,
+    "filter":true,
+    "search":true,
+    "type":"textInObject",
+    "placeholder":"Enter User...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"actions",
+    "name":"Actions",
+    "order":4,
+    "filter":false,
+    "search":false,
+    "showInTable":true,
+    "type":"sele",
+    "buttons":[
+      {
+        "name":"Remove",
+        "order":1,
+        "class":"btn-danger",
+        "functionName":"removeRow"
+      },
+      {
+        "name":"Preview",
+        "order":3,
+        "class":"btn-success",
+        "functionName":"previewRow"
+      }
+    ]
+  }
+]

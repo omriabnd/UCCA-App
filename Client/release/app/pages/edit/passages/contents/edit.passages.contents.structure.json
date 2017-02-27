@@ -1,0 +1,105 @@
+[
+  {
+    "key":"id",
+    "name":"ID",
+    "order":"1",
+    "filter":true,
+    "search":true,
+    "type":"number",
+    "placeholderEnter ":"Id...",
+    "default":""
+  },
+  {
+    "key":"content",
+    "name":"Content",
+    "order":"2",
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Content...",
+    "default":""
+  },
+  {
+    "key":"source",
+    "name":"Source",
+    "order":"3",
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Source Name...",
+    "default":""
+  },
+  {
+    "key":"type",
+    "name":"Type",
+    "order":"4",
+    "filter":true,
+    "search":true,
+    "type":"select",
+    "placeholder":"Select Passage Type...",
+    "default":"",
+    "options":[
+      { "label": "Private", "value": 1 },
+      { "label": "Public", "value": 2 }
+    ]
+  },
+  {
+    "key":"isActive",
+    "name":"Is Active",
+    "order":"5",
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Is Active...",
+    "default":""
+  },
+  {
+    "key":"content",
+    "name":"Content",
+    "order":"6",
+    "filter":false,
+    "search":false,
+    "type":"button",
+    "placeholder":"Choose",
+    "default":"",
+    "class":"btn-default",
+    "functionName":"chooseContent"
+  },
+  {
+    "key":"source",
+    "name":"Source",
+    "order":"7",
+    "filter":false,
+    "search":false,
+    "type":"button",
+    "placeholder":"Choose",
+    "default":"",
+    "class":"btn-default",
+    "functionName":"chooseSource"
+  },
+  {
+    "key":"tasks",
+    "name":"Tasks",
+    "order":"7",
+    "filter":false,
+    "search":false,
+    "type":"button",
+    "placeholder":"View Only",
+    "default":"",
+    "class":"btn-default",
+    "functionName":"viewTasks"
+  },
+  {
+    "key":"projects",
+    "name":"Projects",
+    "order":"7",
+    "filter":false,
+    "search":false,
+    "type":"button",
+    "placeholder":"View Only",
+    "default":"",
+    "class":"btn-default",
+    "functionName":"viewProjects"
+  }
+
+]

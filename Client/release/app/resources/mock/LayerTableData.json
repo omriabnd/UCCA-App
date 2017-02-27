@@ -1,0 +1,60 @@
+[
+  {
+    "name": "Proj12",
+    "description": "Proj12",
+    "id": 23423,
+    "parent": false,
+    "children": [],
+    "type": "tokenization",
+    "tooltip": "tooltip",
+    "projects": [
+      {
+        "id": 23423,
+        "name": "Proj12"
+      }
+    ],
+    "categories": [
+      {
+        "id": "34dwc34dcwec43ce",
+        "name": "category 1",
+        "was_default": false,
+        "shortcut_key": "ctrl+shift+a",
+        "parent": false
+      }
+    ],
+    "restrictions": [
+      {
+        "type": "REQUIRE_SIBLING",
+        "categories_1": [
+          {
+            "id": "5861204a94c2c99b22e11e4c",
+            "name": "Vega category"
+          },
+          {
+            "id": "5861204ae148e91ab55dd87d",
+            "name": "Cannon category"
+          }
+        ],
+        "categories_2": [
+          {
+            "id": "5861204aasd94c2c99b22e11e4c",
+            "name": "ASDegasd asa category"
+          },
+          {
+            "id": "5861204ae148e91ab55dsdfd87d",
+            "name": "ASDa sannon category"
+          }
+        ]
+      }
+    ],
+    "created_by": {
+      "id": "585fc23eb6db860043d3265a",
+      "first_name": "Mckenzie",
+      "last_name": "Garner",
+      "name":"Mckenzie Garner"
+    },
+    "is_active": true,
+    "created_at": "12-11-2016_15:23:45",
+    "updated_at": "12-11-2016_15:23:45"
+  }
+]

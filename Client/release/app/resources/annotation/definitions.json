@@ -1,0 +1,36 @@
+[
+  {
+    "id": 1,
+    "name": "(Un)group",
+    "description": "",
+    "tooltip": "Space bar: If one unit is selected, it ungroups it; If two or more, it groups them.",
+    "wasDefault": false,
+    "shape": "",
+    "shortKey": "",
+    "color": "#a1a1a1",
+    "parentCategoryId": null,
+    "restrictions": {
+      "forbiddenChildrenCategoriesID": [
+        3
+      ],
+      "forbiddenParentCategoriesID": [
+        1
+      ],
+      "forbiddenAllChildrenCategories": false,
+      "forbiddenAllParentsCategories": false
+    }
+  },
+  {
+    "id": 2,
+    "name": "Implicit",
+    "description": "",
+    "tooltip": "adds an implicit unit (active only in remote-unit selection mode).",
+    "wasDefault": false,
+    "shape": "",
+    "shortKey": "",
+    "color": "#0c9640",
+    "parentCategoryId": null,
+    "restrictions": {},
+    "functionToExecute":"addImplicitUnit"
+  }
+]

@@ -1,0 +1,135 @@
+{
+  "DefaultHotKeys":[
+    {
+      "combo": "alt+f",
+      "description": "Finish Unit",
+      "action": "keydown",
+      "callbackFunction":"checkRestrictionForCurrentUnit"
+    },
+    {
+      "combo": "del",
+      "description": "Delete a unit row",
+      "action": "keyup",
+      "callbackFunction":"deleteFromTree"
+    },
+    {
+      "combo": "down",
+      "description": "Move down",
+      "action": "keydown",
+      "callbackFunction":"moveDown"
+    },
+    {
+      "combo": "up",
+      "description": "Move up",
+      "action": "keydown",
+      "callbackFunction":"moveUp"
+    },
+    {
+      "combo": "space",
+      "description": "Space was Pressed",
+      "action": "keydown",
+      "callbackFunction":"spacePressed"
+    },
+    {
+      "combo": "right",
+      "description": "Move right",
+      "action": "keydown",
+      "callbackFunction":"moveRight"
+    },
+    {
+      "combo": "left",
+      "description": "Move left",
+      "action": "keydown",
+      "callbackFunction":"moveLeft"
+    },
+    {
+      "combo": "ctrl+right",
+      "description": "move Right With Ctrl",
+      "action": "keydown",
+      "callbackFunction":"moveRightWithCtrl"
+    },
+    {
+      "combo": "ctrl+left",
+      "description": "move Left With Ctrl",
+      "action": "keydown",
+      "callbackFunction":"moveLeftWithCtrl"
+    },
+    {
+      "combo": "mod+right",
+      "description": "move Right With Ctrl",
+      "action": "keydown",
+      "callbackFunction":"moveRightWithCtrl"
+    },
+    {
+      "combo": "mod+left",
+      "description": "move Left With Ctrl",
+      "action": "keydown",
+      "callbackFunction":"moveLeftWithCtrl"
+    },
+    {
+      "combo": "shift+right",
+      "description": "move Right With Shift",
+      "action": "keydown",
+      "callbackFunction":"moveRightWithShift"
+    },
+    {
+      "combo": "shift+left",
+      "description": "move Left With Shift",
+      "action": "keydown",
+      "callbackFunction":"moveLeftWithShift"
+    }
+  ],
+  "DefaultHotKeysWithClick":[
+    {
+      "combo": "ctrl",
+      "description": "Select multiple words",
+      "callbackFunction":"addWordToGlobal"
+    },
+    {
+      "combo": "mod",
+      "description": "Select multiple words",
+      "callbackFunction":"addWordToGlobal"
+    },
+    {
+      "combo": "shift",
+      "description": "Select words in continuous",
+      "callbackFunction":"selectWordsInContinuous"
+    }
+  ],
+  "ManualHotKeys":[
+    {
+      "combo": "alt+a",
+      "description": "Finish All",
+      "action": "keydown",
+      "callbackFunction":"finishAll"
+    },
+    {
+      "combo": "alt+m",
+      "description": "Go to main menu",
+      "action": "keydown",
+      "callbackFunction":"goToMainMenu"
+    },
+    {
+      "combo": "alt+b",
+      "description": "Submit the task",
+      "action": "keydown",
+      "callbackFunction":"submitTask"
+    },
+    {
+      "combo": "alt+s",
+      "description": "Save the task",
+      "action": "keydown",
+      "callbackFunction":"saveTask"
+    },
+    {
+      "combo": "ctrl+alt+l",
+      "description": "Category Linker",
+      "callbackFunction":"unitToCategory"
+    },
+    {
+      "combo": "ctrl+alt+t",
+      "description": "Category Test",
+      "callbackFunction":"unitToCategory"
+    }
+  ]
+}

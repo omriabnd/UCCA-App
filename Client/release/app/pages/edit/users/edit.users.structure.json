@@ -1,0 +1,120 @@
+[
+  {
+    "key":"id",
+    "name":"ID",
+    "order":"1",
+    "filter":false,
+    "search":false,
+    "type":"text",
+    "showInTable":true,
+    "validationRule":{
+      "type":"Optional"
+    },
+    "disabled":true
+  },
+  {
+    "key":"first_name",
+    "name":"First Name",
+    "order":"2",
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter First Name...",
+    "showInTable":true,
+    "validationRule":{
+      "type":"Require"
+    },
+    "value":""
+  },
+  {
+    "key":"last_name",
+    "name":"Last Name",
+    "order":"3",
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Last Name...",
+    "showInTable":true,
+    "validationRule":{
+      "type":"Require"
+    },
+    "value":""
+  },
+  {
+    "key":"email",
+    "name":"Email",
+    "order":"4",
+    "filter":true,
+    "search":true,
+    "type":"email",
+    "placeholder":"Email...",
+    "showInTable":true,
+    "validationRule":{
+      "type":"Require"
+    },
+    "value":""
+  },
+  {
+    "key":"role",
+    "name":"Role",
+    "order":"5",
+    "filter":true,
+    "search":true,
+    "type":"select",
+    "placeholderEnter ":"Role...",
+    "showInTable":true,
+    "value":"",
+    "disabled":false,
+    "validationRule":{
+      "type":"Require"
+    },
+    "options":[
+      { "label": "Admin", "id": 1 },
+      { "label": "Project Manager", "id": 2 },
+      { "label": "Anotator", "id": 3 },
+      { "label": "Guest", "id": 4 }
+    ]
+  },
+  {
+    "key":"organization",
+    "name":"Organization",
+    "order":"6",
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter organization name...",
+    "showInTable":true,
+    "validationRule":{
+      "type":"Require"
+    },
+    "value":""
+  },
+  {
+    "key":"affiliation",
+    "name":"Affiliation",
+    "order":"7",
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholderEnter ":"affiliation...",
+    "showInTable":true,
+    "validationRule":{
+      "type":"Require"
+    },
+    "value":""
+  },
+  {
+    "key":"is_active",
+    "name":"Is active",
+    "order":"8",
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholderEnter ":"updated by...",
+    "showInTable":true,
+    "validationRule":{
+      "type":"Require"
+    },
+    "value":""
+  }
+]

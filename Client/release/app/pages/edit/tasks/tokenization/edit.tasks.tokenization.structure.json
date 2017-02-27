@@ -1,0 +1,150 @@
+[
+  {
+    "key":"id",
+    "name":"Id",
+    "order":1,
+    "type":"text",
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "disabled":true
+  },
+  {
+    "key":"Status",
+    "name":"Status",
+    "order":2,
+    "filter":true,
+    "search":true,
+    "type":"select",
+    "options":[
+      { "label": "NOT_STARTED", "id": 1 },
+      { "label": "ONGOING", "id": 2 },
+      { "label": "SUBMITTED", "id": 3 },
+      { "label": "REJECTED", "id": 4 }
+    ],
+    "showInTable":true
+  },
+  {
+    "key":"manager_comment",
+    "name":"Manager Comment",
+    "order":3,
+    "filter":true,
+    "search":false,
+    "type":"text",
+    "placeholder":"Enter Comment...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"user",
+    "name":"Annotator",
+    "order":4,
+    "filter":true,
+    "search":true,
+    "type":"table",
+    "viewOnly":true,
+    "placeholder":"Choose",
+    "value":"",
+    "class":"btn-default",
+    "functionName":"chooseAnnotator",
+    "showInTable":true,
+    "tableStructure":[
+      {
+        "key":"id",
+        "name":"Id",
+        "order":1,
+        "type":"text",
+        "filter":true,
+        "search":true,
+        "showInTable":true
+      },
+      {
+        "key":"first_name",
+        "name":"First Name",
+        "order":2,
+        "filter":true,
+        "search":true,
+        "type":"text",
+        "placeholder":"Enter First Name...",
+        "value":"",
+        "showInTable":true
+      },
+      {
+        "key":"last_name",
+        "name":"Last Name",
+        "order":2,
+        "filter":true,
+        "search":true,
+        "type":"text",
+        "placeholder":"Enter Last Name...",
+        "value":"",
+        "showInTable":true
+      }
+    ]
+  },
+  {
+    "key":"passages",
+    "name":"Passages",
+    "order":5,
+    "filter":true,
+    "search":true,
+    "type":"table",
+    "viewOnly":true,
+    "placeholder":"Choose",
+    "value":"",
+    "class":"btn-default",
+    "functionName":"choosePassage",
+    "showInTable":true,
+    "tableStructure":[
+      {
+        "key":"id",
+        "name":"ID",
+        "order":"1",
+        "filter":true,
+        "search":true,
+        "showInTable":true,
+        "type":"text",
+        "placeholderEnter ":"Id...",
+        "value":""
+      },
+      {
+        "key":"actions",
+        "name":"Actions",
+        "order":"3",
+        "filter":false,
+        "search":false,
+        "showInTable":true,
+        "buttons":[
+          {
+            "name":"Remove",
+            "order":"1",
+            "class":"btn-danger",
+            "functionName":"removeRow"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "key":"is_active",
+    "name":"Is Active",
+    "order":6,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Is Active...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"is_demo",
+    "name":"Is Demo",
+    "order":7,
+    "filter":false,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Is Demo...",
+    "value":"",
+    "showInTable":true
+  }
+]
