@@ -123,6 +123,12 @@
                             isFirstInitTree : true,
                             unitGuiStatus : unit.gui_status
                         }
+
+                        delete DataService.remoteFromUnit;
+                        if(unit.is_remote_copy){
+                            DataService.remoteFromUnit = unit.annotation_unit_tree_id
+                        }
+                        
                         $rootScope.clckedLine = DataService.selectedTokensToUnit(tokenToUnitData);
 
                         DataService.getUnitById($rootScope.clckedLine).comment = unit.comment;
@@ -301,7 +307,8 @@
                 // give focus to the new unit
                 $('.selected-row').removeClass('selected-row');
                 $('#directive-info-data-container-'+$rootScope.clckedLine).addClass('selected-row');
-                // updateDomUnitWrappers(DataService.tree)
+                // make a scrollTo new unit
+                $('#directive-info-data-container-'+$rootScope.clckedLine).attr('tabindex','-1').focus()
             });
         }
 
@@ -712,7 +719,7 @@
         function traversInTree(treeNode){
             console.log(treeNode.annotation_unit_tree_id)
             var unit = {
-                annotation_unit_tree_id : treeNode.unitType == 'REMOTE' ? DataService.getParentUnitId(treeNode.annotation_unit_tree_id) : treeNode.annotation_unit_tree_id.toString(),
+                annotation_unit_tree_id : treeNode.unitType == 'REMOTE' ? treeNode.remote_original_id : treeNode.annotation_unit_tree_id.toString(),
                 task_id: DataService.currentTask.id.toString(),
                 comment: treeNode.comment || '',
                 categories: treeNode.categories || [],

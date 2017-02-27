@@ -155,24 +155,28 @@
       {
         "name":"Remove",
         "order":1,
+        "roles":["ADMIN","PM"],
         "class":"btn-danger",
         "functionName":"removeRow"
       },
       {
         "name":"Edit",
         "order":2,
+        "roles":["ADMIN","PM"],
         "class":"btn-info",
         "functionName":"editRow"
       },
       {
-        "name":"Play",
+        "name":"Go",
         "order":3,
+        "roles":["ADMIN","PM","ANNOTATOR","GUEST"],
         "class":"btn-success",
         "functionName":"previewTask"
       },
       {
         "name":"Create New Task",
         "order":4,
+        "roles":["ADMIN","PM"],
         "class":"btn-success",
         "functionName":"createNewTask"
       }

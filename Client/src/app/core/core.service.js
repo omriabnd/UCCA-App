@@ -19,7 +19,7 @@
 			findItemInArrayById:findItemInArrayById,
 			findItemPositionInArrayById:findItemPositionInArrayById,
 			tablePageSize: 5,
-			user_role: storageService.getObjectFromLocalStorage('user_role') || {"id":"2","Name":"Guest"},
+			user_role: storageService.getObjectFromLocalStorage('user_role') || {"id":"4","Name":"Guest"},
 			smartTableCanUseAction:smartTableCanUseAction,
 			checkDependenciesKeys: checkDependenciesKeys,
 			showNotification: showNotification,
@@ -31,7 +31,8 @@
 		
 		return core;
 
-		function smartTableCanUseAction(functionName,type){
+
+		function smartTableCanUseAction(functionName,onlyForRoles,type){
 			return true
 		}
 		function goNext(currentPage) {

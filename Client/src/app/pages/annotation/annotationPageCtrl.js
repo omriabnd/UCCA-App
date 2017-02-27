@@ -6,7 +6,7 @@
       .controller('AnnotationPageCtrl', AnnotationPageCtrl);
 
   /** @ngInject */
-  function AnnotationPageCtrl(DefaultHotKeys,TaskMetaData,AnnotationTextService,DataService,$rootScope,$scope,hotkeys,HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService,$timeout) {
+  function AnnotationPageCtrl(DefaultHotKeys,TaskMetaData,AnnotationTextService,DataService,$rootScope,$scope,hotkeys,HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService,$timeout,$state) {
 
     $rootScope.callToSelectedTokensToUnit = callToSelectedTokensToUnit;
     $rootScope.addCategoryToExistingRow = addCategoryToExistingRow;
@@ -17,6 +17,7 @@
     vm.toggleAnnotationUnitView = AnnotationTextService.toggleAnnotationUnitView;
     vm.saveTask = saveTask;
     vm.submitTask = submitTask;
+    vm.goToMainMenu = goToMainMenu;
     vm.finishAll = finishAll;
     vm.tokenizationTask = TaskMetaData.Task;
     vm.annotationTokens = vm.tokenizationTask.tokens;
@@ -51,6 +52,7 @@
     
 
     function init(){
+      $timeout(function(){$rootScope.$hideSideBar = true;}) 
       bindCategoriesHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService);
       bindReceivedDefaultHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService && !hotkeys.fromParentLayer);
     }
@@ -103,11 +105,24 @@
       DataService.printTree();
     }
 
+    function goToMainMenu(res){
+      var projectId = this ? this.tokenizationTask.project.id : res.data.project.id;
+      var layerType = this ? this.tokenizationTask.project.layer.type : res.data.project.layer.type;
+      url: '/project/:id/tasks/:layerType',
+      $state.go('projectTasks',{
+        id:projectId,
+        layerType:layerType,
+        refresh:true
+      })
+      $timeout(function(){$rootScope.$hideSideBar = false;}) 
+    }
+
     function submitTask(){
       var finishAllResult = vm.finishAll();
       if(finishAllResult){
         return DataService.submitTask().then(function(res){
           Core.showNotification('success','Annotation Task Submitted.');
+          goToMainMenu(res)
         });
       }
     }

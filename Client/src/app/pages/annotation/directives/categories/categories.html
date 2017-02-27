@@ -1,4 +1,5 @@
 <div class="row annotation-type btn-raised" 
+    title="{{defCtrl.definitionDetails.tooltip}}"
 	ng-class="{
 				'disabled':defCtrl.definitionDetails.fromParentLayer,
 				'childCategory':defCtrl.definitionDetails.parent != null
@@ -7,7 +8,11 @@
     <button class="text-wrapper" 
 		ng-disabled="defCtrl.definitionDetails.fromParentLayer"
     	ng-click="defCtrl.highLightSelectedWords(defCtrl.definitionDetails.backgroundColor)">
-        <span class="text">{{defCtrl.definitionDetails.name}} ({{defCtrl.definitionDetails.abbreviation}})</span>
+        <span class="text">
+            {{defCtrl.definitionDetails.name}} ({{defCtrl.definitionDetails.abbreviation}})
+            <b ng-if="defCtrl.definitionDetails.shortcut_key">[ {{defCtrl.definitionDetails.shortcut_key}} ]</b>
+        </span>
+        
     </button>
     <span class="category-info" ng-click="defCtrl.showCategoryInfo($index)"><i class="ion-information"></i></span>
 </div>

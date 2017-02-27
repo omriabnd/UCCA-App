@@ -6,9 +6,10 @@
 	.constant('ENV_CONST', {
 		IS_DEV:false,
 		TEST_URL:"http://private-daea0-ucca.apiary-mock.com/api/v1",
-		// PROD_URL:"http://localhost:8000/api/v1",
+		PROD_URL:"http://localhost:8000/api/v1",
 		// PROD_URL:"http://192.168.0.118:8000/api/v1",
-		PROD_URL:"http://ucca.staging.cs.huji.ac.il/api/v1", 
+		PROD_HUJI_HOST:"huji.ac.il", 
+		PROD_HUJI_API_ENDPOINT:"http://ucca.staging.cs.huji.ac.il/api/v1", 
 		LOCAL_RESOURCES: "app/resources",
 		TASK_TYPE:{
 			ANNOTATION:"ANNOTATION",
@@ -31,20 +32,20 @@
 				id:1,
 				TABS: ["1","2","3","4","5","6","7","8","9"]
 			},
-			GUEST:{
-				name:"Guest",
-				id:2,
-				TABS: ["2","3","4","5"]
-			},
 			PM:{
 				name:"Project Manager",
-				id:3,
+				id:2,
 				TABS: ["1","2","3"]
 			},
 			ANNOTATOR:{
 				name:"Annotator",
-				id:4,
+				id:3,
 				TABS: ["3","4"]
+			},
+			GUEST:{
+				name:"Guest",
+				id:4,
+				TABS: ["2","3","4","5"]
 			}
 		},
 		RESTRICTIONS_TYPE:[
@@ -110,19 +111,19 @@
 			{
 				id:1,
 				name:"Finish All",
-				tooltip:"Alt+f: Finish All",
+				tooltip:"Alt+a: Finish All",
 				executeFunction:"finishAll"
 			},
 			{
 				id:2,
 				name:"Save",
-				tooltip:"Alt+s or Ctrl+s: Save",
+				tooltip:"Alt+s: Save",
 				executeFunction:"saveTask"
 			},
 			{
 				id:3,
 				name:"Submit",
-				tooltip:"Submit (unit will be considered completed)",
+				tooltip:"Alt+b: Submit (unit will be considered completed)",
 				executeFunction:"submitTask"
 			},
 			/*{
@@ -146,7 +147,7 @@
 			{
 				id:7,
 				name:"Main Menu",
-				tooltip:"Alt+h: Main Menu",
+				tooltip:"Alt+m: Go To Main Menu",
 				executeFunction:"goToMainMenu"
 			}
 		],

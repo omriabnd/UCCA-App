@@ -10,7 +10,7 @@
           .state('layers', {
             url: '/layers',
             templateUrl: 'app/pages/layers/layers.html',
-            title: 'layers',
+            title: 'Layers',
             controller: 'layersCtrl',
             controllerAs: 'vm',
             sidebarMeta: {

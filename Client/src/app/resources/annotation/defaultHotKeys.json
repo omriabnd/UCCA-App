@@ -1,16 +1,10 @@
 {
   "DefaultHotKeys":[
     {
-      "combo": "ctrl+alt+w",
-      "description": "Start printing to log",
+      "combo": "alt+f",
+      "description": "Finish Unit",
       "action": "keydown",
-      "callbackFunction":"running"
-    },
-    {
-      "combo": "ctrl+alt+n",
-      "description": "Start Downloading",
-      "action": "keydown",
-      "callbackFunction":"downloading"
+      "callbackFunction":"checkRestrictionForCurrentUnit"
     },
     {
       "combo": "del",
@@ -104,7 +98,25 @@
   ],
   "ManualHotKeys":[
     {
-      "combo": "ctrl+s",
+      "combo": "alt+a",
+      "description": "Finish All",
+      "action": "keydown",
+      "callbackFunction":"finishAll"
+    },
+    {
+      "combo": "alt+m",
+      "description": "Go to main menu",
+      "action": "keydown",
+      "callbackFunction":"goToMainMenu"
+    },
+    {
+      "combo": "alt+b",
+      "description": "Submit the task",
+      "action": "keydown",
+      "callbackFunction":"submitTask"
+    },
+    {
+      "combo": "alt+s",
       "description": "Save the task",
       "action": "keydown",
       "callbackFunction":"saveTask"

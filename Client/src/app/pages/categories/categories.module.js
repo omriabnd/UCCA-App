@@ -10,7 +10,7 @@
           .state('categories', {
             url: '/categories',
             templateUrl: 'app/pages/categories/categories.html',
-            title: 'categories',
+            title: 'Categories',
             controller: 'categoriesCtrl',
             controllerAs: 'vm',
             sidebarMeta: {

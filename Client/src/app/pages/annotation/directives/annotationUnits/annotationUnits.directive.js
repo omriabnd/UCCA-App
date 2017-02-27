@@ -48,7 +48,8 @@
                 moveLeftWithCtrl:moveLeftWithCtrl,
                 moveRightWithShift:moveRightWithShift,
                 moveLeftWithShift:moveLeftWithShift,
-                deleteFromTree:deleteFromTree
+                deleteFromTree:deleteFromTree,
+                checkRestrictionForCurrentUnit:checkRestrictionForCurrentUnit
             };
 
             $scope.selCtrl.removeAnnotationUnit = removeAnnotationUnit;
@@ -401,14 +402,14 @@
              * This function handle keyboard units selection while shift key is pressed.
              */
             function moveRightWithShift(){
-                if(DataService.unitType = 'REGULAR'){
+                if(DataService.unitType == 'REGULAR' && DataService.getUnitById($rootScope.clckedLine).unitType == 'REGULAR'){
                     var currentRow = $('#row-'+$rootScope.clckedLine)[0];
                     if($scope.selCtrl.cursorLocation < $(currentRow).children().length){
 
 
                         var tokenToAdd = currentRow.children[$scope.selCtrl.cursorLocation+1];
 
-                        if(!$(tokenToAdd).hasClass('dot-sep')){
+                        if(!$(tokenToAdd).hasClass('dot-sep') && !$(tokenToAdd).hasClass('cursor')){
                             if($(tokenToAdd).hasClass('clickedToken')){
                                 $(tokenToAdd).removeClass('clickedToken');
                                 
@@ -417,8 +418,10 @@
                                 var tokenId = splitStringByDelimiter($(tokenToAdd).attr('data-wordid'),"-")[1];
                                 removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
                             }else{
-                                $rootScope.selectedTokensArray.push(tokenToAdd.outerHTML);
-                                $(tokenToAdd).addClass('clickedToken');
+                                if(tokenToAdd){
+                                    $rootScope.selectedTokensArray.push(tokenToAdd.outerHTML);
+                                    $(tokenToAdd).addClass('clickedToken');
+                                }
                                 
                             }
                         }
@@ -475,33 +478,43 @@
             }
 
             function moveLeftWithShift(){
-                var currentRow = $('#row-'+$rootScope.clckedLine)[0];
-                if($scope.selCtrl.cursorLocation > 0){
+                if(DataService.unitType == 'REGULAR' && DataService.getUnitById($rootScope.clckedLine).unitType == 'REGULAR'){
+                    var currentRow = $('#row-'+$rootScope.clckedLine)[0];
+                    if($scope.selCtrl.cursorLocation > 0){
 
-                    var tokenToAdd = currentRow.children[$scope.selCtrl.cursorLocation-1];
+                        var tokenToAdd = currentRow.children[$scope.selCtrl.cursorLocation-1];
 
-                    if(!$(tokenToAdd).hasClass('dot-sep')){
-                        if($(tokenToAdd).hasClass('clickedToken')){
-                            $(tokenToAdd).removeClass('clickedToken');
-                            
-
-                            //The token is already selected, need to remove it.
-                            var tokenId = splitStringByDelimiter($(tokenToAdd).attr('data-wordid'),"-")[1];
-                            removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
-                        }else{
-                            $rootScope.selectedTokensArray.push(tokenToAdd.outerHTML);
-                            $(tokenToAdd).addClass('clickedToken');
-                            
+                        if($(tokenToAdd).hasClass('cursor')){
+                            updateCursorLocationLeft(currentRow);
                         }
+
+                        var tokenToAdd = currentRow.children[$scope.selCtrl.cursorLocation-1];
+
+                        if(!$(tokenToAdd).hasClass('dot-sep') && !$(tokenToAdd).hasClass('cursor')){
+                            if($(tokenToAdd).hasClass('clickedToken')){
+                                $(tokenToAdd).removeClass('clickedToken');
+                                
+
+                                //The token is already selected, need to remove it.
+                                var tokenId = splitStringByDelimiter($(tokenToAdd).attr('data-wordid'),"-")[1];
+                                removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
+                            }else{
+                                if(tokenToAdd){
+                                    $rootScope.selectedTokensArray.push(tokenToAdd.outerHTML);
+                                    $(tokenToAdd).addClass('clickedToken');
+                                }
+                                
+                            }
+                        }
+                        updateCursorLocationLeft(currentRow);
                     }
-
-                    $scope.selCtrl.cursorLocation--;
-
-                    var directiveCursor = $('#cursor-'+$rootScope.clckedLine)[0];
-
-                    currentRow.removeChild(directiveCursor);
-                    currentRow.insertBefore(directiveCursor, currentRow.children[$scope.selCtrl.cursorLocation]);
                 }
+            }
+            function updateCursorLocationLeft(currentRow){
+                $scope.selCtrl.cursorLocation--;
+                var directiveCursor = $('#cursor-'+$rootScope.clckedLine)[0];
+                currentRow.removeChild(directiveCursor);
+                currentRow.insertBefore(directiveCursor, currentRow.children[$scope.selCtrl.cursorLocation]);
             }
 
             function deleteFromTree(unitId){
@@ -543,50 +556,51 @@
 
             // update father unit borders, after the san was deleted
             $scope.selCtrl.updateUI = function(unitToDelete){
-                if (!unitToDelete) {return console.log('no unit to delete');}
-                if (unitToDelete.usedAsRemote && unitToDelete.usedAsRemote.length > 0) {return console.log('remote unit');}
-                if(unitToDelete.unitType == 'REGULAR'){
-                    if(unitToDelete.AnnotationUnits.length == 0){
-                        //unit has no children
-                        var unitDomElementToDelete = $("[unit-wrapper-id="+$rootScope.clickedUnit+"]");
-                        var unitDomElementParent =unitDomElementToDelete[0].parentElement;
-                        var unitDomElementChildrenLength = unitDomElementToDelete.children().length;
-                        for(var i=0; i<unitDomElementChildrenLength; i++){
-                            unitDomElementParent.insertBefore(unitDomElementToDelete.children().get(0),unitDomElementToDelete.get(0))
-                        }
-                        unitDomElementToDelete.remove();
-
-                    }else{
-                        //unit has unit children
-                        var unitDomElementToDelete = $("[unit-wrapper-id="+$rootScope.clickedUnit+"]");
-                        var unitDomElementParent =unitDomElementToDelete[0].parentElement;
-
-                        var unitToDeleteChildrenUnits = $('#row-'+unitToDelete.annotation_unit_tree_id).children();
-                        for(var i=0; i<unitToDeleteChildrenUnits.length; i++){
-                            if(!$(unitToDeleteChildrenUnits[i]).hasClass('cursor')){
-                                if($(unitToDeleteChildrenUnits[i]).hasClass('selectable-word')){
-                                    unitToDeleteChildrenUnits[i].innerHTML += " "
-                                }
-                                unitDomElementParent.insertBefore(unitToDeleteChildrenUnits[i],unitDomElementToDelete.get(0))
+                if (!!unitToDelete) {
+                    if (unitToDelete.usedAsRemote && unitToDelete.usedAsRemote.length > 0) {return console.log('remote unit');}
+                    if(unitToDelete.unitType == 'REGULAR'){
+                        if(unitToDelete.AnnotationUnits.length == 0){
+                            //unit has no children
+                            var unitDomElementToDelete = $("[unit-wrapper-id="+$rootScope.clickedUnit+"]");
+                            var unitDomElementParent =unitDomElementToDelete[0].parentElement;
+                            var unitDomElementChildrenLength = unitDomElementToDelete.children().length;
+                            for(var i=0; i<unitDomElementChildrenLength; i++){
+                                unitDomElementParent.insertBefore(unitDomElementToDelete.children().get(0),unitDomElementToDelete.get(0))
                             }
+                            unitDomElementToDelete.remove();
+
+                        }else{
+                            //unit has unit children
+                            var unitDomElementToDelete = $("[unit-wrapper-id="+$rootScope.clickedUnit+"]");
+                            var unitDomElementParent =unitDomElementToDelete[0].parentElement;
+
+                            var unitToDeleteChildrenUnits = $('#row-'+unitToDelete.annotation_unit_tree_id).children();
+                            for(var i=0; i<unitToDeleteChildrenUnits.length; i++){
+                                if(!$(unitToDeleteChildrenUnits[i]).hasClass('cursor')){
+                                    if($(unitToDeleteChildrenUnits[i]).hasClass('selectable-word')){
+                                        unitToDeleteChildrenUnits[i].innerHTML += " "
+                                    }
+                                    unitDomElementParent.insertBefore(unitToDeleteChildrenUnits[i],unitDomElementToDelete.get(0))
+                                }
+                            }
+
+                            unitDomElementToDelete.remove();
                         }
-
-                        unitDomElementToDelete.remove();
+                        //Update parent unit-wrapper-#-# attribute
+                        var parentDomeElementUnitWrappers = $(unitDomElementParent).find('.unit-wrapper');
+                        unitToDelete = DataService.getUnitById(DataService.getParentUnitId(unitToDelete.annotation_unit_tree_id));
                     }
-                    //Update parent unit-wrapper-#-# attribute
-                    var parentDomeElementUnitWrappers = $(unitDomElementParent).find('.unit-wrapper');
-                    unitToDelete = DataService.getUnitById(DataService.getParentUnitId(unitToDelete.annotation_unit_tree_id));
+
+                    $timeout(function(){
+                        updateDomElements(unitToDelete);
+                        $compile($('.text-wrapper'))($rootScope);
+
+                        $(unitDomElementParent).find('.selectable-word').attr('mousedown','').unbind('mousedown');
+                        $(unitDomElementParent).find('.selectable-word').on('mousedown',tokenClicked);
+                        
+                        focusUnit($('#directive-info-data-container-'+splitStringByDelimiter($rootScope.clckedLine,'.').join("-")))
+                    })
                 }
-
-                $timeout(function(){
-                    updateDomElements(unitToDelete);
-                    $compile($('.text-wrapper'))($rootScope);
-
-                    $(unitDomElementParent).find('.selectable-word').attr('mousedown','').unbind('mousedown');
-                    $(unitDomElementParent).find('.selectable-word').on('mousedown',tokenClicked);
-                    
-                    focusUnit($('#directive-info-data-container-'+splitStringByDelimiter($rootScope.clckedLine,'.').join("-")))
-                })
             };
             function updateDomElements(unitToUpdate){
                 // console.log(unitToUpdate.annotation_unit_tree_id);
@@ -704,9 +718,8 @@
 
                     // unit row selected
                     if($(e.toElement).hasClass('directive-info-data-container')){
-                        var selectedUnitTokens = e.toElement.children[2].children[0].children;
-                        var originalIdArray = splitStringByDelimiter($(e.toElement).attr('unit-wrapper-id'),'-')
-                        var originalId = originalIdArray.slice(4,originalIdArray.length).join('-');
+                        var originalId = $(e.toElement).attr('id').split('directive-info-data-container-')[1];
+                        var selectedUnitTokens = $('[child-unit-id='+originalId+']').children();
                     }else{ // unit bordered in parent selected
                         var selectedUnitTokens = e.toElement ? e.toElement.children : e.children;
                         var originalId = $(e.toElement).attr('child-unit-id');
@@ -741,7 +754,7 @@
                     DataService.unitType = 'REMOTE';
                     
                     $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine,false);
-                    DataService.getUnitById($(e.currentTarget).attr('child-unit-id')).usedAsRemote.push($rootScope.clckedLine);
+                    DataService.getUnitById(originalId).usedAsRemote.push($rootScope.clckedLine);
                     DataService.updateDomWhenInsertFinishes();
 
                     e.toElement ? $scope.$apply() : '';
@@ -1308,12 +1321,17 @@
                         }
 
                         $scope.deleteAllRemoteInstanceOfThisUnit = function(){
-                            //TODO - sort the array
+                            
+                            // remove duplicates
+                            selCtrl.currentUnitRemoteInstancesIds = selCtrl.currentUnitRemoteInstancesIds.filter(function(unitTreeId,index,self){
+                                return self.indexOf(unitTreeId) == index
+                            })
                             selCtrl.currentUnitRemoteInstancesIds.sort(sortIndexes);
                             for(var i=0; i<selCtrl.currentUnitRemoteInstancesIds.length ; i++){
                                 DataService.deleteFromTree(selCtrl.currentUnitRemoteInstancesIds[i])
+                                selCtrl.updateUI(DataService.getUnitById(selCtrl.currentUnitRemoteInstancesIds[i]))
                             }
-                            selCtrl.updateUI(DataService.getUnitById($("[unit-wrapper-id="+$rootScope.clickedUnit+"]").attr('child-unit-id')));
+                            // selCtrl.updateUI(DataService.getUnitById($("[unit-wrapper-id="+$rootScope.clickedUnit+"]").attr('child-unit-id')));
                         };
                     }
                 });
@@ -1419,6 +1437,7 @@
                 moveLeftWithShift: $rootScope.isDirRtl ? initObject.moveRightWithShift : initObject.moveLeftWithShift,
                 addAsRemoteUnit:initObject.addAsRemoteUnit,
                 deleteFromTree: initObject.deleteFromTree,
+                checkRestrictionForCurrentUnit: initObject.checkRestrictionForCurrentUnit,
                 index: initObject.scope.selCtrl.lineId
             }
 
@@ -1469,7 +1488,15 @@
         }
 
         function checkRestrictionForCurrentUnit(unit_id,event){
-            var rowElem = $(event.toElement).parents(".directive-info-data-container").first()
+            if(!unit_id){
+                // in case of coe here from hot key
+                unit_id = $rootScope.clckedLine
+                var rowElem = $('#directive-info-data-container-'+unit_id)
+            }
+            if(event){
+                //  in case come here from click on 'f' in unit gui row
+                var rowElem = $(event.toElement).parents(".directive-info-data-container").first()
+            }
             $rootScope.focusUnit(rowElem)
             var unitToValidate = DataService.getUnitById(unit_id);
             var parentUnit = DataService.getUnitById(DataService.getParentUnitId(unitToValidate.annotation_unit_tree_id))

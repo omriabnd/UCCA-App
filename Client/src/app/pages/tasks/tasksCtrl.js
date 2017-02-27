@@ -17,11 +17,13 @@
     vm.editRow = editRow;
     vm.previewTask = Core.previewTask;
     
-    function smartTableCanUseAction(functionName,type){
+    function smartTableCanUseAction(functionName,onlyForRoles,type){
       /*
         logic wehn to show the button
       */
-      console.log(functionName +' '+ type);
+      if(!!onlyForRoles && onlyForRoles.length){
+        return (onlyForRoles.indexOf(Core.user_role.name.toUpperCase()) > -1)
+      }
       return true;
     }
 

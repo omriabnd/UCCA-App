@@ -13,6 +13,7 @@
     vm.smartTableData = TableData;
     vm.createNewTask = createNewTask;
     Core.init(vm,TableStructure,projectTasksService);
+    vm.smartTableCanUseAction = smartTableCanUseAction;
 
     vm.editRow = editRow;
     vm.previewTask = Core.previewTask;
@@ -28,6 +29,16 @@
         $state.go('edit.tasks.tokenization',{projectLayerType:ENV_CONST.LAYER_TYPE.ROOT})
       }
 
+    }
+
+    function smartTableCanUseAction(functionName,onlyForRoles,type){
+      /*
+        logic wehn to show the button
+      */
+      if(!!onlyForRoles && onlyForRoles.length){
+        return (onlyForRoles.indexOf(Core.user_role.name.toUpperCase()) > -1)
+      }
+      return true;
     }
 
     function createNewTask(obj,index){

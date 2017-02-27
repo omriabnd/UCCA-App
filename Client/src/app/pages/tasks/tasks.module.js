@@ -10,7 +10,7 @@
           .state('tasks', {
             url: '/tasks',
             templateUrl: 'app/pages/tasks/tasks.html',
-            title: 'tasks',
+            title: 'Tasks',
             controller: 'tasksCtrl',
             controllerAs: 'vm',
             sidebarMeta: {

@@ -8,10 +8,16 @@
 	.service('httpService', httpService);
 
 	/** @ngInject */
-	function httpService($http,$q,$timeout,$rootScope,$location,ENV_CONST,Core,storageService) {
+	function httpService($http,$q,$timeout,$rootScope,$location,ENV_CONST,Core,storageService,$state) {
 		
 		var is_dev = ($location.host() === 'localhost') || ENV_CONST.IS_DEV;
 		var url = (is_dev && ENV_CONST.IS_DEV ) ? ENV_CONST.TEST_URL : ENV_CONST.PROD_URL;
+
+		var is_prod_server = ($location.absUrl().indexOf(ENV_CONST.PROD_HUJI_HOST) > -1);
+		if(is_prod_server){
+			// for ucca production server
+			url = ENV_CONST.PROD_HUJI_API_ENDPOINT;
+		}
 
 		function SuccessResults (successResult) {
 			var response = {
@@ -42,7 +48,15 @@
 			}
 			$rootScope.$pageFinishedLoading = true;
 			Core.showNotification(type[errorResult.status],errorResult.statusText+"\n"+errorResult.config.url)
+			redirectToLoginOnTokenExpired(errorResult)
 			throw errorResult;
+		}
+
+		function redirectToLoginOnTokenExpired(errorResult){
+			if(errorResult && errorResult.data && errorResult.data.detail == "Invalid token."){
+				storageService.clearLocalStorage()
+				$state.go('auth',{reload:true})
+			}
 		}
 
 		function httpRequest(requestType, requestStringName, bodyData, notFromCache, fromResources) {
