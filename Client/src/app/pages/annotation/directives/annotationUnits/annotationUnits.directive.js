@@ -1508,6 +1508,9 @@
             if(isUnitValidated){
                 unitToValidate.gui_status = 'HIDDEN';
                 Core.showNotification('success','Annotation unit ' + unitToValidate.annotation_unit_tree_id + ' has finished successfully' )
+                var parentId = DataService.getParentUnitId(unitToValidate.annotation_unit_tree_id);
+                var parentRowElem = $('#directive-info-data-container-'+parentId)
+                $rootScope.focusUnit(parentRowElem);
             }
         }
 
