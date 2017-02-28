@@ -271,7 +271,8 @@
   .directive-container {
     min-height: 10px;
     min-height: 38px;
-
+    display: inline-block;
+    width: 100%;
 
     .control-buttons-container {
           float: right;

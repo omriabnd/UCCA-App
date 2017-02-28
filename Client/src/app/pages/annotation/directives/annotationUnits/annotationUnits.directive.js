@@ -95,15 +95,7 @@
                 focusUnit(parentContainer);
 
                 deleteFromTree();
-                // deleteFromTree(unit_id);
-                // var unit_to_delete = DataService.getUnitById(unit_id);
-                // DataService.deleteFromTree(unit_id);
 
-                // $scope.selCtrl.dataBlock.categories.changed = true;
-
-                // if (unit_to_delete.unitType != 'REMOTE'){
-                //     $scope.selCtrl.updateUI(DataService.getUnitById(DataService.getParentUnitId(unit_id)))
-                // }
                 event.stopPropagation();
             }
 
@@ -115,40 +107,38 @@
                 IS_MOUSE_DOWN = false
             });
 
-            $('.selectable-word').on('mouseover',function(){
-                // console.log('IS_MOUSE_DOWN: '+IS_MOUSE_DOWN);
-                if(IS_MOUSE_DOWN){
-                    if($(this).hasClass('clickedToken')){
-                        $(this).removeClass('clickedToken');
-                        var tokenId = splitStringByDelimiter($(this).attr('data-wordid'),"-")[1];
-                        removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
-                    }else{
-                        $(this).addClass('clickedToken');
-                        $rootScope.selectedTokensArray.push(this.outerHTML);
-                    }
-                    updateCursorLocation($scope.selCtrl,event.toElement,$rootScope);
-                }else {
 
-                }
-            });
-
-            /*
-                TODO - new mouse on drag
-
-            $('.selectable-word').on('mouseover',function(event){
+            $('.directive-info-data-container .text-wrapper').on('mouseover', '.selectable-word', function(event) {
                 if(IS_MOUSE_DOWN){
                     var tokenId = splitStringByDelimiter($(this).attr('data-wordid'),"-")[1];
                     removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
-                    console.log("last_word:"+$rootScope.lastSelectedTokenMouse+",current_word:"+tokenId);
+                    // console.log("first_word:"+$rootScope.lastSelectedTokenMouse+",current_word:"+tokenId);
                     selectAllTokensBetween(event,tokenId)
                     updateCursorLocation($scope.selCtrl,event.toElement,$rootScope);
                 }
             });
 
-            function selectAllTokensBetween(event,lastToken){
-                console.log("TODO",$rootScope.lastSelectedTokenMouse);
-                var allWordsArray = $('#row-'+scope.selCtrl.selectedRow).find('.selectable-word');
-            }*/
+            function selectAllTokensBetween(event,lastTokenId){
+                // clear selection
+                $('.clickedToken').removeClass('clickedToken')
+                $rootScope.selectedTokensArray = [];
+                // get all tokens that not inside a unit
+                // and filter out the ones that not between the firstToken and latToken
+                var allWordsArray = $('#row-'+$scope.selCtrl.selectedRow +' > .selectable-word');
+                allWordsArray = allWordsArray.filter(function(index,token,self){
+                    if($rootScope.lastSelectedTokenMouse < lastTokenId){
+                        return ($(token).attr('token-id') >= $rootScope.lastSelectedTokenMouse) && ($(token).attr('token-id') <= lastTokenId)
+                    }else{
+                        return ($(token).attr('token-id') <= $rootScope.lastSelectedTokenMouse) && ($(token).attr('token-id') >= lastTokenId)
+                    }
+                })
+                // select all the relevant filtered tokens
+                for (var i = 0; i < allWordsArray.length; i++) {
+                    $(allWordsArray[i]).addClass('clickedToken')
+                    $rootScope.selectedTokensArray.push(allWordsArray[i].outerHTML);
+                };
+
+            }
 
             /**
              * Handle Click on tokens.
@@ -193,7 +183,7 @@
                         }else{
                             handleClickOnNotClickedToken(event,$scope,$rootScope);
                         }
-                        updateCursorLocation($scope.selCtrl,event.toElement,$rootScope);
+                        // updateCursorLocation($scope.selCtrl,event.toElement,$rootScope);
 
                         var parentContainerId = $(event.toElement.parentElement).attr('id').split('-');
                         parentContainerId = parentContainerId.slice(1,parentContainerId.length).join('-');
@@ -209,6 +199,7 @@
                         $rootScope.lastSelectedWordWithShiftPressed = undefined 
 					}
                 }
+                updateCursorLocation($scope.selCtrl,event.toElement,$rootScope);
             }
             function preventSelectTokensFromDefferentUnits(){
                 var needToPrevent = false
@@ -404,34 +395,29 @@
             function moveRightWithShift(){
                 if(DataService.unitType == 'REGULAR' && DataService.getUnitById($rootScope.clckedLine).unitType == 'REGULAR'){
                     var currentRow = $('#row-'+$rootScope.clckedLine)[0];
+                    $scope.selCtrl.cursorLocation = getCurrentCursorIndexPosition(currentRow)
                     if($scope.selCtrl.cursorLocation < $(currentRow).children().length){
 
-
                         var tokenToAdd = currentRow.children[$scope.selCtrl.cursorLocation+1];
+                        // allow to add only tokens - not units
+                        if($(tokenToAdd).hasClass('unit-wrapper') == false){
+                            if(!$(tokenToAdd).hasClass('dot-sep') && !$(tokenToAdd).hasClass('cursor')){
+                                if($(tokenToAdd).hasClass('clickedToken')){
+                                    $(tokenToAdd).removeClass('clickedToken');
 
-                        if(!$(tokenToAdd).hasClass('dot-sep') && !$(tokenToAdd).hasClass('cursor')){
-                            if($(tokenToAdd).hasClass('clickedToken')){
-                                $(tokenToAdd).removeClass('clickedToken');
-                                
-
-                                //The token is already selected, need to remove it.
-                                var tokenId = splitStringByDelimiter($(tokenToAdd).attr('data-wordid'),"-")[1];
-                                removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
-                            }else{
-                                if(tokenToAdd){
-                                    $rootScope.selectedTokensArray.push(tokenToAdd.outerHTML);
-                                    $(tokenToAdd).addClass('clickedToken');
+                                    //The token is already selected, need to remove it.
+                                    var tokenId = splitStringByDelimiter($(tokenToAdd).attr('data-wordid'),"-")[1];
+                                    removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
+                                }else{
+                                    if(tokenToAdd){
+                                        $rootScope.selectedTokensArray.push(tokenToAdd.outerHTML);
+                                        $(tokenToAdd).addClass('clickedToken');
+                                    }
+                                    
                                 }
-                                
                             }
                         }
-
-                        $scope.selCtrl.cursorLocation++;
-
-                        var directiveCursor = $('#cursor-'+$rootScope.clckedLine)[0];
-
-                        currentRow.removeChild(directiveCursor);
-                        currentRow.insertBefore(directiveCursor, currentRow.children[$scope.selCtrl.cursorLocation]);
+                        updateCursorLocationRight(currentRow)
                     }
                 }                
             }
@@ -477,9 +463,18 @@
                 }
             }
 
+            function getCurrentCursorIndexPosition(currentRow){
+                var cursorPosition = $(currentRow.children).toArray().findIndex(function(obj){
+                    return $(obj).hasClass('cursor')
+                })
+                return cursorPosition                
+            }
+
             function moveLeftWithShift(){
                 if(DataService.unitType == 'REGULAR' && DataService.getUnitById($rootScope.clckedLine).unitType == 'REGULAR'){
                     var currentRow = $('#row-'+$rootScope.clckedLine)[0];
+                    $scope.selCtrl.cursorLocation = getCurrentCursorIndexPosition(currentRow)
+                    
                     if($scope.selCtrl.cursorLocation > 0){
 
                         var tokenToAdd = currentRow.children[$scope.selCtrl.cursorLocation-1];
@@ -490,25 +485,34 @@
 
                         var tokenToAdd = currentRow.children[$scope.selCtrl.cursorLocation-1];
 
-                        if(!$(tokenToAdd).hasClass('dot-sep') && !$(tokenToAdd).hasClass('cursor')){
-                            if($(tokenToAdd).hasClass('clickedToken')){
-                                $(tokenToAdd).removeClass('clickedToken');
-                                
+                        // allow to add only tokens - not units
+                        if($(tokenToAdd).hasClass('unit-wrapper') == false){
+                            if(!$(tokenToAdd).hasClass('dot-sep') && !$(tokenToAdd).hasClass('cursor')){
+                                if($(tokenToAdd).hasClass('clickedToken')){
+                                    $(tokenToAdd).removeClass('clickedToken');
+                                    
 
-                                //The token is already selected, need to remove it.
-                                var tokenId = splitStringByDelimiter($(tokenToAdd).attr('data-wordid'),"-")[1];
-                                removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
-                            }else{
-                                if(tokenToAdd){
-                                    $rootScope.selectedTokensArray.push(tokenToAdd.outerHTML);
-                                    $(tokenToAdd).addClass('clickedToken');
+                                    //The token is already selected, need to remove it.
+                                    var tokenId = splitStringByDelimiter($(tokenToAdd).attr('data-wordid'),"-")[1];
+                                    removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
+                                }else{
+                                    if(tokenToAdd){
+                                        $rootScope.selectedTokensArray.push(tokenToAdd.outerHTML);
+                                        $(tokenToAdd).addClass('clickedToken');
+                                    }
+                                    
                                 }
-                                
                             }
                         }
                         updateCursorLocationLeft(currentRow);
                     }
                 }
+            }
+            function updateCursorLocationRight(currentRow){
+                $scope.selCtrl.cursorLocation++;
+                var directiveCursor = $('#cursor-'+$rootScope.clckedLine)[0];
+                currentRow.removeChild(directiveCursor);
+                currentRow.insertBefore(directiveCursor, currentRow.children[$scope.selCtrl.cursorLocation]);
             }
             function updateCursorLocationLeft(currentRow){
                 $scope.selCtrl.cursorLocation--;
@@ -1221,7 +1225,7 @@
             // rootScope.selectedTokensArray.push(event.toElement.outerHTML);
 
             var wordIndex = parseInt($(event.toElement).attr('data-wordid').split('-')[1]);
-            var allWordsArray = $('#row-'+scope.selCtrl.selectedRow).find('.selectable-word');
+            var allWordsArray = $('#row-'+scope.selCtrl.selectedRow+' > .selectable-word');
 
             var splittedLineId = scope.selCtrl.lineId.toString().split('-');
             var rowID = '#row-';

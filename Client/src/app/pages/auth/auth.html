@@ -20,21 +20,21 @@
     </div>
 
 
-    <nav class="navbar navbar-default">
+    <!-- <nav class="navbar navbar-default">
         <div class="container-fluid bg-primary" >
             <div class="navbar-header">
                 <a href="#" class="navbar-brand" style="color:#fff">UCCA</a></div>
         </div>
-    </nav>
+    </nav> -->
 
 
     <div class="container">
 
 
-        <div class="row auth-main">
+        <div class="row auth-main" style="min-height: 400px;">
             <div class="auth-block"> 
-              <h1>Sign in to UCCA Admin</h1>
-              <a ui-sref="reg" class="auth-link">New to UCCA Admin? Sign up!</a>
+              <h1>Sign in to UCCA App</h1>
+              <a ui-sref="reg" class="auth-link">New to UCCA App? Sign up!</a>
               <form class="form-horizontal" id="login-form" name="vm.loginDetails" novalidate>
 
                 <div class="form-group" ng-class="{'has-error': vm.loginDetails.email.$invalid && (vm.loginDetails.email.$dirty || vm.loginDetails.$submitted)}" style="">
@@ -64,11 +64,11 @@
         </div>
 
 
-        <div class="row">
+        <div class="row details" style="line-height: 30px;font-size:20px;">
 
             <div class="col-md-12">
                 <div>
-                    <h1>The UCCA Project</h1>
+                    <!-- <h1>The UCCA Project</h1> -->
                     <p>Universal Conceptual Cognitive Annotation (UCCA) is a novel semantic approach to grammatical representation. It was developed in the Computational Linguistics Lab of the Computer Science Department of the Hebrew University by Omri Abend and Ari Rappoport.</p>
 
                     <p>UCCA uses purely semantic categories and DAG structures to analyze and annotate the semantics of natural languages. The basic set of semantic categories (the foundational layer) is inspired by work in linguistic typology, cognitive grammar, and neuroscience. The annotation so far focused on argument-structure and linkage phenomena.</p>
@@ -76,11 +76,14 @@
                     <p>We have annotated 160K tokens from English Wikipedia with the UCCA scheme, as well as a 30K English-French parallel corpus. A German annotation project is also underway. </p>
 
                     <p>Due to the complexity of semantic structures, there are often many applicable annotations for a given text. For practical reasons, we select a small set of highly useful distinctions, and apply them to provide one plausible annotation (interpretation). </p>
-
+                    <p>
+                        All UCCA's resources are available <a href="http://www.cs.huji.ac.il/~oabend/ucca.html" title="resources" target="_blank">here</a>‏.
+                    </p>
                 </div>
-
                 <div>
+                    <br>
                     <h2>About UCCA</h2>
+                    <br>
                     <p>UCCA (Universal Conceptual Cognitive Annotation) (Abend and Rappoport, 2013) is a cross-linguistically applicable scheme for semantic annotation. Formally, an UCCA structure is a directed acyclic graph (DAG), whose leaves correspond to the words of the text. The graph&rsquo;s nodes, called units, are either terminals or several elements jointly viewed as a single entity according to some semantic or cognitive consideration. Edges bear a category, indicating the role of the sub-unit in the structure the unit represents. UCCA&rsquo;s basic inventory of distinctions (its foundational layer) focuses on argument structures (adjectival, nominal, verbal and others) and relations between them. The most basic notion is the Scene, which describes a movement, an action or a state which persists in time. Each Scene contains one main relation and zero or more participants. </p>
 
                     <p>For example, the sentence &ldquo;After graduation, Tom moved to America&rdquo; (see figure) contains two Scenes, whose main relations are &ldquo;graduation&rdquo; and &ldquo;moved&rdquo;. The participant &ldquo;Tom&rdquo; is a part of both Scenes, while &ldquo;America&rdquo; only of the latter. Further categories account for inter-scene relations and the sub-structures of participants and relations. </p>
@@ -111,7 +114,9 @@
                 </div>
 
                 <div>
+                    <br>
                     <h2>Contact Us</h2>
+                    <br>
                     <p>With any questions, please contact:</p>
 
                     <p>

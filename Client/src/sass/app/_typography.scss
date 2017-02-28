@@ -271,7 +271,12 @@ p {
   font-family: $font-family;
   font-size: 14px;
 }
-
+.details{
+  p{
+    line-height: 30px;
+    font-size: 20px;
+  }
+}
 p.small-text {
   color: $help-text;
   font-size: 12px;
