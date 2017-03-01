@@ -94,9 +94,11 @@
                 animation: true,
                 templateUrl: 'app/pages/annotation/templates/categoryInfo.html',
                 size: 'lg',
-                controller: function($scope){
+                controller: function($scope,$sce){
                     $scope.name = defCtrl.definitionDetails.name;
-                    $scope.description = defCtrl.definitionDetails.description;
+                    if(defCtrl.definitionDetails.description){
+                        $scope.description = $sce.trustAsHtml(defCtrl.definitionDetails.description);
+                    }
                 }
             });
         };

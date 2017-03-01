@@ -280,6 +280,7 @@
 
             function moveRight(){
                 var currentRow = $('#row-'+$rootScope.clckedLine)[0];
+                $scope.selCtrl.cursorLocation = getCurrentCursorIndexPosition(currentRow)
                 if(DataService.unitType == 'REMOTE'){
                         //Select The first
                     var firstUnit = $(currentRow).find('.selected-unit')[0];
@@ -376,6 +377,7 @@
             function moveRightWithCtrl(){
                 if(DataService.unitType = 'REGULAR'){
                     var currentRow = $('#row-'+$rootScope.clckedLine)[0];
+                    $scope.selCtrl.cursorLocation = getCurrentCursorIndexPosition(currentRow)
                     if($scope.selCtrl.cursorLocation < $(currentRow).children().length){
 
                         $scope.selCtrl.cursorLocation++;
@@ -424,6 +426,7 @@
 
             function moveLeft(){
                 var currentRow = $('#row-'+$rootScope.clckedLine)[0];
+                $scope.selCtrl.cursorLocation = getCurrentCursorIndexPosition(currentRow)
                 if(DataService.unitType == 'REMOTE'){
                         //Select The first
                     var firstUnit = $(currentRow).find('.selected-unit')[0];
@@ -452,6 +455,7 @@
 
             function moveLeftWithCtrl(){
                 var currentRow = $('#row-'+$rootScope.clckedLine)[0];
+                $scope.selCtrl.cursorLocation = getCurrentCursorIndexPosition(currentRow)
                 if($scope.selCtrl.cursorLocation > 0){
 
                     $scope.selCtrl.cursorLocation--;

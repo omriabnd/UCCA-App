@@ -92,20 +92,19 @@
 			GENERAL_ERROR: "Something went wrong. Please try again later."
 		},
 		CATEGORIES_COLORS:[
-			{color:"white",backgroundColor:"#1c2b36"},
-			{color:"white",backgroundColor:"#209e91"},
-			{color:"white",backgroundColor:"#337ab7"},
-			{color:"white",backgroundColor:"#dd4b39"},
-			{color:"white",backgroundColor:"#4ab6d5"},
-			{color:"white",backgroundColor:"#33560a"},
-			{color:"white",backgroundColor:"#390a56"},
-			{color:"white",backgroundColor:"#8c7367"},
-			{color:"black",backgroundColor:"#c6e4f2"},
-			{color:"white",backgroundColor:"#F58E20"},
-			{color:"white",backgroundColor:"#3C7275"},
-			{color:"white",backgroundColor:"#CF5C42"},
-			{color:"white",backgroundColor:"#3C3CBA"},
-			{color:"white",backgroundColor:"#064447"}
+			{color: "white", backgroundColor: "#444267"},
+			{color: "white", backgroundColor: "#0c9640"},
+			{color: "white", backgroundColor: "#AACC55"},
+			{color: "white", backgroundColor: "#db3937"},
+			{color: "white", backgroundColor: "#9302d9"},
+			{color: "white", backgroundColor: "#ef86af"},
+			{color: "white", backgroundColor: "#ff7b23"},
+			{color: "white", backgroundColor: "#3f32fe"},
+			{color: "white", backgroundColor: "#cb9d02"},
+			{color: "white", backgroundColor: "#935754"},
+			{color: "white", backgroundColor: "#4099b7"},
+			{color: "black", backgroundColor: "#66CDAA"},
+			{color: "white", backgroundColor: "#DC143C"}
 		],
 		NAV_BAR_ITEMS:[
 			{
