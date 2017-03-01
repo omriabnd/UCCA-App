@@ -626,7 +626,13 @@
                 if(DataService.unitType == 'REMOTE'){
                         //Select The first
                     var firstUnit = $(currentRow).find('.selected-unit')[0];
-                    onClickForRemote(firstUnit);
+                    var category = {
+                        id : null,
+                        color : 'gray',
+                        abbreviation : null
+                    };
+                    onClickForRemote.call({category:category,lineToAddRemoteUnit:$rootScope.lineToAddRemoteUnit},currentRow)
+                    // onClickForRemote(firstUnit);
                 }else{
                     if($rootScope.selectedTokensArray.length > 0){
                         $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
@@ -674,6 +680,7 @@
                     });
 
                     var lineToAddRemoteUnit = $rootScope.clckedLine;
+                    $rootScope.lineToAddRemoteUnit = lineToAddRemoteUnit;
                     $('.annotation-page-container').toggleClass('crosshair-cursor');
                     $( ".selectable-word" ).attr('mousedown','').unbind('mousedown');
 
@@ -705,11 +712,12 @@
             
             function onClickForRemote(e){
                 if(!!!e){ e = arguments[arguments.length-1]}
+                if(!e.toElement){ e.toElement = $(e).parents('.directive-info-data-container').first() } // when clicking os space for add remote unit
                 if($rootScope.preventRemoteAsign){
                     $rootScope.preventRemoteAsign = false;
                     return;
                 }
-                if($rootScope.clickedUnit == $(e.toElement).attr('unit-wrapper-id') || $rootScope.clickedUnit == $(e).attr('unit-wrapper-id')){
+                if( $rootScope.clickedUnit == $(e.toElement).attr('unit-wrapper-id') || $rootScope.clickedUnit == $(e).attr('unit-wrapper-id')){
                     $scope.selCtrl.open('app/pages/annotation/templates/errorModal.html',
                         'md',"Unit cannot be selected as remote."
                     );
@@ -765,7 +773,7 @@
                     DataService.getUnitById(originalId).usedAsRemote.push($rootScope.clckedLine);
                     DataService.updateDomWhenInsertFinishes();
 
-                    e.toElement ? $scope.$apply() : '';
+                    //e.toElement ? $scope.$apply() : '';
 
                     resetBindingRemoteEvents()
 
@@ -1510,7 +1518,11 @@
             var parentUnit = DataService.getUnitById(DataService.getParentUnitId(unitToValidate.annotation_unit_tree_id))
             var isUnitValidated = restrictionsValidatorService.checkRestrictionsOnFinish(unitToValidate,parentUnit);
             if(isUnitValidated){
-                unitToValidate.gui_status = 'HIDDEN';
+                if(parentUnit.annotation_unit_tree_id == "0"){
+                    unitToValidate.gui_status = 'HIDDEN';
+                }else{
+                    unitToValidate.gui_status = 'COLLAPSE';
+                }
                 Core.showNotification('success','Annotation unit ' + unitToValidate.annotation_unit_tree_id + ' has finished successfully' )
                 var parentId = DataService.getParentUnitId(unitToValidate.annotation_unit_tree_id);
                 var parentRowElem = $('#directive-info-data-container-'+parentId)
