@@ -61,7 +61,8 @@ $text-color: #ffffff;
       text-decoration: none;
       outline: none;
       transition: all 0.2s ease;
-      color: $primary;
+      // color: $primary;
+      color: #7ee4da;
       &:hover {
         color: $primary-dark;
       }
