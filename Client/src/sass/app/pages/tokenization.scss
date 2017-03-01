@@ -1,0 +1,89 @@
+.tokenization-page{
+
+	* {
+		outline: transparent;
+	}
+	.tokenization-text{
+	  height: 100% !important;
+	  resize: none;
+	  overflow: auto
+	}
+
+	.tokenization-panel-header{
+	  height:auto !important;
+	}
+
+	.button-container {
+	  display: inline-block;
+	  float: right;
+	}
+
+	.text-container {
+	  height: 85%;
+	}
+
+	.medium-large-panel {
+	    height: 400px;
+
+		textarea {
+			height: 90%;
+		}
+	}
+
+	.token{
+		-moz-user-modify: read-write;
+		-ms-user-modify: read-write;
+		-webkit-user-modify: read-write;
+		user-modify: read-write;
+		cursor: pointer;
+	}
+
+	.splitted-token{
+		border-top: 1px solid black;
+	}
+
+	/* Put your css in here */
+
+
+	.token-view span.token {
+		background-color: yellow;
+		margin: 0px 2px;
+	}
+
+	.sub-token {
+		border-top: 2px orange solid;
+
+	}
+
+	.sub-token.odd {
+		border-color: navy;
+
+	}
+
+
+	span.token-wrapper {
+		border-bottom: 2px brown solid;
+		margin: 0px 3px;
+		margin-bottom: 2px;
+		display: inline-block;
+	}
+
+	span.token-wrapper.odd {
+		border-color: lime;
+	}
+
+	span.token-text {
+		border: 1px solid brown;
+	}
+
+	span.token-space {
+		/*border: 1px solid yellow;*/
+		/*background: red;*/
+
+	}
+
+	.large-text {
+		font-size: 20px;
+		font-weight: bold;
+	}
+}

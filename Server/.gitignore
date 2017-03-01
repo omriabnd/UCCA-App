@@ -1,0 +1,8 @@
+/ucaaApp/__pycache__/*.pyc
+/ucaaApp/migrations/__pycache__/*.pyc
+/uccaApp/__pycache__
+__pycache__
+.idea
+workspace.xml
+settings.cpython-34.pyc
+Layers.cpython-34.pyc

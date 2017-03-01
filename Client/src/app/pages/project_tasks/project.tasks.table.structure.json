@@ -1,0 +1,185 @@
+[
+  {
+    "key":"id",
+    "name":"Id",
+    "order":1,
+    "type":"text",
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "orderInSearch":1
+  },
+  {
+    "key":"status",
+    "name":"Status",
+    "order":2,
+    "filter":true,
+    "search":true,
+    "type":"select",
+    "placeholder":"Enter Status...",
+    "value":"",
+    "showInTable":true,
+    "orderInSearch":2,
+    "options":[
+      { "label": "NOT_STARTED", "id": 1 },
+      { "label": "ONGOING", "id": 2 },
+      { "label": "SUBMITTED", "id": 3 },
+      { "label": "REJECTED", "id": 4 }
+    ]
+  },
+  {
+    "key":"manager_comment",
+    "name":"Manager Comment",
+    "order":3,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Comment...",
+    "value":"",
+    "showInTable":true,
+    "orderInSearch":2
+  },
+  {
+    "key":"project",
+    "name":"Project",
+    "order":4,
+    "filter":true,
+    "search":false,
+    "type":"text",
+    "placeholder":"Project...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"user",
+    "name":"User",
+    "order":5,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter User...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"passage",
+    "name":"Passage",
+    "order":6,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Passage...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"parent",
+    "name":"Parent",
+    "order":7,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Parent...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"children",
+    "name":"Children",
+    "order":8,
+    "filter":true,
+    "search":false,
+    "type":"text",
+    "placeholder":"Enter Children...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"type",
+    "name":"Type",
+    "order":9,
+    "filter":false,
+    "search":true,
+    "type":"select",
+    "placeholder":"Enter Type...",
+    "value":"",
+    "showInTable":true,
+    "options":[
+      { "label": "ANNOTATION", "id": 1 },
+      { "label": "TOKENIZATION", "id": 2 },
+      { "label": "REVIEW", "id": 3 }
+    ]
+  },
+  {
+    "key":"categories",
+    "name":"Categories",
+    "order":10,
+    "filter":false,
+    "search":false,
+    "type":"text",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":false
+  },
+  {
+    "key":"is_active",
+    "name":"Is Active",
+    "order":12,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Is Active...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"is_demo",
+    "name":"Is Demo",
+    "order":13,
+    "filter":false,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Is Demo...",
+    "value":"",
+    "showInTable":false
+  },
+  {
+    "key":"actions",
+    "name":"Actions",
+    "order":14,
+    "filter":false,
+    "search":false,
+    "showInTable":true,
+    "type":"sele",
+    "buttons":[
+      {
+        "name":"Remove",
+        "order":1,
+        "roles":["ADMIN","PM"],
+        "class":"btn-danger",
+        "functionName":"removeRow"
+      },
+      {
+        "name":"Edit",
+        "order":2,
+        "roles":["ADMIN","PM"],
+        "class":"btn-info",
+        "functionName":"editRow"
+      },
+      {
+        "name":"Go",
+        "order":3,
+        "roles":["ADMIN","PM","ANNOTATOR","GUEST"],
+        "class":"btn-success",
+        "functionName":"previewTask"
+      },
+      {
+        "name":"Create New Task",
+        "order":4,
+        "roles":["ADMIN","PM"],
+        "class":"btn-success",
+        "functionName":"createNewTask"
+      }
+    ]
+  }
+]

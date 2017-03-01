@@ -1,0 +1,93 @@
+[
+  {
+    "key":"id",
+    "name":"Id",
+    "order":"1",
+    "type":"text",
+    "filter":true,
+    "search":true,
+    "showInTable":true
+  },
+  {
+    "key":"name",
+    "name":"Name",
+    "order":"2",
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Name...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"text",
+    "name":"Text",
+    "order":"3",
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Text...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"created_by",
+    "name":"Created by",
+    "order":"4",
+    "filter":false,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":false
+  },
+  {
+    "key":"created_at",
+    "name":"Created at",
+    "order":"5",
+    "filter":false,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":false
+  },
+  {
+    "key":"updated_at",
+    "name":"Updated At",
+    "order":"6",
+    "filter":false,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":false
+  },
+  {
+    "key":"is_active",
+    "name":"Is Active",
+    "order":"7",
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Is Active...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"actions",
+    "name":"Actions",
+    "order":"8",
+    "filter":false,
+    "search":false,
+    "showInTable":true,
+    "buttons":[
+      {
+        "name":"Choose",
+        "order":"1",
+        "class":"btn-info",
+        "functionName":"chooseRow"
+      }
+    ]
+  }
+]

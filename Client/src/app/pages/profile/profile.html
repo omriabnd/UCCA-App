@@ -1,0 +1,94 @@
+<div ba-panel ba-panel-class="profile-page">
+  <div class="panel-content">
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group row clearfix">
+          <label for="inputEmail" class="col-sm-3 control-label">Email</label>
+
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="inputEmail" placeholder="" value="" ng-model="vm.profileDetails.email">
+          </div>
+        </div>
+        <div class="form-group row clearfix">
+          <label for="inputId" class="col-sm-3 control-label">Id</label>
+
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="inputId" placeholder="" value="" ng-model="vm.profileDetails.id" disabled>
+          </div>
+        </div>
+        <div class="form-group row clearfix">
+          <label for="inputFirstName" class="col-sm-3 control-label">First Name</label>
+
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="inputFirstName" placeholder="" value="" ng-model="vm.profileDetails.first_name">
+          </div>
+        </div>
+        <div class="form-group row clearfix">
+          <label for="inputLastName" class="col-sm-3 control-label">Last Name</label>
+
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="inputLastName" placeholder="" value="" ng-model="vm.profileDetails.last_name">
+          </div>
+        </div>
+        <div class="form-group row clearfix">
+          <label for="inputOrganization" class="col-sm-3 control-label">Organization</label>
+
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="inputOrganization" placeholder="" value="" ng-model="vm.profileDetails.organization">
+          </div>
+        </div>
+        <div class="form-group row clearfix">
+          <label for="inputAffiliation" class="col-sm-3 control-label">Affiliation</label>
+
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="inputAffiliation" placeholder="" value="" ng-model="vm.profileDetails.affiliation">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <button type="button" class="btn btn-primary btn-with-icon save-profile" ng-click="vm.saveProfileData()">
+          <i class="ion-android-checkmark-circle"></i>Save
+        </button>
+      </div>
+    </div>
+
+    <h3 class="with-line">Change Password</h3>
+
+    <div class="row">
+      <div class="col-md-6">
+        <form name="vm.passwordDetails" novalidate id="password-change-form">
+          <div class="form-group row clearfix" ng-class="{'has-error': vm.passwordDetails.new_password == null && (vm.passwordDetails.$dirty || vm.passwordDetails.$submitted)}">
+            <label for="inputNewPassword" class="col-sm-3 control-label">New Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control" id="inputNewPassword" placeholder="New password" value="" ng-model="vm.passwordDetails.new_password" required>
+              <span class="help-block error-block basic-block">Required</span>
+            </div>
+          </div>
+          <div class="form-group row clearfix" ng-class="{'has-error': !vm.newPassEquals && vm.passwordDetails.new_password_again }">
+            <label for="inputPasswordAgain" class="col-sm-3 control-label">New Password Again</label>
+
+            <div class="col-sm-9">
+              <input type="password" class="form-control" id="inputPasswordAgain" placeholder="New password again" value="" ng-model="vm.passwordDetails.new_password_again" required>
+              <span class="help-block error-block basic-block">Passwords should match</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <button type="button" class="btn btn-primary btn-with-icon exit-profile-page" ng-click="vm.cancle()">
+                <i class="ion-android-checkmark-circle"></i>Cancel
+              </button>
+              <button type="submit" class="btn btn-primary btn-with-icon save-new-pass" ng-click="vm.updatePassword()">
+                <i class="ion-android-checkmark-circle"></i>Save
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>

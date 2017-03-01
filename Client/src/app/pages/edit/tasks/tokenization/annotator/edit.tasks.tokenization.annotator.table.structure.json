@@ -1,0 +1,57 @@
+[
+  {
+    "key":"id",
+    "name":"ID",
+    "order":"1",
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "type":"text",
+    "placeholderEnter ":"Id...",
+    "value":""
+  },
+  {
+    "key":"first_name",
+    "name":"First Name",
+    "order":"2",
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "type":"select",
+    "placeholder":"Enter Content...",
+    "value":""
+  },
+  {
+    "key":"last_name",
+    "name":"Last Name",
+    "order":"3",
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "type":"select",
+    "placeholder":"Enter Content...",
+    "value":""
+  },
+  {
+    "key":"actions",
+    "name":"Actions",
+    "order":"4",
+    "filter":false,
+    "search":false,
+    "showInTable":true,
+    "buttons":[
+      {
+        "name":"Choose",
+        "order":"1",
+        "class":"btn-success",
+        "functionName":"chooseRow"
+      },
+      {
+        "name":"Info",
+        "order":"2",
+        "class":"btn-info",
+        "functionName":"infoRow"
+      }
+    ]
+  }
+]

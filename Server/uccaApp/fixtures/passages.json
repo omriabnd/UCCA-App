@@ -1,0 +1,26 @@
+[
+  {
+    "model": "uccaApp.passages",
+    "pk": 1,
+    "fields": {
+      "type": "PUBLIC",
+      "text": "Estpariatur incupidatat deserunt esse euadipisicing commodo. Officia aliqua occaecat doanim aliquip reprehenderit pariatur. Consectetur ullamco nisi consequat laborum elit. Induis magna enim labore veniam labore veniam tempor.",
+      "source": 1,
+      "is_active": true,
+      "created_at": "2017-01-09T10:56:28.000228Z",
+      "updated_at": "2017-01-09T10:56:28.002229Z"
+    }
+  },
+  {
+    "model": "uccaApp.passages",
+    "pk": 2,
+    "fields": {
+      "type": "PUBLIC",
+      "text": "Esse reprehenderit officia nulla commodo nulla ex proident nisi velit qui excepteur et dolor. Exercitation Lorem id adipisicing occaecat. Ullamco nostrud quis eu et est magna commodo laboris culpa cillum culpa cillum.",
+      "source": 1,
+      "is_active": true,
+      "created_at": "2017-01-09T10:56:28.000228Z",
+      "updated_at": "2017-01-09T10:56:28.002229Z"
+    }
+  }
+]
