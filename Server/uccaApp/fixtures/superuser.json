@@ -4,8 +4,8 @@
     "pk": 1,
     "fields": {
       "id": 1,
-      "username" : "yarin",
-      "password" : "pbkdf2_sha256$30000$Dn9KIykyksnt$5TEsCKFG4XN3ysgNZWNJt6wtfTvJEkptlpvTihK1D5Y=",
+      "username" : null, // TODO: need to be fetched from the config.py
+      "password" : null, // TODO: need to be fetched from the config.py
       "first_name" : "yarin",
       "last_name" : "slivka",
       "email" : "yarin@zigit.co.il",

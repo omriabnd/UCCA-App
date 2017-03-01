@@ -28,13 +28,8 @@ DEBUG = True
 # python manage.py runserver 0.0.0.0:8000
 ALLOWED_HOSTS = [
     '192.168.0.*',
-    '192.168.0.113',
     'localhost',
     '127.0.0.1',
-    '192.168.0.110',
-    '192.168.0.118',
-    '192.168.0.114',
-    '192.168.0.105',
 ]
 
 
@@ -113,16 +108,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ucca.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'UccaDb'),
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -131,7 +116,7 @@ DATABASES = {
         },
         'NAME': 'ucca-a',
         'USER': 'postgres',
-        'PASSWORD': 'Zigit1346',
+        'PASSWORD': '', # TODO - Add your 'ucca-a' db password
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
