@@ -1,0 +1,821 @@
+[
+  {
+    "model": "auth.group_permissions",
+    "pk": 1,
+    "fields": {
+      "id": 180,
+      "group_id": 1,
+      "permission_id": 1
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 2,
+    "fields": {
+      "id": 181,
+      "group_id": 1,
+      "permission_id": 2
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 3,
+    "fields": {
+      "id": 182,
+      "group_id": 1,
+      "permission_id": 3
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 4,
+    "fields": {
+      "id": 183,
+      "group_id": 1,
+      "permission_id": 4
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 5,
+    "fields": {
+      "id": 184,
+      "group_id": 1,
+      "permission_id": 5
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 6,
+    "fields": {
+      "id": 185,
+      "group_id": 1,
+      "permission_id": 6
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 7,
+    "fields": {
+      "id": 186,
+      "group_id": 1,
+      "permission_id": 7
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 8,
+    "fields": {
+      "id": 187,
+      "group_id": 1,
+      "permission_id": 8
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 9,
+    "fields": {
+      "id": 188,
+      "group_id": 1,
+      "permission_id": 9
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 10,
+    "fields": {
+      "id": 189,
+      "group_id": 1,
+      "permission_id": 10
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 11,
+    "fields": {
+      "id": 190,
+      "group_id": 1,
+      "permission_id": 11
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 12,
+    "fields": {
+      "id": 191,
+      "group_id": 1,
+      "permission_id": 12
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 13,
+    "fields": {
+      "id": 192,
+      "group_id": 1,
+      "permission_id": 13
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 14,
+    "fields": {
+      "id": 193,
+      "group_id": 1,
+      "permission_id": 14
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 15,
+    "fields": {
+      "id": 194,
+      "group_id": 1,
+      "permission_id": 15
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 16,
+    "fields": {
+      "id": 195,
+      "group_id": 1,
+      "permission_id": 16
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 17,
+    "fields": {
+      "id": 196,
+      "group_id": 1,
+      "permission_id": 17
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 18,
+    "fields": {
+      "id": 197,
+      "group_id": 1,
+      "permission_id": 18
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 19,
+    "fields": {
+      "id": 198,
+      "group_id": 1,
+      "permission_id": 19
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 20,
+    "fields": {
+      "id": 199,
+      "group_id": 1,
+      "permission_id": 20
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 21,
+    "fields": {
+      "id": 200,
+      "group_id": 1,
+      "permission_id": 21
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 22,
+    "fields": {
+      "id": 201,
+      "group_id": 1,
+      "permission_id": 22
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 23,
+    "fields": {
+      "id": 202,
+      "group_id": 1,
+      "permission_id": 23
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 24,
+    "fields": {
+      "id": 203,
+      "group_id": 1,
+      "permission_id": 24
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 25,
+    "fields": {
+      "id": 204,
+      "group_id": 1,
+      "permission_id": 25
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 26,
+    "fields": {
+      "id": 205,
+      "group_id": 1,
+      "permission_id": 26
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 27,
+    "fields": {
+      "id": 206,
+      "group_id": 1,
+      "permission_id": 27
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 28,
+    "fields": {
+      "id": 207,
+      "group_id": 1,
+      "permission_id": 28
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 29,
+    "fields": {
+      "id": 208,
+      "group_id": 1,
+      "permission_id": 29
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 30,
+    "fields": {
+      "id": 209,
+      "group_id": 1,
+      "permission_id": 30
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 31,
+    "fields": {
+      "id": 210,
+      "group_id": 1,
+      "permission_id": 31
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 32,
+    "fields": {
+      "id": 211,
+      "group_id": 1,
+      "permission_id": 32
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 33,
+    "fields": {
+      "id": 212,
+      "group_id": 1,
+      "permission_id": 33
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 34,
+    "fields": {
+      "id": 213,
+      "group_id": 1,
+      "permission_id": 34
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 35,
+    "fields": {
+      "id": 214,
+      "group_id": 1,
+      "permission_id": 35
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 36,
+    "fields": {
+      "id": 215,
+      "group_id": 1,
+      "permission_id": 36
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 37,
+    "fields": {
+      "id": 216,
+      "group_id": 1,
+      "permission_id": 37
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 38,
+    "fields": {
+      "id": 217,
+      "group_id": 1,
+      "permission_id": 38
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 39,
+    "fields": {
+      "id": 218,
+      "group_id": 1,
+      "permission_id": 39
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 40,
+    "fields": {
+      "id": 219,
+      "group_id": 1,
+      "permission_id": 40
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 41,
+    "fields": {
+      "id": 220,
+      "group_id": 1,
+      "permission_id": 41
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 42,
+    "fields": {
+      "id": 221,
+      "group_id": 1,
+      "permission_id": 42
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 43,
+    "fields": {
+      "id": 222,
+      "group_id": 1,
+      "permission_id": 43
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 44,
+    "fields": {
+      "id": 223,
+      "group_id": 1,
+      "permission_id": 44
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 45,
+    "fields": {
+      "id": 224,
+      "group_id": 1,
+      "permission_id": 45
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 46,
+    "fields": {
+      "id": 225,
+      "group_id": 1,
+      "permission_id": 46
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 47,
+    "fields": {
+      "id": 226,
+      "group_id": 1,
+      "permission_id": 47
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 48,
+    "fields": {
+      "id": 227,
+      "group_id": 1,
+      "permission_id": 48
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 49,
+    "fields": {
+      "id": 228,
+      "group_id": 1,
+      "permission_id": 49
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 50,
+    "fields": {
+      "id": 229,
+      "group_id": 1,
+      "permission_id": 50
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 51,
+    "fields": {
+      "id": 230,
+      "group_id": 1,
+      "permission_id": 51
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 52,
+    "fields": {
+      "id": 231,
+      "group_id": 1,
+      "permission_id": 52
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 53,
+    "fields": {
+      "id": 232,
+      "group_id": 1,
+      "permission_id": 53
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 54,
+    "fields": {
+      "id": 233,
+      "group_id": 1,
+      "permission_id": 54
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 55,
+    "fields": {
+      "id": 234,
+      "group_id": 1,
+      "permission_id": 55
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 56,
+    "fields": {
+      "id": 235,
+      "group_id": 1,
+      "permission_id": 56
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 57,
+    "fields": {
+      "id": 236,
+      "group_id": 1,
+      "permission_id": 57
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 58,
+    "fields": {
+      "id": 237,
+      "group_id": 1,
+      "permission_id": 58
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 59,
+    "fields": {
+      "id": 238,
+      "group_id": 1,
+      "permission_id": 59
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 60,
+    "fields": {
+      "id": 239,
+      "group_id": 1,
+      "permission_id": 60
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 61,
+    "fields": {
+      "id": 240,
+      "group_id": 1,
+      "permission_id": 61
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 62,
+    "fields": {
+      "id": 241,
+      "group_id": 1,
+      "permission_id": 62
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 63,
+    "fields": {
+      "id": 242,
+      "group_id": 1,
+      "permission_id": 63
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 64,
+    "fields": {
+      "id": 243,
+      "group_id": 1,
+      "permission_id": 64
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 65,
+    "fields": {
+      "id": 244,
+      "group_id": 1,
+      "permission_id": 65
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 66,
+    "fields": {
+      "id": 245,
+      "group_id": 1,
+      "permission_id": 66
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 67,
+    "fields": {
+      "id": 246,
+      "group_id": 1,
+      "permission_id": 67
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 68,
+    "fields": {
+      "id": 247,
+      "group_id": 1,
+      "permission_id": 68
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 69,
+    "fields": {
+      "id": 248,
+      "group_id": 1,
+      "permission_id": 69
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 70,
+    "fields": {
+      "id": 249,
+      "group_id": 1,
+      "permission_id": 70
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 71,
+    "fields": {
+      "id": 250,
+      "group_id": 1,
+      "permission_id": 71
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 72,
+    "fields": {
+      "id": 251,
+      "group_id": 1,
+      "permission_id": 72
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 73,
+    "fields": {
+      "id": 252,
+      "group_id": 1,
+      "permission_id": 73
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 74,
+    "fields": {
+      "id": 253,
+      "group_id": 1,
+      "permission_id": 74
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 75,
+    "fields": {
+      "id": 254,
+      "group_id": 1,
+      "permission_id": 75
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 76,
+    "fields": {
+      "id": 255,
+      "group_id": 1,
+      "permission_id": 76
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 77,
+    "fields": {
+      "id": 256,
+      "group_id": 1,
+      "permission_id": 77
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 78,
+    "fields": {
+      "id": 257,
+      "group_id": 1,
+      "permission_id": 78
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 79,
+    "fields": {
+      "id": 258,
+      "group_id": 1,
+      "permission_id": 79
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 80,
+    "fields": {
+      "id": 259,
+      "group_id": 1,
+      "permission_id": 80
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 81,
+    "fields": {
+      "id": 260,
+      "group_id": 1,
+      "permission_id": 81
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 82,
+    "fields": {
+      "id": 261,
+      "group_id": 1,
+      "permission_id": 82
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 83,
+    "fields": {
+      "id": 262,
+      "group_id": 1,
+      "permission_id": 83
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 84,
+    "fields": {
+      "id": 263,
+      "group_id": 1,
+      "permission_id": 84
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 85,
+    "fields": {
+      "id": 264,
+      "group_id": 1,
+      "permission_id": 85
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 86,
+    "fields": {
+      "id": 266,
+      "group_id": 1,
+      "permission_id": 86
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 87,
+    "fields": {
+      "id": 267,
+      "group_id": 1,
+      "permission_id": 87
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 88,
+    "fields": {
+      "id": 268,
+      "group_id": 1,
+      "permission_id": 88
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 89,
+    "fields": {
+      "id": 269,
+      "group_id": 1,
+      "permission_id": 89
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 90,
+    "fields": {
+      "id": 270,
+      "group_id": 1,
+      "permission_id": 90
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 91,
+    "fields": {
+      "id": 271,
+      "group_id": 1,
+      "permission_id": 91
+    }
+  }
+]

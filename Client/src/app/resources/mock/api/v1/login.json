@@ -1,0 +1,23 @@
+{
+  "token": "d834yx3n487r6xht3jh38434",
+  "profile": {
+    "id": "2",
+    "first_name": "nissim",
+    "last_name": "levy",
+    "email": "nissim@zigit.co.il",
+    "organization": "ZIGIT",
+    "affiliation": "ZIGIT",
+    "created_by": {
+      "id": "1",
+      "first_name": "yarin",
+      "last_name": "slivka"
+    },
+    "role": {
+      "id": 2,
+      "name": "Guest"
+    },
+    "created_at": "12.3.2013-14:27:32",
+    "updated_at": "12.3.2013-14:27:32",
+    "is_active": true
+  }
+}

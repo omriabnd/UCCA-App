@@ -1,0 +1,5 @@
+<div class="row">
+  <field class="form-field" ng-repeat="formElem in vm.smartTableStructure | orderBy:'order' track by $index " ng-if="formElem.search"></field>
+</div>
+
+<button type="submit" class="btn btn-primary" ng-click="vm.search(vm.smartTableStructure,vm.searchTable);">Submit</button>

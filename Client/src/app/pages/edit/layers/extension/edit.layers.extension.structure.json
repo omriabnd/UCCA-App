@@ -1,0 +1,385 @@
+[
+  {
+    "key":"id",
+    "name":"Id",
+    "order":1,
+    "type":"text",
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "disabled":true
+  },
+  {
+    "key":"name",
+    "name":"Name",
+    "order":2,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Name...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"tooltip",
+    "name":"Tooltip",
+    "order":3,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Tooltip...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"children",
+    "name":"Children",
+    "order":12,
+    "filter":true,
+    "search":false,
+    "viewOnly":true,
+    "type":"table",
+    "placeholder":"view only",
+    "value":[],
+    "class":"btn-default",
+    "functionName":"viewChildren",
+    "showInTable":true,
+    "tableStructure":[
+      {
+        "key":"id",
+        "name":"Id",
+        "order":1,
+        "type":"text",
+        "filter":true,
+        "search":true,
+        "showInTable":true
+      },
+      {
+        "key":"name",
+        "name":"Name",
+        "order":2,
+        "filter":true,
+        "search":true,
+        "type":"text",
+        "placeholder":"Enter Name...",
+        "value":"",
+        "showInTable":true
+      }
+    ]
+  },
+  {
+    "key":"parent",
+    "name":"Parent",
+    "order":11,
+    "filter":false,
+    "search":false,
+    "type":"table",
+    "viewOnly":true,
+    "placeholder":"view only",
+    "value":[],
+    "class":"btn-default",
+    "functionName":"viewParent",
+    "showInTable":true,
+    "tableStructure":[
+      {
+        "key":"id",
+        "name":"Id",
+        "order":1,
+        "type":"text",
+        "filter":true,
+        "search":true,
+        "showInTable":true
+      },
+      {
+        "key":"name",
+        "name":"Name",
+        "order":2,
+        "filter":true,
+        "search":true,
+        "type":"text",
+        "placeholder":"Enter Name...",
+        "value":"",
+        "showInTable":true
+      }
+    ]
+  },
+  {
+    "key":"description",
+    "name":"Description",
+    "order":4,
+    "filter":true,
+    "search":true,
+    "type":"editor",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"type",
+    "name":"Type",
+    "order":7,
+    "filter":true,
+    "search":true,
+    "type":"select",
+    "placeholder":"Enter Type...",
+    "value":"",
+    "showInTable":false,
+    "options":[
+      { "label": "tokenization", "id": 1 },
+      { "label": "Type 2", "id": 2 },
+      { "label": "Type 3", "id": 3 },
+      { "label": "Type 4", "id": 4 }
+    ]
+  },
+  {
+    "key":"created_by",
+    "name":"Created by",
+    "order":9,
+    "filter":true,
+    "search":true,
+    "type":"textInObject",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":true,
+    "disabled":true
+  },
+  {
+    "key":"categories",
+    "name":"Categories",
+    "order":6,
+    "filter":true,
+    "search":true,
+    "type":"table",
+    "showInTable":true,
+    "placeholder":"Choose Categories",
+    "value":[],
+    "class":"btn-default",
+    "functionName":"chooseCategory",
+    "tableStructure":"",
+    "managePageRoute":"categories.manage",
+    "tableStructure":[
+      {
+        "key":"id",
+        "name":"Id",
+        "order":1,
+        "type":"text",
+        "filter":true,
+        "search":true,
+        "showInTable":true
+      },
+      {
+        "key":"name",
+        "name":"Name",
+        "order":2,
+        "filter":true,
+        "search":true,
+        "type":"text",
+        "placeholder":"Enter Name...",
+        "value":"",
+        "showInTable":true
+      },
+      {
+        "key":"was_default",
+        "name":"was_default",
+        "order":3,
+        "filter":false,
+        "search":false,
+        "type":"text",
+        "placeholder":"Enter Description...",
+        "value":"",
+        "showInTable":false
+      },
+      {
+        "key":"shortcut_key",
+        "name":"HotKey",
+        "order":4,
+        "filter":true,
+        "search":true,
+        "type":"text",
+        "placeholder":"Enter Tooltip...",
+        "value":"",
+        "showInTable":true
+      },
+      {
+        "key":"abbreviation",
+        "name":"Abbreviation",
+        "order":5,
+        "filter":true,
+        "search":true,
+        "type":"text",
+        "placeholder":"Children...",
+        "value":"",
+        "showInTable":true
+      },
+      {
+        "key":"actions",
+        "name":"Actions",
+        "order":11,
+        "filter":false,
+        "search":false,
+        "showInTable":true,
+        "buttons":[
+          {
+            "name":"Remove",
+            "order":1,
+            "class":"btn-danger",
+            "functionName":"removeRow"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "key":"manager_comment",
+    "name":"Manager Comment",
+    "order":5,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "showInTable":true,
+    "placeholder":"Enter comment",
+    "value":""
+  },
+  {
+    "key":"projects",
+    "name":"Projects",
+    "order":8,
+    "filter":true,
+    "search":true,
+    "viewOnly":true,
+    "type":"table",
+    "placeholder":"view only",
+    "value":[],
+    "class":"btn-default",
+    "functionName":"viewProjects",
+    "showInTable":true,
+    "tableStructure":[
+      {
+        "key":"id",
+        "name":"Id",
+        "order":1,
+        "type":"text",
+        "filter":true,
+        "search":true,
+        "showInTable":true
+      },
+      {
+        "key":"name",
+        "name":"Name",
+        "order":2,
+        "filter":true,
+        "search":true,
+        "type":"text",
+        "placeholder":"Enter Name...",
+        "value":"",
+        "showInTable":true
+      }
+    ]
+  },
+  {
+    "key":"is_active",
+    "name":"Is Active",
+    "order":10,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Is Active...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"restrictions",
+    "name":"Restrictions",
+    "order":7,
+    "filter":false,
+    "search":false,
+    "showInTable":true,
+    "type":"table",
+    "placeholder":"Choose Restrictions",
+    "value":[],
+    "class":"btn-default",
+    "functionName":"manageRestrictions",
+    "managePageRoute":"restrictions",
+    "tableStructure":[
+      {
+        "key":"categories_1",
+        "name":"Category 1",
+        "order":1,
+        "filter":false,
+        "search":false,
+        "type":"text",
+        "placeholder":"Enter Description...",
+        "value":"",
+        "showInTable":true
+      },
+      {
+        "key":"type",
+        "name":"Type",
+        "order":2,
+        "filter":false,
+        "search":false,
+        "type":"text",
+        "placeholder":"Enter Description...",
+        "value":"",
+        "showInTable":true
+      },
+      {
+        "key":"categories_2",
+        "name":"Category 2",
+        "order":3,
+        "filter":false,
+        "search":false,
+        "type":"text",
+        "placeholder":"Enter Description...",
+        "value":"",
+        "showInTable":true
+      },
+
+      {
+        "key":"actions",
+        "name":"Actions",
+        "order":11,
+        "filter":false,
+        "search":false,
+        "showInTable":true,
+        "buttons":[
+          {
+            "name":"edit",
+            "order":1,
+            "class":"btn-success",
+            "functionName":"edit"
+          },
+          {
+            "name":"Remove",
+            "order":2,
+            "displayAs":"on-off",
+            "class":"btn-danger",
+            "functionName":"removeRow"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "key":"created_at",
+    "name":"Created at",
+    "order":12,
+    "filter":false,
+    "search":false,
+    "type":"text",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":false
+  },
+  {
+    "key":"updated_at",
+    "name":"Updated At",
+    "order":13,
+    "filter":false,
+    "search":false,
+    "type":"text",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":false
+  }
+]

@@ -1,0 +1,66 @@
+[
+  {
+    "model": "uccaApp.roles",
+    "pk": 1,
+    "fields": {
+      "id": 1,
+      "name": "ADMIN"
+    }
+  },
+  {
+    "model": "uccaApp.roles",
+    "pk": 2,
+    "fields": {
+      "id": 2,
+      "name": "PROJECT_MANAGER"
+    }
+  },
+  {
+    "model": "uccaApp.roles",
+    "pk": 3,
+    "fields": {
+      "id": 3,
+      "name": "ANNOTATOR"
+    }
+  },
+  {
+    "model": "uccaApp.roles",
+    "pk": 4,
+    "fields": {
+      "id": 4,
+      "name": "GUEST"
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 5,
+    "fields": {
+      "id": 1,
+      "name": "ADMIN"
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 6,
+    "fields": {
+      "id": 2,
+      "name": "PROJECT_MANAGER"
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 7,
+    "fields": {
+      "id": 3,
+      "name": "ANNOTATOR"
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 8,
+    "fields": {
+      "id": 4,
+      "name": "GUEST"
+    }
+  }
+]

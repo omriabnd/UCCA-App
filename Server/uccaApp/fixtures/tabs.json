@@ -1,0 +1,50 @@
+[
+  {
+    "model": "uccaApp.tabs",
+    "pk": 1,
+    "fields": {
+      "id": 1,
+      "name": "USERS"
+    }
+  },
+  {
+    "model": "uccaApp.tabs",
+    "pk": 2,
+    "fields": {
+      "id": 2,
+      "name": "PROJECTS"
+    }
+  },
+  {
+    "model": "uccaApp.tabs",
+    "pk": 3,
+    "fields": {
+      "id": 3,
+      "name": "TASKS"
+    }
+  },
+  {
+    "model": "uccaApp.tabs",
+    "pk": 4,
+    "fields": {
+      "id": 4,
+      "name": "LAYERS"
+    }
+  },
+  {
+    "model": "uccaApp.tabs",
+    "pk": 5,
+    "fields": {
+      "id": 5,
+      "name": "PASSAGES"
+    }
+  },
+  {
+    "model": "uccaApp.tabs",
+    "pk": 6,
+    "fields": {
+      "id": 6,
+      "name": "SOURCES"
+    }
+  }
+]

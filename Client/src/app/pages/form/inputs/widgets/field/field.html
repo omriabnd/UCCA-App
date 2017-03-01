@@ -1,0 +1,63 @@
+<div ng-switch="formElem.type" class="col-sm-3">
+	<div ng-switch-when="text" class="form-group">
+		<label for="inputLastName">{{::formElem.name}}</label>
+		<input type="text" ng-disabled="formElem.disabled" ng-model="formElem.value" class="form-control" placeholder="{{::formElem.placeholder}}">
+	</div>
+
+	<div ng-switch-when="textInObject" class="form-group">
+		<label for="inputLastName">{{::formElem.name}}</label>
+		<input extract-object-name field-elem="formElem.value" type="text" ng-disabled="formElem.disabled" ng-model="formElem.value" class="form-control" placeholder="{{::formElem.placeholder}}">
+	</div>
+
+	<div ng-switch-when="email" class="form-group">
+		<label for="inputLastName">{{::formElem.name}}</label>
+		<input type="email" ng-disabled="formElem.disabled" ng-model="formElem.value" class="form-control" placeholder="{{::formElem.placeholder}}">
+	</div>
+
+	<div ng-switch-when="number" class="form-group">
+		<label for="inputLastName">{{::formElem.name}}</label>
+		<input type="number" ng-disabled="formElem.disabled" ng-model="formElem.value" class="form-control" placeholder="{{::formElem.placeholder}}">
+	</div>
+
+	<div ng-switch-when="select" class="form-group">
+		<label for="inputLastName">{{::formElem.name}}</label>
+		<select class="form-control selectpicker" selectpicker
+				ng-disabled="formElem.disabled" ng-model="formElem.value"
+				ng-options="item as item.label for item in formElem.options track by item.id">
+		</select>
+	</div>
+
+	<div ng-switch-when="checkbox" class="form-group">
+		<label class="checkbox-inline custom-checkbox nowrap">
+			<input type="checkbox" ng-disabled="formElem.disabled" ng-model="formElem.value">
+			<span>{{::formElem.name}}</span>
+		</label>
+	</div>
+
+	<div ng-switch-when="button" class="form-group">
+		<label for="inputLastName">{{::formElem.name}}</label>
+		<button class="btn btn-xs {{formElem.class}}"
+		        ng-click="vm[formElem.functionName](formElem);">
+		        {{::formElem.placeholder}}
+		</button>
+		<pre ng-if="formElem.value" language-align="{{::formElem.value}}">
+			<span>{{::formElem.value}}</span>
+		</pre>
+	</div>
+
+	<div ng-switch-when="table" class="form-group">
+		<label for="inputLastName">{{::formElem.name}}</label>
+		<button class="btn btn-xs {{formElem.class}}"
+				ng-click="vm[formElem.functionName](formElem);"
+				ng-if="formElem.value.length == 0">
+			{{::formElem.placeholder}}
+		</button>
+		<smart-inner-table ng-if="formElem.value.length > 0" table-data='formElem.value' ctrl-module='vm' page-name='formElem.key' manage-page-route='formElem.managePageRoute' view-only='formElem.viewOnly' is-sortable="formElem.isSortable"></smart-inner-table>
+	</div>
+
+	<div ng-switch-when="editor" class="form-group">
+		<label for="inputLastName">{{::formElem.name}}</label>
+		<text-angular ng-model="formElem.value"></text-angular>
+	</div>
+
+</div>

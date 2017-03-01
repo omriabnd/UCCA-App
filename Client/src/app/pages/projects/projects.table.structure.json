@@ -1,0 +1,111 @@
+[
+  {
+    "key":"id",
+    "name":"ID",
+    "order":1,
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "type":"text"
+  },
+  {
+    "key":"name",
+    "name":"Name",
+    "order":2,
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "type":"text",
+    "placeholder":"Enter Name...",
+    "value":""
+  },
+  {
+    "key":"tooltip",
+    "name":"Tooltip",
+    "order":3,
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "type":"text",
+    "placeholder":"Enter Tooltip...",
+    "value":""
+  },
+  {
+    "key":"description",
+    "name":"Description",
+    "order":4,
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "type":"text",
+    "placeholder":"Description...",
+    "value":""
+  },
+  {
+    "key":"layer",
+    "name":"Layer",
+    "order":5,
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "type":"text",
+    "placeholder":"Enter layer name...",
+    "value":""
+  },
+  {
+    "key":"created_by",
+    "name":"Created By",
+    "order":7,
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "type":"text",
+    "placeholderEnter ":"Created By...",
+    "value":""
+  },
+  {
+    "key":"is_active",
+    "name":"Is active",
+    "order":8,
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "type":"checkbox",
+    "placeholderEnter ":"Is Active...",
+    "value":""
+  },
+  {
+    "key":"actions",
+    "name":"Actions",
+    "order":9,
+    "filter":false,
+    "search":false,
+    "showInTable":true,
+    "buttons":[
+      {
+        "name":"Edit",
+        "order":1,
+        "class":"btn-info",
+        "functionName":"editRow"
+      },
+      {
+        "name":"Remove",
+        "order":"2",
+        "class":"btn-danger",
+        "functionName":"removeRow"
+      },
+      {
+        "name":"Export",
+        "order":1,
+        "class":"btn-info",
+        "functionName":"exportProject"
+      },
+      {
+        "name":"My tasks",
+        "order":"2",
+        "class":"btn-danger",
+        "functionName":"myTasks"
+      }
+    ]
+  }
+]

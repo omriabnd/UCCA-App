@@ -1,0 +1,29 @@
+<div class="row" ba-panel>
+    <div class="col-md-12">
+
+    	<div class="input-demo radio-demo row">
+    		<div class="col-md-12">
+    			<label class="radio-inline custom-radio nowrap col-md-12">
+    				<input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="File" ng-model="vm.textFrom">
+    				<span class="form-group">
+    					<label for="input01">Text</label>
+    					<input type="file" class="form-control" id="input01" placeholder="Upload" onchange="angular.element(this).scope().vm.readTextFromFile(this)" ng-focus="vm.textFrom = 'File'">
+    				</span>
+    			</label>
+    		</div>
+    		<div class="col-md-12">
+    			<label class="radio-inline custom-radio nowrap col-md-12">
+    				<input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="Input" ng-model="vm.textFrom">
+    				<span class="form-group">
+    					<label for="textarea01">Textarea</label>
+    					<textarea placeholder="Default Input" class="form-control" id="textarea01" ng-model="vm.text" ng-focus="vm.textFrom = 'Input'"></textarea>
+    				</span>
+    			</label>
+    		</div>
+    	</div>
+
+		<button type="submit" class="btn btn-primary" ng-click="vm.edit();">Submit</button>
+		<button type="button" class="btn btn-danger" ng-click="vmEditCtrl.back();">Cancel</button>
+	</div>
+
+</div>

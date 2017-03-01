@@ -1,0 +1,47 @@
+[
+  {
+    "model": "auth.group_permissions",
+    "pk": 1,
+    "fields": {
+      "id": 272,
+      "group_id": 4,
+      "permission_id": 86
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 1,
+    "fields": {
+      "id": 273,
+      "group_id": 4,
+      "permission_id": 87
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 1,
+    "fields": {
+      "id": 274,
+      "group_id": 4,
+      "permission_id": 89
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 1,
+    "fields": {
+      "id": 275,
+      "group_id": 4,
+      "permission_id": 90
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 1,
+    "fields": {
+      "id": 276,
+      "group_id": 4,
+      "permission_id": 32
+    }
+  }
+]

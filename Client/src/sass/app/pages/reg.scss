@@ -1,0 +1,29 @@
+.auth-main{
+	&:before{
+		background: white !important
+	}
+	.auth-block{
+      max-width: 88%;
+
+	  form{
+
+	    label{
+	      text-align: left !important;
+	    }
+
+	    .sign-up-btn-container{
+	      text-align: right !important;
+	    }
+
+	  }
+	}
+}
+.ucca-reg-header{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	padding: 0 12px;
+	height: 70px;
+	overflow: hidden;
+}

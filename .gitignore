@@ -1,0 +1,4 @@
+*.pyc
+/Client/release
+settings.py
+*.log

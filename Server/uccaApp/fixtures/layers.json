@@ -1,0 +1,16 @@
+[
+  {
+    "model": "uccaApp.layers",
+    "pk": 1,
+    "fields": {
+      "id": 1,
+      "name": "RootLayerFixture",
+      "description": "layers from fixture",
+      "type": "ROOT",
+      "tooltip": "RootLayerFixture-tooltip",
+      "is_active": true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  }
+]

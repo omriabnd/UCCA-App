@@ -1,0 +1,58 @@
+[
+  {
+    "model": "uccaApp.roles_tabs",
+    "pk": 1,
+    "fields": {
+      "role_id": 1,
+      "tab_id": 1
+    }
+  },
+  {
+    "model": "uccaApp.roles_tabs",
+    "pk": 2,
+    "fields": {
+      "role_id": 1,
+      "tab_id": 2
+    }
+  },
+  {
+    "model": "uccaApp.roles_tabs",
+    "pk": 3,
+    "fields": {
+      "role_id": 1,
+      "tab_id": 3
+    }
+  },
+  {
+    "model": "uccaApp.roles_tabs",
+    "pk": 4,
+    "fields": {
+      "role_id": 1,
+      "tab_id": 4
+    }
+  },
+  {
+    "model": "uccaApp.roles_tabs",
+    "pk": 5,
+    "fields": {
+      "role_id": 1,
+      "tab_id": 5
+    }
+  },
+  {
+    "model": "uccaApp.roles_tabs",
+    "pk": 6,
+    "fields": {
+      "role_id": 1,
+      "tab_id": 6
+    }
+  },
+  {
+    "model": "uccaApp.roles_tabs",
+    "pk": 7,
+    "fields": {
+      "role_id": 4,
+      "tab_id": 1
+    }
+  }
+]

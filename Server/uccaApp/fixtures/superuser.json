@@ -1,0 +1,43 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "id": 1,
+      "username" : null, // TODO: need to be fetched from the config.py
+      "password" : null, // TODO: need to be fetched from the config.py
+      "first_name" : "yarin",
+      "last_name" : "slivka",
+      "email" : "yarin@zigit.co.il",
+      "is_superuser" : true,
+      "is_staff" : true,
+      "is_active" : true
+    }
+  },
+  {
+    "model": "uccaApp.users",
+    "pk": 2,
+    "fields": {
+      "id": 1,
+      "first_name" : "yarin",
+      "last_name" : "slivka",
+      "email" : "yarin@zigit.co.il",
+      "organization" : "ZIGIT",
+      "affiliation" : "ZIGIT",
+      "created_by" : 1,
+      "role" : 1,
+      "is_active" : true,
+      "created_at": "2016-12-31T22:21:25.139523",
+      "updated_at": "2016-12-31T20:21:25.153538Z"
+    }
+  },
+  {
+    "model":"auth.user_groups",
+    "pk":3,
+    "fields": {
+      "id": 1,
+      "user_id":1,
+      "group_id":1
+    }
+  }
+]
