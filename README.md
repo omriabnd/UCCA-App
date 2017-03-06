@@ -7,4 +7,4 @@ UCCA (Universal Conceptual Cognitive Annotation) is a cross-linguistically appli
 
 - UCCAApp is undergoing final stages of development. A live demo for the current version can be found [here](http://ucca-demo.cs.huji.ac.il).
 - All of UCCA's resources, including annotated corpora and software packages, are freely available [here](http://www.cs.huji.ac.il/~oabend/ucca.html).
-- A stable, pilot version (albeit more stable) of the application can be found [here](ucca.cs.huji.ac.il). Sign in with user: guest and password tseug.
+- A stable, pilot version (albeit more stable) of the application can be found [here](http://ucca.cs.huji.ac.il). Sign in with user: guest and password tseug.
