@@ -127,9 +127,9 @@
                 var allWordsArray = $('#row-'+$scope.selCtrl.selectedRow +' > .selectable-word');
                 allWordsArray = allWordsArray.filter(function(index,token,self){
                     if($rootScope.lastSelectedTokenMouse < lastTokenId){
-                        return ($(token).attr('token-id') >= $rootScope.lastSelectedTokenMouse) && ($(token).attr('token-id') <= lastTokenId)
+                        return (parseInt($(token).attr('token-id')) >= parseInt($rootScope.lastSelectedTokenMouse)) && (parseInt($(token).attr('token-id')) <= parseInt(lastTokenId))
                     }else{
-                        return ($(token).attr('token-id') <= $rootScope.lastSelectedTokenMouse) && ($(token).attr('token-id') >= lastTokenId)
+                        return (parseInt($(token).attr('token-id')) <= parseInt($rootScope.lastSelectedTokenMouse)) && (parseInt($(token).attr('token-id')) >= parseInt(lastTokenId))
                     }
                 })
                 // select all the relevant filtered tokens
