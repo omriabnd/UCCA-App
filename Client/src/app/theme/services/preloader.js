@@ -1,7 +1,5 @@
-/**
- * @author a.demeshko
- * created on 3/1/16
- */
+
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 

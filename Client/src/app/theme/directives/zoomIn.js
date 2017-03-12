@@ -1,6 +1,7 @@
 /**
  * Animated load block
  */
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -18,7 +19,8 @@
           delay = 100;
         }
 
-        $timeout(function () {
+        $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
           elem.removeClass('full-invisible');
           elem.addClass('animated zoomIn');
         }, delay);

@@ -1,7 +1,5 @@
-/**
- * @author v.lugovsky
- * created on 15.01.2016
- */
+
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -24,7 +22,8 @@
       restrict: 'A',
       link: function($scope, elem) {
         if(!$rootScope.$isMobile) {
-          baPanelzHelper.bodyBgLoad().then(function () {
+          baPanelzHelper.bodyBgLoad().then/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
             setTimeout(recalculatePanelStyle);
           });
           $window.addEventListener('resize', recalculatePanelStyle);

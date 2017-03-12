@@ -1,6 +1,7 @@
 /**
  * Auto expand textarea field
  */
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -21,7 +22,8 @@
         });
 
         // Expand the textarea as soon as it is added to the DOM
-        setTimeout(function () {
+        setTimeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
           var element = elem;
           $(element).height(0);
           var height = $(element)[0].scrollHeight;

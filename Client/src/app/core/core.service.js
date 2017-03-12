@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -41,7 +42,8 @@
 				var vm = this;
 				vm.currentService.getTableData([{'searchKey':'offset','searchValue': vm.smartTableDataSafe.length}]).then(function (res) {
 					vm.smartTableDataSafe = vm.smartTableDataSafe.concat(res);
-					$timeout(function () {
+					$timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
 						tableScope.selectPage(currentPage + 1);
 					})
 				});

@@ -1,6 +1,7 @@
 /**
  * Change top "Daily Downloads", "Active Users" values with animation effect
  */
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -11,12 +12,14 @@
   function animatedChange($timeout) {
     return {
       link: function (scope, element) {
-        $timeout(function () {
+        $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
           var newValue = element.attr('new-value');
           var oldvalue = parseInt(element.html());
 
           function changeValue(val) {
-            $timeout(function () {
+            $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
               element.html(val);
             }, 30);
           }
@@ -30,7 +33,8 @@
               changeValue(j);
             }
           }
-          $timeout(function () {
+          $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
             element.next().find('i').addClass('show-arr');
           }, 500);
         }, 3500);

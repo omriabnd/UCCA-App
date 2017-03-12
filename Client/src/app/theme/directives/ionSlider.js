@@ -1,7 +1,5 @@
-/**
- * @author a.demeshko
- * created on 22.12.2015
- */
+
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -60,27 +58,32 @@
             });
 
             $scope.$watch('min', function (value) {
-              $timeout(function () {
+              $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
                 $element.data("ionRangeSlider").update({min: value});
               });
             }, true);
             $scope.$watch('max', function (value) {
-              $timeout(function () {
+              $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
                 $element.data("ionRangeSlider").update({max: value});
               });
             });
             $scope.$watch('from', function (value) {
-              $timeout(function () {
+              $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
                 $element.data("ionRangeSlider").update({from: value});
               });
             });
             $scope.$watch('to', function (value) {
-              $timeout(function () {
+              $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
                 $element.data("ionRangeSlider").update({to: value});
               });
             });
             $scope.$watch('disable', function (value) {
-              $timeout(function () {
+              $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
                 $element.data("ionRangeSlider").update({disable: value});
               });
             });

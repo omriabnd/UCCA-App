@@ -1,7 +1,5 @@
-/**
- * @author v.lugovksy
- * created on 16.12.2015
- */
+
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -32,7 +30,8 @@
               !baSidebarService.isMenuCollapsed() &&
               baSidebarService.canSidebarBeHidden()) {
             $evt.originalEvent.$sidebarEventProcessed = true;
-            $timeout(function () {
+            $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
               baSidebarService.setMenuCollapsed(true);
             }, 10);
           }
@@ -43,7 +42,8 @@
           var newMenuCollapsed = baSidebarService.shouldMenuBeCollapsed();
           var newMenuHeight = _calculateMenuHeight();
           if (newMenuCollapsed != baSidebarService.isMenuCollapsed() || scope.menuHeight != newMenuHeight) {
-            scope.$apply(function () {
+            scope.$apply/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
               scope.menuHeight = newMenuHeight;
               baSidebarService.setMenuCollapsed(newMenuCollapsed)
             });

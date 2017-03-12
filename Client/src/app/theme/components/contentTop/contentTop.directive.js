@@ -1,7 +1,5 @@
-/**
- * @author v.lugovksy
- * created on 16.12.2015
- */
+
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -14,7 +12,8 @@
       restrict: 'E',
       templateUrl: 'app/theme/components/contentTop/contentTop.html',
       link: function($scope) {
-        $scope.$watch(function () {
+        $scope.$watch/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
           $scope.activePageTitle = $state.current.title;
         });
       }
