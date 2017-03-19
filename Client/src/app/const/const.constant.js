@@ -8,9 +8,6 @@
 		IS_DEV:false,
 		TEST_URL:"http://private-daea0-ucca.apiary-mock.com/api/v1",
 		PROD_URL:"http://localhost:8000/api/v1",
-		// PROD_URL:"http://192.168.0.118:8000/api/v1",
-		PROD_HUJI_HOST:"huji.ac.il", 
-		PROD_HUJI_API_ENDPOINT:"http://ucca.staging.cs.huji.ac.il/api/v1", 
 		LOCAL_RESOURCES: "app/resources",
 		TASK_TYPE:{
 			ANNOTATION:"ANNOTATION",

@@ -56,3 +56,4 @@ build
 /debug.log
 /LICENSE.txt
 /.travis.yml
+settings.json

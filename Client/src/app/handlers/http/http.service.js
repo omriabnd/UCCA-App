@@ -4,7 +4,7 @@
   'use strict';
 
   angular.module('zAdmin.http',[
-  	'zAdmin.const'
+  	'zAdmin.const',
   	])
 	.service('httpService', httpService);
 
@@ -14,11 +14,11 @@
 		var is_dev = ($location.host() === 'localhost') || ENV_CONST.IS_DEV;
 		var url = (is_dev && ENV_CONST.IS_DEV ) ? ENV_CONST.TEST_URL : ENV_CONST.PROD_URL;
 
-		var is_prod_server = ($location.absUrl().indexOf(ENV_CONST.PROD_HUJI_HOST) > -1);
+		/*var is_prod_server = ($location.absUrl().indexOf($rootScope.PROD_CONST.HOST) > -1);
 		if(is_prod_server){
 			// for ucca production server
-			url = ENV_CONST.PROD_HUJI_API_ENDPOINT;
-		}
+			url = $rootScope.PROD_CONST.API_ENDPOINT;
+		}*/
 
 		function SuccessResults (successResult) {
 			var response = {
@@ -61,7 +61,31 @@
 		}
 
 		function httpRequest(requestType, requestStringName, bodyData, notFromCache, fromResources) {
-			var requestURL = url +'/'+ requestStringName;
+
+			if($rootScope.PROD_CONST){
+				var requestURL = buildRequestURL(requestType, requestStringName, bodyData, notFromCache, fromResources)
+				return requestType(requestURL, bodyData, {cache: !notFromCache}).then(
+					SuccessResults,ErrorResults
+				);
+			}else{
+				return $http.get('settings.json').then(function(settings){
+					$rootScope.PROD_CONST = settings.data;
+					var requestURL = buildRequestURL(requestType, requestStringName, bodyData, notFromCache, fromResources)
+					return requestType(requestURL, bodyData, {cache: !notFromCache}).then(
+						SuccessResults,ErrorResults
+					);
+				})
+			}
+
+		}
+		function buildRequestURL(requestType, requestStringName, bodyData, notFromCache, fromResources){
+			var is_prod_server = ($location.absUrl().indexOf($rootScope.PROD_CONST.HOST) > -1);
+			if(is_prod_server){
+				// for ucca production server
+				url = $rootScope.PROD_CONST.API_ENDPOINT;
+			}
+
+			var requestURL = url + '/'+ requestStringName;
 
 			if(fromResources){
 				requestURL = requestStringName;
@@ -79,11 +103,9 @@
 			if(requestType===$http.delete){
 				requestURL += bodyData;
 			}
-			
-			return requestType(requestURL, bodyData, {cache: !notFromCache}).then(
-				SuccessResults,ErrorResults
-			);
+			return requestURL
 		}
+
 		function getHeaders(){
 			var headers = {"Content-Type": "application/json"}
 			var UserInfo = storageService.getObjectFromLocalStorage('UserInfo');
