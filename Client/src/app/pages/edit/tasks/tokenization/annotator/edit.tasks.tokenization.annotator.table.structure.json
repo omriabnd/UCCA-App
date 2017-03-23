@@ -17,8 +17,8 @@
     "filter":true,
     "search":true,
     "showInTable":true,
-    "type":"select",
-    "placeholder":"Enter Content...",
+    "type":"text",
+    "placeholder":"Enter First Name...",
     "value":""
   },
   {
@@ -28,8 +28,8 @@
     "filter":true,
     "search":true,
     "showInTable":true,
-    "type":"select",
-    "placeholder":"Enter Content...",
+    "type":"text",
+    "placeholder":"Enter Last Name...",
     "value":""
   },
   {
@@ -45,12 +45,6 @@
         "order":"1",
         "class":"btn-success",
         "functionName":"chooseRow"
-      },
-      {
-        "name":"Info",
-        "order":"2",
-        "class":"btn-info",
-        "functionName":"infoRow"
       }
     ]
   }

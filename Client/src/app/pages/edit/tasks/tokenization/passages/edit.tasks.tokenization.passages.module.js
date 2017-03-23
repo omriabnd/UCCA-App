@@ -39,7 +39,7 @@
                         return editTokenizationTaskPassagesService.getEditTableStructure();
                     },
                     PassagesTableData: function(editTokenizationTaskPassagesService){
-                        return editTokenizationTaskPassagesService.getPassagesTableData();
+                        return editTokenizationTaskPassagesService.getTableData();
                     }
                 }
             })

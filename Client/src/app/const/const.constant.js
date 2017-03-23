@@ -20,6 +20,12 @@
 			SUBMITTED:"SUBMITTED", 
 			REJECTED:"REJECTED"
 		},
+		TASK_STATUS_ID:{
+			NOT_STARTED:1,
+			ONGOING:2, 
+			SUBMITTED:3, 
+			REJECTED:4
+		},
 		ANNOTATION_TYPE:{
 			IMPLICIT:"IMPLICIT",
 			REGULAR:"REGULAR"
@@ -30,15 +36,15 @@
 				id:1,
 				TABS: ["1","2","3","4","5","6","7","8","9"]
 			},
-			PM:{
+			PROJECT_MANAGER:{
 				name:"Project Manager",
 				id:2,
-				TABS: ["1","2","3"]
+				TABS: ["2","3","4","5","6","7","8","9"]
 			},
 			ANNOTATOR:{
 				name:"Annotator",
 				id:3,
-				TABS: ["3","4"]
+				TABS: ["2","3"]
 			},
 			GUEST:{
 				name:"Guest",

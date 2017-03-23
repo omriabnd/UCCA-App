@@ -177,11 +177,6 @@
         "functionName":"editRow"
       },
       {
-        "name":"View-Only",
-        "order":3,
-        "functionName":"editRow"
-      },
-      {
         "name":"New extension Layer",
         "order":4,
         "functionName":"createExtensionLayer"

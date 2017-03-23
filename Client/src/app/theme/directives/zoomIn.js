@@ -19,8 +19,7 @@
           delay = 100;
         }
 
-        $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-(function () {
+        $timeout(function(){
           elem.removeClass('full-invisible');
           elem.addClass('animated zoomIn');
         }, delay);

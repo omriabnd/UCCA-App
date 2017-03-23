@@ -7,12 +7,12 @@
         .service('editTokenizationTasksService', editTokenizationTasksService);
 
     /** @ngInject */
-    function editTokenizationTasksService(apiService, Core) {
+    function editTokenizationTasksService(apiService, Core, ENV_CONST, $state) {
 
         var service = {
             Data:[],
             getEditTableStructure: function(){
-                return apiService.edit.tasks.getTokenizationTaskEditTableStructure().then(function (res){return res.data});
+                return apiService.edit.tasks.tokenization.getTokenizationTaskEditTableStructure().then(function (res){return res.data});
             },
             getTaskData: function(id){
                 var _service = this;
@@ -27,7 +27,11 @@
                 });
             },
             saveTaskDetails: function(smartTableStructure){
-                var bodyData = Core.extractDataFromStructure(smartTableStructure);
+                var structure = prepareTaskForSend(smartTableStructure,$state.params.projectId);
+                var bodyData = Core.extractDataFromStructure(structure);
+                bodyData.passage = bodyData.passage[0];
+                bodyData.user = bodyData.user[0];
+                bodyData.type = ENV_CONST.TASK_TYPE.TOKENIZATION;
                 service.clearData();
                 return !bodyData.id ? apiService.edit.tasks.postTaskData(bodyData).then(function (res){return res.data}) :  apiService.edit.tasks.putTaskData(bodyData).then(function (res){return res.data});
             },
@@ -35,17 +39,23 @@
                 service.Data = data;
             },
             get:function(key){
-                if(!angular.isArray(this.Data[key]) && this.Data[key] != null){
+                if(!angular.isArray(this.Data[key])){
+                    if(key=='status'){
+                        return {id: ENV_CONST.TASK_STATUS_ID[this.Data[key]],label:this.Data[key]}
+                    }
+                    if(typeof this.Data[key] == "string" || typeof this.Data[key] == "boolean" || typeof this.Data[key] == "number"){
+                        return this.Data[key];
+                    }
                     return [this.Data[key]]
                 }
-                return this.Data[key]
+                return this.Data[key];
             },
-            set:function(key,obj,indexToInsert){
+            set:function(key,obj,shouldReplace){
                 if(angular.isArray(this.Data[key])){
-                    indexToInsert == null ? this.Data[key].push(obj) : this.Data[key][indexToInsert] = obj;
-
+                    shouldReplace ? this.Data[key][0] = obj : this.Data[key].push(obj);
+                    
                 }else{
-                    this.Data[key][0] = obj;
+                    this.Data[key] = obj;
                 }
             },
             deleteItemInData: function(key,index){
@@ -56,7 +66,7 @@
                     id:"",
                     manager_comment:"",
                     status:"",
-                    passages: [],
+                    passage: [],
                     parent:[],
                     user:[],
                     is_active:"",
@@ -65,6 +75,21 @@
             }
         }
         return service;
+    }
+
+    function prepareTaskForSend(smartTableStructure,projectId){
+        var structure = angular.copy(smartTableStructure, structure)
+        structure.forEach(function(obj){
+            if(obj.key == 'status'){
+                obj.value = obj.value.label; // the api call expect the 'status' to be string
+            }
+            if(obj.key == 'project'){
+                obj.value = {
+                    id:projectId
+                }
+            }
+        })
+        return structure
     }
 
 })();

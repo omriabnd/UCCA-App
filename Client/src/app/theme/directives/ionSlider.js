@@ -58,32 +58,27 @@
             });
 
             $scope.$watch('min', function (value) {
-              $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-(function () {
+              $timeout(function(){
                 $element.data("ionRangeSlider").update({min: value});
               });
             }, true);
             $scope.$watch('max', function (value) {
-              $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-(function () {
+              $timeout(function(){
                 $element.data("ionRangeSlider").update({max: value});
               });
             });
             $scope.$watch('from', function (value) {
-              $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-(function () {
+              $timeout(function(){
                 $element.data("ionRangeSlider").update({from: value});
               });
             });
             $scope.$watch('to', function (value) {
-              $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-(function () {
+              $timeout(function(){
                 $element.data("ionRangeSlider").update({to: value});
               });
             });
             $scope.$watch('disable', function (value) {
-              $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-(function () {
+              $timeout(function(){
                 $element.data("ionRangeSlider").update({disable: value});
               });
             });

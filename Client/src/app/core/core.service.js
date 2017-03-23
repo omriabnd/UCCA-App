@@ -27,13 +27,32 @@
 			validate: validate,
 			hasValue: hasValue,
 			previewTask: previewTask,
-			showAlert: showAlert
+			showAlert: showAlert,
+			exportAsset: exportAsset
 		};
 		
 		return core;
 
 
-		function smartTableCanUseAction(functionName,onlyForRoles,type){
+		function exportAsset(){
+			var asset = angular.copy(this.currentService.Data, asset)
+			asset.description = fetchDescription(asset.description);
+			this.showMore(asset);
+		}
+
+		function fetchDescription(desc){
+			if(!!desc){
+				if(!!$(desc).text()){
+					return $(desc).text()
+				}else if(!!desc){
+					return desc
+				}else{
+					return "Asset as JSON"
+				}
+			}
+			return "Asset as JSON"
+		}
+		function smartTableCanUseAction(functionName,onlyForRoles,type,types){
 			return true
 		}
 		function goNext(currentPage) {
@@ -42,8 +61,7 @@
 				var vm = this;
 				vm.currentService.getTableData([{'searchKey':'offset','searchValue': vm.smartTableDataSafe.length}]).then(function (res) {
 					vm.smartTableDataSafe = vm.smartTableDataSafe.concat(res);
-					$timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-(function () {
+					$timeout(function(){
 						tableScope.selectPage(currentPage + 1);
 					})
 				});
@@ -104,7 +122,7 @@
 			var searchBy = structure.map(function (structureObj) {
 				return {
 					"searchKey": structureObj.key,
-					"searchValue": structureObj.value
+					"searchValue": typeof structureObj.value == 'object' ? structureObj.value.label : structureObj.value
 				}
 			}).filter(function (searchObj) {
 				searchObj.searchValue = searchObj.searchValue && searchObj.searchValue.value ? searchObj.searchValue.value : searchObj.searchValue;
@@ -116,15 +134,18 @@
 		function search(structure) {
 			console.log("searchBy", searchBy(structure));
 			var searchTerms = searchBy(structure);
+			$rootScope.$pageFinishedLoading = false;
 			core.currentService.getTableData(searchTerms).then(searchSuccess, searchFailed);
 		}
 
 		function searchSuccess(res) {
 			core.currentCtrl.smartTableDataSafe = res;
+			$rootScope.$pageFinishedLoading = true;
 		}
 
 		function searchFailed(err) {
-			console.log("removeCategoryFailed err :", err);
+			console.log("searchFailed err :", err);
+			$rootScope.$pageFinishedLoading = true;
 		}
 
 		function autoExecute() {
@@ -233,7 +254,7 @@
 			var _core = this;
 			var result = true;
 			structureToValidate.forEach(function(rowElement){
-				if(rowElement.validationRule.type == "Require" && rowElement.value == ""){
+				if(!!rowElement.validationRule && rowElement.validationRule.type == "Require" && rowElement.value == ""){
 					_core.showNotification('error',"Field "+rowElement.name+" is required.");
 					result = false;
 				}
@@ -278,6 +299,8 @@
 				vm.goNext = core.goNext;
 				
 				vm.search = core.search;
+				
+				vm.exportAsset = core.exportAsset;
 
 				vm.smartTablePageSize = core.tablePageSize;
 

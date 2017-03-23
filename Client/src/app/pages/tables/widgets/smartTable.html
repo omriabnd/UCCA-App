@@ -32,7 +32,7 @@
             <button data-ng-switch-when="true" 
                     ng-repeat="action in vm.smartTableStructure[vm.smartTableStructure.length-1].buttons track by $index"
                     class="btn editable-table-button btn-xs {{action.class}}"
-                    ng-show="::vm.smartTableCanUseAction(action.functionName,action.roles,itemRow.type)"
+                    ng-show="::vm.smartTableCanUseAction(action.functionName,action.roles,itemRow.type,action.types,{'status':itemRow.status,'accepteds':action.statuses})"
                     ng-click="vm[action.functionName](itemRow,$parent.$index)">
                     {{::action.name}}
             </button>
@@ -47,7 +47,7 @@
                   <li>
                     <a  href 
                         ng-repeat="action in vm.smartTableStructure[vm.smartTableStructure.length-1].buttons track by $index"
-                        ng-show="::vm.smartTableCanUseAction(action.functionName,action.roles,itemRow.type)"
+                        ng-show="::vm.smartTableCanUseAction(action.functionName,action.roles,itemRow.type,action.types,{'status':itemRow.status,'accepteds':action.statuses})"
                         ng-click="vm[action.functionName](itemRow,$parent.$index)">
                         {{::action.name}}
                     </a>

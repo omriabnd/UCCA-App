@@ -108,5 +108,19 @@
     "placeholder":"Is Active...",
     "value":"",
     "showInTable":true
+  },
+  {
+    "key":"export",
+    "order":99,
+    "name":"Export Asset",
+    "filter":false,
+    "search":false,
+    "type":"button",
+    "placeholder":"Export Asset",
+    "showInTable":true,
+    "value":[],
+    "class":"btn-default",
+    "shouldSendToServer": false,
+    "functionName":"exportAsset"
   }
 ]

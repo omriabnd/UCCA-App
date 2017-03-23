@@ -12,8 +12,7 @@
         var model = $parse(attrs.autoFocus);
         scope.$watch(model, function (value) {
           if (value === true) {
-            $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-(function () {
+            $timeout(function(){
               element[0].focus();
               element[0].select();
             });

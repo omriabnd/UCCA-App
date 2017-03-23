@@ -2,7 +2,7 @@
   {
     "key":"id",
     "name":"ID",
-    "order":"1",
+    "order":1,
     "filter":false,
     "search":false,
     "type":"text",
@@ -15,7 +15,7 @@
   {
     "key":"first_name",
     "name":"First Name",
-    "order":"2",
+    "order":2,
     "filter":true,
     "search":true,
     "type":"text",
@@ -29,7 +29,7 @@
   {
     "key":"last_name",
     "name":"Last Name",
-    "order":"3",
+    "order":3,
     "filter":true,
     "search":true,
     "type":"text",
@@ -43,7 +43,7 @@
   {
     "key":"email",
     "name":"Email",
-    "order":"4",
+    "order":4,
     "filter":true,
     "search":true,
     "type":"email",
@@ -57,7 +57,7 @@
   {
     "key":"role",
     "name":"Role",
-    "order":"5",
+    "order":5,
     "filter":true,
     "search":true,
     "type":"select",
@@ -78,7 +78,7 @@
   {
     "key":"organization",
     "name":"Organization",
-    "order":"6",
+    "order":6,
     "filter":true,
     "search":true,
     "type":"text",
@@ -92,7 +92,7 @@
   {
     "key":"affiliation",
     "name":"Affiliation",
-    "order":"7",
+    "order":7,
     "filter":true,
     "search":true,
     "type":"text",
@@ -106,7 +106,7 @@
   {
     "key":"is_active",
     "name":"Is active",
-    "order":"8",
+    "order":8,
     "filter":true,
     "search":true,
     "type":"checkbox",
@@ -116,5 +116,19 @@
       "type":"Require"
     },
     "value":""
+  },
+  {
+    "key":"export",
+    "order":99,
+    "name":"Export Asset",
+    "filter":false,
+    "search":false,
+    "type":"button",
+    "placeholder":"Export Asset",
+    "showInTable":true,
+    "value":[],
+    "class":"btn-default",
+    "shouldSendToServer": false,
+    "functionName":"exportAsset"
   }
 ]

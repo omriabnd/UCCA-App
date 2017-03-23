@@ -191,5 +191,21 @@
     },
     "placeholderEnter ":"Is Active...",
     "value":""
+  },
+  {
+    "key":"export",
+    "order":99,
+    "name":"Export Asset",
+    "filter":false,
+    "search":false,
+    "type":"button",
+    "placeholder":"Export Asset",
+    "showInTable":true,
+    "viewOnly":true,
+    "class":"btn-default",
+    "shouldSendToServer": false,
+    "dontBindToService": true,
+    "functionName":"exportAsset",
+    "value":null
   }
 ]

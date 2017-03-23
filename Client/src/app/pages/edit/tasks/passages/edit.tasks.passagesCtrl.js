@@ -17,7 +17,7 @@
         var parentCtrl = $scope.$parent.vm;
 
         vm.smartTableData = editTaskPassagesService.getTableData();
-        Core.init(this,EditTableStructure);
+        Core.init(this,EditTableStructure,editTaskPassagesService);
 
         vm.smartTableStructure.forEach(function(obj){
             obj.value = editTaskPassagesService.get(obj.key);

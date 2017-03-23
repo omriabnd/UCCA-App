@@ -320,10 +320,22 @@
              * Moves The Cursor one unit down.
              */
             function moveDown() {
-                // var splittedLineId = $scope.selCtrl.selectedRow.split("-");
-                var nextUnitId = DataService.getNextUnit($rootScope.clckedLine,0);
-
-                var unitExists = DataService.getUnitById(nextUnitId);
+                
+                var currentUnit = DataService.getUnitById($rootScope.clckedLine);
+                if(currentUnit.gui_status == "OPEN"){
+                    var nextUnitId = DataService.getNextUnit($rootScope.clckedLine,0);
+                    var unitExists = DataService.getUnitById(nextUnitId);
+                }else{
+                    var unitExists = DataService.getNextSibling($rootScope.clckedLine)
+                    while(!unitExists){ // when it the last unit in the parent array
+                        // get my parent
+                        currentUnit = DataService.getUnitById(DataService.getParentUnitId(currentUnit.annotation_unit_tree_id));
+                        // get my parent next sibling
+                        unitExists = DataService.getNextSibling(currentUnit.annotation_unit_tree_id)
+                    }
+                    var nextUnitId = unitExists ? unitExists.annotation_unit_tree_id : null;
+                }
+                
 
                 if(unitExists){
                     $scope.selCtrl.selectedRow = $rootScope.clckedLine = unitExists.annotation_unit_tree_id;
@@ -359,6 +371,12 @@
                 }
 
                 var unitExists = DataService.getUnitById(nextUnitId);
+                var currentUnit = DataService.getUnitById(nextUnitId);
+                var parentCollapsed = getCollapseRootParent(currentUnit);
+                if(parentCollapsed){
+                    unitExists = parentCollapsed
+                    nextUnitId = unitExists ? unitExists.annotation_unit_tree_id : null;
+                }
 
                 if(unitExists){
                     $scope.selCtrl.selectedRow = $rootScope.clckedLine = unitExists.annotation_unit_tree_id;
@@ -372,6 +390,36 @@
                         $(firstUnit).addClass('selected-unit');
                     }
                 }
+            }
+
+            function getCollapseRootParent(currentUnit){
+                var parentCollapsed = null;
+                if(!!currentUnit){
+                    if(isUnitShownOnScreen(currentUnit)==false){
+                        var parentUnit = DataService.getUnitById(DataService.getParentUnitId(currentUnit.annotation_unit_tree_id))
+                        while(parentUnit.gui_status == "OPEN"){
+                            parentUnit = DataService.getUnitById(DataService.getParentUnitId(parentUnit.annotation_unit_tree_id))
+                        }
+                        if(parentUnit.annotation_unit_tree_id != "0"){
+                            parentCollapsed = parentUnit;
+                        }
+                    }
+                }
+                return parentCollapsed
+            }
+
+            function isUnitShownOnScreen(currentUnit){
+                var isShown = true;
+                if(!!currentUnit){
+                    var parentUnit = DataService.getUnitById(DataService.getParentUnitId(currentUnit.annotation_unit_tree_id))
+                    while(parentUnit.annotation_unit_tree_id != "0"){
+                        if(parentUnit.gui_status != "OPEN"){
+                            isShown = false;
+                        }
+                        parentUnit = DataService.getUnitById(DataService.getParentUnitId(parentUnit.annotation_unit_tree_id))
+                    }
+                }
+                return isShown;
             }
 
             function moveRightWithCtrl(){
@@ -1477,7 +1525,9 @@
 
             $timeout(function(){
                 $('.selected-row').removeClass('selected-row');
-                $('#directive-info-data-container-'+initObject.DataService.lastInsertedUnitIndex).addClass('selected-row');
+                if(DataService.duringInit == false){
+                    $('#directive-info-data-container-'+initObject.DataService.lastInsertedUnitIndex).addClass('selected-row');
+                }
             });
 
             return directiveIndex;

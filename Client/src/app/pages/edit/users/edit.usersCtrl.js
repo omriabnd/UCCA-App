@@ -11,7 +11,7 @@
   	var vm = this;
   	vm.upsert = upsert;
     vm.back = back;
-    Core.init(vm,EditTableStructure);
+    Core.init(vm,EditTableStructure,editUsersService);
 
     // insertUserDataIntoStructure();
     vm.smartTableStructure.forEach(function(obj){

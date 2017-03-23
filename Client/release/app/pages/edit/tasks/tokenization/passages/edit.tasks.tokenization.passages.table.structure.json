@@ -1,4 +1,4 @@
-s[
+[
   {
     "key":"id",
     "name":"ID",
@@ -9,21 +9,6 @@ s[
     "type":"text",
     "placeholderEnter ":"Id...",
     "value":""
-  },
-  {
-    "key":"type",
-    "name":"Type",
-    "order":"2",
-    "filter":true,
-    "search":true,
-    "showInTable":false,
-    "type":"select",
-    "placeholder":"Enter Content...",
-    "value":"",
-    "options":[
-      { "label": "PRIVATE", "id": 1 },
-      { "label": "PUBLIC", "id": 2 }
-    ]
   },
   {
     "key":"text",
@@ -44,7 +29,7 @@ s[
     "search":true,
     "showInTable":true,
     "type":"text",
-    "placeholder":"Enter Source Name...",
+    "placeholder":"Enter Source Id...",
     "value":""
   },
   {
@@ -71,12 +56,6 @@ s[
         "order":"1",
         "class":"btn-success",
         "functionName":"chooseRow"
-      },
-      {
-        "name":"Info",
-        "order":"2",
-        "class":"btn-info",
-        "functionName":"infoRow"
       }
     ]
   }

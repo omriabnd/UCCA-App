@@ -23,7 +23,7 @@
         //
         // updateTableDataAccordingToLayerType(layerType);
 
-        Core.init(this,EditTableStructure);
+        Core.init(this,EditTableStructure,editRefinementLayerService);
 
         vm.smartTableStructure.forEach(function(obj){
             var value = editRefinementLayerService.get(obj.key);

@@ -17,14 +17,14 @@
         function upsert(obj){
             console.log("edit",obj);
             editTasksService.saveTaskDetails(obj).then(function(response){
-                $state.go("tasks")
+                $state.go("projectTasks")
             },function(err){
-                $state.go("tasks")
+                $state.go("projectTasks")
             })
         }
 
         function back(){
-            $state.go('tasks');
+            $state.go('projectTasks');
         }
 
         function choosePassage(){

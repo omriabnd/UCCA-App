@@ -204,8 +204,8 @@
             return apiService.tokenization.getPassageData(passage_id);
         }
 
-        function saveTask(taskData){
-            return apiService.tokenization.putTaskData(taskData);
+        function saveTask(mode,taskData){
+            return apiService.tokenization.putTaskData(mode,taskData);
         }
 
         /**

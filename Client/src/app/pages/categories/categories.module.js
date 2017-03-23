@@ -15,7 +15,7 @@
             controller: 'categoriesCtrl',
             controllerAs: 'vm',
             sidebarMeta: {
-              icon: 'ion-android-person',
+              icon: 'ion-ios-pricetag',
               order: 4,
               showOnSideBar:false
             },

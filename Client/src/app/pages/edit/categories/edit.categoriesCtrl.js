@@ -10,8 +10,8 @@
   function EditCategoriesCtrl($scope, $rootScope, $filter,$state, editableOptions, editableThemes, $uibModal, EditTableStructure, Core, editCategoriesService) {
   	var vm = this;
   	vm.upsert = upsert;
-      vm.back = back;
-    Core.init(vm,EditTableStructure);
+    vm.back = back;
+    Core.init(vm,EditTableStructure,editCategoriesService);
 
     // insertUserDataIntoStructure();
     vm.smartTableStructure.forEach(function(obj){
@@ -21,12 +21,19 @@
   	function upsert(obj){
   	  console.log("edit",obj);
       editCategoriesService.saveCategoryDetails(obj).then(function(response){
-          $state.go('categories');
+          // $state.go('categories');
+          if($state.current.name.indexOf(".categories.create") > -1){
+            var goToState = $state.current.name.replace("create","manage");
+            $state.go(goToState,{},{reload:true});
+          }else{
+            history.back();
+          }
       })
   	}
 
     function back(){
-        $state.go('categories');
+        // $state.go('categories');
+        history.back();
     }
     
   }

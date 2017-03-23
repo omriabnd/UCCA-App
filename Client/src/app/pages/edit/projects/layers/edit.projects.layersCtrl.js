@@ -17,6 +17,7 @@
         var parentCtrl = $scope.$parent.vm;
 
         vm.smartTableData = LayersTableData;
+
         Core.init(this,EditTableStructure,editProjectLayerService);
 
 

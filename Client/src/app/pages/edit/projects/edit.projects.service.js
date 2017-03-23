@@ -25,6 +25,7 @@
             },
             saveProjectDetails: function(smartTableStructure){
                 var bodyData = Core.extractDataFromStructure(smartTableStructure);
+                bodyData.layer = bodyData.layer[0];
                 return bodyData.id ? apiService.edit.projects.putProjectData(bodyData).then(function (res){return res.data}) :  apiService.edit.projects.postProjectData(bodyData).then(function (res){return res.data});
             },
             initData:function(data){
@@ -33,7 +34,7 @@
             },
             get:function(key){
                 if(!angular.isArray(this.Data[key])){
-                    if(this.Data[key] == ""){
+                    if(typeof this.Data[key] == "string" || typeof this.Data[key] == "boolean" || typeof this.Data[key] == "number"){
                         return this.Data[key];
                     }
                     return [this.Data[key]]

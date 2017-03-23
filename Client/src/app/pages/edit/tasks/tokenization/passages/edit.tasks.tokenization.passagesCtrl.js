@@ -7,7 +7,7 @@
         .controller('EditTokenizationTaskPassagesCtrl', EditTokenizationTaskPassagesCtrl);
 
     /** @ngInject */
-    function EditTokenizationTaskPassagesCtrl($scope,$state, EditTableStructure, editTokenizationTaskPassagesService, editTokenizationTasksService, Core) {
+    function EditTokenizationTaskPassagesCtrl($scope,$state, EditTableStructure, editTokenizationTaskPassagesService, editTokenizationTasksService, Core, PassagesTableData) {
         var vm = this;
         vm.edit = edit;
         vm.editRow = editRow;
@@ -16,8 +16,8 @@
 
         var parentCtrl = $scope.$parent.vm;
 
-        vm.smartTableData = editTokenizationTaskPassagesService.getTableData();
-        Core.init(this,EditTableStructure);
+        vm.smartTableData = PassagesTableData;
+        Core.init(this,EditTableStructure,editTokenizationTaskPassagesService);
 
         vm.smartTableStructure.forEach(function(obj){
             obj.value = editTokenizationTaskPassagesService.get(obj.key);
@@ -39,10 +39,11 @@
             console.log("chooseRow "+index,obj);
             var sourceDetails = {
                 "id":obj.id,
-                "name":obj.name
+                "short_text":obj.text,
+                "type":obj.type
             }
-            editTokenizationTasksService.set("passages",sourceDetails);
-            parentCtrl.refreshData("passages");
+            editTokenizationTasksService.set("passage",sourceDetails,true);
+            parentCtrl.refreshData("passage");
         }
 
         function edit(obj){

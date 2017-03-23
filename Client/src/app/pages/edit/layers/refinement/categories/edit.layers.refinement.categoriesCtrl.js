@@ -84,6 +84,7 @@
             });
         }
         function showCategoryInfo(obj,index){
+            console.log("showCategoryInfo");
             var pagelink = pagelink || 'app/pages/ui/modals/modalTemplates/largeModal.html';
             var size = size || 'lg';
             $uibModal.open({

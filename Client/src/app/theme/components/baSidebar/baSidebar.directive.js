@@ -30,8 +30,7 @@
               !baSidebarService.isMenuCollapsed() &&
               baSidebarService.canSidebarBeHidden()) {
             $evt.originalEvent.$sidebarEventProcessed = true;
-            $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-(function () {
+            $timeout(function(){
               baSidebarService.setMenuCollapsed(true);
             }, 10);
           }
@@ -42,8 +41,7 @@
           var newMenuCollapsed = baSidebarService.shouldMenuBeCollapsed();
           var newMenuHeight = _calculateMenuHeight();
           if (newMenuCollapsed != baSidebarService.isMenuCollapsed() || scope.menuHeight != newMenuHeight) {
-            scope.$apply/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-(function () {
+            scope.$apply(function(){
               scope.menuHeight = newMenuHeight;
               baSidebarService.setMenuCollapsed(newMenuCollapsed)
             });

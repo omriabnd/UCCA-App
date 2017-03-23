@@ -55,6 +55,8 @@
             addCategoryToExistingRow: addCategoryToExistingRow,
             getNextUnit: getNextUnit,
             getPrevUnit: getPrevUnit,
+            getNextSibling:getNextSibling,
+            getPrevSibling:getPrevSibling,
             getUnitById:getUnitById,
             getParentUnitId:getParentUnitId,
             updateDomUnitWrappers:updateDomUnitWrappers,
@@ -823,6 +825,36 @@
                 }
             }
             return tempUnit;
+        }
+
+        function getNextSibling(lastFocusedUnitId){
+            if(lastFocusedUnitId == 0){
+                if(DataService.tree.AnnotationUnits.length > 0){
+                    return DataService.tree.AnnotationUnits[0].annotation_unit_tree_id;
+                }
+            }else{
+                var parentAnnotationUnits = DataService.getUnitById(DataService.getParentUnitId(lastFocusedUnitId)).AnnotationUnits;
+                var currentIndex = getMyIndexInParentTree(parentAnnotationUnits,lastFocusedUnitId);
+                return parentAnnotationUnits[currentIndex+1] ? parentAnnotationUnits[currentIndex+1] : null;
+
+            }
+        }
+
+        function getPrevSibling(lastFocusedUnitId){
+        
+            var parentAnnotationUnits = DataService.getUnitById(DataService.getParentUnitId(lastFocusedUnitId)).AnnotationUnits;
+            var currentIndex = getMyIndexInParentTree(parentAnnotationUnits,lastFocusedUnitId);
+            return parentAnnotationUnits[currentIndex-1] ? parentAnnotationUnits[currentIndex-1] : null;
+        }
+
+        function getMyIndexInParentTree(parentTree,myUnitId){
+            var currentIndex = 0;
+            parentTree.forEach(function(unit,index){
+                if(unit.annotation_unit_tree_id==myUnitId){
+                    currentIndex = index;
+                }
+            });
+            return currentIndex;
         }
 
         function getNextUnit(lastFocusedUnitId,index){

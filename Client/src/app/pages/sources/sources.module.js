@@ -15,7 +15,7 @@
             controller: 'sourcesCtrl',
             controllerAs: 'vm',
             sidebarMeta: {
-              icon: 'ion-android-person',
+              icon: 'ion-at',
               order: 7,
               showOnSideBar:false
             },

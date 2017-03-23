@@ -39,7 +39,7 @@
                         return editTokenizationTaskAnnotatorService.getEditTableStructure();
                     },
                     UserTableData: function(editTokenizationTaskAnnotatorService){
-                        return editTokenizationTaskAnnotatorService.getUserTableData();
+                        return editTokenizationTaskAnnotatorService.getTableData();
                     }
                 }
             })

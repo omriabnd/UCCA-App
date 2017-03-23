@@ -97,6 +97,7 @@
         "name":"Choose",
         "order":1,
         "class":"btn-success",
+        "showAs":"switch",
         "functionName":"toggleItem"
       },
       {

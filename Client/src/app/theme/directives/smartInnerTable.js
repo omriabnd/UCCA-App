@@ -43,6 +43,7 @@
         vm.edit = goToEditPageThroughParentCtrl;
         vm.toggleItem = toggleItem;
         vm.removeRow = removeRow;
+        vm.runFunction = runFunction;
 
         $scope.ctrlModule.smartTableStructure.forEach(function(tableRow){
             if(tableRow.key == $scope.pageName){
@@ -68,6 +69,14 @@
             $scope.ctrlModule.refreshData($scope.pageName);
         }
 
+        function runFunction(functionName,obj,index){
+            if(functionName=='removeRow'){
+                removeRow(obj, index)
+            }else{
+                $scope.ctrlModule[functionName](obj,index);
+            }
+        }
+        
         function toggleItem(category,categoryValue){
             try{
                 $scope.ctrlModule.toggleItem($scope.categoryName,category,categoryValue);

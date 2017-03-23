@@ -155,30 +155,48 @@
       {
         "name":"Remove",
         "order":1,
-        "roles":["ADMIN","PM"],
+        "roles":["ADMIN","PROJECT_MANAGER"],
         "class":"btn-danger",
         "functionName":"removeRow"
       },
       {
         "name":"Edit",
         "order":2,
-        "roles":["ADMIN","PM"],
+        "roles":["ADMIN","PROJECT_MANAGER"],
         "class":"btn-info",
         "functionName":"editRow"
       },
       {
         "name":"Go",
         "order":3,
-        "roles":["ADMIN","PM","ANNOTATOR","GUEST"],
+        "roles":["ADMIN","PROJECT_MANAGER","ANNOTATOR","GUEST"],
+        "statuses":["NOT_STARTED","ONGOING"],
         "class":"btn-success",
         "functionName":"previewTask"
       },
       {
-        "name":"Create New Task",
-        "order":4,
-        "roles":["ADMIN","PM"],
+        "name":"Go View Only",
+        "order":3,
+        "roles":["ADMIN","PROJECT_MANAGER","ANNOTATOR","GUEST"],
+        "statuses":["SUBMITTED","REJECTED"],
         "class":"btn-success",
-        "functionName":"createNewTask"
+        "functionName":"previewTask"
+      },
+      {
+        "name":"Create New Annotatoin Task",
+        "order":4,
+        "roles":["ADMIN","PROJECT_MANAGER"],
+        "types":["TOKENIZATION","ANNOTATION"],
+        "class":"btn-success",
+        "functionName":"createNewAnnotatoinTask"
+      },
+      {
+        "name":"Create New Review Task",
+        "order":5,
+        "roles":["ADMIN","PROJECT_MANAGER"],
+        "types":["ANNOTATION","REVIEW"],
+        "class":"btn-success",
+        "functionName":"createNewReviewTask"
       }
     ]
   }

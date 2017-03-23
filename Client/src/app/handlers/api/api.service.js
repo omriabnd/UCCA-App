@@ -46,8 +46,8 @@
 				getPassageData: function(passage_id){
 					return httpService.getRequest('passages',passage_id);
 				},
-				putTaskData: function(taskData){
-					return httpService.getRequest('tasks/'+taskData.id,taskData);
+				putTaskData: function(mode,taskData){
+					return httpService.putRequest('user_tasks/'+taskData.id+'/'+mode,taskData);
 				}
 			},
 			annotation:{
@@ -77,7 +77,7 @@
 			},
 			users: {
 				getUserTableStructure: function(){
-					return httpService.getRequest('../app/pages/users/users.table.structure.json',{},true,true);
+					return httpService.getRequest('app/pages/users/users.table.structure.json',{},true,true);
 				},
 				getUsersTableData: function(searchTerms){
 					return httpService.getRequest('users',searchTerms);
@@ -88,7 +88,7 @@
 			},
 			projects: {
 				getProjectTableStructure: function(){
-					return httpService.getRequest('../app/pages/projects/projects.table.structure.json',{},true,true);
+					return httpService.getRequest('app/pages/projects/projects.table.structure.json',{},true,true);
 				},
 				getProjectsTableData: function(searchTerms){
 					return httpService.getRequest('projects',searchTerms);
@@ -99,7 +99,7 @@
 			},
 			sources: {
 				getSourceTableStructure: function(){
-					return httpService.getRequest('../app/pages/sources/sources.table.structure.json',{},true,true);
+					return httpService.getRequest('app/pages/sources/sources.table.structure.json',{},true,true);
 				},
 				getSourcesTableData: function(searchTerms){
 					return httpService.getRequest('sources',searchTerms);
@@ -110,7 +110,7 @@
 			},
 			layers: {
 				getLayersTableStructure: function(){
-					return httpService.getRequest('../app/pages/layers/layers.table.structure.json',{},true,true);
+					return httpService.getRequest('app/pages/layers/layers.table.structure.json',{},true,true);
 				},
 				getLayersTableData: function(searchTerms){
 					return httpService.getRequest('layers',searchTerms);
@@ -121,7 +121,7 @@
 			},
 			tasks: {
 				getTasksTableStructure: function(){
-					return httpService.getRequest('../app/pages/tasks/tasks.table.structure.json',{},true,true);
+					return httpService.getRequest('app/pages/tasks/tasks.table.structure.json',{},true,true);
 				},
 				getTasksTableData: function(searchTerms){
 					return httpService.getRequest('tasks',searchTerms);
@@ -132,7 +132,7 @@
 			},
 			categories: {
 				getTableStructure: function(){
-					return httpService.getRequest('../app/pages/categories/categories.structure.json',{},true,true);
+					return httpService.getRequest('app/pages/categories/categories.structure.json',{},true,true);
 				},
 				getCategoriesTableData: function(searchTerms){
 					return httpService.getRequest('categories',searchTerms);
@@ -143,7 +143,7 @@
 			},
 			passages: {
 				getPassageTableStructure: function(){
-					return httpService.getRequest('../app/pages/passages/passages.table.structure.json',{},true,true);
+					return httpService.getRequest('app/pages/passages/passages.table.structure.json',{},true,true);
 				},
 				getPassagesTableData: function(searchTerms){
 					return httpService.getRequest('passages',searchTerms);
@@ -155,7 +155,7 @@
 			edit: {
 				users:{
 					getEditUserTableStructure: function(){
-						return httpService.getRequest('../app/pages/edit/users/edit.users.structure.json',{},true,true);
+						return httpService.getRequest('app/pages/edit/users/edit.users.structure.json',{},true,true);
 					},
 					getUserData: function(user_id){
 						return httpService.getRequest('users/'+user_id);
@@ -169,7 +169,7 @@
 				},
 				projects:{
 					getEditProjectTableStructure: function(){
-						return httpService.getRequest('../app/pages/edit/projects/edit.projects.structure.json',{},true,true);
+						return httpService.getRequest('app/pages/edit/projects/edit.projects.structure.json',{},true,true);
 					},
 					getProjectData: function(project_id){
 						return httpService.getRequest('projects/'+project_id);
@@ -182,21 +182,21 @@
 					},
 					layer: {
 						getTableStructure: function () {
-							return httpService.getRequest('../app/pages/edit/projects/layers/edit.projects.layers.structure.json', {}, true, true);
+							return httpService.getRequest('app/pages/edit/projects/layers/edit.projects.layers.structure.json', {}, true, true);
 						},
 						getSelectTableStructure: function () {
-							return httpService.getRequest('../app/pages/edit/projects/layers/edit.projects.layers.select.structure.json', {}, true, true);
+							return httpService.getRequest('app/pages/edit/projects/layers/edit.projects.layers.select.structure.json', {}, true, true);
 						},
-						getLayersTableData: function(layer_id){
-							return httpService.getRequest('layers/'+layer_id);
+						getLayersTableData: function(){
+							return httpService.getRequest('layers/');
 						}
 					},
 					tasks: {
 						getTableStructure: function () {
-							return httpService.getRequest('../app/pages/project_tasks/project.tasks.table.structure.json', {}, true, true);
+							return httpService.getRequest('app/pages/project_tasks/project.tasks.table.structure.json', {}, true, true);
 						},
 						getSelectTableStructure: function () {
-							return httpService.getRequest('../app/pages/project_tasks/project.tasks.structure.json', {}, true, true);
+							return httpService.getRequest('app/pages/project_tasks/project.tasks.structure.json', {}, true, true);
 						},
 						getTasksTableData: function(project_id){
 							return httpService.getRequest('tasks/',project_id);
@@ -205,7 +205,7 @@
 				},
 				categories:{
 					getEditCategoryTableStructure: function(){
-						return httpService.getRequest('../app/pages/edit/categories/edit.categories.structure.json', {}, true, true);
+						return httpService.getRequest('app/pages/edit/categories/edit.categories.structure.json', {}, true, true);
 					},
 					getCategoryData: function(category_id){
 						return httpService.getRequest('categories/'+category_id);
@@ -219,7 +219,7 @@
 				},
 				sources:{
 					getEditSourceTableStructure: function(){
-						return httpService.getRequest('../app/pages/edit/sources/edit.sources.structure.json',{},true,true);
+						return httpService.getRequest('app/pages/edit/sources/edit.sources.structure.json',{},true,true);
 					},
 					getSourceData: function(source_id){
 						return httpService.getRequest('sources/'+source_id);
@@ -234,10 +234,10 @@
 				layers:{
 					extension:{
 						getEditLayerTableStructure: function(){
-							return httpService.getRequest('../app/pages/edit/layers/extension/edit.layers.extension.structure.json',{},true,true);
+							return httpService.getRequest('app/pages/edit/layers/extension/edit.layers.extension.structure.json',{},true,true);
 						},
 						getCoarseningLayerTableStructure: function(){
-							return httpService.getRequest('../app/pages/edit/layers/extension/coarsening.table.structure.json',{},true,true);
+							return httpService.getRequest('app/pages/edit/layers/extension/coarsening.table.structure.json',{},true,true);
 						},
 						getLayerData: function(layer_id){
 							return httpService.getRequest('layers/'+layer_id);
@@ -250,10 +250,10 @@
 						},
 						categories:{
 							getTableStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/extension/categories/edit.layers.extension.categories.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/extension/categories/edit.layers.extension.categories.structure.json',{},true,true);
 							},
 							getEditCategoriesTableStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/extension/categories/edit.layers.extension.categories.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/extension/categories/edit.layers.extension.categories.structure.json',{},true,true);
 							},
 							getCategoryTableData: function(category_details){
 								return httpService.getRequest('categories',category_details);
@@ -261,22 +261,22 @@
 						},
 						restrictions:{
 							getTableStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/extension/extension/edit.layers.extension.restrictions.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/extension/extension/edit.layers.extension.restrictions.structure.json',{},true,true);
 							},
 							getEditRestrictionsTableStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/extension/restrictions/edit.layers.extension.restrictions.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/extension/restrictions/edit.layers.extension.restrictions.structure.json',{},true,true);
 							},
 							getRestrictionTableData: function(category_details){
 								return httpService.getRequest('restrictions',category_details);
 							},
 							getTableSelectStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/extension/categories/edit.layers.extension.categories.select.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/extension/categories/edit.layers.extension.categories.select.structure.json',{},true,true);
 							}
 						}
 					},
 					coarsening:{
 						getEditLayerTableStructure: function(){
-							return httpService.getRequest('../app/pages/edit/layers/coarsening/edit.layers.coarsening.table.structure.json',{},true,true);
+							return httpService.getRequest('app/pages/edit/layers/coarsening/edit.layers.coarsening.table.structure.json',{},true,true);
 						},
 						getLayerData: function(layer_id){
 							return httpService.getRequest('layers/'+layer_id);
@@ -289,10 +289,10 @@
 						},
 						categories:{
 							getTableStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/coarsening/categories/edit.layers.coarsening.categories.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/coarsening/categories/edit.layers.coarsening.categories.structure.json',{},true,true);
 							},
 							getEditCategoriesTableStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/coarsening/categories/edit.layers.coarsening.categories.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/coarsening/categories/edit.layers.coarsening.categories.structure.json',{},true,true);
 							},
 							getCategoryTableData: function(category_details){
 								return httpService.getRequest('categories',category_details);
@@ -303,22 +303,22 @@
 						},
 						restrictions:{
 							getTableStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/coarsening/restrictions/edit.layers.coarsening.restrictions.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/coarsening/restrictions/edit.layers.coarsening.restrictions.structure.json',{},true,true);
 							},
 							getEditRestrictionsTableStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/coarsening/restrictions/edit.layers.coarsening.restrictions.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/coarsening/restrictions/edit.layers.coarsening.restrictions.structure.json',{},true,true);
 							},
 							getRestrictionTableData: function(category_details){
 								return httpService.getRequest('restrictions',category_details);
 							},
 							getTableSelectStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/categories/edit.layers.coarsening.categories.select.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/categories/edit.layers.coarsening.categories.select.structure.json',{},true,true);
 							}
 						}
 					},
 					refinement:{
 						getEditLayerTableStructure: function(){
-							return httpService.getRequest('../app/pages/edit/layers/refinement/edit.layers.refinement.table.structure.json',{},true,true);
+							return httpService.getRequest('app/pages/edit/layers/refinement/edit.layers.refinement.table.structure.json',{},true,true);
 						},
 						getLayerData: function(layer_id){
 							return httpService.getRequest('layers/'+layer_id);
@@ -331,10 +331,10 @@
 						},
 						categories:{
 							getTableStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/refinement/categories/edit.layers.refinement.categories.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/refinement/categories/edit.layers.refinement.categories.structure.json',{},true,true);
 							},
 							getEditCategoriesTableStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/refinement/categories/edit.layers.refinement.categories.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/refinement/categories/edit.layers.refinement.categories.structure.json',{},true,true);
 							},
 							getCategoryTableData: function(category_details){
 								return httpService.getRequest('categories',category_details);
@@ -345,22 +345,22 @@
 						},
 						restrictions:{
 							getTableStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/refinement/restrictions/edit.layers.refinement.restrictions.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/refinement/restrictions/edit.layers.refinement.restrictions.structure.json',{},true,true);
 							},
 							getEditRestrictionsTableStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/refinement/restrictions/edit.layers.refinement.restrictions.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/refinement/restrictions/edit.layers.refinement.restrictions.structure.json',{},true,true);
 							},
 							getRestrictionTableData: function(category_details){
 								return httpService.getRequest('restrictions',category_details);
 							},
 							getTableSelectStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/categories/edit.layers.refinement.categories.select.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/categories/edit.layers.refinement.categories.select.structure.json',{},true,true);
 							}
 						}
 					},
 					root:{
 						getEditLayerTableStructure: function(){
-							return httpService.getRequest('../app/pages/edit/layers/root/edit.layers.root.structure.json',{},true,true);
+							return httpService.getRequest('app/pages/edit/layers/root/edit.layers.root.structure.json',{},true,true);
 						},
 						getLayerData: function(layer_id){
 							return httpService.getRequest('layers/'+layer_id);
@@ -373,10 +373,10 @@
 						},
 						categories:{
 							getTableStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/root/edit.layers.root.categories.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/root/edit.layers.root.categories.structure.json',{},true,true);
 							},
 							getEditCategoriesTableStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/root/categories/edit.layers.root.categories.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/root/categories/edit.layers.root.categories.structure.json',{},true,true);
 							},
 							getCategoryTableData: function(category_details){
 								return httpService.getRequest('categories',category_details);
@@ -384,29 +384,23 @@
 						},
 						restrictions:{
 							getTableStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/root/edit.layers.root.restrictions.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/root/edit.layers.root.restrictions.structure.json',{},true,true);
 							},
 							getEditRestrictionsTableStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/root/restrictions/edit.layers.root.restrictions.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/root/restrictions/edit.layers.root.restrictions.structure.json',{},true,true);
 							},
 							getRestrictionTableData: function(category_details){
 								return httpService.getRequest('restrictions',category_details);
 							},
 							getTableSelectStructure: function(){
-								return httpService.getRequest('../app/pages/edit/layers/categories/edit.layers.categories.select.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/layers/categories/edit.layers.categories.select.structure.json',{},true,true);
 							}
 						}
 					}
 				},
 				tasks:{
-					getTokenizationTaskEditTableStructure: function(){
-						return httpService.getRequest('../app/pages/edit/tasks/tokenization/edit.tasks.tokenization.structure.json',{},true,true);
-					},
 					getReviewTaskEditTableStructure: function(){
-						return httpService.getRequest('../app/pages/edit/tasks/edit.tasks.review.structure.json',{},true,true);
-					},
-					getAnnotationTaskEditTableStructure: function(){
-						return httpService.getRequest('../app/pages/edit/tasks/edit.tasks.annotation.structure.json',{},true,true);
+						return httpService.getRequest('app/pages/edit/tasks/edit.tasks.review.structure.json',{},true,true);
 					},
 					getTaskData: function(task_id){
 						return httpService.getRequest('tasks/'+task_id);
@@ -419,20 +413,48 @@
 					},
 					passages:{
 						getPassagesTableStructure: function(){
-							return httpService.getRequest('../app/pages/edit/tasks/passages/edit.tasks.passages.table.structure.json',{},true,true);
+							return httpService.getRequest('app/pages/edit/tasks/passages/edit.tasks.passages.table.structure.json',{},true,true);
 						}
 					},
 					tokenization:{
+						getTokenizationTaskEditTableStructure: function(){
+							return httpService.getRequest('app/pages/edit/tasks/tokenization/edit.tasks.tokenization.structure.json',{},true,true);
+						},
 						annotator: {
 							getAnnotatorsTableStructure: function(){
-								return httpService.getRequest('../app/pages/edit/tasks/tokenization/annotator/edit.tasks.tokenization.annotator.table.structure.json',{},true,true);
+								return httpService.getRequest('app/pages/edit/tasks/tokenization/annotator/edit.tasks.tokenization.annotator.table.structure.json',{},true,true);
+							}
+						},
+						passages:{
+							getPassagesTableStructure: function(){
+								return httpService.getRequest('app/pages/edit/tasks/tokenization/passages/edit.tasks.tokenization.passages.table.structure.json',{},true,true);
+							}
+						},
+					},
+					annotation:{
+						getAnnotationTaskEditTableStructure: function(){
+							return httpService.getRequest('app/pages/edit/tasks/annotation/edit.tasks.annotation.structure.json',{},true,true);
+						},
+						annotator: {
+							getAnnotatorsTableStructure: function(){
+								return httpService.getRequest('app/pages/edit/tasks/annotation/annotator/edit.tasks.annotation.annotator.table.structure.json',{},true,true);
+							}
+						}
+					},
+					review:{
+						getReviewTaskEditTableStructure: function(){
+							return httpService.getRequest('app/pages/edit/tasks/review/edit.tasks.review.structure.json',{},true,true);
+						},
+						annotator: {
+							getAnnotatorsTableStructure: function(){
+								return httpService.getRequest('app/pages/edit/tasks/review/annotator/edit.tasks.review.annotator.table.structure.json',{},true,true);
 							}
 						}
 					}
 				},
 				passages:{
 					getEditPassageTableStructure: function(){
-						return httpService.getRequest('../app/pages/edit/passages/edit.passages.structure.json',{},true,true);
+						return httpService.getRequest('app/pages/edit/passages/edit.passages.structure.json',{},true,true);
 					},
 					getPassageData: function(passage_id){
 						return httpService.getRequest('passages/'+passage_id);
@@ -445,10 +467,10 @@
 					},
 					sources:{
 						getSourceTableStructure: function(){
-							return httpService.getRequest('../app/pages/edit/passages/sources/edit.passages.sources.structure.json',{},true,true);
+							return httpService.getRequest('app/pages/edit/passages/sources/edit.passages.sources.structure.json',{},true,true);
 						},
 						getEditSourceTableStructure: function(){
-							return httpService.getRequest('../app/pages/edit/passages/sources/edit.passages.sources.structure.json',{},true,true);
+							return httpService.getRequest('app/pages/edit/passages/sources/edit.passages.sources.structure.json',{},true,true);
 						},
 						getSourceTableData: function(searchTerms){
 							return httpService.getRequest('sources',searchTerms);
@@ -456,7 +478,7 @@
 					},
 					tasks:{
 						getTasksTableStructure: function(){
-							return httpService.getRequest('../app/pages/edit/passages/tasks/edit.passages.tasks.structure.json', {}, true, true);
+							return httpService.getRequest('app/pages/edit/passages/tasks/edit.passages.tasks.structure.json', {}, true, true);
 						},
 						getTasksTableData: function(passage_id){
 							return httpService.getRequest('passages/'+passage_id+'/tasks');
@@ -464,7 +486,7 @@
 					},
 					projects:{
 						getTasksTableStructure: function(){
-							return httpService.getRequest('../app/pages/edit/passages/projects/edit.passages.projects.structure.json', {}, true, true);
+							return httpService.getRequest('app/pages/edit/passages/projects/edit.passages.projects.structure.json', {}, true, true);
 						},
 						getTasksTableData: function(passage_id){
 							return httpService.getRequest('passages/'+passage_id+'/projects');

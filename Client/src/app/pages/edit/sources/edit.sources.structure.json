@@ -2,7 +2,7 @@
   {
     "key":"id",
     "name":"Id",
-    "order":"1",
+    "order":1,
     "type":"text",
     "filter":true,
     "search":true,
@@ -12,7 +12,7 @@
   {
     "key":"name",
     "name":"Name",
-    "order":"2",
+    "order":2,
     "filter":true,
     "search":true,
     "type":"text",
@@ -23,7 +23,7 @@
   {
     "key":"text",
     "name":"Text",
-    "order":"3",
+    "order":3,
     "filter":true,
     "search":true,
     "type":"editor",
@@ -34,7 +34,7 @@
   {
     "key":"created_by",
     "name":"Created by",
-    "order":"4",
+    "order":4,
     "filter":false,
     "search":false,
     "type":"text",
@@ -45,7 +45,7 @@
   {
     "key":"created_at",
     "name":"Created at",
-    "order":"5",
+    "order":5,
     "filter":false,
     "search":false,
     "type":"text",
@@ -56,7 +56,7 @@
   {
     "key":"updated_at",
     "name":"Updated At",
-    "order":"6",
+    "order":6,
     "filter":false,
     "search":false,
     "type":"text",
@@ -67,7 +67,7 @@
   {
     "key":"is_active",
     "name":"Is Active",
-    "order":"7",
+    "order":7,
     "filter":true,
     "search":true,
     "type":"checkbox",
@@ -76,22 +76,36 @@
     "showInTable":true
   },
   {
+    "key":"export",
+    "order":99,
+    "name":"Export Asset",
+    "filter":false,
+    "search":false,
+    "type":"button",
+    "placeholder":"Export Asset",
+    "showInTable":true,
+    "value":[],
+    "class":"btn-default",
+    "shouldSendToServer": false,
+    "functionName":"exportAsset"
+  },
+  {
     "key":"actions",
     "name":"Actions",
-    "order":"8",
+    "order":8,
     "filter":false,
     "search":false,
     "showInTable":true,
     "buttons":[
       {
         "name":"Edit",
-        "order":"1",
+        "order":1,
         "class":"btn-info",
         "functionName":"editRow"
       },
       {
         "name":"Remove",
-        "order":"2",
+        "order":2,
         "class":"btn-danger",
         "functionName":"removeRow"
       }

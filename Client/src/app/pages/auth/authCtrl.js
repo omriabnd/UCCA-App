@@ -54,7 +54,7 @@
       storageService.saveObjectInLocalStorage('user_role',Core.user_role);
       PermissionsService.setPermissions(res.profile.role.id).then(function(){
         $timeout(function(){$rootScope.$hideSideBar = false;}) 
-        $state.go('layers');
+        $state.go('tasks');
       });
     }
 

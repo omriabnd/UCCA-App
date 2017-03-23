@@ -30,7 +30,7 @@
 
         function newCategory (obj,index){
             console.log("editRow",obj);
-            $state.go('edit.layers.categories.create',{});
+            $state.go('edit.layers.coarsening.categories.create',{});
             // $state.go('edit.passages.texts',{})
         }
 

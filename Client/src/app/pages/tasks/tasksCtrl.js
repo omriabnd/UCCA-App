@@ -18,14 +18,19 @@
     vm.editRow = editRow;
     vm.previewTask = Core.previewTask;
     
-    function smartTableCanUseAction(functionName,onlyForRoles,type){
+    function smartTableCanUseAction(functionName,onlyForRoles,objType,onlyForTypes,statusPerms){
       /*
         logic wehn to show the button
       */
+      var permitted = true
       if(!!onlyForRoles && onlyForRoles.length){
-        return (onlyForRoles.indexOf(Core.user_role.name.toUpperCase()) > -1)
+        permitted = (onlyForRoles.indexOf(Core.user_role.name.toUpperCase()) > -1)
       }
-      return true;
+      if(permitted && !!statusPerms && !!statusPerms.accepteds && !!statusPerms.accepteds.length){
+        permitted = (statusPerms.accepteds.indexOf(statusPerms.status) > -1)
+      }
+
+      return permitted;
     }
 
     function editRow (obj,index){

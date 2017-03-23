@@ -21,6 +21,17 @@
     "showInTable": true
   },
   {
+    "key":"created_by",
+    "name":"Created by",
+    "order":3,
+    "filter":false,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter text...",
+    "value":"",
+    "showInTable":false
+  },
+  {
     "key": "tooltip",
     "name": "Tooltip",
     "order": 3,
@@ -143,6 +154,16 @@
     ]
   },
   {
+    "key": "restrictions",
+    "name": "Restrictions",
+    "order": 7,
+    "type": "button",
+    "filter": false,
+    "search": false,
+    "showInTable": false,
+    "disabled": true
+  },
+  {
     "key": "is_active",
     "name": "Is Active",
     "order": 10,
@@ -152,5 +173,21 @@
     "placeholder": "Is Active...",
     "value": "",
     "showInTable": true
+  },
+  {
+    "key":"export",
+    "order":99,
+    "name":"Export Asset",
+    "filter":false,
+    "search":false,
+    "type":"button",
+    "placeholder":"Export Asset",
+    "showInTable":true,
+    "viewOnly":true,
+    "class":"btn-default",
+    "shouldSendToServer": false,
+    "dontBindToService": true,
+    "functionName":"exportAsset",
+    "value":null
   }
 ]

@@ -15,7 +15,7 @@
             controller: 'layersCtrl',
             controllerAs: 'vm',
             sidebarMeta: {
-              icon: 'ion-android-person',
+              icon: 'ion-cube',
               order: 5,
               showOnSideBar:false
             },

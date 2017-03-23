@@ -41,9 +41,9 @@
             var categoriesHash = {}
             categories.forEach(function(category){
                 if(categoriesHash[category.abbreviation]){
-                    categoriesHash[category.abbreviation].category.abbreviation +="_"+(categoriesHash[category.abbreviation].times)
+                    categoriesHash[category.abbreviation].category.abbreviation += (categoriesHash[category.abbreviation].times)
                     categoriesHash[category.abbreviation].times += 1;
-                    category.abbreviation+="_"+(categoriesHash[category.abbreviation].times)
+                    category.abbreviation += (categoriesHash[category.abbreviation].times)
                 }else{
                     categoriesHash[category.abbreviation] = {
                         "category" : category,

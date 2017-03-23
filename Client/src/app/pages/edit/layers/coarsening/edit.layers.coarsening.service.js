@@ -24,12 +24,16 @@
                 });
             },
             saveLayerDetails: function(smartTableStructure){
-                prepareLayerCategoriesForSend(smartTableStructure);
-                var bodyData = Core.extractDataFromStructure(smartTableStructure);
+                var structure = prepareLayerCategoriesForSend(smartTableStructure);
+                var bodyData = Core.extractDataFromStructure(structure);
                 service.clearData();
                 return !bodyData.id ? apiService.edit.layers.coarsening.postLayerData(bodyData).then(function (res){return res.data}) :  apiService.edit.layers.coarsening.putLayerData(bodyData).then(function (res){return res.data});
             },
             initData:function(data){
+                var categories = prepareCoarsningCategories(data.categories);
+                if(categories.length){
+                    data.categories = categories;
+                }
                 service.Data = data;
             },
             get:function(key){
@@ -56,7 +60,7 @@
                 var _service = this;
                 var initialData = _service.Data;
                 _service.clearData();
-                _service.Data.type = "Coarsening";
+                _service.Data.type = ENV_CONST.LAYER_TYPE.COARSENING;
                 _service.Data.parent = initialData;
             },
             deleteItemInData: function(key,index){
@@ -88,8 +92,45 @@
         return service;
     }
 
+    /*
+    * transform the categories array to group by childCategory
+    */
+    function prepareCoarsningCategories(categories){
+        if(!categories){
+            return categories;
+        }else{
+            var response = [];
+            var childCategories = {};
+            var pairs = {};
+
+            categories.forEach(function(cat){
+                childCategories[cat.id] = cat;
+            });
+
+            Object.keys(childCategories).forEach(function(parentId){
+                pairs[parentId] = {
+                    'parent_category': [],
+                    'category': [childCategories[parentId]]
+                }
+            });
+
+            categories.forEach(function(cat){
+                if(cat.parent){
+                    pairs[cat.id].parent_category.push(cat.parent)
+                }
+            });
+            
+            Object.keys(pairs).forEach(function(parentId){
+                response.push(pairs[parentId])
+            });
+            
+            return response;
+        }
+    }
+
     function prepareLayerCategoriesForSend(smartTableStructure){
-        smartTableStructure.forEach(function(rowObj){
+        var structure = angular.copy(smartTableStructure, structure)
+        structure.forEach(function(rowObj){
             if(rowObj.key == 'categories'){
                 console.log(rowObj);
                 var parsedCategories = [];
@@ -109,6 +150,7 @@
                 rowObj.value = parsedCategories;
             }
         });
+        return structure;
     }
 
 

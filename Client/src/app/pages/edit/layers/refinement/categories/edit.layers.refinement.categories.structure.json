@@ -97,11 +97,12 @@
         "name":"Choose",
         "order":1,
         "class":"btn-success",
+        "showAs":"switch",
         "functionName":"toggleItem"
       },
       {
         "name":"Info",
-        "order":1,
+        "order":2,
         "class":"btn-info",
         "functionName":"showCategoryInfo"
       }

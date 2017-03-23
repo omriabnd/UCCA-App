@@ -15,7 +15,7 @@
                 controller: 'ProjectsCtrl',
                 controllerAs: 'vm',
                 sidebarMeta: {
-                    icon: 'ion-android-person',
+                    icon: 'ion-document-text',
                     order: 2,
                     showOnSideBar:false
                 },

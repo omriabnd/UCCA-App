@@ -4,7 +4,9 @@
 
     angular.module('zAdmin.pages.edit.tasks', [
         'zAdmin.pages.edit.tasks.passages',
-        'zAdmin.pages.edit.tasks.tokenization'
+        'zAdmin.pages.edit.tasks.tokenization',
+        'zAdmin.pages.edit.tasks.annotation',
+        'zAdmin.pages.edit.tasks.review'
     ])
         .config(routeConfig);
 

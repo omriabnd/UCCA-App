@@ -47,10 +47,16 @@
     },0).then(
       $timeout(function(){
           console.log("PageReady");
+          focusPassage();
           DataService.duringInit = false;
       },2000)
     )
     
+    function focusPassage(){
+      var firstRowElem = $(".directive-info-data-container").first()
+      $rootScope.focusUnit(firstRowElem)
+      $rootScope.clckedLine = 0;
+    }
 
     function init(){
       $timeout(function(){$rootScope.$hideSideBar = true;}) 
@@ -119,7 +125,7 @@
     }
 
     function submitTask(){
-      var finishAllResult = vm.finishAll();
+      var finishAllResult = vm.finishAll(true);
       if(finishAllResult){
         return DataService.submitTask().then(function(res){
           Core.showNotification('success','Annotation Task Submitted.');
@@ -133,9 +139,9 @@
       });
     }
 
-    function finishAll(){
+    function finishAll(fromSubmit){
         var rootUnit = DataService.getUnitById("0");
-        var finishAllResult = restrictionsValidatorService.evaluateFinishAll(rootUnit);
+        var finishAllResult = restrictionsValidatorService.evaluateFinishAll(rootUnit,fromSubmit);
         if(finishAllResult){
           Core.showNotification('success','Finish All was successful');
           return true;

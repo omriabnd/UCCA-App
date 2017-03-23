@@ -12,7 +12,7 @@
     function routeConfig($stateProvider) {
         $stateProvider
             .state('edit.tasks.tokenization', {
-                url: '/tokenization/:projectLayerType/:id',
+                url: '/tokenization/:projectLayerType/:projectId/:id',
                 templateUrl: 'app/pages/edit/edit.html',
                 title: 'Edit Tokenization Task',
                 controller: 'EditTokenizationTasksCtrl',

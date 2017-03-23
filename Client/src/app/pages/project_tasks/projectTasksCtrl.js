@@ -12,7 +12,9 @@
     var vm = this;
     vm.searchTable = $state.current.name;
     vm.smartTableData = TableData;
-    vm.createNewTask = createNewTask;
+    // vm.createNewTask = createNewTask;
+    vm.createNewAnnotatoinTask = createNewAnnotatoinTask;
+    vm.createNewReviewTask = createNewReviewTask;
     Core.init(vm,TableStructure,projectTasksService);
     vm.smartTableCanUseAction = smartTableCanUseAction;
 
@@ -20,40 +22,63 @@
     vm.previewTask = Core.previewTask;
     vm.projectId = $state.params.id;
 
-    vm.projectLayerType = !!$state.params.layerType && ($state.params.layerType.toUpperCase() == ENV_CONST.LAYER_TYPE.ROOT);
+    vm.projectRootLayerType = !!$state.params.layerType && ($state.params.layerType.toUpperCase() == ENV_CONST.LAYER_TYPE.ROOT);
+    vm.projectDerivedLayerType = !!$state.params.layerType && ($state.params.layerType.toUpperCase() != ENV_CONST.LAYER_TYPE.ROOT);
 
     function editRow (obj,index){
       console.log("editRow",obj);
       if(obj.id){
-
+        $state.go('edit.tasks.'+obj.type.toLowerCase(),{
+          id:obj.id,
+          projectLayerType:$state.params.layerType.toUpperCase(),
+          projectId:$state.params.id,
+          parentTaskId:obj.id
+        })
       }else{
-        $state.go('edit.tasks.tokenization',{projectLayerType:ENV_CONST.LAYER_TYPE.ROOT})
+        // its the top bottun of "create tokenization/annotation task". tableRow must have an id...
+        // $state.go('edit.tasks.tokenization',{
+        $state.go('edit.tasks.'+(vm.projectRootLayerType ? 'tokenization' : 'annotation'),{
+          projectLayerType:$state.params.layerType.toUpperCase(),
+          projectId:$state.params.id,
+        })
       }
 
     }
 
-    function smartTableCanUseAction(functionName,onlyForRoles,type){
+    function smartTableCanUseAction(functionName,onlyForRoles,objType,onlyForTypes,statusPerms){
       /*
         logic wehn to show the button
       */
+      var permitted = true;
       if(!!onlyForRoles && onlyForRoles.length){
-        return (onlyForRoles.indexOf(Core.user_role.name.toUpperCase()) > -1)
+        permitted = (onlyForRoles.indexOf(Core.user_role.name.toUpperCase()) > -1)
       }
-      return true;
+      if(permitted && !!onlyForTypes && onlyForTypes.length && !!objType){
+        permitted = (onlyForTypes.indexOf(objType) > -1)
+      }
+      if(permitted && !!statusPerms && !!statusPerms.accepteds && !!statusPerms.accepteds.length){
+        permitted = (statusPerms.accepteds.indexOf(statusPerms.status) > -1)
+      }
+      return permitted;
     }
 
-    function createNewTask(obj,index){
-      switch($state.params.layerType){
-        case ENV_CONST.LAYER_TYPE.ROOT:{
-          $state.go('edit.tasks',{type:obj.type,projectLayerType:ENV_CONST.LAYER_TYPE.ROOT});
-          break;
-        }
-        default:{
-          $state.go('edit.tasks',{type:obj.type});
-          break;
-        }
-      }
+    function createNewAnnotatoinTask(obj,index){
+      $state.go('edit.tasks.annotation',{
+        projectLayerType:$state.params.layerType.toUpperCase(),
+        projectId:$state.params.id,
+        parentTaskId:obj.id
+      })
     }
+
+    function createNewReviewTask(obj,index){
+      $state.go('edit.tasks.review',{
+        projectLayerType:$state.params.layerType.toUpperCase(),
+        projectId:$state.params.id,
+        parentTaskId:obj.id
+      })
+    }
+
+
 
   }
 

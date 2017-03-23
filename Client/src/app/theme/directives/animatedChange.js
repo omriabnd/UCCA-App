@@ -12,14 +12,12 @@
   function animatedChange($timeout) {
     return {
       link: function (scope, element) {
-        $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-(function () {
+        $timeout(function(){
           var newValue = element.attr('new-value');
           var oldvalue = parseInt(element.html());
 
           function changeValue(val) {
-            $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-(function () {
+            $timeout(function(){
               element.html(val);
             }, 30);
           }
@@ -33,8 +31,7 @@
               changeValue(j);
             }
           }
-          $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-(function () {
+          $timeout(function(){
             element.next().find('i').addClass('show-arr');
           }, 500);
         }, 3500);

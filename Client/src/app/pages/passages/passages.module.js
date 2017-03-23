@@ -15,7 +15,7 @@
             controller: 'PassagesCtrl',
             controllerAs: 'vm',
             sidebarMeta: {
-              icon: 'ion-android-person',
+              icon: 'ion-clipboard',
               order: 6,
               showOnSideBar:false
             },

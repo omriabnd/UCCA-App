@@ -42,8 +42,8 @@
                     PermRoleStore.defineRole('GUEST',ENV_CONST.TABS_ID,function(){return true});
                     return true;
                 }
-                case ENV_CONST.ROLE.PM.id:{
-                    PermRoleStore.defineRole('PM',function(){return true});
+                case ENV_CONST.ROLE.PROJECT_MANAGER.id:{
+                    PermRoleStore.defineRole('PROJECT_MANAGER',function(){return true});
                     return true;
                 }
                 case ENV_CONST.ROLE.ANNOTATOR.id:{

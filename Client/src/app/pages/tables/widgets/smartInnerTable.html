@@ -7,8 +7,10 @@
         <div class="horizontal-scroll">
             <table class="table" st-table="vm.smartTableData" ng-class="{'table-striped': viewOnly == true}" >
                 <thead>
-                <tr class="sortable ">
+                <tr ng-if="!isSortable" class="sortable ">
                     <th st-sort="{{header.key}}" ng-repeat="header in vm.smartTableStructure track by $index" ng-if="header.showInTable">{{::header.name}}</th>
+                <tr ng-if="isSortable" class="">
+                    <th ng-repeat="header in vm.smartTableStructure track by $index" ng-if="header.showInTable">{{::header.name}}</th>
                 </tr>
                 </thead>
                 <tbody ui-sortable is-sortable=isSortable ng-model="vm.smartTableData">
@@ -16,7 +18,7 @@
                         <td ng-repeat="(key,value) in vm.smartTableStructure track by $index"
                             language-align="{{::itemRow[value['key']]}}"
                             ng-class="{'table-id':$index==0,'table-object':itemRow[value['key']].name}"
-                            ng-click="!!itemRow[value['key']].name && vm.showMore(itemRow[value['key']]);"
+                            ng-click="!!itemRow[value['key']].name && vm.runFunction('showMore',itemRow[value['key']]);"
                             ng-if="value.showInTable && value.key != 'actions'">
                             {{::(itemRow[value['key']].name || itemRow[value['key']] )}}
                         </td>
@@ -35,7 +37,7 @@
                                             ng-if="!action.showAs"
                                             ng-repeat="action in vm.smartTableStructure[vm.smartTableStructure.length-1].buttons track by $index"
                                             class="btn editable-table-button btn-xs {{action.class}}"
-                                            ng-click="vm[action.functionName](itemRow,$parent.$parent.$index)">
+                                            ng-click="vm.runFunction(action.functionName,itemRow,$parent.$parent.$index);">
                                             {{::action.name}}
                                     </button>
                                 </span>
@@ -51,7 +53,7 @@
                                       <li>
                                         <a  href
                                             ng-repeat="action in vm.smartTableStructure[vm.smartTableStructure.length-1].buttons track by $index"
-                                            ng-click="vm[action.functionName](itemRow,$parent.$index)">
+                                            ng-click="vm.runFunction(action.functionName,itemRow,$parent.$index)">
                                             {{::action.name}}
                                         </a>
                                       </li>

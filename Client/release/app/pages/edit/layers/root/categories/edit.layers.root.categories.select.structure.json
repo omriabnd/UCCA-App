@@ -48,7 +48,7 @@
     "filter":true,
     "search":true,
     "type":"text",
-    "placeholder":"Children...",
+    "placeholder":"Abbreviation...",
     "value":"",
     "showInTable":true
   },

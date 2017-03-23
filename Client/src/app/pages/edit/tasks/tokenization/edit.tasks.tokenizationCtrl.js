@@ -15,24 +15,32 @@
         vm.refreshData = refreshData;
         vm.deleteItemInData = deleteItemInData;
         vm.chooseAnnotator = chooseAnnotator;
+        vm.manage = manage;
 
-        Core.init(this,EditTableStructure);
+        Core.init(this,EditTableStructure,editTokenizationTasksService);
 
         vm.smartTableStructure.forEach(function(obj){
-            obj.value = editTokenizationTasksService.get(obj.key);
+            if(obj.dontBindToService != true){
+                obj.value = editTokenizationTasksService.get(obj.key);
+            }
         });
 
         function upsert(obj){
             console.log("edit",obj);
             editTokenizationTasksService.saveTaskDetails(obj).then(function(response){
-                $state.go("tasks")
+                $state.go('projectTasks',{id:response.project.id,layerType:$state.params.projectLayerType});
             },function(err){
-                $state.go("tasks")
+                $state.go('projectTasks',{id:response.project.id,layerType:$state.params.projectLayerType});
             })
         }
 
         function back(){
-            $state.go('tasks');
+            var projectId = $state.params.projectId;
+            $state.go('projectTasks',{id:projectId,layerType:$state.params.projectLayerType});
+        }
+
+        function manage (pageRoute){
+            $state.go('edit.tasks.tokenization.'+pageRoute+'.manage');
         }
 
         function choosePassage(){

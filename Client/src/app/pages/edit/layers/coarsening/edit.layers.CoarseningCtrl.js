@@ -23,7 +23,7 @@
         //
         // updateTableDataAccordingToLayerType(layerType);
 
-        Core.init(this,EditTableStructure);
+        Core.init(this,EditTableStructure,editCoarseningLayerService);
 
         vm.smartTableStructure.forEach(function(obj){
             var value = editCoarseningLayerService.get(obj.key);

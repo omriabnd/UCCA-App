@@ -35,11 +35,11 @@
     "name": "Tooltip",
     "order": 4,
     "filter": false,
-    "search": true,
+    "search": false,
     "type": "text",
     "placeholder": "Enter Tool tip...",
     "value": "",
-    "showInTable": true
+    "showInTable": false
   },
   {
     "key": "parent",

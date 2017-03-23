@@ -11,6 +11,7 @@
     var vm = this;
     vm.initText = initText;
     vm.saveChanges = saveChanges;
+    vm.submitTask = submitTask;
 
     vm.name = 'World';
 
@@ -36,11 +37,15 @@
       vm.htmlTextByTokens = "";
     }
 
-    function saveChanges(){
+    function submitTask(){
+      return saveChanges("submit");
+    }
+
+    function saveChanges(mode){
       vm.tokenizationTask.tokens = vm.textTokens;
       vm.tokenizationTask.passage.text = vm.passageText;
-
-      UccaTokenizerService.saveTask(vm.tokenizationTask).then(function(response){
+      mode = mode ? mode : 'draft';
+      UccaTokenizerService.saveTask(mode,vm.tokenizationTask).then(function(response){
           Core.showNotification("success","Task Saved");
       })
     }

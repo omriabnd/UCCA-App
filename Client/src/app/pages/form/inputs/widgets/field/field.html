@@ -41,7 +41,7 @@
 		        {{::formElem.placeholder}}
 		</button>
 		<pre ng-if="formElem.value" language-align="{{::formElem.value}}">
-			<span>{{::formElem.value}}</span>
+			<span>{{formElem.value}}</span>
 		</pre>
 	</div>
 
@@ -57,7 +57,12 @@
 
 	<div ng-switch-when="editor" class="form-group">
 		<label for="inputLastName">{{::formElem.name}}</label>
-		<text-angular ng-model="formElem.value"></text-angular>
+		<text-angular ng-model="formElem.value" 
+			ta-toolbar="[['h1','h2','h3','h4','h5','h6','p','pre','quote','bold','italics','underline','strikeThrough'],
+						['ul','ol','undo','redo','clear'],
+						['justifyLeft','justifyCenter','justifyRight','justifyFull',
+						'indent','outdent','insertLink']]">
+		</text-angular>
 	</div>
 
 </div>

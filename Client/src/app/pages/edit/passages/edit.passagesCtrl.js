@@ -16,7 +16,7 @@
     vm.viewProjects = viewProjects;
     vm.refreshData = refreshData;
     vm.back = back;
-    Core.init(this,EditTableStructure);
+    Core.init(this,EditTableStructure,editPassagesService);
 
     vm.smartTableStructure.forEach(function(obj){
       obj.value = editPassagesService.get(obj.key);

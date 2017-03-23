@@ -10,7 +10,7 @@
     "disabled":true
   },
   {
-    "key":"Status",
+    "key":"status",
     "name":"Status",
     "order":2,
     "filter":true,
@@ -42,11 +42,11 @@
     "filter":true,
     "search":true,
     "type":"table",
-    "viewOnly":true,
     "placeholder":"Choose",
     "value":"",
     "class":"btn-default",
     "functionName":"chooseAnnotator",
+    "managePageRoute":"annotator",
     "showInTable":true,
     "tableStructure":[
       {
@@ -83,17 +83,17 @@
     ]
   },
   {
-    "key":"passages",
-    "name":"Passages",
+    "key":"passage",
+    "name":"Passage",
     "order":5,
     "filter":true,
     "search":true,
     "type":"table",
-    "viewOnly":true,
     "placeholder":"Choose",
     "value":"",
     "class":"btn-default",
     "functionName":"choosePassage",
+    "managePageRoute":"passages",
     "showInTable":true,
     "tableStructure":[
       {
@@ -108,20 +108,116 @@
         "value":""
       },
       {
-        "key":"actions",
-        "name":"Actions",
-        "order":"3",
-        "filter":false,
-        "search":false,
+        "key":"short_text",
+        "name":"Short Preview",
+        "order":"2",
+        "filter":true,
+        "search":true,
         "showInTable":true,
-        "buttons":[
-          {
-            "name":"Remove",
-            "order":"1",
-            "class":"btn-danger",
-            "functionName":"removeRow"
-          }
-        ]
+        "type":"text",
+        "placeholderEnter ":"Short Preview...",
+        "value":""
+      },
+      {
+        "key":"type",
+        "name":"Type",
+        "order":"3",
+        "filter":true,
+        "search":true,
+        "showInTable":true,
+        "type":"text",
+        "placeholderEnter ":"Type...",
+        "value":""
+      }
+    ]
+  },
+  {
+    "key":"children",
+    "name":"Children Tasks",
+    "order":6,
+    "filter":false,
+    "search":false,
+    "type":"table",
+    "viewOnly":true,
+    "placeholder":"Choose",
+    "value":"",
+    "shouldSendToServer":false,
+    "class":"btn-default",
+    "showInTable":false,
+    "tableStructure":[
+      {
+        "key":"id",
+        "name":"Id",
+        "order":1,
+        "showInTable":true
+      },
+      {
+        "key":"type",
+        "name":"Type",
+        "order":2,
+        "showInTable":true
+      }
+    ]
+  },
+  {
+    "key":"project",
+    "name":"Project",
+    "order":6,
+    "filter":true,
+    "search":true,
+    "type":"table",
+    "viewOnly":true,
+    "placeholder":"Choose",
+    "value":"",
+    "class":"btn-default",
+    "showInTable":false,
+    "tableStructure":[
+      {
+        "key":"id",
+        "name":"Id",
+        "order":1,
+        "showInTable":true
+      },
+      {
+        "key":"name",
+        "name":"Name",
+        "order":2,
+        "showInTable":true
+      }
+    ]
+  },
+  {
+    "key": "parent",
+    "name": "Parent Task",
+    "order": 2,
+    "filter": false,
+    "search": false,
+    "type": "table",
+    "viewOnly": true,
+    "placeholder": "Current Parent Task",
+    "value": "",
+    "class": "btn-default",
+    "functionName": "viewOnly",
+    "showInTable": false,
+    "tableStructure": [
+      {
+        "key": "id",
+        "name": "Id",
+        "order": 1,
+        "type": "text",
+        "filter": true,
+        "search": true,
+        "showInTable": true
+      },
+      {
+        "key": "name",
+        "name": "Name",
+        "order": 2,
+        "filter": true,
+        "search": true,
+        "type": "text",
+        "value": "",
+        "showInTable": true
       }
     ]
   },
@@ -146,5 +242,21 @@
     "placeholder":"Is Demo...",
     "value":"",
     "showInTable":true
+  },
+  {
+    "key":"export",
+    "order":99,
+    "name":"Export Asset",
+    "filter":false,
+    "search":false,
+    "type":"button",
+    "placeholder":"Export Asset",
+    "showInTable":true,
+    "viewOnly":true,
+    "class":"btn-default",
+    "shouldSendToServer": false,
+    "dontBindToService": true,
+    "functionName":"exportAsset",
+    "value":null
   }
 ]

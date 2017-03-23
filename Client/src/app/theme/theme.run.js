@@ -23,13 +23,11 @@
       }
     }
 
-    $q.all(whatToWait).then/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-(function () {
+    $q.all(whatToWait).then(function(){
       $rootScope.$pageFinishedLoading = true;
     });
 
-    $timeout/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-(function () {
+    $timeout(function(){
       if (!$rootScope.$pageFinishedLoading) {
         $rootScope.$pageFinishedLoading = true;
       }

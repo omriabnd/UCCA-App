@@ -153,23 +153,18 @@
     "type":"select",
     "buttons":[
       {
-        "name":"Remove",
-        "order":1,
-        "roles":["ADMIN","PM"],
-        "class":"btn-danger",
-        "functionName":"removeRow"
-      },
-      {
-        "name":"Edit",
-        "order":2,
-        "roles":["ADMIN","PM"],
-        "class":"btn-info",
-        "functionName":"editRow"
-      },
-      {
         "name":"Go",
         "order":3,
-        "roles":["ADMIN","PM","ANNOTATOR","GUEST"],
+        "roles":["ADMIN","PROJECT_MANAGER","ANNOTATOR","GUEST"],
+        "statuses":["NOT_STARTED","ONGOING"],
+        "class":"btn-success",
+        "functionName":"previewTask"
+      },
+      {
+        "name":"View Only",
+        "order":3,
+        "roles":["ADMIN","PROJECT_MANAGER","ANNOTATOR","GUEST"],
+        "statuses":["SUBMITTED","REJECTED"],
         "class":"btn-success",
         "functionName":"previewTask"
       }

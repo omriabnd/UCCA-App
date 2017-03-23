@@ -2,7 +2,7 @@
   {
     "key":"id",
     "name":"ID",
-    "order":"1",
+    "order":1,
     "filter":true,
     "search":true,
     "type":"text",
@@ -14,7 +14,7 @@
   {
     "key":"type",
     "name":"Type",
-    "order":"2",
+    "order":2,
     "filter":true,
     "search":true,
     "type":"select",
@@ -28,8 +28,8 @@
   },
   {
     "key":"text",
-    "name":"text",
-    "order":"3",
+    "name":"Text",
+    "order":3,
     "filter":false,
     "search":false,
     "type":"button",
@@ -43,7 +43,7 @@
   {
     "key":"source",
     "name":"Source",
-    "order":"4",
+    "order":4,
     "filter":false,
     "search":false,
     "type":"button",
@@ -56,7 +56,7 @@
   {
     "key":"tasks",
     "name":"Tasks",
-    "order":"5",
+    "order":5,
     "filter":false,
     "search":false,
     "type":"button",
@@ -68,7 +68,7 @@
   },
   {
     "key":"projects",
-    "order":"6",
+    "order":6,
     "name":"Projects",
     "filter":false,
     "search":false,
@@ -82,12 +82,26 @@
   {
     "key":"is_active",
     "name":"Is Active",
-    "order":"7",
+    "order":7,
     "filter":true,
     "search":true,
     "type":"checkbox",
     "placeholder":"Is Active...",
     "showInTable":true,
     "value":""
+  },
+  {
+    "key":"export",
+    "order":99,
+    "name":"Export Asset",
+    "filter":false,
+    "search":false,
+    "type":"button",
+    "placeholder":"Export Asset",
+    "showInTable":true,
+    "value":[],
+    "class":"btn-default",
+    "shouldSendToServer": false,
+    "functionName":"exportAsset"
   }
 ]

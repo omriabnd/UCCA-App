@@ -373,9 +373,11 @@
         }
 
 
-        function evaluateFinishAll(mainPassage){
-            var evaluationResult;
-            evaluationResult = checkIfAllPassageTokenThatRequireAnnotationIsInUnit(mainPassage);
+        function evaluateFinishAll(mainPassage,fromSubmit){
+            var evaluationResult = true;
+            if(fromSubmit){
+                evaluationResult = checkIfAllPassageTokenThatRequireAnnotationIsInUnit(mainPassage);
+            }
             // var checkUnitsCategories = checkIfAllUnitsHaveAtLeastOneCategory(mainPassage);
             // console.log("checkUnitsCategories",checkUnitsCategories);
             if(!evaluationResult){
