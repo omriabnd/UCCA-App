@@ -79,7 +79,7 @@ class UsersViewSet(viewsets.ModelViewSet):
             newUser.email = request.data['email']
             newUser.organization = request.data['organization']
             newUser.affiliation = request.data['affiliation']
-            newUser.role = Roles.objects.get(id=4)
+            newUser.role = Roles.objects.get(id=request.data['role']['id'])
             newUser.set_group(newUser.id, newUser.role.name)
             newUser.created_by = ownerUser
             newUser.save()

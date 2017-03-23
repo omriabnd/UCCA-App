@@ -1,0 +1,29 @@
+[
+  {
+    "model": "auth.group_permissions",
+    "pk": 1,
+    "fields": {
+      "id": 368,
+      "group_id": 3,
+      "permission_id": 87
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 1,
+    "fields": {
+      "id": 369,
+      "group_id": 3,
+      "permission_id": 89
+    }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 1,
+    "fields": {
+      "id": 370,
+      "group_id": 3,
+      "permission_id": 44
+    }
+  }
+]

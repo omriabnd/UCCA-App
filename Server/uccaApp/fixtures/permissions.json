@@ -5,7 +5,7 @@
 	  "fields": {
 	    "id": 85,
 	    "name": "Can view users",
-	    "content_type_id":8,
+	    "content_type_id":17,
 	    "codename":"view_users"
 	  }
 	},
@@ -15,7 +15,7 @@
 	  "fields": {
 	    "id": 86,
 	    "name": "Can view categories",
-	    "content_type_id":9,
+	    "content_type_id":16,
 	    "codename":"view_categories"
 	  }
 	},
@@ -25,7 +25,7 @@
 	  "fields": {
 	    "id": 87,
 	    "name": "Can view tasks",
-	    "content_type_id":10,
+	    "content_type_id":15,
 	    "codename":"view_tasks"
 	  }
 	},
@@ -35,7 +35,7 @@
 	  "fields": {
 	    "id": 88,
 	    "name": "Can view passages",
-	    "content_type_id":12,
+	    "content_type_id":24,
 	    "codename":"view_passages"
 	  }
 	},
@@ -45,7 +45,7 @@
 	  "fields": {
 	    "id": 89,
 	    "name": "Can view projects",
-	    "content_type_id":13,
+	    "content_type_id":21,
 	    "codename":"view_projects"
 	  }
 	},
@@ -55,7 +55,7 @@
 	  "fields": {
 	    "id": 90,
 	    "name": "Can view layers",
-	    "content_type_id":14,
+	    "content_type_id":19,
 	    "codename":"view_layers"
 	  }
 	},
@@ -65,7 +65,7 @@
 	  "fields": {
 	    "id": 91,
 	    "name": "Can view sources",
-	    "content_type_id":23,
+	    "content_type_id":18,
 	    "codename":"view_sources"
 	  }
 	}

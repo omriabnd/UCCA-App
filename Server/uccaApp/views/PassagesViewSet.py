@@ -1,3 +1,4 @@
+from django.db.models import ProtectedError
 from django.db.models import Q
 from rest_framework import parsers
 from rest_framework import renderers
@@ -6,6 +7,7 @@ from rest_framework import viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework_filters.backends import DjangoFilterBackend
 
+from uccaApp.util.exceptions import DependencyFailedException
 from uccaApp.util.functions import has_permissions_to
 from uccaApp.filters.passages_filter import PassagesFilter
 from uccaApp.models.Sources import Sources
@@ -47,7 +49,10 @@ class PassagesViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         if has_permissions_to(self.request.user.id, 'delete_passages'):
-            return super(self.__class__, self).destroy(request)
+            try:
+                return super(self.__class__, self).destroy(request)
+            except ProtectedError:
+                raise DependencyFailedException
         else:
             raise PermissionDenied
 

@@ -70,8 +70,8 @@ class TaskInChartSerializer(serializers.ModelSerializer):
         ownerUser = self.initial_data['created_by']
         validated_data['created_by'] = ownerUser
         project = get_object_or_404(Projects, pk=self.initial_data['project']['id'])
-        annotator = get_object_or_404(Users, pk=self.initial_data['user']['id'])
-        passage = get_object_or_404(Passages, pk=self.initial_data['passage']['id'])
+        annotator = get_object_or_404(Users, pk=self.initial_data['user']['id']) # todo: when coarsening layer task - no need of annotator - check which one to set default?
+
         parent = None
         if self.initial_data['parent']:
             parent = get_object_or_404(Tasks, pk=get_value_or_none('id', self.initial_data['parent']))
@@ -87,6 +87,12 @@ class TaskInChartSerializer(serializers.ModelSerializer):
         newTask.is_active = validated_data['is_active']
         newTask.project = project
         newTask.annotator = annotator
+
+        if (newTask.type == Constants.TASK_TYPES_JSON['TOKENIZATION']):
+            passage = get_object_or_404(Passages, pk=self.initial_data['passage']['id'])
+        else:
+            passage = self.get_passage_by_parent_task(parent)
+
         newTask.passage = passage
         newTask.created_at = timezone.now()
 
@@ -114,6 +120,9 @@ class TaskInChartSerializer(serializers.ModelSerializer):
         # continue updating the layer's attributes
         return super(self.__class__, self).update(instance, validated_data)
 
+
+    def get_passage_by_parent_task(self,parent_task):
+        return parent_task.passage
 
     def has_parent_task(self,task):
         return hasattr(task,'parent_task') and task.parent_task != None
@@ -227,18 +236,18 @@ class TaskInChartSerializer(serializers.ModelSerializer):
                         remote_categories.append(annotation_unit_categories)
 
                         # TODO: save coaesened category to remote units in coarsening task
-                        # if cat.remote_parent_id != None:
-                        # # if the category is the coarsened one, add it to the annotation unit
-                        # coarsend_category = self.get_coarsening_layer_category_or_none(coarsenned_categories, cat.category_id)
-                        # if coarsend_category is not None:
-                        #     coarsend_unit_category = Annotation_Units_Categories()
-                        #     coarsend_unit_category.unit_id = remote_original_unit_in_coarsening_task
-                        #     coarsend_unit_category.category_id = coarsend_category
-                        #     coarsend_unit_category.remote_parent_id = unit_id_remote_original_unit_in_coarsening_task
-                        #     try:
-                        #       coarsend_unit_category.save()
-                        #     except:
-                        #       print("already saved")
+                        if cat.remote_parent_id != None:
+                            # if the category is the coarsened one, add it to the annotation unit
+                            coarsend_category = self.get_coarsening_layer_category_or_none(coarsenned_categories, {'id':cat.category_id.id})
+                            if coarsend_category is not None:
+                                coarsend_unit_category = Annotation_Units_Categories()
+                                coarsend_unit_category.unit_id = remote_original_unit_in_coarsening_task
+                                coarsend_unit_category.category_id = coarsend_category
+                                coarsend_unit_category.remote_parent_id = unit_id_remote_original_unit_in_coarsening_task
+                                try:
+                                  coarsend_unit_category.save()
+                                except:
+                                  print("already saved")
 
                     remote_original_unit_in_coarsening_task.remote_categories = remote_categories
 

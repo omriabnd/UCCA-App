@@ -4,7 +4,7 @@ from rest_framework.exceptions import APIException
 
 class DependencyFailedException(APIException):
     status_code = status.HTTP_403_FORBIDDEN
-    default_detail = ('You need to fix object\'s dependencies')
+    default_detail = ('You need to fix asset\'s dependencies')
     default_code = 'error'
 
 class CreateDerivedLayerException(APIException):

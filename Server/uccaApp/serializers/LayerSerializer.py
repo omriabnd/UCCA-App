@@ -65,10 +65,13 @@ class LayerSerializer(serializers.ModelSerializer):
                 cat.id = lc.category_id.id
                 cat.category_id = lc.category_id
                 cat.parent = lc.parent_category_id
-                lc_obj = Layers_Categories.objects.get(layer_id=obj.id,category_id=lc.category_id.id)
-                cat.was_default = lc_obj.was_default
-                cat.shortcut_key = lc_obj.shortcut_key
-                lc_list.append(cat)
+                try:
+                    lc_obj = Layers_Categories.objects.get(layer_id=obj.id,category_id=lc.category_id.id)
+                    cat.was_default = lc_obj.was_default
+                    cat.shortcut_key = lc_obj.shortcut_key
+                    lc_list.append(cat)
+                except:
+                    lc_obj = None
 
         for lc in lc_list:
             lc_json.append(LayersCategoriesSerializer(lc).data)
@@ -207,7 +210,11 @@ class LayerSerializer(serializers.ModelSerializer):
         newLayer.tooltip = validated_data['tooltip']
 
         if self.initial_data['parent'] is not None and self.initial_data['parent'] and newLayer.type !=  Constants.LAYER_TYPES_JSON['ROOT']: # no parent for root layer
-            newLayer.parent_layer_id = get_object_or_404(Layers,pk=self.initial_data['parent']['id'])
+            if(newLayer.type == Constants.LAYER_TYPES_JSON['REFINEMENT'] or newLayer.type == Constants.LAYER_TYPES_JSON['COARSENING']):
+                parent_id = self.initial_data['parent']['id']
+            else:
+                parent_id = self.initial_data['parent'][0]['id']
+            newLayer.parent_layer_id = get_object_or_404(Layers,pk=parent_id) # TODO: check if '[0]' is ok
 
         newLayer.save()
         return newLayer

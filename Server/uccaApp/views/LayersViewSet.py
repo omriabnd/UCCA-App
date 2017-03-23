@@ -7,7 +7,7 @@ from rest_framework import viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from uccaApp.util.exceptions import DependencyFailedException
-from uccaApp.util.functions import has_permissions_to
+from uccaApp.util.functions import has_permissions_to, get_value_or_none
 from uccaApp.filters.layers_filter import LayersFilter
 from uccaApp.serializers import LayerSerializer
 from uccaApp.models.Layers import Layers
@@ -35,6 +35,8 @@ class LayerViewSet(viewsets.ModelViewSet):
         if has_permissions_to(self.request.user.id, 'add_layers'):
             ownerUser = self.request.user
             request.data['created_by'] = ownerUser
+            if 'created_at' in request.data:
+                request.data.pop('created_at')
             return super(self.__class__, self).create(request)
         else:
             raise PermissionDenied

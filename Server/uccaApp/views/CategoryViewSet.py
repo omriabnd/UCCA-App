@@ -1,3 +1,4 @@
+from django.db.models import ProtectedError
 from rest_framework import parsers
 from rest_framework import renderers
 from rest_framework import status
@@ -6,6 +7,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework_filters.backends import DjangoFilterBackend
 
+from uccaApp.util.exceptions import DependencyFailedException
 from uccaApp.util.functions import has_permissions_to
 from uccaApp.filters.categories_filter import CategoriesFilter
 from uccaApp.models import Categories
@@ -37,13 +39,17 @@ class CategoryViewSet(viewsets.ModelViewSet):
         if has_permissions_to(self.request.user.id, 'add_categories'):
             ownerUser = self.request.user
             request.data['created_by'] = ownerUser
+            request.data.pop('created_at')
             return super(self.__class__, self).create(request)
         else:
             raise PermissionDenied
 
     def destroy(self, request, *args, **kwargs):
         if has_permissions_to(self.request.user.id, 'delete_categories'):
-            return super(self.__class__, self).destroy(request)
+            try:
+                return super(self.__class__, self).destroy(request)
+            except ProtectedError:
+                raise DependencyFailedException
         else:
             raise PermissionDenied
 
