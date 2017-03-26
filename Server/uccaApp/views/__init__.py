@@ -11,6 +11,7 @@ from .CategoryViewSet import *
 from .UsersViewSet import *
 from .SignupViewSet import *
 from .ForgotPasswordViewSet import *
+from .PasswordChangeView import *
 from .LayersViewSet import *
 from .TasksViewSet import *
 from .ProjectesViewSet import *

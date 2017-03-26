@@ -4,7 +4,7 @@ from rest_framework import parsers
 from rest_framework import renderers
 from rest_framework import viewsets
 
-from uccaApp.util.functions import Send_Email
+from uccaApp.util.functions import Send_Email, send_signup_email
 from uccaApp.util.permissions import IsPostMethod
 from uccaApp.models import Constants, Roles
 from uccaApp.models import Users
@@ -47,7 +47,7 @@ class SignupViewSet(viewsets.ModelViewSet):
 
         djangoUser.save()
 
-        Send_Email(djangoUser.email, random_password)
+        send_signup_email(djangoUser.email,random_password)
 
         newUser = Users()
         newUser.id = djangoUser.pk

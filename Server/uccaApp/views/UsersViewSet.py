@@ -9,7 +9,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_filters.backends import DjangoFilterBackend
 
-from uccaApp.util.functions import Send_Email, has_permissions_to
+from uccaApp.util.functions import Send_Email, has_permissions_to, send_invite_email
 from uccaApp.filters.users_filter import UsersFilter
 from uccaApp.models import Constants, Roles
 from uccaApp.models import Users
@@ -63,13 +63,13 @@ class UsersViewSet(viewsets.ModelViewSet):
             djangoUser.last_name = request.data['last_name']
             djangoUser.username = request.data['first_name'] + get_random_string(length=8)
 
-            # random_password = User.objects.make_random_password() # TODO: unmark this line
-            random_password = djangoUser.first_name # TODO: mark this line
+            random_password = User.objects.make_random_password() # TODO: unmark this line
+            # random_password = djangoUser.first_name # TODO: mark this line
             djangoUser.set_password(random_password)
 
             djangoUser.save()
 
-            Send_Email(djangoUser.email, random_password)
+            send_invite_email(inviterName=self.request.user.first_name, toEmail=djangoUser.email, password=random_password)
 
             newUser = Users()
             newUser.id = djangoUser.pk
