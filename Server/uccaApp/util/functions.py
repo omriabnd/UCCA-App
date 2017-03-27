@@ -12,7 +12,7 @@ def Send_Email(email, body, subject=None):
         subject = "New message from UCCA web-app"
     message = ""
     from_email = "support.ucca@cs.huji.ac.il"
-    recipient_list = ["yarin@zigit.co.il","zigit.mobile@gmail.com"]
+    recipient_list = [email]
     try:
         user = get_object_or_404(User,email=email)
         header = "<div>Dear "+user.first_name+",</div><br>"
