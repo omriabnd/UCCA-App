@@ -70,7 +70,7 @@ class TaskInChartSerializer(serializers.ModelSerializer):
         ownerUser = self.initial_data['created_by']
         validated_data['created_by'] = ownerUser
         project = get_object_or_404(Projects, pk=self.initial_data['project']['id'])
-        annotator = get_object_or_404(Users, pk=self.initial_data['user']['id']) # todo: when coarsening layer task - no need of annotator - check which one to set default?
+        annotator = get_object_or_404(Users, pk=get_value_or_none('id',get_value_or_none('user',self.initial_data))) # todo: when coarsening layer task - no need of annotator - check which one to set default?
 
         parent = None
         if self.initial_data['parent']:
@@ -89,7 +89,7 @@ class TaskInChartSerializer(serializers.ModelSerializer):
         newTask.annotator = annotator
 
         if (newTask.type == Constants.TASK_TYPES_JSON['TOKENIZATION']):
-            passage = get_object_or_404(Passages, pk=self.initial_data['passage']['id'])
+            passage = get_object_or_404(Passages, pk=get_value_or_none('id',get_value_or_none('passage',self.initial_data)))
         else:
             passage = self.get_passage_by_parent_task(parent)
 
