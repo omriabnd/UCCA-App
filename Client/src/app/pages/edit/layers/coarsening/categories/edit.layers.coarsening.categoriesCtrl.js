@@ -57,7 +57,7 @@
         function promptHotKeySelectionModal(obj,LayerDetails,parentCtrl){
             $uibModal.open({
                 animation: true,
-                templateUrl: '../app/pages/edit/layers/select.hotkey.modal.html',
+                templateUrl: 'app/pages/edit/layers/select.hotkey.modal.html',
                 size: 'md',
                 resolve: {
                     items: function () {
