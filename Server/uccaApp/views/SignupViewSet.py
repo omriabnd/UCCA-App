@@ -45,6 +45,8 @@ class SignupViewSet(viewsets.ModelViewSet):
         random_password = User.objects.make_random_password()
         djangoUser.set_password(random_password)
 
+        Users.validate_email_unique(djangoUser.email)
+
         djangoUser.save()
 
         send_signup_email(djangoUser.email,random_password)

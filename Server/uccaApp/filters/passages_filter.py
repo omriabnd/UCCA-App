@@ -5,7 +5,7 @@ from uccaApp.models import Passages
 
 class PassagesFilter(filters.FilterSet):
     id = filters.NumberFilter(name='id', lookup_type='exact')
-    text = filters.CharFilter(name='text', lookup_type='contains')
+    text = filters.CharFilter(name='text', lookup_type='icontains')
     type = filters.CharFilter(name='type', lookup_type='exact')
     is_default = filters.BooleanFilter(name='is_default', lookup_type='exact')
     is_active = filters.BooleanFilter(name='is_active', lookup_type='exact')

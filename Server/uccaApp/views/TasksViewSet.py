@@ -8,6 +8,8 @@ from rest_framework.exceptions import (
     PermissionDenied,
     NotFound
 )
+
+from uccaApp.models import Constants
 from uccaApp.util.exceptions import DependencyFailedException
 from uccaApp.util.functions import has_permissions_to
 from uccaApp.filters.tasks_filter import TasksFilter
@@ -55,6 +57,7 @@ class TasksViewSet(viewsets.ModelViewSet):
         if has_permissions_to(self.request.user.id, 'add_tasks'):
             ownerUser = self.request.user
             request.data['created_by'] = ownerUser
+            request.data['status'] =  Constants.TASK_STATUS_JSON['NOT_STARTED']
             return super(self.__class__, self).create(request)
         else:
             raise PermissionDenied

@@ -6,9 +6,9 @@ from uccaApp.models import Tasks
 class TasksFilter(filters.FilterSet):
     id = filters.NumberFilter(name='id', lookup_type='exact')
     parent_task = filters.NumberFilter(name='parent_task', lookup_type='exact')
-    type = filters.CharFilter(name='type', lookup_type='contains')
-    status = filters.CharFilter(name='status', lookup_type='contains')
-    manager_comment = filters.CharFilter(name='manager_comment', lookup_type='contains')
+    type = filters.CharFilter(name='type', lookup_type='icontains')
+    status = filters.CharFilter(name='status', lookup_type='icontains')
+    manager_comment = filters.CharFilter(name='manager_comment', lookup_type='icontains')
     is_demo = filters.BooleanFilter(name='is_demo', lookup_type='exact')
     is_active = filters.BooleanFilter(name='is_active', lookup_type='exact')
     created_by = filters.NumberFilter(name='created_by', lookup_type='exact')

@@ -5,9 +5,9 @@ from uccaApp.models import Categories
 
 class CategoriesFilter(filters.FilterSet):
     id = filters.NumberFilter(name='id', lookup_type='exact')
-    name = filters.CharFilter(name='name', lookup_type='contains')
-    description = filters.CharFilter(name='description', lookup_type='contains')
-    tooltip = filters.CharFilter(name='tooltip', lookup_type='contains')
+    name = filters.CharFilter(name='name', lookup_type='icontains')
+    description = filters.CharFilter(name='description', lookup_type='icontains')
+    tooltip = filters.CharFilter(name='tooltip', lookup_type='icontains')
     abbreviation = filters.CharFilter(name='abbreviation', lookup_type='exact')
     is_default = filters.BooleanFilter(name='is_default', lookup_type='exact')
     is_active = filters.BooleanFilter(name='is_active', lookup_type='exact')
