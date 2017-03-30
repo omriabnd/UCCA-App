@@ -2,17 +2,21 @@
     <div class="col-md-12">
 
     	<div class="input-demo radio-demo row">
-    		<div class="col-md-12">
-    			<label class="radio-inline custom-radio nowrap col-md-12">
-    				<input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="File" ng-model="vm.textFrom">
-    				<span class="form-group">
-    					<label for="input01">Text</label>
-    					<input type="file" class="form-control" id="input01" placeholder="Upload" onchange="angular.element(this).scope().vm.readTextFromFile(this)" ng-focus="vm.textFrom = 'File'">
-    				</span>
-    			</label>
-    		</div>
-    		<div class="col-md-12">
-    			<label class="radio-inline custom-radio nowrap col-md-12">
+            <div class="col-md-12">
+                <i>* You may add a "&lt;DELIMITER>" inside the text in order to split it and create multiple passages at once</i>
+                <br>
+                <br>
+                <label class="radio-inline custom-radio nowrap col-md-12">
+                    <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="File" ng-model="vm.textFrom">
+                    <span class="form-group">
+                        <label for="input01">Text</label>
+                        <input type="file" class="form-control" id="input01" placeholder="Upload" onchange="angular.element(this).scope().vm.readTextFromFile(this)" ng-focus="vm.textFrom = 'File'">
+                    </span>
+                </label>
+            </div>
+            <div class="col-md-12">
+                <br>
+                <label class="radio-inline custom-radio nowrap col-md-12">
     				<input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="Input" ng-model="vm.textFrom">
     				<span class="form-group">
     					<label for="textarea01">Textarea</label>
@@ -20,7 +24,8 @@
     				</span>
     			</label>
     		</div>
-    	</div>
+        </div>
+        <br>
 
 		<button type="submit" class="btn btn-primary" ng-click="vm.edit();">Submit</button>
 		<button type="button" class="btn btn-danger" ng-click="vmEditCtrl.back();">Cancel</button>

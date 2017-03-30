@@ -53,7 +53,7 @@
             editExtensionLayerService.saveLayerDetails(obj).then(function(response){
                 $state.go("layers")
             },function(err){
-                $state.go("layers")
+                // $state.go("layers")
             })
         }
 

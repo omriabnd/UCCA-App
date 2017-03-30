@@ -86,18 +86,21 @@
         "name":"Edit",
         "order":1,
         "class":"btn-info",
+        "roles":["ADMIN","PROJECT_MANAGER"],
         "functionName":"editRow"
       },
       {
         "name":"Remove",
         "order":"2",
         "class":"btn-danger",
+        "roles":["ADMIN","PROJECT_MANAGER"],
         "functionName":"removeRow"
       },
       {
         "name":"Export",
         "order":1,
         "class":"btn-info",
+        "roles":["ADMIN","PROJECT_MANAGER"],
         "functionName":"exportProject"
       },
       {

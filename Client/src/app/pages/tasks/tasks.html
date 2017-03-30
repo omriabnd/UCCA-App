@@ -10,7 +10,7 @@
 <div class="row">
     <div class="col-md-12">
     	<div ba-panel ba-panel-title="Tasks Table" ba-panel-class="with-scroll">
-            <button class="btn btn-primary" style="position: absolute;right: 20px;" ng-click="vm.search([{'key':'project','value':vm.projectId},{'key':'is_demo','value':true}])">Demo Tasks Only</button>
+            <button class="btn btn-primary filter-demo-tasks-button" ng-click="vm.search([{'key':'project','value':vm.projectId},{'key':'is_demo','value':true}])">Demo Tasks Only</button>
     		<div include-with-scope="app/pages/tables/widgets/smartTable.html"></div>
     	</div>
     </div>

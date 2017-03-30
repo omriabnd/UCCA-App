@@ -13,7 +13,7 @@
             .state('edit.passages.projects', {
                 url: '/tasks',
                 templateUrl: 'app/pages/edit/passages/tasks/edit.passages.tasks.html',
-                title: 'View Passages Projects',
+                title: 'Edit Passages',
                 controller: 'EditPassagesProjectsCtrl',
                 controllerAs: 'vm',
                 resolve:{

@@ -36,7 +36,9 @@
         }
 
         function manage (pageRoute){
-            $state.go('edit.layers.refinement.'+pageRoute,{parentId: editRefinementLayerService.get('parent').id});
+            var _parent = editRefinementLayerService.get('parent');
+            var _parentId = angular.isArray(_parent) ? _parent[0].id : _parent.id
+            $state.go('edit.layers.refinement.'+pageRoute,{parentId: _parentId});
         }
 
         function edit (pageRoute,shouldEdit,obj,index,rowItem){
@@ -53,12 +55,14 @@
             editRefinementLayerService.saveLayerDetails(obj).then(function(response){
                 $state.go("layers")
             },function(err){
-                $state.go("layers")
+                // $state.go("layers")
             })
         }
 
         function chooseCategory(){
-            $state.go('edit.layers.refinement.categories.manage',{parentId: editRefinementLayerService.get('parent').id});
+            var _parent = editRefinementLayerService.get('parent');
+            var _parentId = angular.isArray(_parent) ? _parent[0].id : _parent.id
+            $state.go('edit.layers.refinement.categories.manage',{parentId: _parentId});
         }
 
         function refreshData(key){

@@ -13,7 +13,7 @@
             .state('edit.tasks.tokenization.annotator', {
                 url: '/annotator',
                 template: '<ui-view></ui-view>',
-                title: 'Edit Tokenization Task Annotator',
+                title: 'Edit Tokenization Task',
                 abstract:true,
                 controllerAs: 'vm',
                 resolve:{
@@ -28,7 +28,7 @@
             .state('edit.tasks.tokenization.annotator.manage', {
                 url: '/annotator',
                 templateUrl: 'app/pages/edit/tasks/tokenization/annotator/edit.tasks.tokenization.annotator.html',
-                title: 'Edit Tokenization Task annotator',
+                title: 'Edit Tokenization Task',
                 controller: 'EditTokenizationTaskAnnotatorCtrl',
                 controllerAs: 'vm',
                 params:{
@@ -46,7 +46,7 @@
             .state('edit.tasks.tokenization.annotator.create', {
                 url: '/newpassage',
                 templateUrl: 'app/pages/edit/tasks/tokenization/annotator/edit.tasks.tokenization.annotator.create.html',
-                title: 'New User',
+                title: 'Edit Tokenization Task',
                 controller: 'EditPassagesCtrl',
                 controllerAs: 'vm',
                 resolve:{

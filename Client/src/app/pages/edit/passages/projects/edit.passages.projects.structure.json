@@ -54,6 +54,7 @@
   },
   {
     "key":"created_by",
+    "hideInAddNewAssetMode":true,
     "name":"Created By",
     "order":7,
     "filter":true,

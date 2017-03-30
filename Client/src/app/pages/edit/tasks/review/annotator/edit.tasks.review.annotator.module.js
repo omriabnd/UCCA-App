@@ -13,7 +13,7 @@
             .state('edit.tasks.review.annotator', {
                 url: '/annotator',
                 template: '<ui-view></ui-view>',
-                title: 'Edit Review Task Annotator',
+                title: 'Edit Review Task',
                 abstract:true,
                 controllerAs: 'vm',
                 resolve:{
@@ -28,7 +28,7 @@
             .state('edit.tasks.review.annotator.manage', {
                 url: '/annotator',
                 templateUrl: 'app/pages/edit/tasks/review/annotator/edit.tasks.review.annotator.html',
-                title: 'Edit Review Task annotator',
+                title: 'Edit Review Task',
                 controller: 'EditReviewTaskAnnotatorCtrl',
                 controllerAs: 'vm',
                 params:{
@@ -46,7 +46,7 @@
             .state('edit.tasks.review.annotator.create', {
                 url: '/newpassage',
                 templateUrl: 'app/pages/edit/tasks/review/annotator/edit.tasks.review.annotator.create.html',
-                title: 'New User',
+                title: 'Edit Review Task',
                 controller: 'EditPassagesCtrl',
                 controllerAs: 'vm',
                 resolve:{

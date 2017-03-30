@@ -87,7 +87,7 @@
     "type": "text",
     "placeholder": "Enter Type...",
     "value": "",
-    "showInTable": true,
+    "showInTable": false,
     "disabled": true
   },
   {

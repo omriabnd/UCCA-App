@@ -1,11 +1,12 @@
 <div class="horizontal-scroll">
   <div class="form-group select-page-size-wrap ">
-    <label>Rows on page
+    <label><!-- Rows on page -->
       <select class="form-control selectpicker show-tick" title="Rows on page" selectpicker
               ng-model="vm.smartTablePageSize" ng-options="i for i in [5,10,15,20,25]">
       </select>
     </label>
   </div>
+  <span class="total-results" ng-if="vm.smartTableDataSafe.length">Total Results: {{vm.smartTableDataSafe.length}}</span>
   <table class="table" st-table="vm.smartTableData" st-safe-src="vm.smartTableDataSafe">
     <thead>
     <tr class="sortable ">
@@ -25,7 +26,7 @@
           ng-class="{'table-id':$index==0,'table-object': (!!itemRow[value['key']].name || !!itemRow[value['key']][0].name || !!itemRow[value['key']].id || !!itemRow[value['key']][0].id) }"
           ng-click="(!!itemRow[value['key']].name || !!itemRow[value['key']][0].name || !!itemRow[value['key']].id || !!itemRow[value['key']][0].id) && vm.showMore(itemRow[value['key']]);"
           ng-if="value.showInTable && value.key != 'actions'">
-          {{::(itemRow[value['key']].name || itemRow[value['key']] )}}
+          {{::vm.parseSmartTableColumnData(itemRow,value)}}
       </td>
       <td ng-if="vm.smartTableStructure[vm.smartTableStructure.length-1].buttons">
           <span data-ng-switch on="vm.smartTableStructure[vm.smartTableStructure.length-1].buttons.length<4">

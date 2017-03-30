@@ -10,7 +10,9 @@
   function EditCtrl($scope, $rootScope, $filter,$state, editableOptions, editableThemes, $uibModal) {
   	var vm = this;
   	vm.back = back;
-
+    vm.addNewAssetMode = !!!$state.params.id;
+    vm.editAssetMode = !!$state.params.id;
+    
     function back(){
       history.back();
     }

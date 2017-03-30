@@ -16,7 +16,7 @@
             .state('edit.tasks', {
                 url: '/tasks',
                 template : '<ui-view></ui-view>',
-                title: 'Edit',
+                title: 'Edit Tasks',
                 controller: 'EditTasksCtrl',
                 controllerAs: 'vmEditTasksCtrl',
                 sidebarMeta: false

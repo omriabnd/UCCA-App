@@ -18,7 +18,7 @@
             url: '/layers',
             template : '<ui-view></ui-view>',
             abstract: true,
-            title: 'Edit',
+            title: 'Edit Layers',
             controller:'EditLayerCtrl',
             controllerAs:'vmEditLayerCtrl',
             sidebarMeta: false

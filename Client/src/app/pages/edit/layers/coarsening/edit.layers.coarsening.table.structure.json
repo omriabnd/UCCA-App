@@ -22,6 +22,7 @@
   },
   {
     "key":"created_by",
+    "hideInAddNewAssetMode":true,
     "name":"Created by",
     "order":3,
     "filter":false,
@@ -98,7 +99,7 @@
     "type": "text",
     "placeholder": "Enter Type...",
     "value": "",
-    "showInTable": true,
+    "showInTable": false,
     "disabled": true
   },
   {

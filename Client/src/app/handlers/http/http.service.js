@@ -48,9 +48,24 @@
 				"503" : "warning"
 			}
 			$rootScope.$pageFinishedLoading = true;
-			Core.showNotification(type[errorResult.status],errorResult.statusText+"\n"+errorResult.config.url)
+			Core.showNotification(type[errorResult.status],errorResult.statusText+":\n"+fetchError(errorResult))
 			redirectToLoginOnTokenExpired(errorResult)
 			throw errorResult;
+		}
+
+		function fetchError(errorResult){
+			var res = "";
+			if(!!errorResult && !!errorResult.data){
+				if(Array.isArray(errorResult.data)){
+					res = errorResult.data[0]
+				}else if(typeof errorResult.data == "object"){
+					if(!!Object.keys(errorResult.data)[0]){
+						var moreInfo = Object.keys(errorResult.data)[0] == 'detail' ? "" : ": "+Object.keys(errorResult.data)[0];
+						res = errorResult.data[Object.keys(errorResult.data)[0]] + moreInfo
+					}
+				}
+			}
+			return res;
 		}
 
 		function redirectToLoginOnTokenExpired(errorResult){

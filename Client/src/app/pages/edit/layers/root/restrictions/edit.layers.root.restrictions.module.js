@@ -13,7 +13,7 @@
             .state('edit.layers.root.restrictions', {
                 url: '/restrictions/:id',
                 templateUrl: 'app/pages/edit/layers/root/restrictions/edit.layers.root.restrictions.html',
-                title: 'Manage Restrictions',
+                title: 'Edit Root Layer',
                 controller: 'EditRootLayerRestrictionsCtrl',
                 controllerAs: 'vm',
                 params:{

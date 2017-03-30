@@ -13,7 +13,7 @@
             .state('edit.projects.layers', {
                 url: '/layers',
                 templateUrl: 'app/pages/edit/projects/layers/edit.projects.layers.html',
-                title: 'Edit Project layer',
+                title: 'Edit Projects',
                 controller: 'EditProjectsLayersCtrl',
                 controllerAs: 'vm',
                 resolve:{

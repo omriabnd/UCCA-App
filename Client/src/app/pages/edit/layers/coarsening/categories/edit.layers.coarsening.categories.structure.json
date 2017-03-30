@@ -21,6 +21,7 @@
   },
   {
     "key":"created_by",
+    "hideInAddNewAssetMode":true,
     "name":"Created by",
     "order":3,
     "filter":false,

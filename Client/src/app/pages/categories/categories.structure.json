@@ -126,6 +126,7 @@
         "name":"Remove",
         "order":2,
         "class":"btn-danger",
+         "roles":["ADMIN","PROJECT_MANAGER"],
         "functionName":"removeRow"
       }
     ]

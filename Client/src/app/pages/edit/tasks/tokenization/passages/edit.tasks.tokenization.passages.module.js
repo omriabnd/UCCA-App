@@ -13,7 +13,7 @@
             .state('edit.tasks.tokenization.passages', {
                 url: '/tasks/tokenization',
                 template: '<ui-view></ui-view>',
-                title: 'Edit Tokenization Task Passages',
+                title: 'Edit Tokenization Task',
                 abstract:true,
                 controllerAs: 'vm',
                 resolve:{
@@ -28,7 +28,7 @@
             .state('edit.tasks.tokenization.passages.manage', {
                 url: '/tasks/tokenization/:id',
                 templateUrl: 'app/pages/edit/tasks/tokenization/passages/edit.tasks.tokenization.passages.html',
-                title: 'Edit Tokenization Task Passages',
+                title: 'Edit Tokenization Task',
                 controller: 'EditTokenizationTaskPassagesCtrl',
                 controllerAs: 'vm',
                 params:{
@@ -46,7 +46,7 @@
             .state('edit.tasks.tokenization.passages.create', {
                 url: '/newpassage',
                 templateUrl: 'app/pages/edit/tasks/tokenization/passages/edit.tasks.tokenization.passages.create.html',
-                title: 'New Passage',
+                title: 'Edit Tokenization Task',
                 controller: 'EditPassagesCtrl',
                 controllerAs: 'vm',
                 resolve:{

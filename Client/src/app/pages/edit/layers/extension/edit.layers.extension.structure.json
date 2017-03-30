@@ -79,7 +79,7 @@
     "value":[],
     "class":"btn-default",
     "functionName":"viewParent",
-    "showInTable":true,
+    "showInTable":false,
     "tableStructure":[
       {
         "key":"id",
@@ -133,12 +133,13 @@
   },
   {
     "key":"created_by",
+    "hideInAddNewAssetMode":true,
     "name":"Created by",
     "order":9,
     "filter":true,
     "search":true,
     "type":"textInObject",
-    "placeholder":"Enter Description...",
+    "placeholder":"Created by...",
     "value":"",
     "showInTable":true,
     "disabled":true
@@ -236,7 +237,7 @@
     "filter":true,
     "search":true,
     "type":"text",
-    "showInTable":true,
+    "showInTable":false,
     "placeholder":"Enter comment",
     "value":""
   },
@@ -253,6 +254,7 @@
     "class":"btn-default",
     "functionName":"viewProjects",
     "showInTable":true,
+    "hideInAddNewAssetMode":true,
     "tableStructure":[
       {
         "key":"id",
@@ -321,7 +323,7 @@
         "type":"text",
         "placeholder":"Enter Description...",
         "value":"",
-        "showInTable":true
+        "showInTable":false
       },
       {
         "key":"categories_2",

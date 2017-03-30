@@ -13,7 +13,7 @@
             .state('edit.tasks.annotation.annotator', {
                 url: '/annotator',
                 template: '<ui-view></ui-view>',
-                title: 'Edit Annotation Task Annotator',
+                title: 'Edit Annotation Task',
                 abstract:true,
                 controllerAs: 'vm',
                 resolve:{
@@ -28,7 +28,7 @@
             .state('edit.tasks.annotation.annotator.manage', {
                 url: '/annotator',
                 templateUrl: 'app/pages/edit/tasks/annotation/annotator/edit.tasks.annotation.annotator.html',
-                title: 'Edit Annotation Task annotator',
+                title: 'Edit Annotation Task',
                 controller: 'EditAnnotationTaskAnnotatorCtrl',
                 controllerAs: 'vm',
                 params:{
@@ -46,7 +46,7 @@
             .state('edit.tasks.annotation.annotator.create', {
                 url: '/newpassage',
                 templateUrl: 'app/pages/edit/tasks/annotation/annotator/edit.tasks.annotation.annotator.create.html',
-                title: 'New User',
+                title: 'Edit Annotation Task',
                 controller: 'EditPassagesCtrl',
                 controllerAs: 'vm',
                 resolve:{

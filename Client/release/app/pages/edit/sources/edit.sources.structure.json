@@ -33,6 +33,7 @@
   },
   {
     "key":"created_by",
+    "hideInAddNewAssetMode":true,
     "name":"Created by",
     "order":4,
     "filter":false,

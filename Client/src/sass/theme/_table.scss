@@ -6,7 +6,8 @@ smart-inner-table {
           padding-top: 1px;
         }
         & > td {
-          max-width: 240px;
+          // max-width: 240px;
+          max-width: 150px;
           overflow: auto;
           text-overflow: initial;
         }
@@ -41,7 +42,8 @@ smart-inner-table {
         line-height: 35px;
         border-top: 1px solid $border-light;
         white-space: nowrap;
-        max-width: 240px;
+        // max-width: 240px;
+        max-width: 150px;
         overflow: hidden;
         text-overflow: ellipsis;
         &:first-child {
@@ -101,7 +103,14 @@ smart-inner-table {
 }
 
 .select-page-size-wrap {
-  width: 150px;
+  max-width: 220px;
+  position: absolute;
+  top: 5px;
+}
+.total-results{
+  position: absolute;
+  margin-left: 3px;
+  bottom: 15px;
 }
 
 .table .header-row th {

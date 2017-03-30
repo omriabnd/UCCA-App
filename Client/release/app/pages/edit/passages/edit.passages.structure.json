@@ -62,6 +62,7 @@
     "type":"button",
     "placeholder":"View Only",
     "showInTable":true,
+    "hideInAddNewAssetMode":true,
     "value":[],
     "class":"btn-default",
     "functionName":"viewTasks"
@@ -75,6 +76,7 @@
     "type":"button",
     "placeholder":"View Only",
     "showInTable":true,
+    "hideInAddNewAssetMode":true,
     "value":[],
     "class":"btn-default",
     "functionName":"viewProjects"

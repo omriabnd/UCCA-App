@@ -30,10 +30,31 @@
 			showAlert: showAlert,
 			exportAsset: exportAsset,
 			initCategoriesStringToArray: initCategoriesStringToArray,
-			generateRestrictionObject: generateRestrictionObject
+			generateRestrictionObject: generateRestrictionObject,
+			parseSmartTableColumnData:parseSmartTableColumnData
 		};
 		
 		return core;
+
+		function parseSmartTableColumnData(itemRow,value){
+			if(itemRow[value['key']]){
+				if(angular.isArray(itemRow[value['key']])){
+					return itemRow[value['key']].map(function(obj){
+						if(obj.name){
+							return obj.name+"("+obj.id+")"
+						}else if(obj.short_text){
+							return obj.short_text+"("+obj.id+")"
+						}else{
+							return obj.id
+						}
+					}).toString().split(",").join(", ")
+				}else{
+					return (itemRow[value['key']].name || itemRow[value['key']].short_text || itemRow[value['key']].id || itemRow[value['key']] )
+				}
+			}else{
+				return "";
+			}
+		}
 
 		function generateRestrictionObject(categoryOneArray,restrictionType,categoryTwoArray){
 		    categoryOneArray = categoryOneArray.map(function(cat){
@@ -75,9 +96,18 @@
 			}
 			return "Asset as JSON"
 		}
-		function smartTableCanUseAction(functionName,onlyForRoles,type,types){
-			return true
+
+		function smartTableCanUseAction(functionName,onlyForRoles){
+		  /*
+		    logic wehn to show the button
+		  */
+		  var permitted = true;
+		  if(!!onlyForRoles && onlyForRoles.length){
+		    permitted = (onlyForRoles.indexOf(core.user_role.name.toUpperCase()) > -1)
+		  }
+		  return permitted;
 		}
+
 		function goNext(currentPage) {
 			var tableScope = angular.element($('div[st-pagination]')).isolateScope();
 			if (tableScope.currentPage == tableScope.numPages) {
@@ -318,6 +348,8 @@
 			    vm.tableVisibleFields = {};
 
 				vm.showMore = core.showMore;
+
+				vm.parseSmartTableColumnData = core.parseSmartTableColumnData;
 				
 				vm.removeRow = core.removeRow;
 

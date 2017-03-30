@@ -39,7 +39,7 @@
     }
 
     function failedUserCreation(err){
-        Core.showNotification('error',ENV_CONST.NOTIFICATIONS.GENERAL_ERROR);
+        // Core.showNotification('error',ENV_CONST.NOTIFICATIONS.GENERAL_ERROR);
     }
     
   }

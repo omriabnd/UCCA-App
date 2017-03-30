@@ -30,7 +30,7 @@
             editReviewTasksService.saveTaskDetails(obj).then(function(response){
                 $state.go('projectTasks',{id:response.project.id,layerType:$state.params.projectLayerType});
             },function(err){
-                $state.go('projectTasks',{id:response.project.id,layerType:$state.params.projectLayerType});
+                // $state.go('projectTasks',{id:response.project.id,layerType:$state.params.projectLayerType});
             })
         }
 

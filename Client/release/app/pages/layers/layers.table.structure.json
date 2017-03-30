@@ -169,6 +169,7 @@
       {
         "name":"Remove",
         "order":1,
+        "roles":["ADMIN","PROJECT_MANAGER"],
         "functionName":"removeRow"
       },
       {
@@ -179,16 +180,19 @@
       {
         "name":"New extension Layer",
         "order":4,
+        "roles":["ADMIN","PROJECT_MANAGER"],
         "functionName":"createExtensionLayer"
       },
       {
         "name":"New refinement Layer",
         "order":5,
+        "roles":["ADMIN","PROJECT_MANAGER"],
         "functionName":"createRefinementLayer"
       },
       {
         "name":"New coarsening Layer",
         "order":6,
+        "roles":["ADMIN","PROJECT_MANAGER"],
         "functionName":"createCoarseningLayer"
       }
     ]

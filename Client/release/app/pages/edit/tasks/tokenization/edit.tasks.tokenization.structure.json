@@ -22,7 +22,8 @@
       { "label": "SUBMITTED", "id": 3 },
       { "label": "REJECTED", "id": 4 }
     ],
-    "showInTable":true
+    "showInTable":true,
+    "hideInAddNewAssetMode":true
   },
   {
     "key":"manager_comment",
