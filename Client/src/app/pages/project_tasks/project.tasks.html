@@ -11,7 +11,7 @@
 <div class="row">
     <div class="col-md-12">
     	<div ba-panel ba-panel-title="Project {{ 'ID#'+vm.projectId }} Task Table" ba-panel-class="with-scroll">
-            <button class="btn btn-primary" style="position: absolute;right: 20px;" ng-click="vm.search([{'key':'is_demo','value':true}])">Demo Tasks Only</button>
+            <button class="btn btn-primary" style="position: absolute;right: 20px;" ng-click="vm.search([{'key':'project','value':vm.projectId},{'key':'is_demo','value':true}])">Demo Tasks Only</button>
     		<div include-with-scope="app/pages/tables/widgets/smartTable.html"></div>
     	</div>
     </div>

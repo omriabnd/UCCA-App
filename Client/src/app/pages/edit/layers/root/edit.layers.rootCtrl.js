@@ -36,7 +36,7 @@
         }
 
         function manage (pageRoute){
-            $state.go('edit.layers.root.'+pageRoute);
+            $state.go('edit.layers.root.'+pageRoute,{chosenItem : null, itemRowIndex: null});
         }
 
         function edit (pageRoute,shouldEdit,obj,index,rowItem){
@@ -81,7 +81,7 @@
 
         function manageRestrictions(){
             console.log("manageRestriction");
-            $state.go('edit.layers.root.restrictions');
+            $state.go('edit.layers.root.restrictions',{chosenItem : null, itemRowIndex: null});
         }
 
         function getInnerSmartTableStructure(key){

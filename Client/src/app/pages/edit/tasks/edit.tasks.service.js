@@ -56,8 +56,8 @@
                     passages: [],
                     parent:[],
                     annotator:[],
-                    is_active:"",
-                    is_demo:""
+                    is_active:false,
+                    is_demo:false
                 };
             }
         }

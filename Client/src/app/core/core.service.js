@@ -28,11 +28,34 @@
 			hasValue: hasValue,
 			previewTask: previewTask,
 			showAlert: showAlert,
-			exportAsset: exportAsset
+			exportAsset: exportAsset,
+			initCategoriesStringToArray: initCategoriesStringToArray,
+			generateRestrictionObject: generateRestrictionObject
 		};
 		
 		return core;
 
+		function generateRestrictionObject(categoryOneArray,restrictionType,categoryTwoArray){
+		    categoryOneArray = categoryOneArray.map(function(cat){
+		        delete cat.description;
+		        delete cat.tooltip;
+		        return cat;
+		    })
+		    categoryTwoArray = categoryTwoArray.map(function(cat){
+		        delete cat.description;
+		        delete cat.tooltip;
+		        return cat;
+		    })
+		    return {
+		        categories_1: categoryOneArray,
+		        type:restrictionType,
+		        categories_2: categoryTwoArray
+		    }
+		}
+
+		function initCategoriesStringToArray(categoriesAsString){
+		    return JSON.parse(categoriesAsString.replace(/'/g,'"').replace(/True/g,'true').replace(/False/g,'false').replace(/None/g,'null'))
+		}
 
 		function exportAsset(){
 			var asset = angular.copy(this.currentService.Data, asset)
@@ -99,12 +122,14 @@
 				templateUrl: pagelink,
 				size: size,
 				scope: $rootScope.$new(),
-				controller: function ($scope) {
+				controller: ["$scope","$sce",function ($scope,$sce) {
 					$scope.htmlContent = obj.htmlContent;
 					$scope.name = obj.name;
-					$scope.description = obj.description;
+					if(obj.description){
+					    $scope.description = $sce.trustAsHtml(obj.description);
+					}
 					$scope.jsonString = JSON.stringify(obj);
-				}
+				}]
 			});
 		};
 

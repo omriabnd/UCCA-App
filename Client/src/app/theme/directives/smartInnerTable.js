@@ -70,10 +70,23 @@
         }
 
         function runFunction(functionName,obj,index){
-            if(functionName=='removeRow'){
-                removeRow(obj, index)
-            }else{
-                $scope.ctrlModule[functionName](obj,index);
+            switch(functionName){
+                case 'removeRow':
+                    removeRow(obj, index)
+                    break;
+                case 'edit':
+                    goToEditPageThroughParentCtrl(obj,index)
+                    break;
+                case 'toggleItem':
+                    toggleItem(category,categoryValue)
+                    break;
+                case 'manage':
+                    $scope.ctrlModule.manage($scope.managePageRoute);
+                    break;
+                default:
+                    $scope.ctrlModule[functionName](obj,index);
+                    break;
+                
             }
         }
         

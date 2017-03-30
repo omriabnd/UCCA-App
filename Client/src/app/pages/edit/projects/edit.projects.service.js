@@ -61,7 +61,7 @@
                     tooltip:"",
                     tasks:[],
                     created_by:"",
-                    is_active:"",
+                    is_active:false,
                     created_at:"",
                     updated_at:""
                 };

@@ -3,11 +3,11 @@
     <button type="button" class="close" ng-click="$dismiss()" aria-label="Close">
       <em class="ion-ios-close-empty sn-link-close"></em>
     </button>
-    <h4 class="modal-title">{{name}}</h4>
+    <h4 class="modal-title" ng-if="!!name">{{::name}}</h4>
   </div>
   <div class="modal-body">
-    <span>{{description}}</span>
-    <pre>{{jsonString}}</pre>
+    <span ng-if="!!description" ng-bind-html="description"></span>
+    <pre ng-if="!!jsonString">{{::jsonString}}</pre>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-primary" ng-click="$dismiss()">Ok</button>

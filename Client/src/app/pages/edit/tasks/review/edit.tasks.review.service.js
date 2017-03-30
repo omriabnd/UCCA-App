@@ -70,8 +70,8 @@
                     passage: [],
                     parent:[],
                     user:[],
-                    is_active:"",
-                    is_demo:""
+                    is_active:false,
+                    is_demo:false
                 };
             }
         }

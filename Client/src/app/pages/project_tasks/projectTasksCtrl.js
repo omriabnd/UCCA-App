@@ -25,6 +25,13 @@
     vm.projectRootLayerType = !!$state.params.layerType && ($state.params.layerType.toUpperCase() == ENV_CONST.LAYER_TYPE.ROOT);
     vm.projectDerivedLayerType = !!$state.params.layerType && ($state.params.layerType.toUpperCase() != ENV_CONST.LAYER_TYPE.ROOT);
 
+    
+    vm.smartTableStructure.forEach(function(obj){
+      if(obj.key=='project'){
+        obj.value = $state.params.id;
+      }
+    })
+    
     function editRow (obj,index){
       console.log("editRow",obj);
       if(obj.id){

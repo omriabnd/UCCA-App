@@ -42,7 +42,7 @@
             })
             .state('edit.layers.refinement.categories.create', {
                 url: '/newctegories',
-                templateUrl: 'app/pages/edit/layers/categories/refinement/categories/edit.layers.refinement.categories.create.html',
+                templateUrl: 'app/pages/edit/layers/refinement/categories/edit.layers.refinement.categories.create.html',
                 title: 'New Category',
                 controller: 'EditCategoriesCtrl',
                 controllerAs: 'vm',
