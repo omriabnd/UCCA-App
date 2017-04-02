@@ -15,7 +15,8 @@ class AuthTokenSerializer(serializers.Serializer):
         password = attrs.get('password')
 
         if email and password:
-            my_user = get_object_or_404(User,email=email)
+            queryset = User.objects.filter(email__icontains=email)
+            my_user = get_object_or_404(queryset)
             user = authenticate(username=my_user.username, password=password)
 
             if user:
