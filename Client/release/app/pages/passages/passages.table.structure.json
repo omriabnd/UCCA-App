@@ -69,13 +69,13 @@
       {
         "name":"Edit",
         "order":"1",
-        "class":"btn-success",
+        "class":"btn-info",
         "functionName":"editRow"
       },
       {
         "name":"Remove",
         "order":"2",
-        "class":"btn-info",
+        "class":"btn-danger",
         "functionName":"removeRow"
       }
     ]

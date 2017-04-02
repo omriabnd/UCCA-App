@@ -10,8 +10,8 @@
   function ProfileService(apiService) {
     var service = {
         UserProfile:[],
-        getProfileData: function(user_id){
-          return apiService.profile.getProfileData(user_id);
+        getProfileData: function(){
+          return apiService.profile.getProfileData();
         },
         saveProfileData: function(profileDetails){
           return apiService.profile.putProfileData(profileDetails);

@@ -60,7 +60,18 @@
 					res = errorResult.data[0]
 				}else if(typeof errorResult.data == "object"){
 					if(!!Object.keys(errorResult.data)[0]){
-						var moreInfo = Object.keys(errorResult.data)[0] == 'detail' ? "" : ": "+Object.keys(errorResult.data)[0];
+						var moreInfo = "";
+						switch(Object.keys(errorResult.data)[0]){
+							case 'detail':
+								moreInfo = "";
+								break;
+							case 'non_field_errors':
+								moreInfo = "";
+								break;
+							default:
+								moreInfo = ": "+Object.keys(errorResult.data)[0];
+								break;
+						}
 						res = errorResult.data[Object.keys(errorResult.data)[0]] + moreInfo
 					}
 				}

@@ -24,7 +24,12 @@
 		      localStorage.setItem(key, JSON.stringify(value));
 		    },
 		    getObjectFromLocalStorage: function(key){
-		      return JSON.parse(localStorage.getItem(key));
+		    	try{
+		    		return JSON.parse(localStorage.getItem(key));
+		    	}catch(e){
+		    		console.error(e);
+		    		return {};
+		    	}
 		    },
 		    clearLocalStorage: function(){
 		      localStorage.clear();

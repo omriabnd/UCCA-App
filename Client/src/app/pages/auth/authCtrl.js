@@ -28,8 +28,12 @@
     }
 
     function resendPasswordSuccess(res){
-      console.log("resend password success:", res.data.msg)
-      Core.showNotification("success",res.data.msg)
+      if(!res.data.error){
+        console.log("resend password success:", res.data.msg)
+        Core.showNotification("success",res.data.msg)
+      }else{
+        Core.showNotification("error",res.data.error)
+      }
     }
 
     function resendPasswordFailed(err){

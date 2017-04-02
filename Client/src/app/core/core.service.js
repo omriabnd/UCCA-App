@@ -167,7 +167,7 @@
 			var result = {};
 			for (var i = 0; i < structure.length; i++) {
 				if(structure[i].shouldSendToServer != false){
-					structure[i].type == "checkbox" ? result[structure[i].key] = structure[i].value : result[structure[i].key] = structure[i].value || null;
+					structure[i].type == "checkbox" ? result[structure[i].key] = !!structure[i].value : result[structure[i].key] = structure[i].value || null;
 				}
 			}
 			return result;

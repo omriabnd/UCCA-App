@@ -65,7 +65,8 @@
 				}
 			},
 			profile:{
-				getProfileData: function(user_id){
+				getProfileData: function(){
+					var user_id = storageService.getObjectFromLocalStorage("UserInfo").profile.id;
 					return httpService.getRequest('users/'+user_id);
 				},
 				putProfileData: function(profileDetails){

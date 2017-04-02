@@ -17,8 +17,7 @@
           controllerAs:'vm',
           resolve:{
             Profile: function(profileService){
-              var user_id = "1";
-              return profileService.getProfileData(user_id).then(function(res){
+              return profileService.getProfileData().then(function(res){
                   return res.data
               });
             }
