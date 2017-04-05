@@ -18,7 +18,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
     """
-    queryset = Projects.objects.all()
+    queryset = Projects.objects.all().order_by('-updated_at')
     serializer_class = ProjectSerializer
     parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
     renderer_classes = (renderers.JSONRenderer,)
@@ -34,16 +34,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
             # get all users projects by user_id
             if  user_role == 'ADMIN':
-                param_user_projects = Projects.objects.all()
+                param_user_projects = Projects.objects.all().order_by('-updated_at')
             elif user_role == 'PM' or user_role == 'PROJECT_MANAGER':
-                param_user_projects = Projects.objects.all().filter(created_by=self.request.user.id)
+                param_user_projects = Projects.objects.all().filter(created_by=self.request.user.id).order_by('-updated_at')
             elif user_role == 'ANNOTATOR' or user_role == 'GUEST':
                 # if the current user can see only his own tasks - projects
-                user_tasks = Tasks.objects.all().filter(annotator=self.request.user.id, is_active=True)
+                user_tasks = Tasks.objects.all().filter(annotator=self.request.user.id, is_active=True).order_by('-updated_at')
                 for task in user_tasks:
                     my_projects.append(task.project.id)
 
-                param_user_projects = Projects.objects.all().filter(is_active=True,id__in = my_projects)
+                param_user_projects = Projects.objects.all().filter(is_active=True,id__in = my_projects).order_by('-updated_at')
 
             return param_user_projects
 

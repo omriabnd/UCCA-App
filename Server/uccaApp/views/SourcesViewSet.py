@@ -18,7 +18,7 @@ class SourceViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
     """
-    queryset = Sources.objects.all()
+    queryset = Sources.objects.all().order_by('-updated_at')
     serializer_class = SourceSerializer
     parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
     renderer_classes = (renderers.JSONRenderer,)

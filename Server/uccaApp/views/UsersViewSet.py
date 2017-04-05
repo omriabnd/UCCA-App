@@ -31,7 +31,7 @@ class UsersViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
     permission_classes = [IsAuthenticated]
-    queryset = Users.objects.all()
+    queryset = Users.objects.all().order_by('-updated_at')
     serializer_class = UsersSerializer
     parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
     renderer_classes = (renderers.JSONRenderer,)
@@ -43,10 +43,22 @@ class UsersViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
-        if has_permissions_to(self.request.user.id,'view_users'):
-            return self.queryset
-        else:
-            raise PermissionDenied
+        # if has_permissions_to(self.request.user.id,'view_users'):
+
+            param_user_details = None
+
+            # get user_role
+            user_role = self.request.user.groups.first().name
+            if  user_role == 'GUEST':
+                param_user_details = Users.objects.all().order_by('-updated_at')
+                # if the current user wants to see his own tasks
+                param_user_details = Users.objects.all().filter(id=self.request.user.id, is_active=True)
+            else:
+                param_user_details = Users.objects.all().order_by('-updated_at')
+
+            return param_user_details
+        # else:
+        #     raise PermissionDenied
 
 
     def create(self, request, *args, **kwargs):

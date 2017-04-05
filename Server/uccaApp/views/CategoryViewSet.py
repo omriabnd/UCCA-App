@@ -19,7 +19,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
     """
-    queryset = Categories.objects.all()
+    queryset = Categories.objects.all().order_by('-updated_at')
     serializer_class = CategorySerializer
     parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
     renderer_classes = (renderers.JSONRenderer,)

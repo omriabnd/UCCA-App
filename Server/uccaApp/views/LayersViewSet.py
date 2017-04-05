@@ -16,7 +16,7 @@ class LayerViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
     """
-    queryset = Layers.objects.all()
+    queryset = Layers.objects.all().order_by('-updated_at')
     serializer_class = LayerSerializer
     parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
     renderer_classes = (renderers.JSONRenderer,)

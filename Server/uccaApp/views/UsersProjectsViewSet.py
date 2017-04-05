@@ -18,7 +18,7 @@ class UsersProjectsViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
     permission_classes = []
-    queryset = Projects.objects.all()
+    queryset = Projects.objects.all().order_by('-updated_at')
     serializer_class = ProjectSerializer
     parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
     renderer_classes = (renderers.JSONRenderer,)

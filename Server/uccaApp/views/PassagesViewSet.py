@@ -22,7 +22,7 @@ class PassagesViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
     """
-    queryset = Passages.objects.all()
+    queryset = Passages.objects.all().order_by('-updated_at')
     serializer_class = PassageSerializer
     parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
     renderer_classes = (renderers.JSONRenderer,)
