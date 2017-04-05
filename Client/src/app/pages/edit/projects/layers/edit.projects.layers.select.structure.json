@@ -60,7 +60,7 @@
     "search": true,
     "type": "checkbox",
     "placeholder": "Enter text...",
-    "value": "",
+    "value": true,
     "showInTable": true
   },
   {
@@ -82,7 +82,7 @@
         "name": "Info",
         "order": 1,
         "class":"btn-info",
-        "functionName": "showMore"
+        "functionName": "showMoreWithoutJson"
       }
     ]
   }

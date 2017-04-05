@@ -26,6 +26,9 @@
 				message:"Success",
 				data:successResult.data
 			}
+			if(successResult.data){
+				$rootScope.$totalResults = successResult.data.count;
+			}
 			return response;
 		}
 

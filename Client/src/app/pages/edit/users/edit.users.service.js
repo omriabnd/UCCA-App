@@ -44,7 +44,7 @@
               role:"",
               organization:"",
               affiliation:"",
-              is_active:""
+              is_active:true
           };
         }
     }

@@ -1,0 +1,46 @@
+<div class="tokenization-page row">
+	<div class="col-md-12">
+	    <div class="medium-large-panel light-text" >
+	    	<div class="panel  medium-large-panel light-text animated zoomIn" >
+		        <div class="panel-heading clearfix tokenization-panel-header">
+		            <div class="button-container">
+		                <button type="button" class="btn btn-default btn-raised" ng-click="submitTask()">Submit</button>
+		                <button type="button" class="btn btn-default btn-raised" ng-click="saveChanges()">Save</button>
+		            </div>
+		        </div>
+		        <!--tokenizer-behaviour directive is restricting the keydown events on the textarea-->
+		        <textarea class="panel-body text-container-v2" ng-model="tokenizedText" tokenizer-behaviour></textarea>
+		    </div>
+		</div>
+		<br>
+	    <div class="col-xs-6 hidden">
+	        <div class="well">
+	            <span class="label label-info">Original Text:</span> {{originalText}}
+	        </div>
+
+
+
+	        
+	        <div class="panel panel-default">
+	            <div class="panel-heading">Saved tokens</div>
+	            
+	            
+	            <!--For preview only-->
+	            
+	            <div class="panel-body"><pre>{{savedTokens | json}}</pre></div>
+
+	        </div>
+
+	    </div>
+
+
+	    <div class="col-xs-6 hidden">
+
+	        <h3>A view of the original char map just for testing</h3>
+	        <div ng-repeat="char in originalText track by $index">
+	            {{$index}} :: {{char}}
+	        </div>
+
+	    </div>
+	</div>
+</div>

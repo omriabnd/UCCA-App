@@ -72,7 +72,7 @@
     "search":true,
     "type":"checkbox",
     "placeholder":"Is Active...",
-    "value":"",
+    "value":true,
     "showInTable":true
   },
   {

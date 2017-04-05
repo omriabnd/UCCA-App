@@ -55,7 +55,7 @@
   {
     "key":"affiliation",
     "name":"Affiliation",
-    "order":6,
+    "order":7,
     "filter":true,
     "search":true,
     "showInTable":true,
@@ -66,7 +66,7 @@
   {
     "key":"role",
     "name":"Role",
-    "order":7,
+    "order":6,
     "filter":true,
     "search":true,
     "showInTable":true,
@@ -74,10 +74,10 @@
     "placeholderEnter ":"Role...",
     "value":"",
     "options":[
-      { "label": "Admin", "id": 1 },
-      { "label": "Project Manager", "id": 2 },
-      { "label": "Anotator", "id": 3 },
-      { "label": "Guest", "id": 4 }
+      { "label": "ADMIN", "id": 1 },
+      { "label": "PROJECT_MANAGER", "id": 2 },
+      { "label": "ANNOTATOR", "id": 3 },
+      { "label": "GUEST", "id": 4 }
     ]
   },
   {
@@ -89,7 +89,7 @@
     "showInTable":true,
     "type":"checkbox",
     "placeholderEnter ":"updated by...",
-    "value":""
+    "value":true
   },
   {
     "key":"actions",

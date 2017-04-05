@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-md-6" ba-panel>
+    <div class="edit-container col-md-6" ba-panel>
         <div class="row">
             <field class="form-field col-md-12" ng-repeat="formElem in vm.smartTableStructure | orderBy:'order' track by $index" ng-if="formElem.showInTable && (vmEditCtrl.editAssetMode || (vmEditCtrl.addNewAssetMode && formElem.hideInAddNewAssetMode != true) ) "
             ></field>
@@ -8,7 +8,7 @@
         <button type="submit" class="btn btn-primary" ng-click="vm.upsert(vm.smartTableStructure);">Submit</button>
         <button type="button" class="btn btn-danger" ng-click="vm.back();">Cancel</button>
     </div>
-    <div class="col-md-6">
+    <div class="edit-container col-md-6">
         <ui-view></ui-view>
     </div>
 </div>

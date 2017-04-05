@@ -70,7 +70,7 @@
     "filter":true,
     "search":true,
     "type":"text",
-    "placeholder":"Enter Description...",
+    "placeholder":"Created by...",
     "value":"",
     "showInTable":true
   },
@@ -104,7 +104,7 @@
     "search":true,
     "type":"checkbox",
     "placeholder":"Is Active...",
-    "value":"",
+    "value":true,
     "showInTable":true
   },
   {

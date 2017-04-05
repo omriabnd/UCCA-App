@@ -83,6 +83,9 @@
                 case 'manage':
                     $scope.ctrlModule.manage($scope.managePageRoute);
                     break;
+                case 'parseSmartTableColumnData':
+                    return $scope.ctrlModule[functionName](obj,index);// (itemRow,value)
+                    break;
                 default:
                     $scope.ctrlModule[functionName](obj,index);
                     break;

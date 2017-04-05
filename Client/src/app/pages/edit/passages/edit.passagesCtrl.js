@@ -21,7 +21,7 @@
     vm.smartTableStructure.forEach(function(obj){
       obj.value = editPassagesService.get(obj.key);
       if(obj.key == 'type'){
-        obj.value = ENV_CONST.PASSAGE_TYPE[obj.value]
+        obj.value = ENV_CONST.PASSAGE_TYPE[obj.value] || ENV_CONST.PASSAGE_TYPE['PUBLIC']
       }
     });
 

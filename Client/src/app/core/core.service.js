@@ -12,6 +12,7 @@
 		var core = {
 			init: init,
 			showMore: showMore,
+			showMoreWithoutJson: showMoreWithoutJson,
 			goNext: goNext,
 			search: search,
 			removeRow: removeRow,
@@ -144,7 +145,11 @@
 			return PermPermissionStore.getStore()[state_id.toString()].validationFunction[2](state_id.toString());
 		}
 
-		function showMore(obj, pagelink, size) {
+		function showMoreWithoutJson(obj, pagelink, size) {
+			this.showMore(obj, pagelink, size, true);
+		}
+
+		function showMore(obj, pagelink, size, hideJson) {
 			var pagelink = angular.isString(pagelink) ? pagelink || 'app/pages/ui/modals/modalTemplates/largeModal.html' : 'app/pages/ui/modals/modalTemplates/largeModal.html';
 			var size = size || 'lg';
 			$uibModal.open({
@@ -158,7 +163,9 @@
 					if(obj.description){
 					    $scope.description = $sce.trustAsHtml(obj.description);
 					}
-					$scope.jsonString = JSON.stringify(obj);
+					if(!hideJson){
+						$scope.jsonString = JSON.stringify(obj);
+					}
 				}]
 			});
 		};
@@ -348,6 +355,8 @@
 			    vm.tableVisibleFields = {};
 
 				vm.showMore = core.showMore;
+				
+				vm.showMoreWithoutJson = core.showMoreWithoutJson;
 
 				vm.parseSmartTableColumnData = core.parseSmartTableColumnData;
 				
@@ -362,7 +371,9 @@
 				vm.smartTablePageSize = core.tablePageSize;
 
 				vm.smartTableDataSafe = [].concat(vm.smartTableData)
-
+				
+				vm.$totalResults = $rootScope.$totalResults;
+				
 				vm.smartTableCanUseAction = core.smartTableCanUseAction
 
 				setTableVisibleFields(vm, smartTableStructure);

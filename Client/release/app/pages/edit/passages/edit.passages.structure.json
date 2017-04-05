@@ -29,7 +29,7 @@
   {
     "key":"text",
     "name":"Text",
-    "order":3,
+    "order":4,
     "filter":false,
     "search":false,
     "type":"button",
@@ -43,7 +43,7 @@
   {
     "key":"source",
     "name":"Source",
-    "order":4,
+    "order":3,
     "filter":false,
     "search":false,
     "type":"button",
@@ -90,7 +90,7 @@
     "type":"checkbox",
     "placeholder":"Is Active...",
     "showInTable":true,
-    "value":""
+    "value":true
   },
   {
     "key":"export",

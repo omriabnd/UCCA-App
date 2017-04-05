@@ -73,6 +73,6 @@
     "showInTable":true,
     "type":"checkbox",
     "placeholderEnter ":"Is Active...",
-    "value":""
+    "value":true
   }
 ]

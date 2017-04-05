@@ -20,7 +20,7 @@
                             ng-class="{'table-id':$index==0,'table-object':itemRow[value['key']].name}"
                             ng-click="!!itemRow[value['key']].name && vm.runFunction('showMore',itemRow[value['key']]);"
                             ng-if="value.showInTable && value.key != 'actions'">
-                            {{::(itemRow[value['key']].name || itemRow[value['key']] )}}
+                            {{::vm.runFunction('parseSmartTableColumnData',itemRow,value)}}
                         </td>
                         <td ng-if="vm.smartTableStructure[vm.smartTableStructure.length-1].buttons">
                           <span data-ng-switch on="vm.smartTableStructure[vm.smartTableStructure.length-1].buttons.length<4">

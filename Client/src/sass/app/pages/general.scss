@@ -40,3 +40,12 @@
     right: 50px;
     top: 5px;
 }
+
+.edit-container {
+    max-height: 750px;
+    overflow-y: auto;
+}
+.edit-container pre {
+    overflow-y: auto;
+    max-height: 200px;
+}

@@ -1,6 +1,6 @@
 <div
     ba-panel
-    ba-panel-title="Search Form {{vm.projectId ? 'PROJECT ID#'+vm.projectId : ''}}"
+    ba-panel-title="Search Form {{vm.currentProject.name}} ({{ vm.projectId }})"
     ba-panel-class="with-scroll">
     <div class="add-asset-btn-container">
         <button type="button" class="btn btn-sm btn-primary" ng-click="vm.editRow({})" ng-if="vm.projectRootLayerType">New Tokenization Task</button>
@@ -10,7 +10,7 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-    	<div ba-panel ba-panel-title="Project {{ 'ID#'+vm.projectId }} Task Table" ba-panel-class="with-scroll">
+    	<div ba-panel ba-panel-title="Project {{vm.currentProject.name}} ({{ vm.projectId }}) Task Table" ba-panel-class="with-scroll">
             <button class="btn btn-primary filter-demo-tasks-button" ng-click="vm.search([{'key':'project','value':vm.projectId},{'key':'is_demo','value':true}])">Demo Tasks Only</button>
     		<div include-with-scope="app/pages/tables/widgets/smartTable.html"></div>
     	</div>

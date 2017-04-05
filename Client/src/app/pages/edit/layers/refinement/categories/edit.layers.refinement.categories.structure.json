@@ -72,7 +72,7 @@
     "search":true,
     "type":"checkbox",
     "placeholder":"Children...",
-    "value":"",
+    "value":true,
     "showInTable":false
   },
   {

@@ -36,7 +36,8 @@
                         Core.showNotification('success',"Project Saved.")
                         // editProjectsService.set("id",response.id);
                         // refreshData("id");
-                        $state.go('edit.projects',{id:response.id},{reload:true})
+                        // $state.go('edit.projects',{id:response.id},{reload:true})
+                        $state.go('projects')
                     }
                     
                 }) 

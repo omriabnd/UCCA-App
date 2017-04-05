@@ -35,7 +35,15 @@
           return this.Data[key];
         },
         clearData: function(){
-          service.Data = {};
+          service.Data = {
+            id : "",
+            name : "",
+            text : "",
+            created_by : "",
+            created_at : "",
+            updated_at : "",
+            is_active : true
+          };
         }
     }
     return service;

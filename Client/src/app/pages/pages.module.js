@@ -22,13 +22,13 @@
     'zAdmin.pages.tasks',
     'zAdmin.pages.categories',
     'zAdmin.pages.annotation',
-    'zAdmin.pages.tokenization',
+    'zAdmin.pages.tokenization-v2',
     'zAdmin.permissions',
     'zAdmin.restrictionsValidator'
   ])
   .config(routeConfig)
   .run(run);
-
+  console.warn = function(){};
   var ifNotLoggedIn = function (authService,$state){
     if ( !authService.isLoggedIn ) {
       setTimeout(function(){

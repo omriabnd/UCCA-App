@@ -83,7 +83,7 @@
                         "last_name":"",
                         "name":""
                     },
-                    "is_active": false,
+                    "is_active": true,
                     "created_at": "",
                     "updated_at": ""
                 };

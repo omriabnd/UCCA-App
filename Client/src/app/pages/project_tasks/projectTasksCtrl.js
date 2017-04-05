@@ -20,8 +20,9 @@
 
     vm.editRow = editRow;
     vm.previewTask = Core.previewTask;
-    vm.projectId = $state.params.id;
-
+    vm.projectId =  $state.params.id;
+    vm.currentProject = {};
+    
     vm.projectRootLayerType = !!$state.params.layerType && ($state.params.layerType.toUpperCase() == ENV_CONST.LAYER_TYPE.ROOT);
     vm.projectDerivedLayerType = !!$state.params.layerType && ($state.params.layerType.toUpperCase() != ENV_CONST.LAYER_TYPE.ROOT);
 
@@ -29,6 +30,9 @@
     vm.smartTableStructure.forEach(function(obj){
       if(obj.key=='project'){
         obj.value = $state.params.id;
+        if(TableData[0] && TableData[0]['project'] ){
+          vm.currentProject = TableData[0]['project'];
+        }
       }
     })
     

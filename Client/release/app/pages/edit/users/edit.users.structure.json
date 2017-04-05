@@ -69,10 +69,10 @@
       "type":"Require"
     },
     "options":[
-      { "label": "Admin", "id": 1 },
-      { "label": "Project Manager", "id": 2 },
-      { "label": "Anotator", "id": 3 },
-      { "label": "Guest", "id": 4 }
+      { "label": "ADMIN", "id": 1 },
+      { "label": "PROJECT_MANAGER", "id": 2 },
+      { "label": "ANNOTATOR", "id": 3 },
+      { "label": "GUEST", "id": 4 }
     ]
   },
   {
@@ -115,7 +115,7 @@
     "validationRule":{
       "type":"Require"
     },
-    "value":""
+    "value":true
   },
   {
     "key":"export",

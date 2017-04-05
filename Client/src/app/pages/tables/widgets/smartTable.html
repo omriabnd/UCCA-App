@@ -6,7 +6,7 @@
       </select>
     </label>
   </div>
-  <span class="total-results" ng-if="vm.smartTableDataSafe.length">Total Results: {{vm.smartTableDataSafe.length}}</span>
+  <span class="total-results" ng-if="vm.$totalResults">Total Results: {{vm.$totalResults}}<sup ng-if="vm.smartTableDataSafe.length < vm.$totalResults" title="There is more than 100 assets">*</sup></span>
   <table class="table" st-table="vm.smartTableData" st-safe-src="vm.smartTableDataSafe">
     <thead>
     <tr class="sortable ">
@@ -29,7 +29,7 @@
           {{::vm.parseSmartTableColumnData(itemRow,value)}}
       </td>
       <td ng-if="vm.smartTableStructure[vm.smartTableStructure.length-1].buttons">
-          <span data-ng-switch on="vm.smartTableStructure[vm.smartTableStructure.length-1].buttons.length<4">
+          <span data-ng-switch on="vm.smartTableStructure[vm.smartTableStructure.length-1].buttons.length<3">
             <button data-ng-switch-when="true" 
                     ng-repeat="action in vm.smartTableStructure[vm.smartTableStructure.length-1].buttons track by $index"
                     class="btn editable-table-button btn-xs {{action.class}}"

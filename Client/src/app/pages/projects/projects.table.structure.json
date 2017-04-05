@@ -72,7 +72,7 @@
     "showInTable":true,
     "type":"checkbox",
     "placeholderEnter ":"Is Active...",
-    "value":""
+    "value":true
   },
   {
     "key":"actions",
@@ -90,24 +90,17 @@
         "functionName":"editRow"
       },
       {
+        "name":"My tasks",
+        "order":2,
+        "class":"btn-success",
+        "functionName":"myTasks"
+      },
+      {
         "name":"Remove",
-        "order":"2",
+        "order":3,
         "class":"btn-danger",
         "roles":["ADMIN","PROJECT_MANAGER"],
         "functionName":"removeRow"
-      },
-      {
-        "name":"Export",
-        "order":1,
-        "class":"btn-info",
-        "roles":["ADMIN","PROJECT_MANAGER"],
-        "functionName":"exportProject"
-      },
-      {
-        "name":"My tasks",
-        "order":"2",
-        "class":"btn-danger",
-        "functionName":"myTasks"
       }
     ]
   }
