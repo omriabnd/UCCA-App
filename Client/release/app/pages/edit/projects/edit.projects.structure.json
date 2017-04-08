@@ -70,6 +70,10 @@
     "validationRule":{
       "type":"Require"
     },
+    "viewOnlyRule":{
+        "key":"tasks",
+        "validateFunction":"hasValue"
+    },
     "tableStructure":[
           {
             "key":"id",

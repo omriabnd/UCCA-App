@@ -1,6 +1,6 @@
 <div  >
     <div class="manage-button-container">
-        <button type="button" class="btn btn-sm btn-primary" ng-click="vm.manage({})" ng-if="viewOnly != true">Choose</button>
+        <button type="button" class="btn btn-sm btn-primary" ng-click="vm.manage({})" ng-if="::(viewOnly != true && vm.viewOnlyRuleOk()===false)">Choose</button>
     </div>
     <div ba-panel ba-panel-title="Selected {{pageName}}" ba-panel-class="with-scroll">
 
@@ -34,7 +34,7 @@
                                             ng-change="vm.toggleItem(itemRow,itemRow.selected)"
                                             type="checkbox">
                                     <button 
-                                            ng-if="!action.showAs"
+                                            ng-if="::(!action.showAs && vm.viewOnlyRuleOk()===false)"
                                             ng-repeat="action in vm.smartTableStructure[vm.smartTableStructure.length-1].buttons track by $index"
                                             class="btn editable-table-button btn-xs {{action.class}}"
                                             ng-click="vm.runFunction(action.functionName,itemRow,$parent.$parent.$index);">

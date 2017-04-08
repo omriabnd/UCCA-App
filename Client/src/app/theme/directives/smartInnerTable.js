@@ -20,6 +20,7 @@
                 pageName:'=',
                 ctrlModule:'=',
                 viewOnly:'=',
+                viewOnlyRule:'=',
                 categoryName:'@',
                 managePageRoute:'=',
                 loadSelectDataStructure:'=',
@@ -35,7 +36,7 @@
         };
     }
     /** @ngInject */
-    function innerTableCtrl($scope, $state,$rootScope,apiService) {
+    function innerTableCtrl($scope, $state,$rootScope,apiService,Core) {
 
         var vm = this;
 
@@ -44,6 +45,7 @@
         vm.toggleItem = toggleItem;
         vm.removeRow = removeRow;
         vm.runFunction = runFunction;
+        vm.viewOnlyRuleOk = Core.viewOnlyRuleOk.bind($scope.viewOnlyRule);
 
         $scope.ctrlModule.smartTableStructure.forEach(function(tableRow){
             if(tableRow.key == $scope.pageName){

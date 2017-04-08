@@ -32,10 +32,34 @@
 			exportAsset: exportAsset,
 			initCategoriesStringToArray: initCategoriesStringToArray,
 			generateRestrictionObject: generateRestrictionObject,
-			parseSmartTableColumnData:parseSmartTableColumnData
+			parseSmartTableColumnData:parseSmartTableColumnData,
+			viewOnlyRuleOk:viewOnlyRuleOk
 		};
 		
 		return core;
+
+		function viewOnlyRuleOk(_viewOnlyRule){
+		    var isOk = false;
+		    var viewOnlyRule = _viewOnlyRule || this;
+		    if(viewOnlyRule){
+		        switch(viewOnlyRule.validateFunction){
+		            case "hasValue":
+		                isOk = checkIfHasValueInAssetKey(viewOnlyRule.key)
+		                break;
+		        }
+		    }
+		    return isOk;
+		}
+		
+		function checkIfHasValueInAssetKey(assetKey){
+			if(core.currentService && core.currentService.Data){
+			    if(angular.isArray(core.currentService.Data[assetKey])){
+			        return core.currentService.Data[assetKey].length > 0
+			    }
+			    return !!core.currentService.Data[assetKey] 
+			}
+			return false;
+		}
 
 		function parseSmartTableColumnData(itemRow,value){
 			if(itemRow[value['key']]){
@@ -356,6 +380,8 @@
 
 				vm.showMore = core.showMore;
 				
+				vm.viewOnlyRuleOk = core.viewOnlyRuleOk;
+
 				vm.showMoreWithoutJson = core.showMoreWithoutJson;
 
 				vm.parseSmartTableColumnData = core.parseSmartTableColumnData;

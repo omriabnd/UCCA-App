@@ -170,6 +170,10 @@
     "functionName":"chooseCategory",
     "managePageRoute":"categories.manage",
     "isSortable":true,
+    "viewOnlyRule":{
+        "key":"projects",
+        "validateFunction":"hasValue"
+    },
     "tableStructure":[
       {
         "key":"id",
@@ -326,6 +330,10 @@
     "class":"btn-default",
     "functionName":"manageRestrictions",
     "managePageRoute":"restrictions",
+    "viewOnlyRule":{
+        "key":"projects",
+        "validateFunction":"hasValue"
+    },
     "tableStructure":[
       {
         "key":"categories_1",

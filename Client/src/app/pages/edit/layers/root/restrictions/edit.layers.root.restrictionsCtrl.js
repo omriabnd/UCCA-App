@@ -90,15 +90,15 @@
         }
         
         function save(){
-            if(categoryOneArray.length > 0 && categoryTwoArray.length > 0){
-                
-                var restriction = Core.generateRestrictionObject(categoryOneArray,vm.restrictionType,categoryTwoArray);
+            if(categoryOneArray.length > 0){
+                if(vm.restrictionType.key == "FORBID_ANY_CHILD" || categoryTwoArray.length > 0){
+                    var restriction = Core.generateRestrictionObject(categoryOneArray,vm.restrictionType,categoryTwoArray);
 
-                editRootLayerService.set("restrictions",restriction, $state.params.itemRowIndex);
-                parentCtrl.refreshData("restriction");
+                    editRootLayerService.set("restrictions",restriction, $state.params.itemRowIndex);
+                    parentCtrl.refreshData("restriction");
 
-                back();
-                
+                    back();
+                }
             }
         }
 

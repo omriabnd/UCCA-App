@@ -49,10 +49,11 @@
 		<label for="inputLastName">{{::formElem.name}}</label>
 		<button class="btn btn-xs {{formElem.class}}"
 				ng-click="vm[formElem.functionName](formElem);"
+				ng-disabled='::(formElem.viewOnlyRule && vm.viewOnlyRuleOk(formElem.viewOnlyRule))'
 				ng-if="formElem.value.length == 0">
 			{{::formElem.placeholder}}
 		</button>
-		<smart-inner-table ng-if="formElem.value.length > 0" table-data='formElem.value' ctrl-module='vm' page-name='formElem.key' manage-page-route='formElem.managePageRoute' view-only='formElem.viewOnly' is-sortable="formElem.isSortable"></smart-inner-table>
+		<smart-inner-table ng-if="formElem.value.length > 0" table-data='formElem.value' ctrl-module='vm' page-name='formElem.key' manage-page-route='formElem.managePageRoute' view-only='formElem.viewOnly' view-only-rule='formElem.viewOnlyRule' is-sortable="formElem.isSortable"></smart-inner-table>
 	</div>
 
 	<div ng-switch-when="editor" class="form-group">

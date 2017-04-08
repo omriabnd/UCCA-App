@@ -77,6 +77,7 @@
     $rootScope.$on('$stateChangeSuccess',
     function(event, toState, toParams, fromState, fromParams, error){
         $rootScope.$pageFinishedLoading = true;
+        if(ga) ga('send', 'pageview',$location.absUrl());
     });
 
     PermissionsService.init();
