@@ -28,13 +28,13 @@ class SourceViewSet(viewsets.ModelViewSet):
     ordering = ('-updated_at','id',)
 
     def get_queryset(self):
-        if has_permissions_to(self.request.user.id, 'view_sources'):
+        if has_permissions_to(self.request, 'view_sources'):
             return self.queryset
         else:
             raise PermissionDenied
 
     def create(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'add_sources'):
+        if has_permissions_to(self.request, 'add_sources'):
             ownerUser = self.request.user
             request.data['created_by'] = ownerUser
             request.data.pop('created_at')
@@ -43,7 +43,7 @@ class SourceViewSet(viewsets.ModelViewSet):
             raise PermissionDenied
 
     def destroy(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'delete_sources'):
+        if has_permissions_to(self.request, 'delete_sources'):
             try:
                 return super(self.__class__, self).destroy(request)
             except ProtectedError:
@@ -53,7 +53,7 @@ class SourceViewSet(viewsets.ModelViewSet):
 
 
     def update(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'change_sources'):
+        if has_permissions_to(self.request, 'change_sources'):
             return super(self.__class__, self).update(request)
         else:
             raise PermissionDenied

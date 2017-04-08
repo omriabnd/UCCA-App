@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView, exception_handler
 from django.contrib.auth import authenticate, login
 
+from uccaApp.models import LogLogin
 from uccaApp.util.exceptions import InActiveUserLoginExeption
 from uccaApp.models.Users import Users
 from uccaApp.serializers import UsersSerializer
@@ -37,4 +38,12 @@ class ObtainAuthToken(APIView):
             'token': token.key,
             "profile": UsersSerializer(profile).data
         }
+        LogLogin(
+            login = user.first_name,
+            user_id = user,
+            action = "login",
+            data = 'ip: '+LogLogin.get_client_ip(request) +'; browser: '+request.META['HTTP_USER_AGENT']+'; response: '+ str(res),
+            comment = ""
+        ).save()
+
         return Response(res)

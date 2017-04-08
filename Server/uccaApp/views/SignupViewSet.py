@@ -6,7 +6,7 @@ from rest_framework import viewsets
 
 from uccaApp.util.functions import Send_Email, send_signup_email
 from uccaApp.util.permissions import IsPostMethod
-from uccaApp.models import Constants, Roles
+from uccaApp.models import Constants, Roles, LogLogin
 from uccaApp.models import Users
 from uccaApp.serializers.UsersSerializer import UsersSerializer
 from rest_framework.response import Response
@@ -68,5 +68,15 @@ class SignupViewSet(viewsets.ModelViewSet):
         res = {
           "result": userSerialiser.data
         }
+
+        LogLogin(
+            login=djangoUser.first_name,
+            user_id=djangoUser,
+            action="signup",
+            data='ip: ' + LogLogin.get_client_ip(request) + '; browser: ' + request.META[
+                'HTTP_USER_AGENT'] + '; response: ' + str(res),
+            comment=""
+        ).save()
+
         return Response(res)
 

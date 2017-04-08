@@ -28,7 +28,7 @@ class AnnotatorTasksViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
-        if has_permissions_to(self.request.user.id,'view_tasks'):
+        if has_permissions_to(self.request,'view_tasks'):
             return self.queryset
         else:
             raise PermissionDenied
@@ -36,7 +36,7 @@ class AnnotatorTasksViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         if(kwargs['save_type'] not in Constants.SAVE_TYPES):
             raise SaveTypeDeniedException
-        if has_permissions_to(self.request.user.id, 'change_tasks'):
+        if has_permissions_to(self.request, 'change_tasks'):
             request.data['save_type'] = kwargs['save_type']
             request.data['status'] = 'ONGOING'
             return super(self.__class__, self).update(request)

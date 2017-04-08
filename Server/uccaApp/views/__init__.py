@@ -7,6 +7,7 @@ from uccaApp import services
 from .SourcesViewSet import *
 from .PassagesViewSet import *
 from .LoginViewSet import *
+from .LogoutViewSet import *
 from .CategoryViewSet import *
 from .UsersViewSet import *
 from .SignupViewSet import *

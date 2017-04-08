@@ -28,7 +28,7 @@ class PassagesTasksViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
-        if has_permissions_to(self.request.user.id,'view_tasks'):
+        if has_permissions_to(self.request,'view_tasks'):
             # init
             param_passage_tasks = None
 

@@ -25,7 +25,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     filter_class = ProjectsFilter
 
     def get_queryset(self):
-        if has_permissions_to(self.request.user.id, 'view_projects'):
+        if has_permissions_to(self.request, 'view_projects'):
 
             param_user_projects = None
             my_projects = []
@@ -52,7 +52,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             raise PermissionDenied
 
     def create(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'add_projects'):
+        if has_permissions_to(self.request, 'add_projects'):
             ownerUser = self.request.user
             request.data['created_by'] = ownerUser
             return super(self.__class__, self).create(request)
@@ -60,7 +60,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             raise PermissionDenied
 
     def destroy(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'delete_projects'):
+        if has_permissions_to(self.request, 'delete_projects'):
             try:
                 return super(self.__class__, self).destroy(request)
             except ProtectedError:
@@ -70,7 +70,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 
     def update(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'change_projects'):
+        if has_permissions_to(self.request, 'change_projects'):
             return super(self.__class__, self).update(request)
         else:
             raise PermissionDenied

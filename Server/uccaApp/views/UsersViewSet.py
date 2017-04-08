@@ -43,7 +43,7 @@ class UsersViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
-        # if has_permissions_to(self.request.user.id,'view_users'):
+        if has_permissions_to(self.request,'view_users'):
 
             param_user_details = None
 
@@ -57,12 +57,12 @@ class UsersViewSet(viewsets.ModelViewSet):
                 param_user_details = Users.objects.all().order_by('-updated_at')
 
             return param_user_details
-        # else:
-        #     raise PermissionDenied
+        else:
+            raise PermissionDenied
 
 
     def create(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'add_users'):
+        if has_permissions_to(self.request, 'add_users'):
             context = {
                 'request': self.request
             }
@@ -108,7 +108,7 @@ class UsersViewSet(viewsets.ModelViewSet):
 
 
     def update(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'change_users'):
+        if has_permissions_to(self.request, 'change_users'):
             partial = kwargs.pop('partial', False)
             instance = self.get_object()
             new_role = Roles.objects.get(id=request.data['role']['id'])
@@ -133,7 +133,7 @@ class UsersViewSet(viewsets.ModelViewSet):
 
 
     def destroy(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'delete_users'):
+        if has_permissions_to(self.request, 'delete_users'):
             instance = self.get_object()
             User.objects.get(pk=instance.id).delete()
             self.perform_destroy(instance)

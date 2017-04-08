@@ -43,5 +43,14 @@
       "group_id": 4,
       "permission_id": 44
     }
+  },
+  {
+    "model": "auth.group_permissions",
+    "pk": 1,
+    "fields": {
+      "id": 372,
+      "group_id": 4,
+      "permission_id": 85
+    }
   }
 ]

@@ -29,7 +29,7 @@ class TasksViewSet(viewsets.ModelViewSet):
     filter_class = TasksFilter
 
     def get_queryset(self):
-        if has_permissions_to(self.request.user.id, 'view_tasks'):
+        if has_permissions_to(self.request, 'view_tasks'):
             # init
             param_user_tasks = None
 
@@ -54,7 +54,7 @@ class TasksViewSet(viewsets.ModelViewSet):
 
 
     def create(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'add_tasks'):
+        if has_permissions_to(self.request, 'add_tasks'):
             ownerUser = self.request.user
             request.data['created_by'] = ownerUser
             request.data['status'] =  Constants.TASK_STATUS_JSON['NOT_STARTED']
@@ -64,7 +64,7 @@ class TasksViewSet(viewsets.ModelViewSet):
 
 
     def destroy(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'delete_tasks'):
+        if has_permissions_to(self.request, 'delete_tasks'):
             try:
                 return super(self.__class__, self).destroy(request)
             except ProtectedError:
@@ -74,7 +74,7 @@ class TasksViewSet(viewsets.ModelViewSet):
 
 
     def update(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'change_tasks'):
+        if has_permissions_to(self.request, 'change_tasks'):
             return super(self.__class__, self).update(request)
         else:
             raise PermissionDenied

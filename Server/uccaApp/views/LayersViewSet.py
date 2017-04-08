@@ -26,13 +26,13 @@ class LayerViewSet(viewsets.ModelViewSet):
       model = Layers
 
     def get_queryset(self):
-        if has_permissions_to(self.request.user.id, 'view_layers'):
+        if has_permissions_to(self.request, 'view_layers'):
             return self.queryset
         else:
             raise PermissionDenied
 
     def create(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'add_layers'):
+        if has_permissions_to(self.request, 'add_layers'):
             ownerUser = self.request.user
             request.data['created_by'] = ownerUser
             if 'created_at' in request.data:
@@ -47,7 +47,7 @@ class LayerViewSet(viewsets.ModelViewSet):
 
 
     def destroy(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'delete_layers'):
+        if has_permissions_to(self.request, 'delete_layers'):
             try:
                 return super(self.__class__, self).destroy(request)
             except ProtectedError:
@@ -57,7 +57,7 @@ class LayerViewSet(viewsets.ModelViewSet):
 
 
     def update(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'change_layers'):
+        if has_permissions_to(self.request, 'change_layers'):
             return super(self.__class__, self).update(request)
         else:
             raise PermissionDenied

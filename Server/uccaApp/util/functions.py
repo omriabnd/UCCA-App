@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from rest_framework.generics import get_object_or_404
 
 from ucca.settings import REGISTRATION_LINK
+from uccaApp.models.Log_Action import LogAction
 from uccaApp.util.exceptions import InActiveModelExeption
 from django.core.mail import send_mail
 
@@ -85,7 +86,8 @@ def active_obj_or_raise_exeption(obj):
     if obj is not None and obj.is_active == False:
         raise InActiveModelExeption
 
-def has_permissions_to(user_id,premission_code_name):
+def has_permissions_to(request,premission_code_name):
+    user_id = request.user.id
     user = get_object_or_404(User, pk=user_id)
 
     if (user.groups.first()):
@@ -96,4 +98,19 @@ def has_permissions_to(user_id,premission_code_name):
         has_perm = False
 
     print(user.email + '('+ group +')' + ' has permissions to '+premission_code_name,has_perm)
+
+    # if has permition -> save action to log
+    if(has_perm == True):
+        log_data = ''
+        if request.data:
+            log_data = str(request.data)
+        elif request.parser_context and request.parser_context['kwargs']:
+            log_data = str(request.parser_context['kwargs'])
+        LogAction(
+            user_id = request.user,
+            action=premission_code_name,
+            data=log_data,
+            comment='',
+        ).save()
+
     return has_perm

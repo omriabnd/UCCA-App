@@ -149,7 +149,7 @@ class LayerSerializer(serializers.ModelSerializer):
         restrictions = validated_data['restrictions'] = self.initial_data['restrictions']
 
         # disable changing non-metaadata attrs if is parent of other layers
-        if self.is_parent_of_other_layer(instance) == False:
+        if self.is_parent_of_other_layer(instance) == False and self.already_in_use_in_a_project(instance) == False:
             # start update the connected tables [Layers_Categories , Layers_Categories_Restrictions]
             # update layer_categories - by reset
 
@@ -195,6 +195,11 @@ class LayerSerializer(serializers.ModelSerializer):
             if any(o['id'] == um['id'] for o in res) != True:
                 res.append(um)
         return res
+
+    def already_in_use_in_a_project(self,instance):
+        projects_list = instance.projects_set.all()
+        already_in_use = len(projects_list ) > 0
+        return already_in_use
 
     def is_parent_of_other_layer(self,instance):
         children_list = Layers.objects.all().filter(parent_layer_id=instance.id)

@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from uccaApp.util.functions import Send_Email, send_forgot_password_email
 from uccaApp.util.permissions import IsPostMethod
-from uccaApp.models import Constants, Roles
+from uccaApp.models import Constants, Roles, LogLogin
 from uccaApp.models import Users
 from uccaApp.serializers.ForgotPasswordSerializer import ForgotPasswordSerializer
 from uccaApp.serializers.UsersSerializer import UsersSerializer
@@ -39,6 +39,16 @@ class ForgotPasswordViewSet(APIView):
         res = {
             "msg":"A message has been sent to you by email with your password"
         }
+
+        LogLogin(
+            login=user.first_name,
+            user_id=user,
+            action="forgot password",
+            data='ip: ' + LogLogin.get_client_ip(request) + '; browser: ' + request.META[
+                'HTTP_USER_AGENT'] + '; response: ' + str(res),
+            comment=""
+        ).save()
+
         return Response(res)
 
 

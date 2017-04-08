@@ -29,7 +29,7 @@ class PassagesProjectsViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
-        if has_permissions_to(self.request.user.id,'view_projects'):
+        if has_permissions_to(self.request,'view_projects'):
             # init
             param_passage_tasks = None
             projects_set = []
