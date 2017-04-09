@@ -35,7 +35,12 @@ class SaveTaskTypeDeniedException(APIException):
 
 class CreateAnnotationTaskDeniedException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = ('Annotation task must have a parent task')
+    default_detail = ('Annotation task must have a parent task, and it\'s layer must be the new task\'s parent layer.')
+    default_code = 'error'
+
+class CreateDerivedAnnotationTaskDeniedException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = ('The parent task is not yet submitted.')
     default_code = 'error'
 
 class CreateCoarseningAnnotationTaskDeniedException(APIException):

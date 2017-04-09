@@ -9,7 +9,8 @@ from uccaApp.models import Layers_Categories
 from uccaApp.serializers import CategorySerializer
 from uccaApp.serializers import LayersCategoriesSerializer
 from uccaApp.serializers.AnnotationUnitsSerializer import Annotation_UnitsSerializer
-from uccaApp.util.exceptions import CreateAnnotationTaskDeniedException, CreateCoarseningAnnotationTaskDeniedException
+from uccaApp.util.exceptions import CreateAnnotationTaskDeniedException, CreateCoarseningAnnotationTaskDeniedException, \
+    CreateDerivedAnnotationTaskDeniedException
 from uccaApp.util.tokenizer import tokenize
 from uccaApp.models import Tokens
 from uccaApp.models.Tasks import *
@@ -104,10 +105,8 @@ class TaskInChartSerializer(serializers.ModelSerializer):
             newTask.save()
             self.generate_and_save_tokens(newTask)
         elif(newTask.type == Constants.TASK_TYPES_JSON['ANNOTATION'] or (newTask.type == Constants.TASK_TYPES_JSON['REVIEW'])):
-            if(self.has_parent_task(newTask)):
+            if(self.has_parent_task(newTask) and self.parent_task_layer_is_my_parent_layer(newTask) and self.is_parent_task_submitted(newTask)):
                 self.save_task_by_layer_type(newTask)
-            else:
-                raise CreateAnnotationTaskDeniedException
 
         return newTask
 
@@ -124,8 +123,32 @@ class TaskInChartSerializer(serializers.ModelSerializer):
     def get_passage_by_parent_task(self,parent_task):
         return parent_task.passage
 
+    def is_parent_task_submitted(self,task):
+        if task.parent_task.status == Constants.TASK_STATUS_JSON['SUBMITTED']:
+            return True
+        else:
+            raise CreateDerivedAnnotationTaskDeniedException
+
+
+    def parent_task_layer_is_my_parent_layer(self,task):
+        if task.project.layer.parent_layer_id != None: # if im using a derived layer in my new task
+            parent_task_layer_id = task.parent_task.project.layer.id
+            my_parent_layer_id = task.project.layer.parent_layer_id.id
+            print("my_parent_layer_id: "+str(my_parent_layer_id)+" ; parent_task_layer_id: "+str(parent_task_layer_id))
+            if my_parent_layer_id == parent_task_layer_id:
+                return True
+            else:
+                raise CreateAnnotationTaskDeniedException
+        else:
+            return True
+
+
     def has_parent_task(self,task):
-        return hasattr(task,'parent_task') and task.parent_task != None
+        if hasattr(task,'parent_task') and task.parent_task != None:
+            return True
+        else:
+            raise CreateAnnotationTaskDeniedException
+
 
     def is_parent_of_other_tasks(self, instance):
         children_list = Tasks.objects.all().filter(parent_task_id=instance.id)

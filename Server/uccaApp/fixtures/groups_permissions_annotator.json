@@ -3,7 +3,7 @@
     "model": "auth.group_permissions",
     "pk": 1,
     "fields": {
-      "id": 368,
+      "id": 369,
       "group_id": 3,
       "permission_id": 87
     }
@@ -12,7 +12,7 @@
     "model": "auth.group_permissions",
     "pk": 1,
     "fields": {
-      "id": 369,
+      "id": 370,
       "group_id": 3,
       "permission_id": 89
     }
@@ -21,7 +21,7 @@
     "model": "auth.group_permissions",
     "pk": 1,
     "fields": {
-      "id": 370,
+      "id": 371,
       "group_id": 3,
       "permission_id": 44
     }
@@ -30,7 +30,7 @@
     "model": "auth.group_permissions",
     "pk": 1,
     "fields": {
-      "id": 371,
+      "id": 372,
       "group_id": 3,
       "permission_id": 85
     }
