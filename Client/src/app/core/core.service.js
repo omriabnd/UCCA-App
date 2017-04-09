@@ -208,7 +208,7 @@
 			var searchBy = structure.map(function (structureObj) {
 				return {
 					"searchKey": structureObj.key,
-					"searchValue": typeof structureObj.value == 'object' ? structureObj.value.label : structureObj.value
+					"searchValue": typeof structureObj.value == 'object' ? structureObj.value.label : structureObj.type == 'checkbox' ? !!structureObj.value : structureObj.value
 				}
 			}).filter(function (searchObj) {
 				searchObj.searchValue = searchObj.searchValue && searchObj.searchValue.value ? searchObj.searchValue.value : searchObj.searchValue;
@@ -227,6 +227,7 @@
 		function searchSuccess(res) {
 			core.currentCtrl.smartTableDataSafe = res;
 			$rootScope.$pageFinishedLoading = true;
+			core.currentCtrl.$totalResults = $rootScope.$totalResults;
 		}
 
 		function searchFailed(err) {

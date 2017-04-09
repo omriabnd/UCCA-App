@@ -22,9 +22,25 @@
             "abbreviation":obj.abbreviation
 
         };
+        if( currentService.get('type')=="EXTENSION" ){
+            var parentLayer = currentService.get('parent');
+            if(parentLayer[0]){
+                var itemNotAlreadyInParentLayer = Core.findItemInArrayById(LayerDetails.id,parentLayer[0].categories);
+                if(itemNotAlreadyInParentLayer == false){ // item is Already In Parent Layer
+                    Core.showNotification('error','Cant add this category. It is already located in the parent layer.')
+                    return;
+                }
+            }else{
+                Core.showNotification('error','Extension layer must have a parent layer.')
+                return;
+            }
+        }
         var itemAlreadySelected = Core.findItemInArrayById(LayerDetails.id,currentService.get('categories'));
         if(itemAlreadySelected){
             promptHotKeySelectionModal(obj,LayerDetails,ctrlToRefresh,currentService);
+        }else{
+            Core.showNotification('error','Category already exists.')
+            return;
         }
     }
 

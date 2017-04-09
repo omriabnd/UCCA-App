@@ -202,39 +202,14 @@
   },
   {
     "key": "parent",
-    "name": "Parent Task",
+    "name": "Parent Task Id",
     "order": 2,
     "filter": false,
     "search": false,
-    "type": "table",
-    "viewOnly": true,
-    "placeholder": "Choose Parent Task",
-    "value": "",
-    "class": "btn-default",
-    "functionName": "chooseParentTask",
-    "managePageRoute":"parent",
+    "type": "text",
     "showInTable": false,
-    "tableStructure": [
-      {
-        "key": "id",
-        "name": "Id",
-        "order": 1,
-        "type": "text",
-        "filter": true,
-        "search": true,
-        "showInTable": true
-      },
-      {
-        "key": "type",
-        "name": "Type",
-        "order": 2,
-        "filter": true,
-        "search": true,
-        "type": "text",
-        "value": "",
-        "showInTable": true
-      }
-    ]
+    "placeholder": "Choose Parent Task",
+    "value": ""
   },
   {
     "key": "is_active",

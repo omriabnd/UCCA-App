@@ -158,6 +158,10 @@
     "functionName":"chooseCategory",
     "tableStructure":"",
     "managePageRoute":"categories.manage",
+    "viewOnlyRule":{
+        "key":"projects",
+        "validateFunction":"hasValue"
+    },
     "tableStructure":[
       {
         "key":"id",
@@ -295,13 +299,17 @@
     "order":7,
     "filter":false,
     "search":false,
-    "showInTable":true,
+    "showInTable":false,
     "type":"table",
     "placeholder":"Choose Restrictions",
     "value":[],
     "class":"btn-default",
     "functionName":"manageRestrictions",
     "managePageRoute":"restrictions",
+    "viewOnlyRule":{
+        "key":"projects",
+        "validateFunction":"hasValue"
+    },
     "tableStructure":[
       {
         "key":"categories_1",

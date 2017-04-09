@@ -32,7 +32,7 @@
                 bodyData.passage = bodyData.passage[0];
                 bodyData.user = bodyData.user[0];
                 bodyData.type = ENV_CONST.TASK_TYPE.ANNOTATION;
-                bodyData.parent = {id:$state.params.parentTaskId};
+                bodyData.parent = {id: !!bodyData.parent.length ? bodyData.parent : $state.params.parentTaskId};
                 service.clearData();
                 return !bodyData.id ? apiService.edit.tasks.postTaskData(bodyData).then(function (res){return res.data}) :  apiService.edit.tasks.putTaskData(bodyData).then(function (res){return res.data});
             },
