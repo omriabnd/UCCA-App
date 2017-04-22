@@ -27,6 +27,15 @@
 	  height: 75% !important;
 	  margin: 0 2%;
 	}
+	
+	.text-container-v2::selection {
+	  outline: none;
+	  -webkit-user-select: none;
+	     -moz-user-select: none;
+	      -ms-user-select: none;
+	       -o-user-select: none;
+	          user-select: none;
+	}
 
 	.medium-large-panel {
 	    height: 400px;

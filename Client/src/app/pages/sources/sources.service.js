@@ -8,9 +8,9 @@
 
   /** @ngInject */
   function sourcesService(apiService) {
-    apiService.sources.getSourcesTableData().then(function (res){
+    /*apiService.sources.getSourcesTableData().then(function (res){
       angular.copy(res.data.results, service.tableData);
-    });
+    });*/
     var service = {
         tableData:[],
         getTableStructure: function(){

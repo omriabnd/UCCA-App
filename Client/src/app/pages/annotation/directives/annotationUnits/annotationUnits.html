@@ -21,10 +21,12 @@
 
         </div>
         <span ng-if="selCtrl.lineId">{{selCtrl.lineId}}</span>
-        <span class="categories" ng-repeat="cat in selCtrl.dataBlock.categories">
-            <span class="category-abbreviation" 
-                    ng-class="{'shouldRefine': cat.shouldRefine,'refinedCategory':cat.refinedCategory}"
-                    ng-style="{'color':cat.color,'background-color':cat.backgroundColor}">{{cat.abbreviation}}</span>
+        <span ng-if="selCtrl.lineId" class="line-categories-container">
+            <span class="categories" ng-repeat="cat in selCtrl.dataBlock.categories">
+                <span class="category-abbreviation" 
+                        ng-class="{'shouldRefine': cat.shouldRefine,'refinedCategory':cat.refinedCategory}"
+                        ng-style="{'color':cat.color,'background-color':cat.backgroundColor}">{{cat.abbreviation}}</span>
+            </span>
         </span>
         <div class="text-wrapper" dir="{{selCtrl.languageAlign}}">
             <div class="text" id="row-{{selCtrl.lineId}}" >

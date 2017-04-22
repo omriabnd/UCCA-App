@@ -1,9 +1,10 @@
 <div class="modal-content">
   <div class="modal-header bg-danger">
-    <i class="ion-flame modal-icon"></i><span> Error</span>
+    <i class="ion-flame modal-icon"></i><span> Pay Attention!</span>
   </div>
-  <div class="modal-body text-center">Your information hasn't been saved!</div>
+  <div class="modal-body text-center">{{message}}</div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-danger" ng-click="$dismiss()">OK</button>
+    <button type="button" class="btn btn-primary" ng-click="$close(true)">OK</button>
+    <button type="button" class="btn btn-danger" ng-click="$dismiss(false)">Cancel</button>
   </div>
 </div>

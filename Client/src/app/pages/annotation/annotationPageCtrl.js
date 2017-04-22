@@ -19,6 +19,7 @@
     vm.saveTask = saveTask;
     vm.submitTask = submitTask;
     vm.goToMainMenu = goToMainMenu;
+    vm.resetAllAnnotations = resetAllAnnotations;
     vm.finishAll = finishAll;
     vm.tokenizationTask = TaskMetaData.Task;
     vm.annotationTokens = vm.tokenizationTask.tokens;
@@ -110,6 +111,58 @@
      */
     function printTree(){
       DataService.printTree();
+    }
+
+    function is_delete_button_of_remote_unit(elem){
+      return !!$(elem).parents('.remote-unit').first()[0];
+    }
+
+    function compareButtons(a,b){
+      var aIndex = is_delete_button_of_remote_unit(a);
+      var bIndex = is_delete_button_of_remote_unit(b);
+      if(aIndex < bIndex){
+          return -1;
+      }
+      if(aIndex > bIndex){
+          return 1;
+      }
+      return 0;
+    }
+
+    function resetAllAnnotations(res){
+      console.log('DataService',DataService);
+      Core.promptAlert('Are you sure you want to delete all the annotation units?').result.then(function(res){
+        if(res){
+          console.log("reset All Annotations");
+          var i,
+              allDeleteButtons = $('.delete-btn.unit-buttons'),
+              remoteUnitDeleteBtnArr = [],
+              regularUnitDeleteBtnArr = [],
+              k=allDeleteButtons.length-1;
+          
+          // delete the remote units first, then the rest of the units - start
+          for (var i = 0; i < allDeleteButtons.length; i++) {
+            var elem = allDeleteButtons[i];
+            if(is_delete_button_of_remote_unit(elem)){
+              remoteUnitDeleteBtnArr.push(elem);
+            }else{
+              regularUnitDeleteBtnArr.push(elem);;
+            }
+          }
+          allDeleteButtons = regularUnitDeleteBtnArr.concat(remoteUnitDeleteBtnArr)
+          // delete the remote units first, then the rest of the units - end
+
+          for (i = allDeleteButtons.length-1; i > 0; i--) {
+            $timeout(function(){
+                var elem = allDeleteButtons[k];
+                var id = $(elem).parents('.directive-info-data-container').first().attr('id').split('directive-info-data-container-')[1];
+                console.log('delete:',id);
+                $(elem).click()
+                k--;
+            },1000)
+          };
+        }
+      })
     }
 
     function goToMainMenu(res){

@@ -704,6 +704,10 @@
             }
 
             function addAsRemoteUnit(category,event){
+                if(DataService.getUnitById($rootScope.clckedLine).unitType=="REMOTE"){
+                    // cant add remote unit to remote unit
+                    return;
+                }
                 DataService.unitType = 'REMOTE';
                 if(category == undefined){
                     category = {

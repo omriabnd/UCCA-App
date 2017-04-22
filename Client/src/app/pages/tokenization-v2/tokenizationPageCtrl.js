@@ -7,7 +7,7 @@
       .controller('TokenizationPageCtrl', TokenizationPageCtrl);
 
   /** @ngInject */
-  function TokenizationPageCtrl($scope, uccaFactory, TokenizationTask, Core) {
+  function TokenizationPageCtrl($scope, uccaFactory, TokenizationTask, Core, $state, $timeout, $rootScope) {
       $scope.saveChanges = saveChanges;
       $scope.submitTask = submitTask;
 
@@ -67,14 +67,17 @@
       $scope.tokenizedText = angular.copy($scope.originalText);
 
       function submitTask(){
-        return saveChanges("submit");
+        return saveChanges("submit").then(function(){
+          $state.go('tasks',{},{refresh:true})
+          $timeout(function(){$rootScope.$hideSideBar = false;}) 
+        })
       }
 
       function saveChanges(mode){
         $scope.tokenizationTask.tokens = $scope.savedTokens;
         $scope.tokenizationTask.passage.text = $scope.tokenizedText;
         mode = mode ? mode : 'draft';
-        uccaFactory.saveTask(mode,$scope.tokenizationTask).then(function(response){
+        return uccaFactory.saveTask(mode,$scope.tokenizationTask).then(function(response){
           Core.showNotification("success","Task Saved");
         })
       }

@@ -30,6 +30,10 @@
     border-radius: 3px;
     padding: 5px;
   }
+  .line-categories-container {
+      display: inline-block;
+      margin-bottom: 2px;
+  }
 
   .clickedToken{
     background-color: gray;
@@ -78,6 +82,7 @@
     left: 4px;
     height: auto !important;
     display: inline-block;
+    line-height: 22px;
   }
   button.text-wrapper{
     width: calc(100% - 55px);
@@ -258,6 +263,7 @@
     min-height: 10px;
 
   }
+
   .closed-annotation-unit {
     max-height: 0;
     min-height: 0;
@@ -268,6 +274,12 @@
     // -webkit-transition: .3s all;
     // transition: .3s all;
     // max-height: 40px;
+    &.categorized-word{
+      .directive-info-data-container {
+          max-height: 43px;
+          overflow-y: auto;
+      }
+    }
   }
   .directive-container {
     min-height: 10px;
