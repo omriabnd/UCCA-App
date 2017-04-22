@@ -10,7 +10,7 @@ class LayersCategoriesResrictionsSerializer(serializers.ModelSerializer):
   categories_2 = serializers.SerializerMethodField('category_ids2_referance')
 
   def resriction_type_referance(self, obj):
-    return ast.literal_eval(obj.resriction_type)
+    return obj.resriction_type
 
   def category_ids1_referance(self, obj):
     return ast.literal_eval(obj.category_ids1)
