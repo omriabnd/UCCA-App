@@ -180,21 +180,24 @@
     function submitTask(){
       var finishAllResult = vm.finishAll(true);
       if(finishAllResult){
-        return DataService.submitTask().then(function(res){
-          Core.showNotification('success','Annotation Task Submitted.');
-          goToMainMenu(res)
-        });
+        return DataService.saveTask().then(function(){
+          return DataService.submitTask().then(function(res){
+            Core.showNotification('success','Annotation Task Submitted.');
+            goToMainMenu(res)
+          });
+        })
       }
     }
     function saveTask(){
-      DataService.saveTask().then(function(res){
+      return DataService.saveTask().then(function(res){
         Core.showNotification('success','Annotation Task Saved.');
       });
     }
 
     function finishAll(fromSubmit){
         var rootUnit = DataService.getUnitById("0");
-        var finishAllResult = restrictionsValidatorService.evaluateFinishAll(rootUnit,fromSubmit);
+        var hashTables = DataService.hashTables;
+        var finishAllResult = restrictionsValidatorService.evaluateFinishAll(rootUnit,fromSubmit,hashTables);
         if(finishAllResult){
           Core.showNotification('success','Finish All was successful');
           return true;

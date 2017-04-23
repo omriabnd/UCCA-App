@@ -163,12 +163,16 @@
             DataService.unitType = 'REGULAR';
         }
 
-        function createTokensHashByTokensArrayForPassage(annotationTokensArray){
+        function tokensArrayToHash(annotationTokensArray){
             var hash = {}
             annotationTokensArray.forEach(function(token){
-                hash[token.id] = token
+                hash[token.id] = DataService.hashTables.tokensHashTable[token.id]
             })
-            DataService.tree.children_tokens_hash = hash;
+            return hash;
+        }
+
+        function createTokensHashByTokensArrayForPassage(annotationTokensArray){
+            DataService.tree.children_tokens_hash = tokensArrayToHash(annotationTokensArray);
         }
 
         function createHashTables(){
@@ -203,37 +207,6 @@
          * @param level - defines which level in the data structure to insert the newObject.
          * @return newObject.annotation_unit_tree_id - the new row id.
          */
-        // function insertToTree(newObject,level){
-        //     if(level == 0){ // insert into the main passage new unit as a child
-        //         DataService.tree.numOfAnnotationUnits++;
-        //         newObject.annotation_unit_tree_id = DataService.tree.numOfAnnotationUnits;
-        //         DataService.tree.AnnotationUnits.push(newObject);
-
-        //         // update the dataseervice hash to be without the tokens
-        //         removeTokensFromPassage(newObject);
-
-        //     }else{
-        //         var splittedIndex = level.toString().split('-');
-        //         var tempObject = null;
-
-        //         tempObject = DataService.tree.AnnotationUnits[parseInt(splittedIndex[0]) - 1];
-        //         if(tempObject){
-        //             for (var i=1; i<splittedIndex.length; i++){
-        //                 tempObject = tempObject.AnnotationUnits[parseInt(splittedIndex[i]) - 1];
-        //             }
-        //             tempObject.numOfAnnotationUnits++;
-        //             newObject.annotation_unit_tree_id = level+'-'+(tempObject.AnnotationUnits.length+1)
-                    
-        //             if(newObject.unitType == 'REMOTE'){
-        //                 newObject.remote_located_parent_id = level;                 
-        //                 newObject.remote_original_id = DataService.remoteFromUnit   
-        //             }
-        //             tempObject.AnnotationUnits.push(newObject);
-        //         }
-        //     }
-        //     DataService.lastInsertedUnitIndex = newObject.annotation_unit_tree_id;
-        //     return newObject.annotation_unit_tree_id;
-        // }
         
         function insertToTree(newObject,level){
             // console.log('newObject',newObject);
@@ -262,6 +235,7 @@
                         newObject.remote_original_id = DataService.remoteFromUnit   
                     }
                     tempObject.AnnotationUnits.push(newObject);
+                    removeTokensFromUnit(newObject,tempObject)
                 }
             }
 
@@ -401,6 +375,13 @@
 
         }
 
+        function removeTokensFromUnit(newObject,unit){
+            // update the dataseervice hash to be without the tokens
+            newObject.children_tokens.forEach(function(token){
+                delete unit.children_tokens_hash[token.id]
+            })
+        }
+
         function removeTokensFromPassage(newObject){
             // update the dataseervice hash to be without the tokens
             newObject.children_tokens.forEach(function(token){
@@ -408,6 +389,14 @@
             })
             // console.log("Passage tokens number after removing : ", Object.keys(DataService.tree.children_tokens_hash).length)
         }
+
+        function insertTokensBackToUnit(unit){
+            var parentUnit = DataService.getUnitById(getParentUnitId(unit.annotation_unit_tree_id));
+            Object.keys(unit.children_tokens_hash).forEach(function(tokenid){
+                parentUnit.children_tokens_hash[tokenid] = DataService.hashTables.tokensHashTable[tokenid];
+            })
+        }
+
         function insertTokensBackToPassage(unitIndex){
             DataService.tree.AnnotationUnits[unitIndex].children_tokens.forEach(function(token){
                 DataService.tree.children_tokens_hash[token.id] = DataService.hashTables.tokensHashTable[token.id];
@@ -418,7 +407,6 @@
                     removeTokensFromPassage(unit);
                 })  
             }
-            
         }
 
         /**
@@ -496,7 +484,11 @@
                     indexToInsertChild++
                 }
 
-                tempObject.AnnotationUnits.splice(parseInt(splittedId[splittedId.length-1])-1,1);
+                var unitIndex = parseInt(splittedId[splittedId.length-1])-1;
+                // update the unit tokens hash table
+                insertTokensBackToUnit(unitToDelete);
+
+                tempObject.AnnotationUnits.splice(unitIndex,1);
 
                 updateTreeNodesIds(tempObject);
             }
@@ -626,6 +618,7 @@
                     rowShape:'',
                     usedAsRemote:[],
                     children_tokens: children_tokens,
+                    children_tokens_hash: tokensArrayToHash(children_tokens),
                     gui_status: unitGuiStatus ? unitGuiStatus : 'OPEN',
                     unitType:DataService.unitType,
                     containsAllParentUnits: containsAllParentUnits || false,
@@ -660,9 +653,12 @@
                 if(level != undefined){
                     // if the parent unit is not the root passage - need to check the restrictions of the layer
                     var parentUnit = getUnitById(level);
-                    if(!restrictionsValidatorService.checkRestrictionsBeforeInsert(parentUnit,objToPush,DataService.hashTables.tokensHashTable)){
-                        // if no unit has been added, ewtuern the parent unitRowId
-                        return level;
+                    if(DataService.duringInit === false){
+                        // only after page init finished - start check for restrictions
+                        if(!restrictionsValidatorService.checkRestrictionsBeforeInsert(parentUnit,objToPush,DataService.hashTables.tokensHashTable)){
+                            // if no unit has been added, ewtuern the parent unitRowId
+                            return level;
+                        }
                     }
                     newRowId = DataService.insertToTree(objToPush,level); // level is the parent unit
 

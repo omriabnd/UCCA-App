@@ -1570,7 +1570,8 @@
             $rootScope.focusUnit(rowElem)
             var unitToValidate = DataService.getUnitById(unit_id);
             var parentUnit = DataService.getUnitById(DataService.getParentUnitId(unitToValidate.annotation_unit_tree_id))
-            var isUnitValidated = restrictionsValidatorService.checkRestrictionsOnFinish(unitToValidate,parentUnit);
+            var hashTables = DataService.hashTables;
+            var isUnitValidated = restrictionsValidatorService.checkRestrictionsOnFinish(unitToValidate,parentUnit,hashTables);
             if(isUnitValidated){
                 if(parentUnit.annotation_unit_tree_id == "0"){
                     unitToValidate.gui_status = 'HIDDEN';
