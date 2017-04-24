@@ -75,6 +75,7 @@
   }
 
   .text-wrapper {
+    vertical-align: text-top;
     display: block;
     height: 25px !important;
     position: relative;
@@ -276,7 +277,7 @@
     // max-height: 40px;
     &.categorized-word{
       .directive-info-data-container {
-          max-height: 43px;
+          height: 38px;
           overflow-y: auto;
       }
     }

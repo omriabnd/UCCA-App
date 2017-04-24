@@ -225,17 +225,26 @@
                 tempObject = DataService.tree.AnnotationUnits[parseInt(splittedIndex[0]) - 1];
                 if(tempObject){
                     for (var i=1; i<splittedIndex.length; i++){
-                        tempObject = tempObject.AnnotationUnits[parseInt(splittedIndex[i]) - 1];
+                        if(tempObject.AnnotationUnits[parseInt(splittedIndex[i]) - 1]){
+                            tempObject = tempObject.AnnotationUnits[parseInt(splittedIndex[i]) - 1];
+                        }else{
+                            // fix when first load page, with remote unit and next sibling regular annotation unit with childrens
+                            tempObject = tempObject.AnnotationUnits[tempObject.AnnotationUnits.length - 1];
+                            level = tempObject.annotation_unit_tree_id;
+                        }
                     }
-                    tempObject.numOfAnnotationUnits++;
-                    newObject.annotation_unit_tree_id = level+'-'+(tempObject.AnnotationUnits.length+1)
+                    if(tempObject){
+                        tempObject.numOfAnnotationUnits++;
+                        newObject.annotation_unit_tree_id = level+'-'+(tempObject.AnnotationUnits.length+1)
+                        
+                        if(newObject.unitType == 'REMOTE'){
+                            newObject.remote_located_parent_id = level;                 
+                            newObject.remote_original_id = DataService.remoteFromUnit   
+                        }
+                        tempObject.AnnotationUnits.push(newObject);
+                        removeTokensFromUnit(newObject,tempObject)
+                    }
                     
-                    if(newObject.unitType == 'REMOTE'){
-                        newObject.remote_located_parent_id = level;                 
-                        newObject.remote_original_id = DataService.remoteFromUnit   
-                    }
-                    tempObject.AnnotationUnits.push(newObject);
-                    removeTokensFromUnit(newObject,tempObject)
                 }
             }
 
@@ -280,11 +289,16 @@
 
         function updateDomWhenInsertFinishes(){
             $timeout(function(){
-                // give focus to the new unit
-                $('.selected-row').removeClass('selected-row');
-                $('#directive-info-data-container-'+$rootScope.clckedLine).addClass('selected-row');
-                // make a scrollTo new unit
-                $('#directive-info-data-container-'+$rootScope.clckedLine).attr('tabindex','-1').focus()
+                var parentUnit = DataService.getUnitById(DataService.getParentUnitId($rootScope.clckedLine));
+                if(parentUnit.gui_status == 'COLLAPSE'){ // is parent unit is collapse
+                    // do nothing
+                }else{
+                    // give focus to the new unit
+                    $('.selected-row').removeClass('selected-row');
+                    $('#directive-info-data-container-'+$rootScope.clckedLine).addClass('selected-row');
+                    // make a scrollTo new unit
+                    $('#directive-info-data-container-'+$rootScope.clckedLine).attr('tabindex','-1').focus()
+                }
             });
         }
 
@@ -417,86 +431,92 @@
          */
         function deleteFromTree(row_id){
             // console.log('row_id',row_id);
-            var splittedId = row_id.toString().split('-');
-            var tempObject;
-            var treeNodeAnnotationUnitsLength;
-            var indexToInsertChild;
-            var unitToDelete = DataService.getUnitById(row_id);
-            if(splittedId.length == 1){
-                /**
-                 * Node in tree's top level - the main passage.
-                 */
+            if(row_id != "0"){
+                var splittedId = row_id.toString().split('-');
+                var tempObject;
+                var treeNodeAnnotationUnitsLength;
+                var indexToInsertChild;
+                var unitToDelete = DataService.getUnitById(row_id);
+                if(splittedId.length == 1){
+                    /**
+                     * Node in tree's top level - the main passage.
+                     */
 
-                var unitToDeleteChildren = DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1].AnnotationUnits;
+                    var parentUnit = DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1]
+                    var unitToDeleteChildren = parentUnit.AnnotationUnits;
 
-                for(var i=0; i<unitToDeleteChildren.length; i++){
-                    if(unitToDeleteChildren[i].unitType == 'REMOTE'){
-                        DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1].AnnotationUnits.splice(i,1);
-                        DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1].numOfAnnotationUnits = DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1].AnnotationUnits.length;
-                        i--;
+                    for(var i=0; i<unitToDeleteChildren.length; i++){
+                        if(unitToDeleteChildren[i].unitType == 'REMOTE'){
+                            removeRemoteChildFromUsedAsRemoteOriginalUnit(unitToDeleteChildren[i].remote_original_id,unitToDeleteChildren[i].annotation_unit_tree_id);
+                            DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1].AnnotationUnits.splice(i,1);
+                            DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1].numOfAnnotationUnits = DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1].AnnotationUnits.length;
+                            i--;
+                        }
                     }
+
+                    treeNodeAnnotationUnitsLength = DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1].AnnotationUnits.length;
+                    indexToInsertChild = parseInt(splittedId[0]);
+                    for(var i=0; i<treeNodeAnnotationUnitsLength; i++){
+                        DataService.tree.AnnotationUnits.splice(indexToInsertChild, 0, DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1].AnnotationUnits[i]);
+                        indexToInsertChild++
+                    }
+
+                    var unitIndex = parseInt(splittedId[0]) - 1;
+                    // update the main passage tokens hash table
+                    insertTokensBackToPassage(unitIndex);
+
+                    // remove the unit from its parent
+                    DataService.tree.AnnotationUnits.splice(unitIndex,1);
+                    DataService.tree.numOfAnnotationUnits = DataService.tree.AnnotationUnits.length;
+                    
+
+                    //Remove border from parent + update tree node ids
+                    updateTreeNodesIds(DataService.tree);
+
+                }else{
+                    /**
+                     * Traverse to the node.
+                     */
+                    tempObject = DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1];
+                    for (i=1; i<splittedId.length-1; i++){
+                        tempObject = tempObject.AnnotationUnits[parseInt(splittedId[i]) - 1];
+                    }
+
+                    var deletedRow = tempObject.AnnotationUnits[parseInt(splittedId[splittedId.length-1])-1];
+
+                    var unitToDeleteChildren = deletedRow.AnnotationUnits;
+
+                    for(var i=0; i<unitToDeleteChildren.length; i++){
+                        if(unitToDeleteChildren[i].unitType == 'REMOTE'){
+                            deletedRow.AnnotationUnits.splice(i,1);
+                            deletedRow.numOfAnnotationUnits = deletedRow.AnnotationUnits.length;
+                            i--;
+                        }
+                    }
+
+                    deletedRow != undefined ? treeNodeAnnotationUnitsLength = deletedRow.AnnotationUnits.length : treeNodeAnnotationUnitsLength = 0;
+                    indexToInsertChild = parseInt(splittedId[splittedId.length-1]);
+                    for(i=0; i<treeNodeAnnotationUnitsLength; i++){
+                        tempObject.AnnotationUnits.splice(indexToInsertChild, 0, deletedRow.AnnotationUnits[i]);
+                        indexToInsertChild++
+                    }
+
+                    var unitIndex = parseInt(splittedId[splittedId.length-1])-1;
+                    // update the unit tokens hash table
+                    insertTokensBackToUnit(unitToDelete);
+
+                    tempObject.AnnotationUnits.splice(unitIndex,1);
+
+                    updateTreeNodesIds(tempObject);
                 }
-
-                treeNodeAnnotationUnitsLength = DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1].AnnotationUnits.length;
-                indexToInsertChild = parseInt(splittedId[0]);
-                for(var i=0; i<treeNodeAnnotationUnitsLength; i++){
-                    DataService.tree.AnnotationUnits.splice(indexToInsertChild, 0, DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1].AnnotationUnits[i]);
-                    indexToInsertChild++
+                if(unitToDelete.unitType == "REMOTE"){
+                    updateOriginalRemoteUnitUsedAsRemoteArray(unitToDelete)
                 }
-
-                var unitIndex = parseInt(splittedId[0]) - 1;
-                // update the main passage tokens hash table
-                insertTokensBackToPassage(unitIndex);
-
-                // remove the unit from its parent
-                DataService.tree.AnnotationUnits.splice(unitIndex,1);
-                DataService.tree.numOfAnnotationUnits = DataService.tree.AnnotationUnits.length;
-                
-
-                //Remove border from parent + update tree node ids
-                updateTreeNodesIds(DataService.tree);
-
+                updateRemoteUnitsAndUsedAsRemote()
+                return updatedFocusedUnitId(row_id);
             }else{
-                /**
-                 * Traverse to the node.
-                 */
-                tempObject = DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1];
-                for (i=1; i<splittedId.length-1; i++){
-                    tempObject = tempObject.AnnotationUnits[parseInt(splittedId[i]) - 1];
-                }
-
-                var deletedRow = tempObject.AnnotationUnits[parseInt(splittedId[splittedId.length-1])-1];
-
-                var unitToDeleteChildren = deletedRow.AnnotationUnits;
-
-                for(var i=0; i<unitToDeleteChildren.length; i++){
-                    if(unitToDeleteChildren[i].unitType == 'REMOTE'){
-                        deletedRow.AnnotationUnits.splice(i,1);
-                        deletedRow.numOfAnnotationUnits = deletedRow.AnnotationUnits.length;
-                        i--;
-                    }
-                }
-
-                deletedRow != undefined ? treeNodeAnnotationUnitsLength = deletedRow.AnnotationUnits.length : treeNodeAnnotationUnitsLength = 0;
-                indexToInsertChild = parseInt(splittedId[splittedId.length-1]);
-                for(i=0; i<treeNodeAnnotationUnitsLength; i++){
-                    tempObject.AnnotationUnits.splice(indexToInsertChild, 0, deletedRow.AnnotationUnits[i]);
-                    indexToInsertChild++
-                }
-
-                var unitIndex = parseInt(splittedId[splittedId.length-1])-1;
-                // update the unit tokens hash table
-                insertTokensBackToUnit(unitToDelete);
-
-                tempObject.AnnotationUnits.splice(unitIndex,1);
-
-                updateTreeNodesIds(tempObject);
+                return "cant_delete_root";
             }
-            if(unitToDelete.unitType == "REMOTE"){
-                updateOriginalRemoteUnitUsedAsRemoteArray(unitToDelete)
-            }
-            updateRemoteUnitsAndUsedAsRemote()
-            return updatedFocusedUnitId(row_id);
         }
 
         function updateRemoteUnitsAndUsedAsRemote(){
@@ -518,6 +538,11 @@
             })
             // DataService.printTree()
             resetRemoteTempArrays();                
+        }
+
+        function removeRemoteChildFromUsedAsRemoteOriginalUnit(originalUnitId,unitIdToRemove){
+            var originalUnit = DataService.getUnitById(originalUnitId);
+            originalUnit.usedAsRemote = originalUnit.usedAsRemote.filter(function(unitId){return unitId!=unitIdToRemove});
         }
 
         function isInArray(obj,arrayOfObj){
@@ -811,7 +836,7 @@
             if(unitID == -1){
                 return null
             }else if(!unitID || unitID == 0){
-                var tempUnit = DataService.tree;
+                return DataService.tree;
             }else{
                 var splittedUnitId = splitStringByDelimiter(unitID,"-");
                 var tempUnit = DataService.tree;
@@ -819,8 +844,8 @@
                 for(var i=0; i<splittedUnitId.length; i++){
                     tempUnit.AnnotationUnits.length > 0 ? tempUnit = tempUnit.AnnotationUnits[parseInt(splittedUnitId[i])-1] : '';
                 }
+                return tempUnit.annotation_unit_tree_id == unitID ? tempUnit : null;
             }
-            return tempUnit;
         }
 
         function getNextSibling(lastFocusedUnitId){

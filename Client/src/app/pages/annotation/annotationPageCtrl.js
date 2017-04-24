@@ -22,7 +22,7 @@
     vm.resetAllAnnotations = resetAllAnnotations;
     vm.finishAll = finishAll;
     vm.tokenizationTask = TaskMetaData.Task;
-    vm.annotationTokens = vm.tokenizationTask.tokens;
+    vm.annotationTokens = initAnnotationTokens(vm.tokenizationTask.tokens);
     vm.categories = TaskMetaData.Categories;
     vm.defaultHotKeys = DefaultHotKeys;
     vm.categorizedWords = [];
@@ -52,7 +52,20 @@
           DataService.duringInit = false;
       },2000)
     )
-    
+
+    function initAnnotationTokens(tokensArray){
+      if(tokensArray){
+        tokensArray = tokensArray.sort(orderTokensById);
+      }
+      return tokensArray
+    }
+
+    function orderTokensById(a,b){
+      if(a.id>b.id) return 1;
+      if(a.id<b.id) return -1;
+      return 0;
+    }
+
     function focusPassage(){
       var firstRowElem = $(".directive-info-data-container").first()
       $rootScope.focusUnit(firstRowElem)

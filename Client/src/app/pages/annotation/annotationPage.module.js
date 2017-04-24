@@ -96,7 +96,7 @@
                     // this is how we will know to add style to this category
                     allCategories[parentIndex]['shouldRefine'] = true
                 });
-
+                taskResponse.tokens = replaceEnterWithBr(taskResponse.tokens);
                 DataService.currentTask = taskResponse;
 
                 restrictionsValidatorService.initRestrictionsTables(taskResponse.project.layer.restrictions);
@@ -109,7 +109,7 @@
                     DataService.createTokensHashByTokensArrayForPassage(taskResponse.tokens);
                     DataService.initTree();
                 }
-
+                
                 return{
                     Task:taskResponse,
                     Layer: taskResponse.project.layer,
@@ -117,7 +117,12 @@
                 }
             });
         }
-
+        function replaceEnterWithBr(tokensArray){
+          tokensArray.forEach(function(token){
+              token.text = token.text.replace(/\n/g,'<br>').replace(/\u21b5/g,'<br>');
+          });
+          return tokensArray;
+        }
         function getDefinitions(DefinitionsService) {
             return DefinitionsService.getDefinitions();
         }

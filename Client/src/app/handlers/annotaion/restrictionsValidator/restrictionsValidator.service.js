@@ -179,20 +179,20 @@
             var categories_hash = hashTables.categoriesHashTable;
             
             var violateUnitsCategoriesAmount = checkIfAllUnitsHaveAtLeastOneCategory(annotationUnit,categories_hash);
-            console.log("violateUnitsCategoriesAmount",violateUnitsCategoriesAmount);
+            // console.log("violateUnitsCategoriesAmount",violateUnitsCategoriesAmount);
             
             if(!violateUnitsCategoriesAmount){
                 var vaiolateForbidSibling = checkIfForbidSiblingHandler(annotationUnit,parentUnit);
-                console.log('vaiolateForbidSibling',vaiolateForbidSibling);                
+                // console.log('vaiolateForbidSibling',vaiolateForbidSibling);                
                 if(!vaiolateForbidSibling){
                     var vaiolateForbidChild = checkIfForbidChildHandler(annotationUnit);
-                    console.log('vaiolateForbidChild',vaiolateForbidChild);
+                    // console.log('vaiolateForbidChild',vaiolateForbidChild);
                     if(!vaiolateForbidChild){
                         var vaiolateRequireSibling  = checkIfUnitViolateRequireSiblingAndAlert(annotationUnit,parentUnit)
-                        console.log('vaiolateRequireSibling',vaiolateRequireSibling);
+                        // console.log('vaiolateRequireSibling',vaiolateRequireSibling);
                         if(!vaiolateRequireSibling){
                             var violateRequireChild = checkIfUnitViolateRequireChildRestrictionAndAlert(annotationUnit);
-                            console.log('violateRequireChild',violateRequireChild);
+                            // console.log('violateRequireChild',violateRequireChild);
                             if(violateRequireChild){
                                 vaiolate = true;
                             }
@@ -467,7 +467,7 @@
                     if(isForbidAnyChild(rootUnit) == false){
                         checkIfOk = false;
                         NOT_ALL_TOKENS_IN_UNIT_ERROR = true;
-                        console.log("REQUIRE_ANNOTATION",token);
+                        // console.log("REQUIRE_ANNOTATION",token);
                         return true; // its only break from the some loop
                     }
                 }
@@ -483,7 +483,7 @@
         }
 
         function checkAtLeastOneCategoryRecursion(parentUnit,categories_hash){
-            console.log(parentUnit.annotation_unit_tree_id);
+            // console.log(parentUnit.annotation_unit_tree_id);
             if(!parentUnit.categories.length){
                 return false;
             }else{
