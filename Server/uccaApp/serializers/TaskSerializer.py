@@ -1,5 +1,8 @@
+from ast import literal_eval
+
 from rest_framework.generics import get_object_or_404
 from django.utils import timezone
+from setuptools.svn_utils import decode_as_string
 
 from uccaApp.models import Annotation_Remote_Units_Annotation_Units
 from uccaApp.models import Annotation_Units
@@ -156,7 +159,7 @@ class TaskInChartSerializer(serializers.ModelSerializer):
         return is_parent
 
     def generate_and_save_tokens(self,taskInstance):
-        tokens_arr = tokenize(taskInstance.passage.text)
+        tokens_arr = tokenize(taskInstance.passage.text.replace('\\n','\n'))
         taskInstance.tokens_set.all().delete()
         # self.get_object()
         for token in tokens_arr:
