@@ -66,7 +66,7 @@
                         if(cursorLocation){
 
                             console.log('charPrevious', charPrevious);
-                            if(charPrevious.trim()==""){
+                            if(charPrevious != "\n" && charPrevious.trim()==""){
 
                                 console.log('deleted char isSpace');
 
