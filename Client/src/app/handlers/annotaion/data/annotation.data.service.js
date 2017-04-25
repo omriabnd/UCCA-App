@@ -240,6 +240,7 @@
                         if(newObject.unitType == 'REMOTE'){
                             newObject.remote_located_parent_id = level;                 
                             newObject.remote_original_id = DataService.remoteFromUnit   
+                            addRemoteChildToUsedAsRemoteOriginalUnit(newObject.remote_original_id,newObject.annotation_unit_tree_id)
                         }
                         tempObject.AnnotationUnits.push(newObject);
                         removeTokensFromUnit(newObject,tempObject)
@@ -538,6 +539,10 @@
             })
             // DataService.printTree()
             resetRemoteTempArrays();                
+        }
+        function addRemoteChildToUsedAsRemoteOriginalUnit(originalUnitId,unitIdToAdd){
+            var originalUnit = DataService.getUnitById(originalUnitId);
+            originalUnit.usedAsRemote.push(unitIdToAdd);
         }
 
         function removeRemoteChildFromUsedAsRemoteOriginalUnit(originalUnitId,unitIdToRemove){

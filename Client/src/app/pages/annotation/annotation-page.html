@@ -45,8 +45,8 @@
                             'closed-annotation-unit':lineObj.gui_status=='COLLAPSE'
                         }">
                 <div ng-show="lineObj.AnnotationUnits.length" class="expand-btn" ng-click="vm.toggleAnnotationUnitView($event)" >
-                    <i ng-class="{'ion-minus-round':lineObj.gui_status=='OPEN', 
-                        'ion-plus-round':lineObj.gui_status=='COLLAPSE'}" 
+                    <i ng-class="{'minus-round':lineObj.gui_status=='OPEN', 
+                        'plus-round':lineObj.gui_status=='COLLAPSE'}" 
                         id="{{lineObj.annotation_unit_tree_id}}">
                     </i>
                 </div>

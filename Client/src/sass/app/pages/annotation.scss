@@ -251,12 +251,34 @@
       /* border-radius: 30px; */
       width: 15px;
       height: 15px;
-      border: 1px solid #000;
+      // border: 1px solid #000;
 
     .ion-minus-round, .ion-plus-round {
       position: relative;
       top: -3px;
       left: -4px;
+    }
+    .minus-round, .plus-round {
+      position: relative;
+      top: -3px;
+      left: -4px;
+    }
+    .minus-round,.plus-round {
+        cursor: pointer;
+        background-size: cover;
+        background-repeat: no-repeat;
+        margin-top: 6px;
+        margin-left: 0px;
+        width: 15px;
+        height: 15px;
+        display: inline-block;
+        z-index: 9;
+    }
+    .minus-round {
+        background-image: url(../assets/img/app/huji/minus.jpg);
+    }
+    .plus-round {
+        background-image: url(../assets/img/app/huji/plus.jpg);
     }
   }
   

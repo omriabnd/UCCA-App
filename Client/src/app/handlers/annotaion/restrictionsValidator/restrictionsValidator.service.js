@@ -462,6 +462,9 @@
             Object.keys(rootUnit.children_tokens_hash).some(function(tokenId){
                 var token = hash_tokens[tokenId];
                 // if there is only one token and its non pangtuation
+                if(rootUnit.annotation_unit_tree_id == "0"){
+                    rootUnit.children_tokens = rootUnit.children_tokens_hash;
+                }
                 if(token.require_annotation && Object.keys(rootUnit.children_tokens).length > 1){
                     // check if the current rootUnit has category that forbid_any_child
                     if(isForbidAnyChild(rootUnit) == false){

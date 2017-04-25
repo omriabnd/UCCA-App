@@ -22,7 +22,7 @@
     vm.resetAllAnnotations = resetAllAnnotations;
     vm.finishAll = finishAll;
     vm.tokenizationTask = TaskMetaData.Task;
-    vm.annotationTokens = initAnnotationTokens(vm.tokenizationTask.tokens);
+    vm.annotationTokens = vm.tokenizationTask.tokens;
     vm.categories = TaskMetaData.Categories;
     vm.defaultHotKeys = DefaultHotKeys;
     vm.categorizedWords = [];
@@ -41,13 +41,15 @@
     vm.setFontSize = setFontSize;
 
     DataService.tree.text = vm.wrappedText;
-
+    
+    $rootScope.$pageFinishedLoading = false;
     $timeout(function(){
       init();
       DataService.duringInit = true;
     },0).then(
       $timeout(function(){
-          console.log("PageReady");
+          $rootScope.$pageFinishedLoading = true;
+          // console.log("PageReady");
           focusPassage();
           DataService.duringInit = false;
       },2000)
