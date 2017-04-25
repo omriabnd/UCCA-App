@@ -15,7 +15,8 @@
 
       $scope.tokenizationTask = TokenizationTask;
       $scope.originalText = TokenizationTask.passage.text;
-
+      // create a copy of the original text for the tokenized text
+      var passageFromTokens = createTextFromTokens(TokenizationTask.tokens);
 
       /**
        *
@@ -61,15 +62,25 @@
 
       $scope.originalTokens = uccaFactory.getTokensFromText($scope.originalText);
 
+      // $scope.tokenizedText = angular.copy($scope.originalText);
+      $scope.tokenizedText = passageFromTokens;
 
-      // create a copy of the original text for the tokenized text
 
-      $scope.tokenizedText = angular.copy($scope.originalText);
+      function createTextFromTokens(tokensArray){
+        var tokensArr = tokensArray;
+        var output = '';
+        tokensArray.forEach(function(token,index){
+          output += (token.text) + (index == tokensArr.length-1 ? '' : ' ');
+        })
+        return output;
+      }
 
       function submitTask(){
-        return saveChanges("submit").then(function(){
-          $state.go('tasks',{},{refresh:true})
-          $timeout(function(){$rootScope.$hideSideBar = false;}) 
+        return saveChanges().then(function(){
+          return saveChanges("submit").then(function(){
+            $state.go('tasks',{},{refresh:true})
+            $timeout(function(){$rootScope.$hideSideBar = false;}) 
+          })
         })
       }
 
