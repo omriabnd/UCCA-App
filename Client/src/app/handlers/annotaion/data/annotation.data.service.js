@@ -29,6 +29,9 @@
             tokensHashTable: {},
             categoriesHashTable: {}
         };
+        $rootScope.getTokenIdFromDomElem = getTokenIdFromDomElem;
+        $rootScope.unitElemsToTokensArray = unitElemsToTokensArray;
+
         var DataService = {
             /**
              * A data structure that contains rows of selectable words.
@@ -59,6 +62,7 @@
             getPrevSibling:getPrevSibling,
             getUnitById:getUnitById,
             getParentUnitId:getParentUnitId,
+            getUnitByUniqueId:getUnitByUniqueId,
             updateDomUnitWrappers:updateDomUnitWrappers,
             saveTask: saveTask,
             submitTask: submitTask,
@@ -73,7 +77,29 @@
 
         return DataService;
 
+        function unitElemsToTokensArray(group){
+            if(group && angular.isArray(group)){
+                group = group.map(function(elem) {
+                    if ($(elem).hasClass('unit-wrapper'))
+                        return Array.prototype.slice.call( elem.children )
+                    return elem
+                })
+                group = [].concat.apply([], group)
+            }
+            return group;
+        }
         
+        function getTokenIdFromDomElem(elem,byFirstToken){
+            if($(elem).attr('token-id')){
+                return parseInt($(elem).attr('token-id'));
+            }else{
+                if(byFirstToken){
+                    return parseInt($($(elem).find('[token-id]')[0]).attr('token-id'))
+                }
+                return parseInt($($(elem).find('[token-id]')[$(elem).find('[token-id]').length-1]).attr('token-id'))
+            }
+        }
+
         function initTree(){
             DataService.currentTask.annotation_units.forEach(function(unit,index){
                 //for each unit go through it tokens and find them in the tokens array,
@@ -128,7 +154,11 @@
 
                         delete DataService.remoteFromUnit;
                         if(unit.is_remote_copy){
-                            DataService.remoteFromUnit = unit.annotation_unit_tree_id
+                            DataService.remoteFromUnit = {
+                                remote_original_id : unit.annotation_unit_tree_id,
+                                remote_original_unique_id : DataService.getUnitById(unit.annotation_unit_tree_id).unitUniqueId
+                            }
+                            
                         }
                         
                         $rootScope.clckedLine = DataService.selectedTokensToUnit(tokenToUnitData);
@@ -210,17 +240,18 @@
         
         function insertToTree(newObject,level){
             // console.log('newObject',newObject);
+            var tempObject = null;
             if(level == 0){
 
                 DataService.tree.numOfAnnotationUnits++;
                 newObject.annotation_unit_tree_id = DataService.tree.numOfAnnotationUnits;
-                DataService.tree.AnnotationUnits.push(newObject);
+                // DataService.tree.AnnotationUnits.push(newObject);
+                tempObject = DataService.tree;
 
                 // update the dataseervice hash to be without the tokens
-                removeTokensFromPassage(newObject);
+                // removeTokensFromPassage(newObject);
             }else{
                 var splittedIndex = level.toString().split('-');
-                var tempObject = null;
 
                 tempObject = DataService.tree.AnnotationUnits[parseInt(splittedIndex[0]) - 1];
                 if(tempObject){
@@ -239,14 +270,23 @@
                         
                         if(newObject.unitType == 'REMOTE'){
                             newObject.remote_located_parent_id = level;                 
-                            newObject.remote_original_id = DataService.remoteFromUnit   
+                            newObject.remote_original_id = DataService.remoteFromUnit.remote_original_id   
+                            newObject.remote_original_unique_id = DataService.remoteFromUnit.remote_original_unique_id   
                             addRemoteChildToUsedAsRemoteOriginalUnit(newObject.remote_original_id,newObject.annotation_unit_tree_id)
                         }
-                        tempObject.AnnotationUnits.push(newObject);
-                        removeTokensFromUnit(newObject,tempObject)
+                        // tempObject.AnnotationUnits.push(newObject);
+                        // removeTokensFromUnit(newObject,tempObject)
                     }
                     
                 }
+            }
+            // add the new unit to model
+            tempObject.AnnotationUnits.push(newObject);
+            // update the dataseervice hash to be without the tokens
+            if(tempObject.annotation_unit_tree_id == "0"){
+                removeTokensFromPassage(newObject);
+            }else{
+                removeTokensFromUnit(newObject,tempObject);
             }
 
             
@@ -255,7 +295,7 @@
             updateTreeNodesIds(parentUnit);
 
             DataService.lastInsertedUnitIndex = newObject.annotation_unit_tree_id;
-            
+            // console.log(DataService.tree);
             return DataService.lastInsertedUnitIndex;
         }
 
@@ -288,10 +328,23 @@
             }
         }
 
+        function hasAtLeastOneCollapseParent(unit){
+            if(unit.annotation_unit_tree_id == "0") {
+                return false;
+            }else{
+                if(unit.gui_status == 'COLLAPSE'){ return true; }
+                else{ 
+                    var parentUnit = DataService.getUnitById(DataService.getParentUnitId(unit.annotation_unit_tree_id));
+                    return hasAtLeastOneCollapseParent(parentUnit);
+                }
+            }
+
+        }
+
         function updateDomWhenInsertFinishes(){
             $timeout(function(){
                 var parentUnit = DataService.getUnitById(DataService.getParentUnitId($rootScope.clckedLine));
-                if(parentUnit.gui_status == 'COLLAPSE'){ // is parent unit is collapse
+                if(hasAtLeastOneCollapseParent(parentUnit)){ // is parent unit is collapse
                     // do nothing
                 }else{
                     // give focus to the new unit
@@ -382,9 +435,11 @@
         }
 
         function sortByOrderNumber(a,b){
-            if (a.orderNumber  < b.orderNumber )
+            var a_orderNumber = parseInt(a.orderNumber);
+            var b_orderNumber = parseInt(b.orderNumber);
+            if (a_orderNumber  < b_orderNumber )
                 return -1;
-            if (a.orderNumber  > b.orderNumber )
+            if (a_orderNumber  > b_orderNumber )
                 return 1;
             return 0;
 
@@ -564,7 +619,7 @@
             unit 'usedAsRemote' array by remove itself from it
         */
         function updateOriginalRemoteUnitUsedAsRemoteArray(deletedRemoteRowId){
-            var originalUnit = DataService.getUnitById(deletedRemoteRowId.remote_original_id)
+            var originalUnit = DataService.getUnitByUniqueId(deletedRemoteRowId.remote_original_unique_id)
             originalUnit.usedAsRemote = originalUnit.usedAsRemote.filter(function(remoteId){
                 return remoteId != deletedRemoteRowId.annotation_unit_tree_id
             })
@@ -595,8 +650,138 @@
             }
         }
 
-        
+        function getUnitTreeIdFromDomElem(elem){
+            var fullPath = $(elem).attr('unit-wrapper-id').split('unit-wrapper-')[1];
+            var fullPathLength = fullPath.split("-").length;
+            var childUnitTreeId = $(elem).attr('child-unit-id');
+            // var childUnitTreeIdLength = childUnitTreeId.split("-").length;
+            // var unitId = fullPath.split('-').splice(1, fullPathLength - childUnitTreeIdLength ).join('-');
+            // return unitId;
+            return childUnitTreeId;
+        }
 
+        function removeFromTreeModel(unitId){
+            var parentUnit = DataService.getUnitById( DataService.getParentUnitId(unitId) )
+            
+            var unitIndex = parentUnit.AnnotationUnits.findIndex(function(annotationUnit){
+                return annotationUnit.annotation_unit_tree_id == unitId;
+            })
+            parentUnit.AnnotationUnits.splice(unitIndex,1)
+        }
+
+        function isRemoteIdGoingToChange(remoteId,unitsIdsToDeleteArr){
+            if(remoteId == "0"){
+                return false;
+            }
+            else if(unitsIdsToDeleteArr.indexOf(remoteId) != -1){
+                return true;
+            }else{
+                var parentId = DataService.getParentUnitId(remoteId);
+                return isRemoteIdGoingToChange(parentId,unitsIdsToDeleteArr);
+            }
+        }
+
+        function isDirectChildOf(childUnitId,parentUnitIdToCheck){
+            if(childUnitId == "0"){
+                return false;
+            }else if(DataService.getParentUnitId(childUnitId) == parentUnitIdToCheck){
+                return true;
+            }else{
+                var parentId = DataService.getParentUnitId(childUnitId);
+                return isDirectChildOf(parentId,parentUnitIdToCheck);
+            }
+        }
+
+        function getFutureRemoteId(remoteId,parentIdToDel){
+            if(isDirectChildOf(remoteId,parentIdToDel)){
+                return remoteId+"-1"
+            }else{
+                return parentIdToDel+"-"+remoteId
+            }
+        }
+
+        function getFutureOriginalId(originalId,parentIdToDelArr){
+            for (var i = 0; i < parentIdToDelArr.length; i++) {
+                var parentId = parentIdToDelArr[i];
+                if(originalId == parentId){
+                    return futureParentId + '-' + originalTail;
+                }
+                if(isDirectChildOf(originalId,parentId)){
+                    var futureParentId = parentIdToDelArr[0] + "-" + (i+1);
+                    var originalTail = originalId.split("-")[originalId.split("-").length-1]
+                    return futureParentId + '-' + originalTail;
+                }
+                
+            };
+
+        }
+
+        function updateUsedAsRemotes(unitsIdsToDeleteArr,newUnitToAdd){
+            for (var j = 0; j < newUnitToAdd.AnnotationUnits.length; j++) {
+                var unitChild = newUnitToAdd.AnnotationUnits[j];
+                updateUsedAsRemotes(unitsIdsToDeleteArr,unitChild)
+                for (var i = 0; i < unitChild.usedAsRemote.length; i++) {
+                    var id = unitChild.usedAsRemote[i];
+                    if(isRemoteIdGoingToChange(id,unitsIdsToDeleteArr) == true){
+                        var futureRemoteId = getFutureRemoteId(id,unitsIdsToDeleteArr[0]);
+                        var oldId = unitChild.usedAsRemote[i];
+                        var unit = DataService.getUnitByUniqueId(unitChild.unitUniqueId);
+                        unit.usedAsRemote[i] = futureRemoteId;
+                        unitChild.usedAsRemote[i] = futureRemoteId;
+                    }
+                };
+            };
+            
+        }
+
+        function getUnitTokensIdsFromElem(unit){
+            return Array.prototype.slice.call( unit ).map(function(elem){
+                if($(elem).hasClass('selectable-word')){
+                    return {
+                        id : $(elem).attr('token-id')
+                    }
+                }
+            })
+        };
+
+        function getUnitFromTree(parentUnit,unitUniqueId){
+            if(parentUnit.unitUniqueId == unitUniqueId){
+                return parentUnit;
+            }else{
+                var result = null;
+                for (var i = 0; i < parentUnit.AnnotationUnits.length; i++) {
+                    if( result == null ){
+                        var unit = parentUnit.AnnotationUnits[i];
+                        result = getUnitFromTree(unit,unitUniqueId);
+                    }
+                    // console.log('result',result);
+                };
+                return result;
+            }
+            return null;
+        }
+
+        function getUnitByUniqueId(unitUniqueId){
+            var foundUnit = getUnitFromTree(DataService.tree,unitUniqueId);
+            return foundUnit;
+        }
+
+        function updateRemoteOriginalIds(parentUnit){
+            for (var i = 0; i < parentUnit.AnnotationUnits.length; i++) {
+                var childUnit = parentUnit.AnnotationUnits[i];
+                updateRemoteOriginalIds(childUnit);
+                if(childUnit.remote_original_unique_id){
+                    console.log("remote tree id: "+childUnit.annotation_unit_tree_id);
+                    console.log("old remote original id: "+childUnit.remote_original_id);
+                    console.log("unique original id: "+childUnit.remote_original_unique_id);
+                    var remoteOriginalUnit = getUnitByUniqueId(childUnit.remote_original_unique_id);
+                    if(remoteOriginalUnit){
+                        console.log("new remote original id: "+remoteOriginalUnit.annotation_unit_tree_id);
+                        childUnit.remote_original_id = remoteOriginalUnit.annotation_unit_tree_id;
+                    }
+                }
+            };
+        }
         /**
          * Gets the selected words array turns the into 1 line and insert then into the data structure.
          * @param selectedTokensArray - the selected words.
@@ -618,17 +803,35 @@
             var categoriesArray = tokenToUnitData.categoriesArray;
             var isFirstInitTree = tokenToUnitData.isFirstInitTree;
             var unitGuiStatus = tokenToUnitData.unitGuiStatus;
+            var uniqueId = Math.floor(Math.random() * 10000000000);
             if(selectedTokensArray.length > 0){
                 var attachedWords = '';
                 // $scope.currentColor = color;
-                var lastTokenId = parseInt(splitStringByDelimiter($(selectedTokensArray[0]).attr('data-wordid'),"-")[1]);
+                // var lastTokenId = parseInt(splitStringByDelimiter($(selectedTokensArray[0]).attr('data-wordid'),"-")[1]);
+                var lastTokenId = $rootScope.getTokenIdFromDomElem($(selectedTokensArray[0]));
                 var children_tokens = [];
+                var selected_units_array = [];
+                var removeFromTree = [];
                 selectedTokensArray.forEach(function(word,index){
-                    children_tokens[index] = {
-                        id: $(word).attr('token-id')
-                       
+                    if($(word).hasClass('unit-wrapper')){
+                        var currentUnitId = getUnitTreeIdFromDomElem(word);
+                        var currentUnit = angular.copy(DataService.getUnitById(currentUnitId));
+                        var unitTokens = getUnitTokensIdsFromElem($(word)[0].children);
+                        currentUnit.annotation_unit_tree_id = '';
+                        
+                        selected_units_array.push(
+                            currentUnit
+                        )
+                        // add the current unit's tokens to the tokens array
+                        children_tokens = children_tokens.concat(unitTokens);
+                        removeFromTree.push(currentUnitId)
+                    }else{
+                        children_tokens.push({
+                            id: $(word).attr('token-id')
+                        })
                     }
-                    var currentTokenId = parseInt(splitStringByDelimiter($(word).attr('data-wordid'),"-")[1]);
+                    // var currentTokenId = parseInt(splitStringByDelimiter($(word).attr('data-wordid'),"-")[1]);
+                    var currentTokenId = $rootScope.getTokenIdFromDomElem(word,true/* by first token in case of unit*/);
                     if(index > 0){
                         if(currentTokenId > lastTokenId + 1){
                             attachedWords += '<span class="dot-sep">...</span>';
@@ -637,10 +840,12 @@
                     }
                     attachedWords += word;
                     attachedWords += ' ';
-                    lastTokenId = currentTokenId;
+                    lastTokenId = $rootScope.getTokenIdFromDomElem(word,false/*by last token in case of unit*/);
                 });
+
                 var objToPush = { // TODO: take out from here with constaructor ANNOTATION_UNIT
                     annotation_unit_tree_id : '',
+                    unitUniqueId : uniqueId,
                     text : attachedWords,
                     numOfAnnotationUnits: 0,
                     categories:[],
@@ -652,9 +857,7 @@
                     gui_status: unitGuiStatus ? unitGuiStatus : 'OPEN',
                     unitType:DataService.unitType,
                     containsAllParentUnits: containsAllParentUnits || false,
-                    AnnotationUnits : [
-
-                    ],
+                    AnnotationUnits : selected_units_array,
                     orderNumber : children_tokens[0] ? children_tokens[0].id : "-1",
                     TEMP_LAST_INSERTED_UNIT : true
                 };
@@ -683,23 +886,42 @@
                 if(level != undefined){
                     // if the parent unit is not the root passage - need to check the restrictions of the layer
                     var parentUnit = getUnitById(level);
-                    if(DataService.duringInit === false){
-                        // only after page init finished - start check for restrictions
+                    // only after page init finished - start check for restrictions
+                    if(DataService.duringInit === false){ // TODO: uncomment this block
+                        
+                        if(objToPush.AnnotationUnits.length){
+                            // if the objToPush has children - need to check if not violated FORBID_CHILD restriction
+                            for (var i = 0; i < objToPush.AnnotationUnits.length; i++) {
+                                var childUnit = objToPush.AnnotationUnits[i];
+                                if(!restrictionsValidatorService.checkRestrictionsBeforeInsert(objToPush,childUnit,DataService.hashTables.tokensHashTable)){
+                                    // if no unit has been added, ewtuern the parent unitRowId
+                                    return level;
+                                }    
+                            };
+                        }
                         if(!restrictionsValidatorService.checkRestrictionsBeforeInsert(parentUnit,objToPush,DataService.hashTables.tokensHashTable)){
-                            // if no unit has been added, ewtuern the parent unitRowId
+                            // if no unit has been added, return the parent unitRowId
                             return level;
                         }
                     }
-                    newRowId = DataService.insertToTree(objToPush,level); // level is the parent unit
-
-                    $rootScope.selectedTokensArray = [];
                 }else{
-                    var parentUnit = DataService.tree
-                    // should insert the unit to the root passage as a child
-                    newRowId = DataService.insertToTree(objToPush,0);
-
-                    $rootScope.selectedTokensArray = [];
+                    level = 0;
                 }
+
+                if(removeFromTree.length){
+                    updateUsedAsRemotes(removeFromTree,objToPush);
+                    // remove the old units
+                    removeFromTree.forEach(function(id){
+                        removeFromTreeModel(id);
+                    })
+                }
+                // insert the new unit
+                newRowId = DataService.insertToTree(objToPush,level); // level is the parent unit
+
+                updateRemoteOriginalIds(DataService.tree);
+                // clear the selected array
+                $rootScope.selectedTokensArray = [];
+
 
                 DataService.lastInsertedUnitIndex = newRowId;
 
@@ -741,13 +963,16 @@
             }else{
                 result = wordsToWrap;
             }
-            return result;
+            return removeCursors(result);
+        }
+        function removeCursors(wordsToWrap){
+            return $('<span>').append($(wordsToWrap).filter(':not(.cursor)').clone()).html();
         }
 
         function traversInTree(treeNode){
             console.log(treeNode.annotation_unit_tree_id)
             var unit = {
-                annotation_unit_tree_id : treeNode.unitType == 'REMOTE' ? treeNode.remote_original_id : treeNode.annotation_unit_tree_id.toString(),
+                annotation_unit_tree_id : treeNode.unitType == 'REMOTE' ? DataService.getUnitByUniqueId(treeNode.remote_original_unique_id).annotation_unit_tree_id : treeNode.annotation_unit_tree_id.toString(),
                 task_id: DataService.currentTask.id.toString(),
                 comment: treeNode.comment || '',
                 categories: treeNode.categories || [],
@@ -847,9 +1072,11 @@
                 var tempUnit = DataService.tree;
 
                 for(var i=0; i<splittedUnitId.length; i++){
-                    tempUnit.AnnotationUnits.length > 0 ? tempUnit = tempUnit.AnnotationUnits[parseInt(splittedUnitId[i])-1] : '';
+                    var unitIdToFind = splittedUnitId.slice(0,i+1).join("-");
+                    var unitIndex = tempUnit.AnnotationUnits.findIndex(function(unit){return unit.annotation_unit_tree_id == unitIdToFind})
+                    tempUnit.AnnotationUnits.length > 0 ? tempUnit = tempUnit.AnnotationUnits[unitIndex] : '';
                 }
-                return tempUnit.annotation_unit_tree_id == unitID ? tempUnit : null;
+                return !!tempUnit && tempUnit.annotation_unit_tree_id == unitID ? tempUnit : null;
             }
         }
 
@@ -919,7 +1146,8 @@
 
         function getPrevUnit(lastFocusedUnitId,index){
             var prevUnitId, parentUnit;
-            if(index != -1){
+            // if(index != -1){
+            if(index > 0){
                 prevUnitId = lastFocusedUnitId+"-"+index;
                 parentUnit = getUnitById(prevUnitId);
             }else{
@@ -928,9 +1156,11 @@
             }
 
             if(parentUnit){
-                //go down to the last node of the last node
-                while(parentUnit.AnnotationUnits.length > 0){
-                    parentUnit = parentUnit.AnnotationUnits[parentUnit.AnnotationUnits.length-1]
+                //go down to the last node of the last node that is not me
+                if(parentUnit.annotation_unit_tree_id != lastFocusedUnitId || index == -1){
+                    while(parentUnit.AnnotationUnits.length > 0){
+                            parentUnit = parentUnit.AnnotationUnits[parentUnit.AnnotationUnits.length-1]
+                    }
                 }
                 return parentUnit.annotation_unit_tree_id;
 
@@ -938,35 +1168,6 @@
                 return lastFocusedUnitId;
             }
             
-            // if(lastFocusedUnitId == 1){
-            //     return "0"
-            // }else{
-
-            //     var currentUnit = DataService.getUnitById(lastFocusedUnitId);
-            //     if(currentUnit.AnnotationUnits[parseInt(index)-2]){
-            //         return currentUnit.AnnotationUnits[parseInt(index)-2].annotation_unit_tree_id;
-            //     }else{
-            //         var splittedUnitID = splitStringByDelimiter(lastFocusedUnitId,'-');
-            //         var parentID="";
-            //         if(currentUnit.annotation_unit_tree_id.length >= 3){
-            //             parentID = splittedUnitID.slice(0,splittedUnitID.length-1).join("-");
-            //         }
-            //         else{
-            //             parentID = 0;
-            //         }
-            //         if(splitStringByDelimiter(parentID,'-').length == 1){
-
-            //             // var splittedUnitId = splitStringByDelimiter(lastFocusedUnitId,'-');
-            //             // var parenUnit = DataService.getUnitById(parseInt(splittedUnitId[splittedUnitId.length-2]));
-            //             // while(parenUnit.AnnotationUnits.length > 0){
-            //             //     parenUnit = parenUnit.AnnotationUnits[parseInt(splittedUnitId[splittedUnitId.length-1]-2)]
-            //             // }
-            //             // parentID = parenUnit.annotation_unit_tree_id;
-            //         }
-            //         return parentID;
-
-            //     }
-            // }
         }
 
         function findUnitParentThatHAsBrothers(unitID){
@@ -1025,8 +1226,10 @@
          * @returns {number}
          */
         function sortSelectedWordsArrayByWordIndex(a,b){
-            var aIndex = parseInt($(a).attr('data-wordid').split('-')[1]);
-            var bIndex = parseInt($(b).attr('data-wordid').split('-')[1]);
+            // var aIndex = parseInt($(a).attr('data-wordid').split('-')[1]);
+            // var bIndex = parseInt($(b).attr('data-wordid').split('-')[1]);
+            var aIndex = $rootScope.getTokenIdFromDomElem(a);
+            var bIndex = $rootScope.getTokenIdFromDomElem(b);
             if(aIndex < bIndex){
                 return -1;
             }

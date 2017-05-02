@@ -13,14 +13,17 @@
             link: function ($scope, elem) {
 
                 $(elem).click(function(){
+
+                    // highlight the unit, and make its parent row focused
+
                     var unitId = $(this).attr('unit-wrapper-id');
                     var splittedUnitID = unitId.split('-');
 
                     var parentContainerId = $(event.toElement).attr('parent-index');
 
                     var parentContainer = $(this.parentElement.parentElement.parentElement).addClass('selected-row');
-                    $('.highlight-unit').removeClass('highlight-unit');
-                    $("[unit-wrapper-id="+unitId+"]").toggleClass('highlight-unit');
+                    // $('.highlight-unit').removeClass('highlight-unit');
+                    // $("[unit-wrapper-id="+unitId+"]").toggleClass('highlight-unit');
 
                     event.stopPropagation();
 
@@ -81,8 +84,8 @@
             $(element).addClass('selected-row').delay(500);
         }    
 
-        $('.selectable-word').removeClass('clickedToken');
-        rootScope.selectedTokensArray = [];    
+        // $('.selectable-word').removeClass('clickedToken');
+        // rootScope.selectedTokensArray = [];    
     }
 
 

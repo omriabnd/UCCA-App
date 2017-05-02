@@ -60,6 +60,8 @@
 
             $rootScope.tokenClicked = tokenClicked;
             $rootScope.focusUnit = focusUnit;
+            
+            $rootScope.selectAllTokensBetween = selectAllTokensBetween;
 
             var directiveIndex = initDirective(initObject);
 
@@ -83,7 +85,6 @@
                 });
             }
 
-            
 
             function removeAnnotationUnit(unit_id,event){
                 var annotaionUnitToDelete = $('#row-'+unit_id);
@@ -108,9 +109,10 @@
             });
 
 
-            $('.directive-info-data-container .text-wrapper').on('mouseover', '.selectable-word', function(event) {
+            $('.directive-info-data-container .text-wrapper').on('mouseover', '.selectable-word,.unit-wrapper', function(event) {
                 if(IS_MOUSE_DOWN){
-                    var tokenId = splitStringByDelimiter($(this).attr('data-wordid'),"-")[1];
+                    var tokenId = $rootScope.getTokenIdFromDomElem(event.toElement);
+
                     removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
                     // console.log("first_word:"+$rootScope.lastSelectedTokenMouse+",current_word:"+tokenId);
                     selectAllTokensBetween(event,tokenId)
@@ -124,12 +126,12 @@
                 $rootScope.selectedTokensArray = [];
                 // get all tokens that not inside a unit
                 // and filter out the ones that not between the firstToken and latToken
-                var allWordsArray = $('#row-'+$scope.selCtrl.selectedRow +' > .selectable-word');
+                var allWordsArray = $('#row-'+$scope.selCtrl.selectedRow +' > .selectable-word,#row-'+$scope.selCtrl.selectedRow +' > .unit-wrapper');
                 allWordsArray = allWordsArray.filter(function(index,token,self){
                     if($rootScope.lastSelectedTokenMouse < lastTokenId){
-                        return (parseInt($(token).attr('token-id')) >= parseInt($rootScope.lastSelectedTokenMouse)) && (parseInt($(token).attr('token-id')) <= parseInt(lastTokenId))
+                        return ($rootScope.getTokenIdFromDomElem(token) >= parseInt($rootScope.lastSelectedTokenMouse)) && ($rootScope.getTokenIdFromDomElem(token) <= parseInt(lastTokenId))
                     }else{
-                        return (parseInt($(token).attr('token-id')) <= parseInt($rootScope.lastSelectedTokenMouse)) && (parseInt($(token).attr('token-id')) >= parseInt(lastTokenId))
+                        return ($rootScope.getTokenIdFromDomElem(token,true/*by first token*/) <= parseInt($rootScope.lastSelectedTokenMouse)) && ($rootScope.getTokenIdFromDomElem(token) >= parseInt(lastTokenId))
                     }
                 })
                 // select all the relevant filtered tokens
@@ -137,7 +139,7 @@
                     $(allWordsArray[i]).addClass('clickedToken')
                     $rootScope.selectedTokensArray.push(allWordsArray[i].outerHTML);
                 };
-
+                // console.log($rootScope.selectedTokensArray);
             }
 
             /**
@@ -148,6 +150,7 @@
                 /**
                  * Initialization phase - checks if ctrl/shift is pressed and update clickedLine variable on rootScope.
                  */
+                // console.log($rootScope.selectedTokensArray);
                 IS_MOUSE_DOWN = true
                 $('.highlight-unit').removeClass('highlight-unit'); // unit can not be selected while a token being clicked 
                 $('.selected-row').removeClass('selected-row'); // reset (prev) other selected rows
@@ -158,7 +161,15 @@
                 $rootScope.clckedLine = tokenRowId;
                 $scope.selCtrl.selectedRow = tokenRowId;
 
-                $rootScope.lastSelectedTokenMouse = parseInt($(event.toElement).attr('data-wordid').split('-')[1]);
+                if(isShiftPressed == false){
+                    if($(event.toElement).attr('data-wordid')){
+                        // token clicked
+                        $rootScope.lastSelectedTokenMouse = parseInt($(event.toElement).attr('data-wordid').split('-')[1]);
+                    }else{
+                        // unit clicked
+                        $rootScope.lastSelectedTokenMouse = parseInt($($(event.toElement).find('[data-wordid]')[0]).attr('data-wordid').split('-')[1]);
+                    }
+                }
                 // console.log("last word",$rootScope.lastSelectedTokenMouse);
 
                 /**
@@ -200,11 +211,20 @@
 					}
                 }
                 updateCursorLocation($scope.selCtrl,event.toElement,$rootScope);
+                // console.log($rootScope.selectedTokensArray);
             }
             function preventSelectTokensFromDefferentUnits(){
                 var needToPrevent = false
                 if($rootScope.selectedTokensArray.length){
-                    needToPrevent = $($rootScope.selectedTokensArray[0]).attr('parent-index') != $rootScope.clckedLine;
+                    var parentIndex = null;
+                    if($($rootScope.selectedTokensArray[0]).hasClass('unit-wrapper') == false){
+                        // token clicked
+                        parentIndex = $($rootScope.selectedTokensArray[0]).attr('parent-index')
+                    }else{
+                        // unit clicked
+                        parentIndex = $($($rootScope.selectedTokensArray[0]).find('[parent-index]')[0]).attr('parent-index')
+                    }
+                    needToPrevent = parentIndex != $rootScope.clckedLine;
                     if(needToPrevent){
                         $rootScope.selectedTokensArray = [];
                         $('.clickedToken').removeClass('clickedToken');
@@ -450,13 +470,14 @@
 
                         var tokenToAdd = currentRow.children[$scope.selCtrl.cursorLocation+1];
                         // allow to add only tokens - not units
-                        if($(tokenToAdd).hasClass('unit-wrapper') == false){
+                        // if($(tokenToAdd).hasClass('unit-wrapper') == false){
                             if(!$(tokenToAdd).hasClass('dot-sep') && !$(tokenToAdd).hasClass('cursor')){
                                 if($(tokenToAdd).hasClass('clickedToken')){
                                     $(tokenToAdd).removeClass('clickedToken');
 
                                     //The token is already selected, need to remove it.
-                                    var tokenId = splitStringByDelimiter($(tokenToAdd).attr('data-wordid'),"-")[1];
+                                    // var tokenId = splitStringByDelimiter($(tokenToAdd).attr('data-wordid'),"-")[1];
+                                    var tokenId = $rootScope.getTokenIdFromDomElem(tokenToAdd);
                                     removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
                                 }else{
                                     if(tokenToAdd){
@@ -466,10 +487,11 @@
                                     
                                 }
                             }
-                        }
+                        // }
                         updateCursorLocationRight(currentRow)
                     }
-                }                
+                }   
+                console.log($rootScope.selectedTokensArray.length);             
             }
 
             function moveLeft(){
@@ -538,14 +560,15 @@
                         var tokenToAdd = currentRow.children[$scope.selCtrl.cursorLocation-1];
 
                         // allow to add only tokens - not units
-                        if($(tokenToAdd).hasClass('unit-wrapper') == false){
+                        // if($(tokenToAdd).hasClass('unit-wrapper') == false){
                             if(!$(tokenToAdd).hasClass('dot-sep') && !$(tokenToAdd).hasClass('cursor')){
                                 if($(tokenToAdd).hasClass('clickedToken')){
                                     $(tokenToAdd).removeClass('clickedToken');
                                     
 
                                     //The token is already selected, need to remove it.
-                                    var tokenId = splitStringByDelimiter($(tokenToAdd).attr('data-wordid'),"-")[1];
+                                    // var tokenId = splitStringByDelimiter($(tokenToAdd).attr('data-wordid'),"-")[1];
+                                    var tokenId = $rootScope.getTokenIdFromDomElem(tokenToAdd);
                                     removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
                                 }else{
                                     if(tokenToAdd){
@@ -555,10 +578,11 @@
                                     
                                 }
                             }
-                        }
+                        // }
                         updateCursorLocationLeft(currentRow);
                     }
                 }
+                console.log($rootScope.selectedTokensArray.length);
             }
             function updateCursorLocationRight(currentRow){
                 $scope.selCtrl.cursorLocation++;
@@ -686,7 +710,10 @@
                     onClickForRemote.call({category:category,lineToAddRemoteUnit:$rootScope.lineToAddRemoteUnit},currentRow)
                     // onClickForRemote(firstUnit);
                 }else{
-                    if($rootScope.selectedTokensArray.length > 0){
+                    var selectedUnit = $(currentRow).find('.unit-wrapper.clickedToken').attr('child-unit-id');
+                    var isOnlyOnySystemUnitSelected = selectedUnit && $(currentRow).find('.clickedToken').length == 1;
+                    if(!isOnlyOnySystemUnitSelected && $rootScope.selectedTokensArray.length > 0){
+                        // add new empty unit
                         $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
                         if($rootScope.selectedTokensArray.length > 0){
                             $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine);
@@ -699,7 +726,8 @@
 
                         $rootScope.lastSelectedWordWithShiftPressed = undefined;
                     }else{
-                        var selectedUnit = $($(currentRow).find('.highlight-unit')).attr('child-unit-id');
+                        // remove the selected unit
+                        // var selectedUnit = $($(currentRow).find('.highlight-unit')).attr('child-unit-id');
                         if(selectedUnit){
                             selectedUnit != undefined ? deleteFromTree(selectedUnit) : '';
                         }
@@ -813,7 +841,10 @@
                         return;
                     }
 
-                    DataService.remoteFromUnit = originalId;
+                    DataService.remoteFromUnit = {
+                        remote_original_id : originalId,
+                        remote_original_unique_id : DataService.getUnitById(originalId).unitUniqueId
+                    }
                     for(var i=0; i<selectedUnitTokens.length; i++){
                         if(!$(selectedUnitTokens[i]).hasClass('cursor')){
                             $rootScope.selectedTokensArray.push(selectedUnitTokens[i].outerHTML);
@@ -826,7 +857,7 @@
                     DataService.unitType = 'REMOTE';
                     
                     $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine,false);
-                    DataService.getUnitById(originalId).usedAsRemote.push($rootScope.clckedLine);
+                    // DataService.getUnitById(originalId).usedAsRemote.push($rootScope.clckedLine);
                     DataService.updateDomWhenInsertFinishes();
                     
                     if(!$scope.selCtrl.currentUnitRemoteInstancesIds){
@@ -847,6 +878,7 @@
                 $('.selected-unit').removeClass('selected-unit');
                 $('.annotation-page-container').toggleClass('crosshair-cursor');
                 $( ".unit-wrapper" ).attr('mousedown','').unbind('mousedown');
+                $( ".unit-wrapper" ).on('mousedown',tokenClicked);
                 $( ".selectable-word" ).attr('mousedown','').unbind('mousedown');
                 $( ".selectable-word" ).on('mousedown',tokenClicked);
                 $( ".directive-info-data-container" ).attr('mousedown','').unbind('mousedown');
@@ -977,7 +1009,8 @@
             var tokenInSelectedTokensArray;
             for(var i=0; i< selectedTokensArray.length; i++){
                 tokenInSelectedTokensArray = selectedTokensArray[i];
-                var tokenId = splitStringByDelimiter($(tokenInSelectedTokensArray).attr('data-wordid'),"-")[1];
+                
+                var tokenId = $rootScope.getTokenIdFromDomElem(tokenInSelectedTokensArray);
 
                 if(tokenIdToRemove == tokenId){
                     selectedTokensArray.splice(i,1);
@@ -995,8 +1028,10 @@
          * @returns {number}
          */
         function sortSelectedWordsArrayByWordIndex(a,b){
-            var aIndex = parseInt($(a).attr('data-wordid').split('-')[1]);
-            var bIndex = parseInt($(b).attr('data-wordid').split('-')[1]);
+            // var aIndex = parseInt($(a).attr('data-wordid').split('-')[1]);
+            // var bIndex = parseInt($(b).attr('data-wordid').split('-')[1]);
+            var aIndex = $rootScope.getTokenIdFromDomElem(a);
+            var bIndex = $rootScope.getTokenIdFromDomElem(b);
             if(aIndex < bIndex){
                 return -1;
             }
@@ -1036,10 +1071,19 @@
 
         }
 
+        function isTokenPartOfUnit(tokenElem){
+            return $(tokenElem.parentElement).hasClass('unit-wrapper')
+        }
+
+        
         function wrapEveryAdjacentChildrenGroupInItsParentUnitTogether(childrenGroup,categories,taskCategories,newLine,rootScope,tokenOrderInArray){
             var startIndex, hasDataWordId = false;
+
+            childrenGroup = $rootScope.unitElemsToTokensArray(childrenGroup);
+
             if($(childrenGroup[0]).attr('data-wordid')){
-                startIndex = parseInt($(childrenGroup[0]).attr('data-wordid').split('-')[1]);
+                // startIndex = parseInt($(childrenGroup[0]).attr('data-wordid').split('-')[1]);
+                startIndex = $rootScope.getTokenIdFromDomElem(childrenGroup[0],true)
                 hasDataWordId = true;
             }else{
                 startIndex = $("#row-"+DataService.getParentUnitId($rootScope.clckedLine)).find("[unit-wrapper-id=unit-wrapper-"+DataService.getParentUnitId($rootScope.clckedLine)+"-"+$rootScope.clckedLine+"]")
@@ -1069,6 +1113,8 @@
                 $(wrappedChildrenSpan).attr('num-of-tokens',childrenGroup.length);
 
                 $(wrappedChildrenSpan).attr('go-to-unit','');
+                
+                $(wrappedChildrenSpan).on('mousedown',$rootScope.tokenClicked);
 
                 $(wrappedChildrenSpan).attr('child-unit-id',DataService.lastInsertedUnitIndex);
 
@@ -1086,7 +1132,10 @@
                 var tempElement = angular.copy(wrappedChildrenSpan);
                 try{
                     if(hasDataWordId){
-                        annotationUnitId[0].insertBefore(wrappedChildrenSpan.get(0),annotationUnitId.find('.word-'+startIndex)[0]);
+                        var insertBeforeToken = annotationUnitId.find('.word-'+startIndex)[0];
+                        var insertBeforeToken = isTokenPartOfUnit(insertBeforeToken) ? insertBeforeToken.parentElement : insertBeforeToken;
+                        var newUnit = wrappedChildrenSpan.get(0);
+                        annotationUnitId[0].insertBefore(newUnit,insertBeforeToken);
                     }else{
                         annotationUnitId[0].insertBefore(wrappedChildrenSpan.get(0),startIndex);
                     }
@@ -1104,7 +1153,9 @@
                                 $(annotationUnitId[0]).find("#"+$(childrenGroup[i]).attr('id'))[0].remove();
                             }else if($(annotationUnitId[0]).find('.'+childrenGroup[i].classList[1]).length > 0){
                                 try{
-                                    $(annotationUnitId[0]).find('.'+childrenGroup[i].classList[1])[1].remove();
+                                    var tokenToRemove = $(annotationUnitId[0]).find('.'+childrenGroup[i].classList[1])[1];
+                                    var tokenToRemove = isTokenPartOfUnit(tokenToRemove) ? tokenToRemove.parentElement : tokenToRemove;
+                                    tokenToRemove.remove();
                                 }catch(e){
                                     // console.log('Remote Unit');
                                 }
@@ -1193,6 +1244,7 @@
         }
 
         function arrangeUnitAdjacentChildrenInGroups(unitChildren){
+            unitChildren = $rootScope.unitElemsToTokensArray( Array.prototype.slice.call( unitChildren ));
             var groupedChildrenArray = [];
             var group = [];
 
@@ -1201,8 +1253,9 @@
                 if(!$(unitChildren[i]).hasClass('dot-sep')){
                     if(group.length == 0){
                         group.push(unitChildren[i]);
-                        if($(unitChildren[i]).attr('data-wordid')){
-                            lastPushedChildWordId = parseInt($(unitChildren[i]).attr('data-wordid').split('-')[1]);
+                        // if($(unitChildren[i]).attr('data-wordid')){
+                        if($rootScope.getTokenIdFromDomElem(unitChildren[i])){
+                            lastPushedChildWordId = $rootScope.getTokenIdFromDomElem(unitChildren[i]);
                         }else{
                             lastPushedChildWordId = -1;
                         }
@@ -1210,7 +1263,8 @@
                         if(lastPushedChildWordId == -1){
                             group.push(unitChildren[i]);
                         }else{
-                            var currentChildWordId = parseInt($(unitChildren[i]).attr('data-wordid').split('-')[1]);
+                            // var currentChildWordId = parseInt($(unitChildren[i]).attr('data-wordid').split('-')[1]);
+                            var currentChildWordId = $rootScope.getTokenIdFromDomElem(unitChildren[i]);
                             if(lastPushedChildWordId == currentChildWordId - 1){
                                 group.push(unitChildren[i]);
                             }else if(lastPushedChildWordId == currentChildWordId){
@@ -1220,7 +1274,8 @@
                                 group = [];
                                 group.push(unitChildren[i]);
                             }
-                            lastPushedChildWordId = parseInt($(unitChildren[i]).attr('data-wordid').split('-')[1]);
+                            // lastPushedChildWordId = parseInt($(unitChildren[i]).attr('data-wordid').split('-')[1]);
+                            lastPushedChildWordId = $rootScope.getTokenIdFromDomElem(unitChildren[i]);
                         }
 
                     }
@@ -1255,7 +1310,8 @@
                 $(event.toElement).removeClass('clickedToken')
                 
                 //The token is already selected, need to remove it.
-                var tokenId = splitStringByDelimiter($(event.toElement).attr('data-wordid'),"-")[1];
+                var tokenId = $rootScope.getTokenIdFromDomElem(event.toElement);
+
                 removeTokensFromSelectedTokensArray(tokenId,rootScope.selectedTokensArray);
             }
         }
@@ -1270,101 +1326,11 @@
         }
 
         function handleClickOnTokenWhenShiftPressed(event,scope,rootScope){
-            if(rootScope.lastSelectedWordWithShiftPressed == undefined){
+            var tokenId = rootScope.getTokenIdFromDomElem(event.toElement);
 
-                handleFirstClickOnTokenWhenShiftPressed(event,scope,rootScope);
-
-            }else{
-
-                handleSecondClickOnTokenWhenShiftPressed(event,scope,rootScope);
-
-            }
-        }
-
-        function handleFirstClickOnTokenWhenShiftPressed(event,scope,rootScope){
-            rootScope.lastSelectedWordWithShiftPressed = parseInt($(event.toElement).attr('data-wordid').split('-')[1]);
-            $('.clickedToken').removeClass('clickedToken');
+            removeTokensFromSelectedTokensArray(tokenId,rootScope.selectedTokensArray);
             
-            $(event.toElement).attr('parent-index',scope.selCtrl.lineId);
-            rootScope.selectedTokensArray = [];
-            rootScope.selectedTokensArray.push(event.toElement.outerHTML);
-            $(event.toElement).addClass('clickedToken');
-            
-        }
-
-        function handleSecondClickOnTokenWhenShiftPressed(event,scope,rootScope){
-            // $(event.toElement).attr('parent-index',scope.selCtrl.lineId);
-            // rootScope.selectedTokensArray.push(event.toElement.outerHTML);
-
-            var wordIndex = parseInt($(event.toElement).attr('data-wordid').split('-')[1]);
-            var allWordsArray = $('#row-'+scope.selCtrl.selectedRow+' > .selectable-word');
-
-            var splittedLineId = scope.selCtrl.lineId.toString().split('-');
-            var rowID = '#row-';
-            if (splittedLineId.length > 1){
-                for(var i=0; i<splittedLineId.length - 1; i++){
-                    rowID += splittedLineId[i]+"-";
-                }
-                rowID += splittedLineId[i];
-            }else{
-                rowID += splittedLineId[0];
-            }
-            if(rootScope.lastSelectedWordWithShiftPressed < wordIndex){
-
-                handelSecondClickedTokenIsHigherThenFirstClickedTokenEvent(scope,rootScope,allWordsArray,wordIndex,rowID);
-
-            }else{
-
-                handelSecondClickedTokenIsLowerThenFirstClickedTokenEvent(scope,rootScope,allWordsArray,wordIndex,rowID);
-
-            }
-            rootScope.lastSelectedWordWithShiftPressed = undefined;
-        }
-
-        function handelSecondClickedTokenIsHigherThenFirstClickedTokenEvent(scope,rootScope,allWordsArray,wordIndex,rowID){
-            var startIndex = 0, endIndex = 0;
-            for(var i=0; i <allWordsArray.length; i++){
-                if($(allWordsArray[i]).hasClass('word-'+wordIndex)){
-                    startIndex = i;
-                }
-                if($(allWordsArray[i]).hasClass('word-'+rootScope.lastSelectedWordWithShiftPressed)){
-                    endIndex = i;
-                }
-            }
-
-            for(i = startIndex; i >= endIndex; i--){
-                if($(rowID).find('.'+$(allWordsArray[i]).attr('data-wordid')).hasClass('clickedToken')){
-                    break;
-                }else{
-                    $(allWordsArray[i]).attr('parent-index',scope.selCtrl.lineId);
-                    rootScope.selectedTokensArray.push(allWordsArray[i].outerHTML);
-                    // $(rootScope.selectedTokensArray[rootScope.selectedTokensArray.length-1]).attr('parent-index',rootScope.clckedLine);
-                    $(allWordsArray[i]).addClass('clickedToken');
-                    
-                }
-            }
-        }
-
-        function handelSecondClickedTokenIsLowerThenFirstClickedTokenEvent(scope,rootScope,allWordsArray,wordIndex,rowID){
-            var startIndex = 0, endIndex = 0;
-            for(var i=0; i <allWordsArray.length; i++){
-                if($(allWordsArray[i]).hasClass('word-'+wordIndex)){
-                    startIndex = i;
-                }
-                if($(allWordsArray[i]).hasClass('word-'+rootScope.lastSelectedWordWithShiftPressed)){
-                    endIndex = i;
-                }
-            }
-            for(var i = startIndex; i <= endIndex; i++){
-                if($(rowID).find('.'+$(allWordsArray[i]).attr('data-wordid')).hasClass('clickedToken')){
-                    break;
-                }else{
-                    $(allWordsArray[i]).attr('parent-index',scope.selCtrl.lineId);
-                    rootScope.selectedTokensArray.push(allWordsArray[i].outerHTML);
-                    $(allWordsArray[i]).addClass('clickedToken');
-                    
-                }
-            }
+            rootScope.selectAllTokensBetween(event,tokenId)
         }
 
 
@@ -1490,11 +1456,11 @@
             /**
              * Set the on click function and parent-color attribute
              */
-            $(initObject.elem).find('.selectable-word').on('mousedown',initObject.tokenClicked);
+            $(initObject.elem).find('.selectable-word,.unit-wrapper').on('mousedown',initObject.tokenClicked);
             $(initObject.elem).on('mousedown',initObject.focusUnit);
 
             $(initObject.elem).find('.selectable-word').attr('parent-color',initObject.rootScope.currentCategoryBGColor);
-
+            $compile($(initObject.elem.find('.unit-wrapper')))(initObject.rootScope);
             initObject.rootScope.selectedTokensArray = [];
 
             if(initObject.scope.selCtrl.control == undefined){

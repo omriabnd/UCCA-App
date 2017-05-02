@@ -103,6 +103,24 @@
             });
         };
         
+        /**
+         * Use the object's 'data-wordid' attribute in order to sorts the array in ascending order.
+         * @param a,b - array elements.
+         * @returns {number}
+         */
+        function sortSelectedWordsArrayByWordIndex(a,b){
+            // var aIndex = parseInt($(a).attr('data-wordid').split('-')[1]);
+            // var bIndex = parseInt($(b).attr('data-wordid').split('-')[1]);
+            var aIndex = $rootScope.getTokenIdFromDomElem(a);
+            var bIndex = $rootScope.getTokenIdFromDomElem(b);
+            if(aIndex < bIndex){
+                return -1;
+            }
+            if(aIndex > bIndex){
+                return 1;
+            }
+            return 0;
+        }
     }
 
 
@@ -111,22 +129,7 @@
         return rootScope.clckedLine != undefined && rootScope.clckedLine != '0';
     }
 
-    /**
-     * Use the object's 'data-wordid' attribute in order to sorts the array in ascending order.
-     * @param a,b - array elements.
-     * @returns {number}
-     */
-    function sortSelectedWordsArrayByWordIndex(a,b){
-        var aIndex = parseInt($(a).attr('data-wordid').split('-')[1]);
-        var bIndex = parseInt($(b).attr('data-wordid').split('-')[1]);
-        if(aIndex < bIndex){
-            return -1;
-        }
-        if(aIndex > bIndex){
-            return 1;
-        }
-        return 0;
-    }
+    
 
 
 })();
