@@ -57,8 +57,8 @@
             function setOriginalTextNoSpaces(){
 
                 console.log('setOriginalTextNoSpaces');
-                originalTextNoSpaces = service.originalText.replace(/\s/g, '');
-
+                // originalTextNoSpaces = service.originalText.replace(/\s/g, '');
+                originalTextNoSpaces = service.originalText.replace(/ /g, '');
                 return originalTextNoSpaces;
             }
 
@@ -81,10 +81,11 @@
              */
             function getTokensFromText(text){
 
-                console.log('getTokensFromText');
+                var processText = text.replace(/\n/g, " \n ");
+                
+                console.log(text, processText);
 
-
-                var tokensSplit = text.split(" ");
+                var tokensSplit = processText.split(" ");
                 var startIndex = 0;
                 var endIndex = 0;
                 var endIndex_no_spaces = 0;

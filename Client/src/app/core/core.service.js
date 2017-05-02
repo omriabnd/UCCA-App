@@ -33,7 +33,8 @@
 			initCategoriesStringToArray: initCategoriesStringToArray,
 			generateRestrictionObject: generateRestrictionObject,
 			parseSmartTableColumnData:parseSmartTableColumnData,
-			viewOnlyRuleOk:viewOnlyRuleOk
+			viewOnlyRuleOk:viewOnlyRuleOk,
+			promptAlert:promptAlert
 		};
 		
 		return core;
@@ -94,7 +95,7 @@
 		    })
 		    return {
 		        categories_1: categoryOneArray,
-		        type:restrictionType,
+		        type:restrictionType.key,
 		        categories_2: categoryTwoArray
 		    }
 		}
@@ -193,6 +194,20 @@
 				}]
 			});
 		};
+
+		function promptAlert(message) {
+			var pagelink = 'app/pages/ui/modals/modalTemplates/dangerModal.html';
+			var size = 'md';
+			return $uibModal.open({
+				animation: true,
+				templateUrl: pagelink,
+				size: size,
+				scope: $rootScope.$new(),
+				controller: ["$scope",function ($scope) {
+					$scope.message = message
+				}]
+			});
+		}
 
 		function extractDataFromStructure(structure) {
 			var result = {};

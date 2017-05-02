@@ -81,17 +81,24 @@
         }
 
         function toggleInCategoryToGroupTwo(category,categoryValue){
-            if(categoryValue){
-                categoryTwoArray.push(category);
+            if(vm.restrictionType.key !== "FORBID_ANY_CHILD"){
+                if(categoryValue){
+                    categoryTwoArray.push(category);
+                }else{
+                    var categoryIndexInArray = categoryTwoArray.map(function(e,index){return e.id}).indexOf(parseInt(category.id));
+                    categoryTwoArray.splice(categoryIndexInArray,1)
+                }
             }else{
-                var categoryIndexInArray = categoryTwoArray.map(function(e,index){return e.id}).indexOf(parseInt(category.id));
-                categoryTwoArray.splice(categoryIndexInArray,1)
+                if(categoryValue){
+                    Core.showNotification('error','"forbid any child" accept only one category set.')
+                }
             }
         }
         
         function save(){
             if(categoryOneArray.length > 0){
                 if(vm.restrictionType.key == "FORBID_ANY_CHILD" || categoryTwoArray.length > 0){
+                    categoryTwoArray = vm.restrictionType.key == "FORBID_ANY_CHILD" ? [] : categoryTwoArray;
                     var restriction = Core.generateRestrictionObject(categoryOneArray,vm.restrictionType,categoryTwoArray);
 
                     editRootLayerService.set("restrictions",restriction, $state.params.itemRowIndex);

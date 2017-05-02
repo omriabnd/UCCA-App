@@ -58,6 +58,8 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         tokens_json = []
         for t in tokens:
             tokens_json.append(TokensSerializer(t).data)
+
+        tokens_json.sort(key=lambda x: x["start_index"])
         return tokens_json
 
     def get_annotation_units(self, obj):

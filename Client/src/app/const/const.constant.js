@@ -129,13 +129,13 @@
 				tooltip:"Alt+b: Submit (unit will be considered completed)",
 				executeFunction:"submitTask"
 			},
-			/*{
+			{
 				id:4,
 				name:"Reset",
 				tooltip:"Alt+x: Reset annotation",
-				executeFunction:"resetAnnotation"
+				executeFunction:"resetAllAnnotations"
 			},
-			{
+			/*{
 				id:5,
 				name:"Help",
 				tooltip:"?: Help",

@@ -89,6 +89,7 @@ def tokenize(t):
       # extend the list with new tokens
       output.extend(tuples_to_dict(token_candidates))
 
+  output.sort(key=lambda x :-x["start_index"])
   # return the list without the first linefeed token, which is superfluous
   return output[1:]
 

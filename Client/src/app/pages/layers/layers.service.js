@@ -8,9 +8,9 @@
 
   /** @ngInject */
   function layersService(apiService) {
-    apiService.layers.getLayersTableData().then(function (res){
+    /*apiService.layers.getLayersTableData().then(function (res){
       angular.copy(res.data.results, service.tableData);
-    });
+    });*/
     var service = {
         tableData:[],
         getTableStructure: function(){

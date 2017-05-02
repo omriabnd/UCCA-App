@@ -598,13 +598,17 @@
                 if(unitToDelete){
                     if(unitToDelete.usedAsRemote && unitToDelete.usedAsRemote.length > 0){
                         $scope.selCtrl.currentUnitRemoteInstancesIds = unitToDelete.usedAsRemote;
-                        $scope.selCtrl.currentUnitRemoteInstancesIds.push(unitToDelete.annotation_unit_tree_id.toString());
-                        $scope.selCtrl.open('app/pages/annotation/templates/deleteAllRemoteModal.html','md',unitToDelete.usedAsRemote.length-1);
+                        /*$scope.selCtrl.currentUnitRemoteInstancesIds.push(unitToDelete.annotation_unit_tree_id.toString());*/
+                        $scope.selCtrl.open('app/pages/annotation/templates/deleteAllRemoteModal.html','md',unitToDelete.usedAsRemote.length);
                     }else{
-                        $rootScope.clckedLine = DataService.deleteFromTree(unitToDelete.annotation_unit_tree_id);
-                        if(unitToDelete.unitType == 'REGULAR'){
-                            // console.log("$scope.selCtrl.updateUI(unitToDelete)");
-                            $scope.selCtrl.updateUI(unitToDelete)
+                        var deleteUnit = DataService.deleteFromTree(unitToDelete.annotation_unit_tree_id);
+                        if(deleteUnit != 'cant_delete_root'){
+                            $rootScope.clckedLine = deleteUnit;
+
+                            if(unitToDelete.unitType == 'REGULAR'){
+                                // console.log("$scope.selCtrl.updateUI(unitToDelete)");
+                                $scope.selCtrl.updateUI(unitToDelete)
+                            }
                         }
                     }
                 }
@@ -704,6 +708,10 @@
             }
 
             function addAsRemoteUnit(category,event){
+                if(DataService.getUnitById($rootScope.clckedLine).unitType=="REMOTE"){
+                    // cant add remote unit to remote unit
+                    return;
+                }
                 DataService.unitType = 'REMOTE';
                 if(category == undefined){
                     category = {
@@ -820,7 +828,11 @@
                     $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine,false);
                     DataService.getUnitById(originalId).usedAsRemote.push($rootScope.clckedLine);
                     DataService.updateDomWhenInsertFinishes();
-
+                    
+                    if(!$scope.selCtrl.currentUnitRemoteInstancesIds){
+                        $scope.selCtrl.currentUnitRemoteInstancesIds = [];
+                    }
+                    $scope.selCtrl.currentUnitRemoteInstancesIds.push($rootScope.clckedLine);
                     //e.toElement ? $scope.$apply() : '';
 
                     resetBindingRemoteEvents()
@@ -1367,8 +1379,8 @@
             selCtrl.languageAlign = $rootScope.languageAlign = $rootScope.isDirRtl ? 'rtl' : 'ltr';
 
             var mouseDown = false;
-
             selCtrl.open = function (page, size,message) {
+                var remoteOriginalId = $rootScope.clckedLine;
                 $uibModal.open({
                     animation: true,
                     templateUrl: page,
@@ -1384,13 +1396,10 @@
                             selCtrl.dataBlock.comment = $scope.comment;
                         }
 
+                        var remoteOriginalTreeId = remoteOriginalId;
                         $scope.deleteAllRemoteInstanceOfThisUnit = function(){
                             
-                            // remove duplicates
-                            selCtrl.currentUnitRemoteInstancesIds = selCtrl.currentUnitRemoteInstancesIds.filter(function(unitTreeId,index,self){
-                                return self.indexOf(unitTreeId) == index
-                            })
-                            selCtrl.currentUnitRemoteInstancesIds.sort(sortIndexes);
+                            selCtrl.currentUnitRemoteInstancesIds.push(remoteOriginalTreeId);
                             for(var i=0; i<selCtrl.currentUnitRemoteInstancesIds.length ; i++){
                                 DataService.deleteFromTree(selCtrl.currentUnitRemoteInstancesIds[i])
                                 selCtrl.updateUI(DataService.getUnitById(selCtrl.currentUnitRemoteInstancesIds[i]))
@@ -1398,6 +1407,10 @@
                             // selCtrl.updateUI(DataService.getUnitById($("[unit-wrapper-id="+$rootScope.clickedUnit+"]").attr('child-unit-id')));
                         };
                     }
+                }).result.then(function(okRes){
+                    
+                },function(abortRes){
+                    
                 });
             };
 
@@ -1566,7 +1579,8 @@
             $rootScope.focusUnit(rowElem)
             var unitToValidate = DataService.getUnitById(unit_id);
             var parentUnit = DataService.getUnitById(DataService.getParentUnitId(unitToValidate.annotation_unit_tree_id))
-            var isUnitValidated = restrictionsValidatorService.checkRestrictionsOnFinish(unitToValidate,parentUnit);
+            var hashTables = DataService.hashTables;
+            var isUnitValidated = restrictionsValidatorService.checkRestrictionsOnFinish(unitToValidate,parentUnit,hashTables);
             if(isUnitValidated){
                 if(parentUnit.annotation_unit_tree_id == "0"){
                     unitToValidate.gui_status = 'HIDDEN';

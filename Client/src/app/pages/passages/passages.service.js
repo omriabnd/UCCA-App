@@ -8,9 +8,9 @@
 
   /** @ngInject */
   function passagesService(apiService) {
-    apiService.passages.getPassagesTableData().then(function (res){
+    /*apiService.passages.getPassagesTableData().then(function (res){
       service.tableData = res.data.results
-    });
+    });*/
     var service = {
         tableData:[],
         getTableStructure: function(){

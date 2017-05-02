@@ -30,6 +30,10 @@
     border-radius: 3px;
     padding: 5px;
   }
+  .line-categories-container {
+      display: inline-block;
+      margin-bottom: 2px;
+  }
 
   .clickedToken{
     background-color: gray;
@@ -71,6 +75,7 @@
   }
 
   .text-wrapper {
+    vertical-align: text-top;
     display: block;
     height: 25px !important;
     position: relative;
@@ -78,6 +83,7 @@
     left: 4px;
     height: auto !important;
     display: inline-block;
+    line-height: 22px;
   }
   button.text-wrapper{
     width: calc(100% - 55px);
@@ -245,12 +251,34 @@
       /* border-radius: 30px; */
       width: 15px;
       height: 15px;
-      border: 1px solid #000;
+      // border: 1px solid #000;
 
     .ion-minus-round, .ion-plus-round {
       position: relative;
       top: -3px;
       left: -4px;
+    }
+    .minus-round, .plus-round {
+      position: relative;
+      top: -3px;
+      left: -4px;
+    }
+    .minus-round,.plus-round {
+        cursor: pointer;
+        background-size: cover;
+        background-repeat: no-repeat;
+        margin-top: 6px;
+        margin-left: 0px;
+        width: 15px;
+        height: 15px;
+        display: inline-block;
+        z-index: 9;
+    }
+    .minus-round {
+        background-image: url(../assets/img/app/huji/minus.jpg);
+    }
+    .plus-round {
+        background-image: url(../assets/img/app/huji/plus.jpg);
     }
   }
   
@@ -258,6 +286,7 @@
     min-height: 10px;
 
   }
+
   .closed-annotation-unit {
     max-height: 0;
     min-height: 0;
@@ -268,6 +297,12 @@
     // -webkit-transition: .3s all;
     // transition: .3s all;
     // max-height: 40px;
+    &.categorized-word{
+      .directive-info-data-container {
+          height: 38px;
+          overflow-y: auto;
+      }
+    }
   }
   .directive-container {
     min-height: 10px;

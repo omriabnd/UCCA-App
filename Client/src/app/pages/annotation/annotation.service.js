@@ -61,7 +61,7 @@
         }
 
         function toggleAnnotationGuiStatus(plusMinusElem){
-            if ($(plusMinusElem).hasClass('ion-minus-round')) {
+            if ($(plusMinusElem).hasClass('minus-round')) {
                 return ENV_CONST.ANNOTATION_GUI_STATUS.COLLAPSE
             }else{
                 return ENV_CONST.ANNOTATION_GUI_STATUS.OPEN

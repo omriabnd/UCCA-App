@@ -8,9 +8,9 @@
 
   /** @ngInject */
   function categoriesService(apiService) {
-    apiService.categories.getCategoriesTableData().then(function (res){
+    /*apiService.categories.getCategoriesTableData().then(function (res){
       angular.copy(res.data.results, service.tableData);
-    });
+    });*/
     var service = {
         tableData:[],
         getTableStructure: function(){

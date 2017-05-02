@@ -8,9 +8,9 @@
 
   /** @ngInject */
   function usersService(apiService) {
-    apiService.users.getUsersTableData().then(function (res){
+    /*apiService.users.getUsersTableData().then(function (res){
       angular.copy(res.data.results, service.tableData);
-    });
+    });*/
     var service = {
         tableData:[],
         getTableStructure: function(){

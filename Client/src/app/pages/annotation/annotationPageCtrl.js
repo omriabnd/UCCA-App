@@ -19,6 +19,7 @@
     vm.saveTask = saveTask;
     vm.submitTask = submitTask;
     vm.goToMainMenu = goToMainMenu;
+    vm.resetAllAnnotations = resetAllAnnotations;
     vm.finishAll = finishAll;
     vm.tokenizationTask = TaskMetaData.Task;
     vm.annotationTokens = vm.tokenizationTask.tokens;
@@ -40,18 +41,33 @@
     vm.setFontSize = setFontSize;
 
     DataService.tree.text = vm.wrappedText;
-
+    
+    $rootScope.$pageFinishedLoading = false;
     $timeout(function(){
       init();
       DataService.duringInit = true;
     },0).then(
       $timeout(function(){
-          console.log("PageReady");
+          $rootScope.$pageFinishedLoading = true;
+          // console.log("PageReady");
           focusPassage();
           DataService.duringInit = false;
       },2000)
     )
-    
+
+    function initAnnotationTokens(tokensArray){
+      if(tokensArray){
+        tokensArray = tokensArray.sort(orderTokensById);
+      }
+      return tokensArray
+    }
+
+    function orderTokensById(a,b){
+      if(a.id>b.id) return 1;
+      if(a.id<b.id) return -1;
+      return 0;
+    }
+
     function focusPassage(){
       var firstRowElem = $(".directive-info-data-container").first()
       $rootScope.focusUnit(firstRowElem)
@@ -112,6 +128,58 @@
       DataService.printTree();
     }
 
+    function is_delete_button_of_remote_unit(elem){
+      return !!$(elem).parents('.remote-unit').first()[0];
+    }
+
+    function compareButtons(a,b){
+      var aIndex = is_delete_button_of_remote_unit(a);
+      var bIndex = is_delete_button_of_remote_unit(b);
+      if(aIndex < bIndex){
+          return -1;
+      }
+      if(aIndex > bIndex){
+          return 1;
+      }
+      return 0;
+    }
+
+    function resetAllAnnotations(res){
+      console.log('DataService',DataService);
+      Core.promptAlert('Are you sure you want to delete all the annotation units?').result.then(function(res){
+        if(res){
+          console.log("reset All Annotations");
+          var i,
+              allDeleteButtons = $('.delete-btn.unit-buttons'),
+              remoteUnitDeleteBtnArr = [],
+              regularUnitDeleteBtnArr = [],
+              k=allDeleteButtons.length-1;
+          
+          // delete the remote units first, then the rest of the units - start
+          for (var i = 0; i < allDeleteButtons.length; i++) {
+            var elem = allDeleteButtons[i];
+            if(is_delete_button_of_remote_unit(elem)){
+              remoteUnitDeleteBtnArr.push(elem);
+            }else{
+              regularUnitDeleteBtnArr.push(elem);;
+            }
+          }
+          allDeleteButtons = regularUnitDeleteBtnArr.concat(remoteUnitDeleteBtnArr)
+          // delete the remote units first, then the rest of the units - end
+
+          for (i = allDeleteButtons.length-1; i > 0; i--) {
+            $timeout(function(){
+                var elem = allDeleteButtons[k];
+                var id = $(elem).parents('.directive-info-data-container').first().attr('id').split('directive-info-data-container-')[1];
+                console.log('delete:',id);
+                $(elem).click()
+                k--;
+            },1000)
+          };
+        }
+      })
+    }
+
     function goToMainMenu(res){
       var projectId = this ? this.tokenizationTask.project.id : res.data.project.id;
       var layerType = this ? this.tokenizationTask.project.layer.type : res.data.project.layer.type;
@@ -127,21 +195,24 @@
     function submitTask(){
       var finishAllResult = vm.finishAll(true);
       if(finishAllResult){
-        return DataService.submitTask().then(function(res){
-          Core.showNotification('success','Annotation Task Submitted.');
-          goToMainMenu(res)
-        });
+        return DataService.saveTask().then(function(){
+          return DataService.submitTask().then(function(res){
+            Core.showNotification('success','Annotation Task Submitted.');
+            goToMainMenu(res)
+          });
+        })
       }
     }
     function saveTask(){
-      DataService.saveTask().then(function(res){
+      return DataService.saveTask().then(function(res){
         Core.showNotification('success','Annotation Task Saved.');
       });
     }
 
     function finishAll(fromSubmit){
         var rootUnit = DataService.getUnitById("0");
-        var finishAllResult = restrictionsValidatorService.evaluateFinishAll(rootUnit,fromSubmit);
+        var hashTables = DataService.hashTables;
+        var finishAllResult = restrictionsValidatorService.evaluateFinishAll(rootUnit,fromSubmit,hashTables);
         if(finishAllResult){
           Core.showNotification('success','Finish All was successful');
           return true;

@@ -8,9 +8,9 @@
 
     /** @ngInject */
     function projectsService(apiService) {
-        apiService.projects.getProjectsTableData().then(function (res){
+        /*apiService.projects.getProjectsTableData().then(function (res){
             angular.copy(res.data.results, service.tableData);
-        });
+        });*/
         var service = {
             tableData:[],
             getTableStructure: function(){

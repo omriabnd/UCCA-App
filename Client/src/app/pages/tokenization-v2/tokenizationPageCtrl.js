@@ -7,7 +7,7 @@
       .controller('TokenizationPageCtrl', TokenizationPageCtrl);
 
   /** @ngInject */
-  function TokenizationPageCtrl($scope, uccaFactory, TokenizationTask, Core) {
+  function TokenizationPageCtrl($scope, uccaFactory, TokenizationTask, Core, $state, $timeout, $rootScope) {
       $scope.saveChanges = saveChanges;
       $scope.submitTask = submitTask;
 
@@ -15,7 +15,8 @@
 
       $scope.tokenizationTask = TokenizationTask;
       $scope.originalText = TokenizationTask.passage.text;
-
+      // create a copy of the original text for the tokenized text
+      var passageFromTokens = createTextFromTokens(TokenizationTask.tokens);
 
       /**
        *
@@ -61,20 +62,33 @@
 
       $scope.originalTokens = uccaFactory.getTokensFromText($scope.originalText);
 
+      // $scope.tokenizedText = angular.copy($scope.originalText);
+      $scope.tokenizedText = passageFromTokens;
 
-      // create a copy of the original text for the tokenized text
 
-      $scope.tokenizedText = angular.copy($scope.originalText);
+      function createTextFromTokens(tokensArray){
+        var tokensArr = tokensArray;
+        var output = '';
+        tokensArray.forEach(function(token,index){
+          output += (token.text) + (index == tokensArr.length-1 ? '' : ' ');
+        })
+        return output;
+      }
 
       function submitTask(){
-        return saveChanges("submit");
+        return saveChanges().then(function(){
+          return saveChanges("submit").then(function(){
+            $state.go('tasks',{},{refresh:true})
+            $timeout(function(){$rootScope.$hideSideBar = false;}) 
+          })
+        })
       }
 
       function saveChanges(mode){
         $scope.tokenizationTask.tokens = $scope.savedTokens;
         $scope.tokenizationTask.passage.text = $scope.tokenizedText;
         mode = mode ? mode : 'draft';
-        uccaFactory.saveTask(mode,$scope.tokenizationTask).then(function(response){
+        return uccaFactory.saveTask(mode,$scope.tokenizationTask).then(function(response){
           Core.showNotification("success","Task Saved");
         })
       }
