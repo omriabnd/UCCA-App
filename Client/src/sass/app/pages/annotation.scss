@@ -84,6 +84,7 @@
     height: auto !important;
     display: inline-block;
     line-height: 22px;
+    max-width: 100%;
   }
   button.text-wrapper{
     width: calc(100% - 55px);
@@ -505,6 +506,10 @@ textarea.unit-comment-text {
   .selectable-word {
       margin: 0 1px;
       margin-right: 4px;
+      display: inline-block;
+      &.new-line {
+        display: inline;
+      }
   }
 } 
 

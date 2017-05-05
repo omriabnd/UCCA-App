@@ -954,9 +954,9 @@
                 var result ='';
                 wordsToWrap.forEach(function(token,index){
                     if(token.parent_id){
-                        result += '<span parent-index='+token.parent_id+'  token-id='+token.id+' class="selectable-word word-'+(token.id)+'" data-wordId="word-'+ (token.id) +'">'+token.text+'</span>';
+                        result += '<span parent-index='+token.parent_id+'  token-id='+token.id+' class="selectable-word '+(token.text=='<br>'?'new-line':'')+' word-'+(token.id)+'" data-wordId="word-'+ (token.id) +'">'+token.text+'</span>';
                     }else{
-                        result += '<span parent-index="0"  token-id='+token.id+' class="selectable-word word-'+(token.id)+'" data-wordId="word-'+ (token.id) +'">'+token.text+'</span>';
+                        result += '<span parent-index="0"  token-id='+token.id+' class="selectable-word '+(token.text=='<br>'?'new-line':'')+' word-'+(token.id)+'" data-wordId="word-'+ (token.id) +'">'+token.text+'</span>';
                     }
                     result += ' ';
                 });
