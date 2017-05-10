@@ -243,10 +243,12 @@
                     console.log('no cursor');
                 }
                 var locationToInsertCursor = 0;
-                locationToInsertCursor = $(currentRow.children).index( element )+1;
-                selCtrl.cursorLocation = locationToInsertCursor;
+                if(currentRow){
+                    locationToInsertCursor = $(currentRow.children).index( element )+1;
+                    selCtrl.cursorLocation = locationToInsertCursor;
 
-                currentRow.insertBefore(directiveCursor, currentRow.children[locationToInsertCursor]);
+                    currentRow.insertBefore(directiveCursor, currentRow.children[locationToInsertCursor]);
+                }
             }
 
             function restSelectedTokens(){
@@ -288,9 +290,11 @@
                         $(currElem.parentElement.parentElement.parentElement).addClass('selected-row');
                     }else{
                         $(currElem).addClass('selected-row');
+                        $(currElem).attr('tabindex',-1).focus();
                     }
                 }else{
                     $(element).addClass('selected-row');
+                    $(element).attr('tabindex',-1).focus();
                 }
 
                 $scope.selCtrl.selectedRow = $rootScope.clckedLine;
@@ -360,7 +364,10 @@
                 if(unitExists){
                     $scope.selCtrl.selectedRow = $rootScope.clckedLine = unitExists.annotation_unit_tree_id;
                     var currentRow = $('#directive-info-data-container-' + nextUnitId)[0];
-                    focusUnit(currentRow);
+
+                    if(currentRow){
+                        focusUnit(currentRow);
+                    }
 
                     if(DataService.unitType == 'REMOTE'){
                         //Select The first
@@ -377,6 +384,7 @@
             function moveUp() {
                 var nextUnitId;
                 var splittedLineId =  splitStringByDelimiter($rootScope.clckedLine,"-");
+                if(!splittedLineId) return;
                 if(splittedLineId.length == 1 && splittedLineId[0] == 1){
                     nextUnitId = "0";
                 }else{
@@ -538,10 +546,12 @@
             }
 
             function getCurrentCursorIndexPosition(currentRow){
-                var cursorPosition = $(currentRow.children).toArray().findIndex(function(obj){
-                    return $(obj).hasClass('cursor')
-                })
-                return cursorPosition                
+                if(currentRow){
+                    var cursorPosition = $(currentRow.children).toArray().findIndex(function(obj){
+                        return $(obj).hasClass('cursor')
+                    })
+                    return cursorPosition                
+                }
             }
 
             function moveLeftWithShift(){
@@ -728,8 +738,9 @@
                     }else{
                         // remove the selected unit
                         // var selectedUnit = $($(currentRow).find('.highlight-unit')).attr('child-unit-id');
-                        if(selectedUnit){
-                            selectedUnit != undefined ? deleteFromTree(selectedUnit) : '';
+                        if(selectedUnit && selectedUnit != undefined ){
+                            $rootScope.clickedUnit = $(".unit-wrapper.clickedToken").attr('unit-wrapper-id');
+                            deleteFromTree(selectedUnit);
                         }
                     }
                 }
@@ -974,7 +985,7 @@
 
                 var unitContainsAllParentUnitTokens = parentUnitDomElement.children().length-1 == $rootScope.selectedTokensArray.length;
 
-                if(!(parenUnit.containsAllParentUnits && unitContainsAllParentUnitTokens)){
+                if(!(parenUnit && parenUnit.containsAllParentUnits && unitContainsAllParentUnitTokens)){
                     $rootScope.currentCategoryID = category.id;
                     $rootScope.currentCategoryColor = category.color;
                     $rootScope.currentCategoryBGColor = category.backgroundColor;

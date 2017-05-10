@@ -186,7 +186,7 @@
                             ]
                         };
 
-                        DataService.insertToTree(objToPush,$rootScope.clckedLine);
+                        DataService.insertToTree(objToPush,$rootScope.clckedLine == undefined ? unit.parent_id : $rootScope.clckedLine);
                     }
                 }
             })
@@ -241,6 +241,9 @@
         function insertToTree(newObject,level){
             // console.log('newObject',newObject);
             var tempObject = null;
+            if (level == undefined){
+                return;
+            } 
             if(level == 0){
 
                 DataService.tree.numOfAnnotationUnits++;
@@ -462,9 +465,11 @@
 
         function insertTokensBackToUnit(unit){
             var parentUnit = DataService.getUnitById(getParentUnitId(unit.annotation_unit_tree_id));
-            Object.keys(unit.children_tokens_hash).forEach(function(tokenid){
-                parentUnit.children_tokens_hash[tokenid] = DataService.hashTables.tokensHashTable[tokenid];
-            })
+            if(unit.children_tokens_hash){
+                Object.keys(unit.children_tokens_hash).forEach(function(tokenid){
+                    parentUnit.children_tokens_hash[tokenid] = DataService.hashTables.tokensHashTable[tokenid];
+                })
+            }
         }
 
         function insertTokensBackToPassage(unitIndex){
@@ -502,8 +507,10 @@
                     var unitToDeleteChildren = parentUnit.AnnotationUnits;
 
                     for(var i=0; i<unitToDeleteChildren.length; i++){
-                        if(unitToDeleteChildren[i].unitType == 'REMOTE'){
-                            removeRemoteChildFromUsedAsRemoteOriginalUnit(unitToDeleteChildren[i].remote_original_id,unitToDeleteChildren[i].annotation_unit_tree_id);
+                        if(unitToDeleteChildren[i].unitType == 'REMOTE' || unitToDeleteChildren[i].unitType == 'IMPLICIT' ){
+                            if(unitToDeleteChildren[i].unitType == 'REMOTE' ){
+                                removeRemoteChildFromUsedAsRemoteOriginalUnit(unitToDeleteChildren[i].remote_original_id,unitToDeleteChildren[i].annotation_unit_tree_id);
+                            }
                             DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1].AnnotationUnits.splice(i,1);
                             DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1].numOfAnnotationUnits = DataService.tree.AnnotationUnits[parseInt(splittedId[0]) - 1].AnnotationUnits.length;
                             i--;

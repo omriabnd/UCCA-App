@@ -50,6 +50,7 @@
                     comment:"",
                     rowShape:'',
                     unitType:'IMPLICIT',
+                    orderNumber: '-1',
                     gui_status:'OPEN',
                     usedAsRemote:[],
                     children_tokens:[],

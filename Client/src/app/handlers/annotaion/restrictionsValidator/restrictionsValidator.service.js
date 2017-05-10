@@ -495,7 +495,7 @@
                 var atLeastOnNotDefault = false;
                 
                 parentUnit.categories.some(function(currentCategory){
-                    return atLeastOnNotDefault = (categories_hash[currentCategory.id].was_default === false)
+                    return atLeastOnNotDefault = (categories_hash[currentCategory.id] && categories_hash[currentCategory.id].was_default === false)
                 })
 
                 if(atLeastOnNotDefault){
