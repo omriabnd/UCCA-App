@@ -51,7 +51,9 @@ def tokenize(t):
   for p, parag_offset in paragraphs:
 
     # the first token of each paragraph is a linefeed token
-    output.extend(tuples_to_dict([(parag_offset - 1, parag_offset - 1, '\n', True)]))
+    if parag_offset > 0:
+      output.extend(tuples_to_dict([(parag_offset - 1, parag_offset - 1, '\n', True)]))
+
 
     # split each paragraph into words by whitespace
     words = [(m.group(0), parag_offset + m.start()) for m in whitespace.finditer(p)]
