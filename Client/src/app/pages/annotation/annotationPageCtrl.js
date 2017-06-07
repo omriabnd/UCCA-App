@@ -11,6 +11,7 @@
 
     $rootScope.callToSelectedTokensToUnit = callToSelectedTokensToUnit;
     $rootScope.addCategoryToExistingRow = addCategoryToExistingRow;
+    $rootScope.resetAllAnnotations = false;
     $rootScope.selectedRow = '';
     //Capture variable for this.
     var vm = this;
@@ -116,7 +117,7 @@
         backgroundColor:$rootScope.currentCategoryBGColor,
         refinedCategory:$rootScope.currentCategoryIsRefined,
         abbreviation: $rootScope.currentCategoryAbbreviation,
-        name: $rootScope.currentCategoryNames
+        name: $rootScope.currentCategoryName
       };
       $rootScope.clckedLine != '' ? DataService.addCategoryToExistingRow($rootScope.clckedLine,newCategory,$scope) : '';
     }
@@ -148,6 +149,7 @@
       console.log('DataService',DataService);
       Core.promptAlert('Are you sure you want to delete all the annotation units?').result.then(function(res){
         if(res){
+          $rootScope.resetAllAnnotations = true;
           console.log("reset All Annotations");
           var i,
               allDeleteButtons = $('.delete-btn.unit-buttons'),
@@ -172,7 +174,7 @@
                 var elem = allDeleteButtons[k];
                 var id = $(elem).parents('.directive-info-data-container').first().attr('id').split('directive-info-data-container-')[1];
                 console.log('delete:',id);
-                $(elem).click()
+                $(elem).click();
                 k--;
             },1000)
           };
@@ -328,8 +330,9 @@
               //     // executeFunction(functionToExecute,rootScope,dataService,HotKeysManager);
               //   }
               // }
-              vm.keyController[0][functionToExecute]();
-              e.preventDefault()
+              !e.fired ? vm.keyController[0][functionToExecute]() : '';
+              e.preventDefault();
+              e.fired == undefined ? e.fired = true : e.fired = undefined;
             }
           })
     });

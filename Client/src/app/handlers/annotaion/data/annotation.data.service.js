@@ -299,6 +299,7 @@
 
             DataService.lastInsertedUnitIndex = newObject.annotation_unit_tree_id;
             // console.log(DataService.tree);
+            DataService.getUnitById(DataService.getParentUnitId(newObject.annotation_unit_tree_id)).gui_status = "OPEN";
             return DataService.lastInsertedUnitIndex;
         }
 

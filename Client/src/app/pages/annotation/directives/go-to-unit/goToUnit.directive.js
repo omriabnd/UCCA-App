@@ -5,7 +5,7 @@
         .module('zAdmin.annotation.directives')
         .directive('goToUnit',goToUnitDirective);
 
-    function goToUnitDirective($rootScope,DataService) {
+    function goToUnitDirective($rootScope,DataService,AnnotationTextService) {
         return {
             restrict: 'A',
             scope: true,
@@ -38,12 +38,14 @@
                     // $('.selected-row').removeClass('selected-row');
 
                     var parentContainer = $('#directive-info-data-container-'+childUnitId).addClass('selected-row');
-
                     // var childUnitId = splittedUnitID.slice(3,splittedUnitID.length).join('-');
                     var annotationUnit = $('#directive-info-data-container-'+childUnitId).parents('.categorized-word')
+
+                    var expandBtn = annotationUnit[1] ? $(annotationUnit[1]).find('.expand-btn') : $(annotationUnit[0]).find('.expand-btn');
                     // annotationUnit.removeClass('hidden');
                     $scope.$apply(function(){
                         DataService.getUnitById(childUnitId).gui_status = 'OPEN';
+                        AnnotationTextService.toggleAnnotationUnitView(expandBtn[0]);
                     })
 
                     event.stopPropagation();

@@ -6,7 +6,8 @@
         "cfp.hotkeys",
         "zAdmin.annotation.data",
         "zAdmin.annotation.definitions",
-        "zAdmin.annotation.hotKeysManager"
+        "zAdmin.annotation.hotKeysManager",
+        "zAdmin.annotation.selectionHandler"
     ]);
 
 })();

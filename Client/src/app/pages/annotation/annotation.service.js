@@ -70,7 +70,9 @@
 
         function toggleAnnotationUnitView(element){
 
-            $rootScope.focusUnit($(element.toElement).closest('.categorized-word').find('.directive-info-data-container').first())
+            var elem = element.toElement ? element.toElement : element;
+
+            $rootScope.focusUnit($(elem).closest('.categorized-word').find('.directive-info-data-container').first())
             
             
             var currentTarget =element.currentTarget;

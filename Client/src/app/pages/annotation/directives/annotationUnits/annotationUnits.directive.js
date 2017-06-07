@@ -15,7 +15,8 @@
                 lineId: '=',
                 childDirective: '@',
                 categories: '=',
-                control: '='
+                control: '=',
+                tokens:'='
             },
             link: annotationUnitDirectiveLink,
             controller: AnnotationUnitController,
@@ -72,7 +73,7 @@
                 //This gets called when data changes.
                 if(newValue){
                     $scope.selCtrl.dataBlock = getCurrentDataBlock(DataService,$scope.selCtrl.dataBlock.annotation_unit_tree_id);
-                    wrapUnitWithBordersInParentUnit($scope.selCtrl.dataBlock,DefinitionsService,false,$rootScope);
+                    $scope.selCtrl.dataBlock.unitType == 'REGULAR' ? wrapUnitWithBordersInParentUnit($scope.selCtrl.dataBlock,DefinitionsService,false,$rootScope) : '';
                     $scope.selCtrl.dataBlock.categories.changed = false;
                 }
             });
@@ -104,13 +105,18 @@
              * Sets the words hover function.
              */
             var IS_MOUSE_DOWN = false;
-            $('.directive-info-data-container .text-wrapper').on('mouseup',function(){
+            $('.directive-info-data-container .text-wrapper').on('mouseup',function(e){
+                IS_MOUSE_DOWN = false
+            });
+
+            $('html').on('mouseup',function(e){
                 IS_MOUSE_DOWN = false
             });
 
 
             $('.directive-info-data-container .text-wrapper').on('mouseover', '.selectable-word,.unit-wrapper', function(event) {
-                if(IS_MOUSE_DOWN){
+                var isCtrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
+                if(!isCtrlPressed && IS_MOUSE_DOWN){
                     var tokenId = $rootScope.getTokenIdFromDomElem(event.toElement);
 
                     removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
@@ -126,7 +132,7 @@
                 $rootScope.selectedTokensArray = [];
                 // get all tokens that not inside a unit
                 // and filter out the ones that not between the firstToken and latToken
-                var allWordsArray = $('#row-'+$scope.selCtrl.selectedRow +' > .selectable-word,#row-'+$scope.selCtrl.selectedRow +' > .unit-wrapper');
+                var allWordsArray = $('#row-'+$rootScope.clckedLine +' > .selectable-word,#row-'+$scope.selCtrl.selectedRow +' > .unit-wrapper');
                 allWordsArray = allWordsArray.filter(function(index,token,self){
                     if($rootScope.lastSelectedTokenMouse < lastTokenId){
                         return ($rootScope.getTokenIdFromDomElem(token) >= parseInt($rootScope.lastSelectedTokenMouse)) && ($rootScope.getTokenIdFromDomElem(token) <= parseInt(lastTokenId))
@@ -150,15 +156,15 @@
                 /**
                  * Initialization phase - checks if ctrl/shift is pressed and update clickedLine variable on rootScope.
                  */
-                // console.log($rootScope.selectedTokensArray);
-                IS_MOUSE_DOWN = true
-                $('.highlight-unit').removeClass('highlight-unit'); // unit can not be selected while a token being clicked 
+                IS_MOUSE_DOWN = true;
+                $('.highlight-unit').removeClass('highlight-unit'); // unit can not be selected while a token being clicked
                 $('.selected-row').removeClass('selected-row'); // reset (prev) other selected rows
                 var isShiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
                 var isCtrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 var tokenRowId = $(event.currentTarget.parentElement).attr('id').split('-');
                 tokenRowId = tokenRowId.slice(1,tokenRowId.length).join('-');
                 $rootScope.clckedLine = tokenRowId;
+                delete $rootScope.clickedUnit;
                 $scope.selCtrl.selectedRow = tokenRowId;
 
                 if(isShiftPressed == false){
@@ -259,7 +265,8 @@
              * Handle click on row - update the current selected row.
              */
             function focusUnit(element,withoutResetSelectedTokens){
-                if(!withoutResetSelectedTokens){
+                var isCtrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
+                if(!isCtrlPressed && !withoutResetSelectedTokens){
                     restSelectedTokens()
                 }
                 var currElem = (event && event.type) == "mousedown" ? element.toElement : (event && event.type) == "keydown" ? element : element;
@@ -483,12 +490,34 @@
                                 if($(tokenToAdd).hasClass('clickedToken')){
                                     $(tokenToAdd).removeClass('clickedToken');
 
-                                    //The token is already selected, need to remove it.
-                                    // var tokenId = splitStringByDelimiter($(tokenToAdd).attr('data-wordid'),"-")[1];
-                                    var tokenId = $rootScope.getTokenIdFromDomElem(tokenToAdd);
-                                    removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
+                                    var unitWrapperId = $(tokenToAdd).attr('unit-wrapper-id');
+                                    var isDiscontiguousUnit = checkIfUnitIsDiscontiguous(unitWrapperId);
+
+                                    if(isDiscontiguousUnit){
+                                        var tokenToPush = $("[unit-wrapper-id="+unitWrapperId+"]");
+                                        tokenToPush.removeClass('clickedToken');
+                                        for(var i=0; i < tokenToPush.length; i++){
+                                            rootScope.selectedTokensArray.push(tokenToPush[i].outerHTML);
+                                        }
+
+                                    }else{
+                                        //The token is already selected, need to remove it.
+                                        // var tokenId = splitStringByDelimiter($(tokenToAdd).attr('data-wordid'),"-")[1];
+                                        var tokenId = $rootScope.getTokenIdFromDomElem(tokenToAdd);
+                                        removeTokensFromSelectedTokensArray(tokenId,$rootScope.selectedTokensArray);
+                                    }
                                 }else{
-                                    if(tokenToAdd){
+                                    var unitWrapperId = $(tokenToAdd).attr('unit-wrapper-id');
+                                    var isDiscontiguousUnit = checkIfUnitIsDiscontiguous(unitWrapperId);
+
+                                    if(isDiscontiguousUnit){
+                                        var tokenToPush = $("[unit-wrapper-id="+unitWrapperId+"]");
+                                        tokenToPush.addClass('clickedToken');
+                                        for(var i=0; i < tokenToPush.length; i++){
+                                            rootScope.selectedTokensArray.push(tokenToPush[i].outerHTML);
+                                        }
+
+                                    }else{
                                         $rootScope.selectedTokensArray.push(tokenToAdd.outerHTML);
                                         $(tokenToAdd).addClass('clickedToken');
                                     }
@@ -630,7 +659,7 @@
                 var unitChildren  = unitToDelete.AnnotationUnits;
 
                 if(unitToDelete){
-                    if(unitToDelete.usedAsRemote && unitToDelete.usedAsRemote.length > 0){
+                    if(!$rootScope.resetAllAnnotations && unitToDelete.usedAsRemote && unitToDelete.usedAsRemote.length > 0){
                         $scope.selCtrl.currentUnitRemoteInstancesIds = unitToDelete.usedAsRemote;
                         /*$scope.selCtrl.currentUnitRemoteInstancesIds.push(unitToDelete.annotation_unit_tree_id.toString());*/
                         $scope.selCtrl.open('app/pages/annotation/templates/deleteAllRemoteModal.html','md',unitToDelete.usedAsRemote.length);
@@ -645,6 +674,7 @@
                             }
                         }
                     }
+                    $rootScope.resetAllAnnotations = false;
                 }
             }
 
@@ -656,10 +686,18 @@
                         if(unitToDelete.AnnotationUnits.length == 0){
                             //unit has no children
                             var unitDomElementToDelete = $("[unit-wrapper-id="+$rootScope.clickedUnit+"]");
+                            var unitTokens = [];
+                            for(var i=0; i<unitDomElementToDelete.length; i++){
+                                unitTokens[i] = $(unitDomElementToDelete[i]).children().length;
+                            }
                             var unitDomElementParent =unitDomElementToDelete[0].parentElement;
                             var unitDomElementChildrenLength = unitDomElementToDelete.children().length;
-                            for(var i=0; i<unitDomElementChildrenLength; i++){
-                                unitDomElementParent.insertBefore(unitDomElementToDelete.children().get(0),unitDomElementToDelete.get(0))
+                            for(var i=0,j=0,k=0; i<unitTokens[k]; i++, j++){
+                                unitDomElementParent.insertBefore($(unitDomElementToDelete[k]).children().get(i-j),unitDomElementToDelete.get(k));
+                                if($(unitDomElementToDelete[k]).children().length == 0){
+                                    k++;
+                                    j=i=-1;
+                                }
                             }
                             unitDomElementToDelete.remove();
 
@@ -993,15 +1031,26 @@
                     $rootScope.currentCategoryAbbreviation = category.abbreviation;
                     $rootScope.currentCategoryName = category.name;
                     $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
-                    if($rootScope.selectedTokensArray.length > 0 && parenUnit.unitType != 'REMOTE' && parenUnit.unitType != 'IMPLICIT'){
+
+                    //Check if we only selected one unit, if so don't create new unit just toggle the category.
+                    var selectedUnits =  ($rootScope.clickedUnit != undefined && $rootScope.clickedUnit.includes('unit-wrapper') && $rootScope.selectedTokensArray.length >= 1 );
+
+
+                    if(!selectedUnits && $rootScope.selectedTokensArray.length > 0 && parenUnit.unitType != 'REMOTE' && parenUnit.unitType != 'IMPLICIT'){
                         $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine,unitContainsAllParentUnitTokens);
                         DataService.updateDomWhenInsertFinishes();
                     }else{
+                        if(selectedUnits){
+                            //The user has selected 1 unit box need to toggle category.
+                            $rootScope.clckedLine = $rootScope.clickedUnit.split('unit-wrapper-'+$rootScope.clckedLine+'-')[1];
+
+                        }
+
                         if(checkIfRowWasClicked($rootScope)){
                             $rootScope.addCategoryToExistingRow();
                         }
                     }
-
+                    delete $rootScope.clickedUnit;
                     delete $rootScope.currentCategoryID;
                     delete $rootScope.currentCategoryColor;
                     delete $rootScope.currentCategoryBGColor;
@@ -1186,6 +1235,7 @@
 
 
             }else{ // excisiting line
+                DataService.lastInsertedUnitIndex = $rootScope.clckedLine;
                 var wrappedChildrenSpan = $("[unit-wrapper-id = unit-wrapper-"+(rowID.split('row-')[1])+"-"+DataService.lastInsertedUnitIndex+"]");
                 paintWrapperSpan($(wrappedChildrenSpan),categories,DefinitionsService);
             }
@@ -1301,15 +1351,32 @@
 
         function handleClickOnNotClickedToken(event,scope,rootScope){
             $('.clickedToken').removeClass('clickedToken');
-            
+
             rootScope.selectedTokensArray = [];
             $(event.toElement).attr('parent-index',scope.selCtrl.lineId);
             var tokenToPush = event.toElement.outerHTML;
             $(tokenToPush).attr('parent-index',rootScope.clckedLine);
 
-            rootScope.selectedTokensArray.push(tokenToPush);
-            $(event.toElement).addClass('clickedToken');
-            
+            var unitWrapperId = $(event.toElement).attr('unit-wrapper-id');
+            var isDiscontiguousUnit = checkIfUnitIsDiscontiguous(unitWrapperId);
+
+            if(isDiscontiguousUnit){
+                var tokenToPush = $("[unit-wrapper-id="+unitWrapperId+"]");
+                tokenToPush.addClass('clickedToken');
+                for(var i=0; i < tokenToPush.length; i++){
+                    rootScope.selectedTokensArray.push(tokenToPush[i].outerHTML);
+                }
+
+            }else{
+                rootScope.selectedTokensArray.push(tokenToPush);
+                $(event.toElement).addClass('clickedToken');
+            }
+        }
+
+        function checkIfUnitIsDiscontiguous(unitWrapperId){
+            if(unitWrapperId){
+                return $("[unit-wrapper-id="+unitWrapperId+"]").length > 1;
+            }
         }
 
         function handleClickOnAlreadyClickedToken(event,isShiftPressed,isCtrlPressed,rootScope){
@@ -1339,7 +1406,7 @@
         function handleClickOnTokenWhenShiftPressed(event,scope,rootScope){
             var tokenId = rootScope.getTokenIdFromDomElem(event.toElement);
 
-            removeTokensFromSelectedTokensArray(tokenId,rootScope.selectedTokensArray);
+            // removeTokensFromSelectedTokensArray(tokenId,rootScope.selectedTokensArray);
             
             rootScope.selectAllTokensBetween(event,tokenId)
         }

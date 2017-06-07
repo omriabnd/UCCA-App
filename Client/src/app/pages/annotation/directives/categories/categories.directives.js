@@ -61,11 +61,18 @@
                 $rootScope.currentCategoryAbbreviation = defCtrl.definitionDetails.abbreviation;
                 $rootScope.currentCategoryName = defCtrl.definitionDetails.name;
                 $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
-                
-                if($rootScope.selectedTokensArray.length > 0){
+
+                var selectedUnits =  ($rootScope.clickedUnit != undefined && $rootScope.clickedUnit.includes('unit-wrapper') && $rootScope.selectedTokensArray.length === 1 );
+
+                if(!selectedUnits && $rootScope.selectedTokensArray.length > 0){
                     $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine,unitContainsAllParentUnitTokens);
                     DataService.updateDomWhenInsertFinishes();
                 }else{
+                    if(selectedUnits){
+                        //The user has selected 1 unit box need to toggle category.
+                        $rootScope.clckedLine = $rootScope.clickedUnit.split('unit-wrapper-'+$rootScope.clckedLine+'-')[1];
+
+                    }
                     if(checkIfRowWasClicked($rootScope)){
                         $rootScope.addCategoryToExistingRow();
                     }

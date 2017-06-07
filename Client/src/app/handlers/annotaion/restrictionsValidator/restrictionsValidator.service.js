@@ -487,7 +487,9 @@
 
         function checkAtLeastOneCategoryRecursion(parentUnit,categories_hash){
             // console.log(parentUnit.annotation_unit_tree_id);
-            if(!parentUnit.categories.length){
+            if(parentUnit.categories == undefined){
+                return false;
+            }else if(!parentUnit.categories.length){
                 return false;
             }else{
 
