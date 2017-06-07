@@ -1033,7 +1033,7 @@
                     $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
 
                     //Check if we only selected one unit, if so don't create new unit just toggle the category.
-                    var selectedUnits =  ($rootScope.clickedUnit != undefined && $rootScope.clickedUnit.includes('unit-wrapper') && $rootScope.selectedTokensArray.length >= 1 );
+                    var selectedUnits =  checkSelectedObjectsType($rootScope.selectedTokensArray);
 
 
                     if(!selectedUnits && $rootScope.selectedTokensArray.length > 0 && parenUnit.unitType != 'REMOTE' && parenUnit.unitType != 'IMPLICIT'){
@@ -1064,6 +1064,25 @@
 
         }
 
+        function checkSelectedObjectsType(selectedTokensArray){
+            var result = false; // true : toggle category , false : create new unit.
+            if(selectedTokensArray.length == 1){
+                var html = $.parseHTML(selectedTokensArray[0]);
+                if($(html).hasClass('unit-wrapper')){
+                    result = true;
+                }else if($(html).hasClass('selectable-word')){
+                    result = false
+                }
+            }else{
+                for(var i=0; i<selectedTokensArray.length; i++){
+                    var obj = selectedTokensArray[i];
+                    if($(html).hasClass('unit-wrapper')){
+                        result = true;
+                    }
+                }
+            }
+            return result;
+        }
 
         function removeTokensFromSelectedTokensArray(tokenIdToRemove,selectedTokensArray){
             var tokenInSelectedTokensArray;
