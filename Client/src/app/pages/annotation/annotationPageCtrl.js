@@ -110,6 +110,8 @@
       if($rootScope.clckedLine == ''){
         var lastSelectedRow = $('.selected-row').find('.text');
         lastSelectedRow.length != 0 ? $rootScope.clckedLine = $(lastSelectedRow[0]).attr('id').split('-')[1] : '';
+      }else{
+          $rootScope.clckedLine  = $('.selected-row').attr('id').split('directive-info-data-container-')[1]
       }
       var newCategory = {
         id:$rootScope.currentCategoryID,

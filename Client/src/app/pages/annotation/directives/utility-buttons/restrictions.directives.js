@@ -41,7 +41,8 @@
         defCtrl.addImplicitUnit = addImplicitUnit;
         
         function addImplicitUnit(){
-            if(DataService.unitType == 'REMOTE'){
+            var selectedUnit = DataService.getUnitById($rootScope.clckedLine)
+            if(selectedUnit.unitType == 'REGULAR'){
                 var objToPush = {
                     rowId : '',
                     text : '<span>IMPLICIT UNIT</span>',

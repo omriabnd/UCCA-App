@@ -8639,6 +8639,7 @@ angular.module('zAdmin', [
             getNextUnit: getNextUnit,
             getPrevUnit: getPrevUnit,
             getNextSibling:getNextSibling,
+            isUnitLastInTree:isUnitLastInTree,
             getPrevSibling:getPrevSibling,
             getUnitById:getUnitById,
             getParentUnitId:getParentUnitId,
@@ -8668,6 +8669,8 @@ angular.module('zAdmin', [
             }
             return group;
         }
+
+        function isUnitLastInTree
         
         function getTokenIdFromDomElem(elem,byFirstToken){
             if($(elem).attr('token-id')){

@@ -60,6 +60,7 @@
             getPrevUnit: getPrevUnit,
             getNextSibling:getNextSibling,
             getPrevSibling:getPrevSibling,
+            isUnitLastInTree:isUnitLastInTree,
             getUnitById:getUnitById,
             getParentUnitId:getParentUnitId,
             getUnitByUniqueId:getUnitByUniqueId,
@@ -247,7 +248,7 @@
             if(level == 0){
 
                 DataService.tree.numOfAnnotationUnits++;
-                newObject.annotation_unit_tree_id = DataService.tree.numOfAnnotationUnits;
+                newObject.annotation_unit_tree_id = DataService.tree.AnnotationUnits.length+1;
                 // DataService.tree.AnnotationUnits.push(newObject);
                 tempObject = DataService.tree;
 
@@ -347,6 +348,9 @@
 
         function updateDomWhenInsertFinishes(){
             $timeout(function(){
+                if(DataService.unitType === "REMOTE"){
+                    $rootScope.clckedLine = DataService.getParentUnitId(DataService.lastInsertedUnitIndex);
+                }
                 var parentUnit = DataService.getUnitById(DataService.getParentUnitId($rootScope.clckedLine));
                 if(hasAtLeastOneCollapseParent(parentUnit)){ // is parent unit is collapse
                     // do nothing
@@ -356,6 +360,9 @@
                     $('#directive-info-data-container-'+$rootScope.clckedLine).addClass('selected-row');
                     // make a scrollTo new unit
                     $('#directive-info-data-container-'+$rootScope.clckedLine).attr('tabindex','-1').focus()
+                }
+                if(DataService.unitType !== "REGULAR"){
+                    DataService.unitType = "REGULAR"
                 }
             });
         }
@@ -826,13 +833,22 @@
                         var currentUnit = angular.copy(DataService.getUnitById(currentUnitId));
                         var unitTokens = getUnitTokensIdsFromElem($(word)[0].children);
                         currentUnit.annotation_unit_tree_id = '';
-                        
-                        selected_units_array.push(
-                            currentUnit
-                        )
-                        // add the current unit's tokens to the tokens array
-                        children_tokens = children_tokens.concat(unitTokens);
-                        removeFromTree.push(currentUnitId)
+                        currentUnit.unitWrapper = $(word).attr('unit-wrapper-id').split('unit-wrapper-')[1];
+
+                        var elementPos = selected_units_array.map(function(x) {return x.unitWrapper; }).indexOf(currentUnit.unitWrapper);
+                        if(elementPos === -1){
+                            selected_units_array.push(
+                                currentUnit
+                            );
+
+                            // add the current unit's tokens to the tokens array
+                            children_tokens = children_tokens.concat(unitTokens);
+                            removeFromTree.push(currentUnitId)
+                        }else{
+                            children_tokens = children_tokens.concat(unitTokens);
+                        }
+
+
                     }else{
                         children_tokens.push({
                             id: $(word).attr('token-id')
@@ -1068,6 +1084,18 @@
             }
             rowObject.categories.changed = false;
             return rowObject;
+        }
+
+        function isUnitLastInTree(subTreeRootUnit,idToLook){
+            var root = DataService.tree;
+            if(subTreeRootUnit.AnnotationUnits.length !== 0){
+                var unit = subTreeRootUnit.AnnotationUnits[subTreeRootUnit.AnnotationUnits.length-1];
+                return isUnitLastInTree(unit,idToLook);
+            }else if(idToLook === subTreeRootUnit.annotation_unit_tree_id){
+                return true;
+            }else{
+                return false;
+            }
         }
 
         function getUnitById(unitID){
