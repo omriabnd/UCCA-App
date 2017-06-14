@@ -33,13 +33,13 @@
     }
 
     /** @ngInject */
-    function DefinitionsController($scope,$rootScope,DataService, $timeout, $uibModal, restrictionsValidatorService,Core) {
+    function DefinitionsController($scope,$rootScope,DataService, $timeout, $uibModal, restrictionsValidatorService,Core,selectionHandlerService) {
         // Injecting $scope just for comparison
         var defCtrl = this;
 
         defCtrl.highLightSelectedWords = highLightSelectedWords;
         defCtrl.showCategoryInfo = showCategoryInfo;
-        
+
         function highLightSelectedWords(color) {
 
             // $('.clickedToken').css('border','3px solid '+ defCtrl.definitionDetails.color);
@@ -51,34 +51,36 @@
             parentUnitId = '#row-'+parentUnitId;
             var parentUnitDomElement = $(parentUnitId);
 
-            var unitContainsAllParentUnitTokens = parentUnitDomElement.children().length-1 == $rootScope.selectedTokensArray.length;
+            // var unitContainsAllParentUnitTokens = parentUnitDomElement.children().length-1 == $rootScope.selectedTokensArray.length;
 
-            if(!(parenUnit.containsAllParentUnits && unitContainsAllParentUnitTokens)){
-                $rootScope.currentCategoryID = defCtrl.definitionDetails.id;
-                $rootScope.currentCategoryColor = defCtrl.definitionDetails.color || 'rgb(0,0,0)';
-                $rootScope.currentCategoryBGColor = defCtrl.definitionDetails.backgroundColor || 'rgb(0,0,0)';
-                $rootScope.currentCategoryIsRefined = defCtrl.definitionDetails.refinedCategory;
-                $rootScope.currentCategoryAbbreviation = defCtrl.definitionDetails.abbreviation;
-                $rootScope.currentCategoryName = defCtrl.definitionDetails.name;
-                $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
+            selectionHandlerService.toggleCategory(defCtrl.definitionDetails);
 
-                var selectedUnits =  ($rootScope.clickedUnit != undefined && $rootScope.clickedUnit.includes('unit-wrapper') && $rootScope.selectedTokensArray.length === 1 );
-
-                if(!selectedUnits && $rootScope.selectedTokensArray.length > 0){
-                    $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine,unitContainsAllParentUnitTokens);
-                    DataService.updateDomWhenInsertFinishes();
-                }else{
-                    if(selectedUnits){
-                        //The user has selected 1 unit box need to toggle category.
-                        $rootScope.clckedLine = $rootScope.clickedUnit.split('unit-wrapper-'+$rootScope.clckedLine+'-')[1];
-
-                    }
-                    if(checkIfRowWasClicked($rootScope)){
-                        $rootScope.addCategoryToExistingRow();
-                    }
-                }
-                $rootScope.lastSelectedWordWithShiftPressed = undefined;
-            }
+            // if(!(parenUnit.containsAllParentUnits && unitContainsAllParentUnitTokens)){
+            //     $rootScope.currentCategoryID = defCtrl.definitionDetails.id;
+            //     $rootScope.currentCategoryColor = defCtrl.definitionDetails.color || 'rgb(0,0,0)';
+            //     $rootScope.currentCategoryBGColor = defCtrl.definitionDetails.backgroundColor || 'rgb(0,0,0)';
+            //     $rootScope.currentCategoryIsRefined = defCtrl.definitionDetails.refinedCategory;
+            //     $rootScope.currentCategoryAbbreviation = defCtrl.definitionDetails.abbreviation;
+            //     $rootScope.currentCategoryName = defCtrl.definitionDetails.name;
+            //     $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
+            //
+            //     var selectedUnits =  ($rootScope.clickedUnit != undefined && $rootScope.clickedUnit.includes('unit-wrapper') && $rootScope.selectedTokensArray.length === 1 );
+            //
+            //     if(!selectedUnits && $rootScope.selectedTokensArray.length > 0){
+            //         $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine,unitContainsAllParentUnitTokens);
+            //         DataService.updateDomWhenInsertFinishes();
+            //     }else{
+            //         if(selectedUnits){
+            //             //The user has selected 1 unit box need to toggle category.
+            //             $rootScope.clckedLine = $rootScope.clickedUnit.split('unit-wrapper-'+$rootScope.clckedLine+'-')[1];
+            //
+            //         }
+            //         if(checkIfRowWasClicked($rootScope)){
+            //             $rootScope.addCategoryToExistingRow();
+            //         }
+            //     }
+            //     $rootScope.lastSelectedWordWithShiftPressed = undefined;
+            // }
         }
 
         function preventIfPanctuation() {

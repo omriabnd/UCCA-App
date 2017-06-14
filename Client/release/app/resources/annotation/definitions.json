@@ -9,6 +9,7 @@
     "shortKey": "",
     "color": "#a1a1a1",
     "parentCategoryId": null,
+    "functionToExecute":"unGroupUnit",
     "restrictions": {
       "forbiddenChildrenCategoriesID": [
         3

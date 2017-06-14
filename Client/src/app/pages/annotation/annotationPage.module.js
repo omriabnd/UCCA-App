@@ -43,7 +43,7 @@
             return this; // for testing purposes
         };
 
-        function getAnnotationTask(AnnotationTextService,$stateParams,DataService,restrictionsValidatorService) {
+        function getAnnotationTask(AnnotationTextService,$stateParams,DataService,restrictionsValidatorService,selectionHandlerService) {
             return AnnotationTextService.getAnnotationTask($stateParams.taskId).then(function(taskResponse){
                 var layer_id = taskResponse.project.layer.id;
 
@@ -107,7 +107,7 @@
                     DataService.categories = allCategories;
                     DataService.createHashTables();
                     DataService.createTokensHashByTokensArrayForPassage(taskResponse.tokens);
-                    DataService.initTree();
+                    selectionHandlerService.initTree();
                 }
                 
                 return{

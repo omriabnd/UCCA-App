@@ -30,37 +30,9 @@
         <!-- passage -->
         <annotation-units
                 class="has-elements"
-                preview-line="vm.wrappedText"
-                control="vm.keyController"
+                unit="vm.dataTree"
                 tokens="vm.annotationTokens"
-                line-id="0">
+                annotation-unit-tree-id="0">
         </annotation-units>
-        
-        <!-- passage annotation units -->
-        <div class="categorized-words-container">
-            
-            <div class="categorized-word" ng-repeat="lineObj in vm.dataTree" 
-                ng-class="{ 'remote-unit':lineObj.unitType == 'REMOTE' || lineObj.unitType == 'IMPLICIT',
-                            'highlight-unit':lineObj.unitType == 'REMOTE' || lineObj.unitType == 'IMPLICIT',
-                            'hidden':lineObj.gui_status=='HIDDEN',
-                            'closed-annotation-unit':lineObj.gui_status=='COLLAPSE'
-                        }">
-                <div ng-show="lineObj.AnnotationUnits.length" class="expand-btn" ng-click="vm.toggleAnnotationUnitView($event)" >
-                    <i ng-class="{'minus-round':lineObj.gui_status=='OPEN', 
-                        'plus-round':lineObj.gui_status=='COLLAPSE'}" 
-                        id="{{lineObj.annotation_unit_tree_id}}">
-                    </i>
-                </div>
-                <annotation-units
-                        class="has-elements"
-                        preview-line="lineObj.text"
-                        categories="lineObj.categories"
-                        control="vm.keyController"
-                        tokens="lineObj.children_tokens_hash"
-                        line-id="lineObj.annotation_unit_tree_id">
-                </annotation-units>
-            </div>
-        </div>
-
     </div>
 </div>

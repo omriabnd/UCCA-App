@@ -73,6 +73,7 @@
         }
 
         function checkRestrictionsBeforeInsert(parentAnnotationUnit, newAnnotationUnit,tokensHashTable){
+            newAnnotationUnit.children_tokens = newAnnotationUnit.tokens;
             var result = doesUnitContainsOnlyPunctuation(newAnnotationUnit,tokensHashTable);
             if(result){
                 var msg = errorMasseges['UNIT_CONTAIN_ONLY_PUNCTUATIONS'];
@@ -160,9 +161,9 @@
                     var currentCategory = currentAnnotationUnitSibling.categories[j];
                     for(var k=0; k< newAnnotationUnit.categories.length; k++){
                         var newAnnotationUnitCategory = newAnnotationUnit.categories[k];
-                        if(restrictionsTables['FORBID_SIBLING'][newAnnotationUnitCategory.id] && restrictionsTables['FORBID_SIBLING'][newAnnotationUnitCategory.id][currentCategory.id]){
+                        if(newAnnotationUnitCategory && restrictionsTables['FORBID_SIBLING'][newAnnotationUnitCategory.id] && restrictionsTables['FORBID_SIBLING'][newAnnotationUnitCategory.id][currentCategory.id]){
                             return [currentCategory,newAnnotationUnitCategory];
-                        } else if(restrictionsTables['FORBID_SIBLING'][currentCategory.id] && restrictionsTables['FORBID_SIBLING'][currentCategory.id][newAnnotationUnitCategory.id]){
+                        } else if(currentCategory && restrictionsTables['FORBID_SIBLING'][currentCategory.id] && restrictionsTables['FORBID_SIBLING'][currentCategory.id][newAnnotationUnitCategory.id]){
                             return [currentCategory,newAnnotationUnitCategory];
                         }
                     }

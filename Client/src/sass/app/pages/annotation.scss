@@ -1,4 +1,100 @@
 .annotation-page-container{
+
+
+  annotation-units{
+    .token.clicked{
+      color: white;
+      background-color: #337ab7;
+    }
+  }
+
+  .remote-unit {
+    background-color: #5b7c55;
+    color: white;
+
+    .token-wrapper {
+      pointer-events: none;
+    }
+
+    .unit-cursor{
+      display: none;
+    }
+  }
+
+  span.token-wrapper.clicked {
+    background: #337ab7;
+  }
+  
+  .remote-unit .token-wrapper {
+    border: none !important;
+  }
+
+
+  .directive-container {
+    position: relative;
+    border: 1px solid black;
+    padding: 5px;
+    width: 100% !important;
+    display: block;
+    margin-top: 10px;
+    box-shadow: 0 0 0 black;
+    transition: box-shadow 0.3s linear;
+  }
+
+  .selected-unit {
+    box-shadow: 1px 3px 5px black;
+    transition: box-shadow 0.3s linear;
+  }
+
+  .category-square {
+    display: inline-block;
+    width: auto;
+    height: 18px;
+    position: relative;
+    top: 0px;
+    margin-right: 5px;
+    color: white;
+    padding: 2px;
+    border-radius: 0px
+  }
+
+  .hidden-unit {
+    height: 0;
+    overflow: hidden;
+  }
+
+  .child-unit  {
+    width: 99%;
+    float: right;
+    position: relative;
+  }
+
+  .horizontal-line {
+    width: 0.7%;
+    height: 2px;
+    background-color: black;
+    display: inline-block;
+    position: absolute;
+    top: 25px;
+    left: -0.7%;
+  }
+
+  span.token {
+    line-height: 25px;
+    padding: 3px;
+    margin: 0 3px;
+  }
+
+
+
+  annotation-units.has-elements.unit-collapse {
+    height: 0;
+    overflow: hidden;
+    animation: .3s all linear;
+    transition: height 1s;
+  }
+
+
   margin-top: 10px;
   .directive-info-data-container {
       outline: none;
@@ -135,16 +231,8 @@
   .text {
     position: relative;
     top: 0px;
-    outline: none;
   }
 
-  annotation-units.has-elements {
-    border: 1px solid black;
-    box-shadow: 1px 3px 5px black;
-    padding: 5px;
-    width: 100% !important;
-    display: block;
-  }
 
   .directive-info-data-container {
     padding: 8px;
@@ -244,16 +332,15 @@
   }
 
   .expand-btn {
-      position: absolute;
-      left: 0px;
-      top: 10px;
-      color: #f00;
-      background-color: rgba(0, 0, 0, 0);
-      padding: 2px 5px;
-      /* border-radius: 30px; */
-      width: 15px;
-      height: 15px;
-      // border: 1px solid #000;
+    position: absolute;
+    left: -20px;
+    top: 5px;
+    color: #f00;
+    background-color: transparent;
+    padding: 2px 5px;
+    /* border-radius: 30px; */
+    width: 15px;
+    height: 15px;
 
     .ion-minus-round, .ion-plus-round {
       position: relative;
@@ -283,19 +370,14 @@
         background-image: url(../assets/img/app/huji/plus.jpg);
     }
   }
-  
+
   .categorized-word {
     min-height: 10px;
 
   }
 
   .closed-annotation-unit .categorized-word {
-    height: 0;
-    min-height: 0;
-    overflow: hidden;
-    margin-top: 0;
-    padding-top: 0;
-    transition: .3s all;
+    height: none;
     //max-height: 0;
     //min-height: 0;
     //max-height: 43px;
@@ -520,5 +602,5 @@ textarea.unit-comment-text {
         display: inline;
       }
   }
-} 
+}
 

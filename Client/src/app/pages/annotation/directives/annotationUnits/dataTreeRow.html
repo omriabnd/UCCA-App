@@ -1,9 +1,9 @@
-<div class="categorized-word"  ng-repeat="lineObj in selCtrl.dataBlock.AnnotationUnits" 
+<div class="categorized-word"  ng-repeat="lineObj in selCtrl.dataBlock.AnnotationUnits"
     ng-class="{'hidden':lineObj.gui_status=='HIDDEN','closed-annotation-unit':lineObj.gui_status=='COLLAPSE'}">
     <div ng-show="lineObj.AnnotationUnits.length" class="expand-btn" ng-click="selCtrl.toggleAnnotationUnitView($event);" ng-if="lineObj.unitType == 'REGULAR'">
-        
-        <i ng-class="{'minus-round':lineObj.gui_status=='OPEN', 
-            'plus-round':lineObj.gui_status=='COLLAPSE'}" 
+
+        <i ng-class="{'minus-round':lineObj.gui_status=='OPEN',
+            'plus-round':lineObj.gui_status=='COLLAPSE'}"
             >
         </i>
     </div>

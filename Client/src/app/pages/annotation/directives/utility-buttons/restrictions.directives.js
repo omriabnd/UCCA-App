@@ -33,21 +33,36 @@
     }
 
     /** @ngInject */
-    function DefinitionsController($scope,$rootScope, DataService, $timeout, $compile) {
+    function DefinitionsController($scope,$rootScope, DataService, $timeout, $compile,selectionHandlerService) {
         // Injecting $scope just for comparison
         var defCtrl = this;
 
         defCtrl.highLightSelectedWords = highLightSelectedWords;
         defCtrl.addImplicitUnit = addImplicitUnit;
-        
+        defCtrl.unGroupUnit = unGroupUnit;
+
+        function unGroupUnit(){
+            var unitId = selectionHandlerService.getSelectedUnitId();
+            var parentUnit = DataService.getParentUnitId(unitId);
+            if(unitId !== 0){
+                DataService.deleteUnit(unitId).then(function(res){
+                    selectionHandlerService.updateSelectedUnit(parentUnit);
+                });
+
+            }
+        }
+
+
         function addImplicitUnit(){
-            var selectedUnit = DataService.getUnitById($rootScope.clckedLine)
-            if(selectedUnit.unitType == 'REGULAR'){
+            var selectedUnitId = selectionHandlerService.getSelectedUnitId();
+            var selectedUnit = DataService.getUnitById(selectedUnitId);
+
+            if(DataService.unitType === 'REGULAR' && selectedUnit.unitType !== "REMOTE" && selectedUnit.unitType !== "IMPLICIT"){
                 var objToPush = {
                     rowId : '',
                     text : '<span>IMPLICIT UNIT</span>',
                     numOfAnnotationUnits: 0,
-                    categories:[{color:defCtrl.definitionDetails.backgroundColor}],
+                    categories:[], // {color:defCtrl.definitionDetails.backgroundColor}
                     comment:"",
                     rowShape:'',
                     unitType:'IMPLICIT',
@@ -56,29 +71,34 @@
                     usedAsRemote:[],
                     children_tokens:[],
                     containsAllParentUnits: false,
+                    tokens:[{
+                        "text":"IMPLICIT UNIT",
+                        "parentId":selectionHandlerService.getSelectedUnitId(),
+                        "inUnit":null
+                    }],
                     AnnotationUnits : [
 
                     ]
                 };
 
-                var newRowId = DataService.insertToTree(objToPush,$rootScope.clckedLine);
+                var newRowId = DataService.insertToTree(objToPush,selectionHandlerService.getSelectedUnitId());
                 // DataService.getUnitById($rootScope.clckedLine).usedAsRemote.push(newRowId);
 
-                $timeout(function(){
-                    $scope.$apply();
-                    DataService.unitType = 'REGULAR';
-                    // $('#'+$rootScope.clickedUnit).toggleClass('highlight-unit');
-                    $("[unit-wrapper-id="+$rootScope.clickedUnit+"]").toggleClass('highlight-unit');
-                    $('.annotation-page-container').toggleClass('crosshair-cursor');
-                    $( ".unit-wrapper" ).attr('mousedown','').unbind('mousedown');
-                    $( ".selectable-word" ).attr('mousedown','').unbind('mousedown');
-                    $( ".selectable-word" ).on('mousedown',$rootScope.tokenClicked);
-                    $( ".directive-info-data-container" ).attr('mousedown','').unbind('mousedown');
-                    $( ".directive-info-data-container" ).on('mousedown',$rootScope.focusUnit);
-                },0);
-
-                console.log(newRowId);
-                $compile($('.text-wrapper'))($rootScope);
+                // $timeout(function(){
+                //     $scope.$apply();
+                //     DataService.unitType = 'REGULAR';
+                //     // $('#'+$rootScope.clickedUnit).toggleClass('highlight-unit');
+                //     $("[unit-wrapper-id="+$rootScope.clickedUnit+"]").toggleClass('highlight-unit');
+                //     $('.annotation-page-container').toggleClass('crosshair-cursor');
+                //     $( ".unit-wrapper" ).attr('mousedown','').unbind('mousedown');
+                //     $( ".selectable-word" ).attr('mousedown','').unbind('mousedown');
+                //     $( ".selectable-word" ).on('mousedown',$rootScope.tokenClicked);
+                //     $( ".directive-info-data-container" ).attr('mousedown','').unbind('mousedown');
+                //     $( ".directive-info-data-container" ).on('mousedown',$rootScope.focusUnit);
+                // },0);
+                //
+                // console.log(newRowId);
+                // $compile($('.text-wrapper'))($rootScope);
             }
         }
 

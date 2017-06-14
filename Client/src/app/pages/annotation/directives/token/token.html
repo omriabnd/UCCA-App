@@ -1,0 +1,4 @@
+<span class="token-wrapper" ng-class="{'clicked': vm.tokenInSelectionList(vm) && vm.tokenUnitIsSelected(vm)}" border-paint style="{{vm.token.borderStyle}}" ng-init="vm.initToken(vm,$index)" ng-dblclick="vm.tokenDbClick(vm)">
+    <span class="token" ng-class="{'clicked': vm.tokenInSelectionList(vm) && vm.tokenUnitIsSelected(vm)}" ng-mouseover="vm.addOnHover(vm)" ng-click="vm.tokenClicked(vm)"> {{vm.token.text}} </span>
+    <span class="three-dot-separator" ng-if="vm.token.nextTokenNotAdjacent">...</span>
+</span>
