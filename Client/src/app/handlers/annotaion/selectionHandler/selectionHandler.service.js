@@ -194,6 +194,10 @@
                             _handler.clearTokenList();
                         });
 
+                        if(unit.categories.length === 0){
+                            _handler.toggleCategory(null,null,unit);
+                        }
+
                         DataService.unitType = 'REGULAR';
 
                         var unitToAddTo = DataService.getUnitById(unit.annotation_unit_tree_id);
@@ -202,8 +206,12 @@
                             unitToAddTo["usedAsRemote"] = [];
                         }
 
-                        var remotePosition = DataService.getUnitById(unit.parent_id).AnnotationUnits.map(function(x) {return x.id; }).indexOf(unit.id);
-                        unitToAddTo["usedAsRemote"].push(DataService.getUnitById(unit.parent_id).AnnotationUnits[remotePosition].annotation_unit_tree_id);
+                        var remotePosition = DataService.getUnitById(unit.remote_original_id).AnnotationUnits.map(function(x) {return x.id; }).indexOf(unit.id);
+                        if(remotePosition > -1){
+                            unitToAddTo["usedAsRemote"].push(DataService.getUnitById(unit.parent_id).AnnotationUnits[remotePosition].annotation_unit_tree_id);
+                        }else{
+                            unitToAddTo["usedAsRemote"].push(unit.parent_id + "-" + unit.annotation_unit_tree_id);
+                        }
 
 
 
@@ -247,7 +255,7 @@
                         newUnit = angular.copy(remote);
                         var tempCat = angular.copy(newUnit.categories[0]);
                         newUnit.categories = [];
-                        newUnit.categories.push(DataService.hashTables.categoriesHashTable[tempCat.id]);
+                        tempCat !== undefined ? newUnit.categories.push(DataService.hashTables.categoriesHashTable[tempCat.id]) : '';
 
                         this.selectedUnit = newUnit.parent_id;
 

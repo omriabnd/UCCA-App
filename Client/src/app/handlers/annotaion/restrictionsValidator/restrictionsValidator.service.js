@@ -126,7 +126,7 @@
                 //Go through all of the parent annotation unit categories and check if they exists in the FORBID_ANY_CHILD restrictions table.
                 for(var i=0; i< parentAnnotationUnit.categories.length; i++){
                     var currentCategory = parentAnnotationUnit.categories[i];
-                    if(restrictionsTables['FORBID_ANY_CHILD'][currentCategory.id]){
+                    if(currentCategory && restrictionsTables['FORBID_ANY_CHILD'][currentCategory.id]){
                         return currentCategory;
                     }
                 }
@@ -140,10 +140,10 @@
                 //Go through all of the parent annotation unit categories and check if they exists in the FORBID_CHILD restrictions table.
                 for(var i=0; i< parentAnnotationUnit.categories.length; i++){
                     var currentCategory = parentAnnotationUnit.categories[i];
-                    if(restrictionsTables['FORBID_CHILD'][currentCategory.id]){
+                    if(currentCategory && restrictionsTables['FORBID_CHILD'][currentCategory.id]){
                         for(var j=0; j< newAnnotationUnit.categories.length; j++){
                             var newAnnotationCurrentCategory = newAnnotationUnit.categories[j];
-                            if(restrictionsTables['FORBID_CHILD'][currentCategory.id] && restrictionsTables['FORBID_CHILD'][currentCategory.id][newAnnotationCurrentCategory.id]){
+                            if(currentCategory && newAnnotationCurrentCategory && restrictionsTables['FORBID_CHILD'][currentCategory.id] && restrictionsTables['FORBID_CHILD'][currentCategory.id][newAnnotationCurrentCategory.id]){
                                 return [currentCategory,newAnnotationCurrentCategory];
                             }
                         }
@@ -161,7 +161,7 @@
                     var currentCategory = currentAnnotationUnitSibling.categories[j];
                     for(var k=0; k< newAnnotationUnit.categories.length; k++){
                         var newAnnotationUnitCategory = newAnnotationUnit.categories[k];
-                        if(newAnnotationUnitCategory && restrictionsTables['FORBID_SIBLING'][newAnnotationUnitCategory.id] && restrictionsTables['FORBID_SIBLING'][newAnnotationUnitCategory.id][currentCategory.id]){
+                        if(currentCategory && newAnnotationUnitCategory && newAnnotationUnitCategory && restrictionsTables['FORBID_SIBLING'][newAnnotationUnitCategory.id] && restrictionsTables['FORBID_SIBLING'][newAnnotationUnitCategory.id][currentCategory.id]){
                             return [currentCategory,newAnnotationUnitCategory];
                         } else if(currentCategory && restrictionsTables['FORBID_SIBLING'][currentCategory.id] && restrictionsTables['FORBID_SIBLING'][currentCategory.id][newAnnotationUnitCategory.id]){
                             return [currentCategory,newAnnotationUnitCategory];
