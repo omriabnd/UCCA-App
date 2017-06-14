@@ -50,9 +50,9 @@ gulp.1
 build
 
 /src/release
+/release
 /bower_components
 /.tmp
 /debug.log
 /LICENSE.txt
 /.travis.yml
-settings.json
