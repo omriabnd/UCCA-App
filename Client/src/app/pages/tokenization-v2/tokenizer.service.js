@@ -98,7 +98,7 @@
                 for(var i = 0; i < tokensSplit.length; i++){
                     var tokenText = tokensSplit[i];
 
-                    if(tokenText != " "){
+                    if(tokenText != " " && tokenText != ""){
                         var start_index_no_spaces = originalTextNoSpaces.indexOf(tokenText, endIndex_no_spaces);
                         startIndex = start_index_no_spaces + originalTextSpaceMap[start_index_no_spaces];
                         endIndex_no_spaces = start_index_no_spaces + tokenText.length - 1;
