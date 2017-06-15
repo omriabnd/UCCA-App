@@ -65,23 +65,26 @@
             },
             removeTokenFromUnitTokens: function(token){
                 var unit = DataService.getUnitById(_handler.getSelectedUnitId());
-                if(unit.tokenCopy === undefined){
-                    unit.tokenCopy = [];
-                    for(var key in unit.children_tokens_hash){
-                        unit.tokenCopy.push(unit.children_tokens_hash[key]);
+                if(unit){
+                    if(unit.tokenCopy === undefined){
+                        unit.tokenCopy = [];
+                        for(var key in unit.children_tokens_hash){
+                            unit.tokenCopy.push(unit.children_tokens_hash[key]);
+                        }
                     }
-                }
-                var elementPos = unit.tokenCopy.map(function(x) {return x.id; }).indexOf(token.id);
-                if(elementPos > -1){
-                    var selectedUnitId = _handler.getSelectedUnitId();
-                    var selectedUnit = DataService.getUnitById(selectedUnitId);
-                    if(selectedUnit.AnnotationUnits === undefined){
-                        selectedUnit.AnnotationUnits = [];
-                    }
-                    var tokenInUnit = _handler.isTokenInUnit(selectedUnit,token);
-                    !tokenInUnit ? token['inUnit'] = selectedUnitId.toString() === "0" ? (selectedUnit.AnnotationUnits.length + 1).toString() : selectedUnit.annotation_unit_tree_id + "-" +(selectedUnit.AnnotationUnits.length + 1).toString() : ''
+                    var elementPos = unit.tokenCopy.map(function(x) {return x.id; }).indexOf(token.id);
+                    if(elementPos > -1){
+                        var selectedUnitId = _handler.getSelectedUnitId();
+                        var selectedUnit = DataService.getUnitById(selectedUnitId);
+                        if(selectedUnit.AnnotationUnits === undefined){
+                            selectedUnit.AnnotationUnits = [];
+                        }
+                        var tokenInUnit = _handler.isTokenInUnit(selectedUnit,token);
+                        !tokenInUnit ? token['inUnit'] = selectedUnitId.toString() === "0" ? (selectedUnit.AnnotationUnits.length + 1).toString() : selectedUnit.annotation_unit_tree_id + "-" +(selectedUnit.AnnotationUnits.length + 1).toString() : ''
 
+                    }
                 }
+
             },
             isTokenInUnit: function(selectedUnit,token){
                 var tokenInUnit = false;
