@@ -150,9 +150,10 @@
                     var remoteOriginalTreeId = remoteOriginalId;
                     $scope.deleteAllRemoteInstanceOfThisUnit = function(){
 
-                        $scope.vm.dataBlock.usedAsRemote.forEach(function(remoteInstance){
-                            DataService.deleteUnit(remoteInstance);
-                        });
+                        for(var key in DataService.unitsUsedAsRemote[$scope.vm.dataBlock.annotation_unit_tree_id]){
+                            DataService.deleteUnit(key);
+                            delete DataService.unitsUsedAsRemote[$scope.vm.dataBlock.annotation_unit_tree_id][key];
+                        }
                         DataService.deleteUnit($scope.vm.dataBlock.annotation_unit_tree_id);
                         // selCtrl.updateUI(DataService.getUnitById($("[unit-wrapper-id="+$rootScope.clickedUnit+"]").attr('child-unit-id')));
                     };
@@ -195,13 +196,24 @@
                         var elementPos = childUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
                         var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
                         if(elementPos !== -1 && elementPosInThisUnit !== -1){
-                            if(unit.categories.length === 1 && unit.categories[0] === undefined){
+                            if(unit.categories.length === 1 && unit.categories[0] === undefined || unit.categories.length === 0){
                                 unit.categories[0] = {
                                     id:9999,
                                     backgroundColor: 'gray'
                                 }
                             }
                             childUnitTokens[elementPos].backgroundColor = unit.categories[0] ? unit.categories[0].backgroundColor : "transparent";
+
+                            if(unit.categories.length === 1 && unit.categories[0].id === 9999){
+                                tokens[elementPosInThisUnit].borderStyle = "transparent";
+                            }
+
+                            if(unit.categories.length > 1){
+                                var elementPos = unit.categories.map(function(x) {return x.id; }).indexOf(9999);
+                                if(elementPos > -1){
+                                    unit.categories.splice(unit.categories,1);
+                                }
+                            }
 
                             switch(token.positionInUnit){
                                 case 'First': {
@@ -347,8 +359,9 @@
 
             var currentUnit = DataService.getUnitById(unitId);
 
-            if(currentUnit.usedAsRemote && currentUnit.usedAsRemote.length > 0){
-                open('app/pages/annotation/templates/deleteAllRemoteModal.html','md',currentUnit.usedAsRemote.length,vm);
+
+            if(DataService.unitsUsedAsRemote[unitId] !==  undefined){
+                open('app/pages/annotation/templates/deleteAllRemoteModal.html','md',Object.keys(DataService.unitsUsedAsRemote[unitId]).length,vm);
             }else{
                 if(currentUnit.unitType === "REMOTE"){
                     //UpdateUsedAsRemote
@@ -357,6 +370,8 @@
                     if(elementPos > -1){
                         remoteUnit.usedAsRemote.splice(elementPos,1);
                     }
+
+                    delete DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.annotation_unit_tree_id];
                 }
                 var parentUnit = DataService.getParentUnitId(unitId);
                 DataService.deleteUnit(unitId).then(function(res){
@@ -419,12 +434,10 @@
                 var newRowId = DataService.insertToTree(objToPush,selectionHandlerService.getUnitToAddRemotes()).then(function(res){
                     DataService.unitType = 'REGULAR';
 
-                    var unitToAddTo = DataService.getUnitById(vm.dataBlock.annotation_unit_tree_id);
-
-                    if(unitToAddTo.usedAsRemote === undefined){
-                        unitToAddTo["usedAsRemote"] = [];
+                    if(DataService.unitsUsedAsRemote[vm.dataBlock.annotation_unit_tree_id] === undefined){
+                        DataService.unitsUsedAsRemote[vm.dataBlock.annotation_unit_tree_id] = {};
                     }
-                    unitToAddTo["usedAsRemote"].push(res.id);
+                    DataService.unitsUsedAsRemote[vm.dataBlock.annotation_unit_tree_id][res.id] = true;
 
 
                     selectionHandlerService.setUnitToAddRemotes("0");

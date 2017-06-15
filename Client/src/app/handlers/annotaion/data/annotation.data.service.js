@@ -13,6 +13,8 @@
             categoriesHashTable: {}
         };
 
+        var unitsUsedAsRemote = {};
+
         var DataService = {
             /**
              * A data structure that contains rows of selectable words.
@@ -31,6 +33,7 @@
             currentTask:null,
             hashTables: hashTables,
             categories: [],
+            unitsUsedAsRemote:unitsUsedAsRemote,
             getData: getData,
             insertToTree: insertToTree,
             toggleCategoryForUnit:toggleCategoryForUnit,

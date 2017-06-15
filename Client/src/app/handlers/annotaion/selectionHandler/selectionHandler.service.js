@@ -202,16 +202,23 @@
 
                         var unitToAddTo = DataService.getUnitById(unit.annotation_unit_tree_id);
 
-                        if(unitToAddTo.usedAsRemote === undefined){
-                            unitToAddTo["usedAsRemote"] = [];
+                        if(unitToAddTo){
+                            if(unitToAddTo.usedAsRemote === undefined){
+                                unitToAddTo["usedAsRemote"] = [];
+                            }
+
+                            var remotePosition = DataService.getUnitById(unit.remote_original_id).AnnotationUnits.map(function(x) {return x.id; }).indexOf(unit.id);
+                            if(remotePosition > -1){
+                                unitToAddTo["usedAsRemote"].push(DataService.getUnitById(unit.parent_id).AnnotationUnits[remotePosition].annotation_unit_tree_id);
+                            }else{
+                                unitToAddTo["usedAsRemote"].push(unit.parent_id + "-" + unit.annotation_unit_tree_id);
+                            }
                         }
 
-                        var remotePosition = DataService.getUnitById(unit.remote_original_id).AnnotationUnits.map(function(x) {return x.id; }).indexOf(unit.id);
-                        if(remotePosition > -1){
-                            unitToAddTo["usedAsRemote"].push(DataService.getUnitById(unit.parent_id).AnnotationUnits[remotePosition].annotation_unit_tree_id);
-                        }else{
-                            unitToAddTo["usedAsRemote"].push(unit.parent_id + "-" + unit.annotation_unit_tree_id);
+                        if(DataService.unitsUsedAsRemote[unit.annotation_unit_tree_id] === undefined){
+                            DataService.unitsUsedAsRemote[unit.annotation_unit_tree_id] = {};
                         }
+                        DataService.unitsUsedAsRemote[unit.annotation_unit_tree_id][unit.parent_id + "-" + unit.annotation_unit_tree_id] = true;
 
 
 
@@ -244,7 +251,12 @@
                 DataService.unitType = 'REGULAR';
             },
             toggleCategory: function(category,justToggle,remote,gui_status){
-                if( (this.selectedTokenList.length && !justToggle) || remote){
+
+                if(this.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(this.selectedTokenList)){
+                    return
+                }
+
+                if(!aUnitIsSelected(this.selectedTokenList) && (this.selectedTokenList.length && !justToggle) || remote){
                     //This mean we selected token and now we need to create new unit.
                     var newUnit = {
                         tokens : angular.copy(this.selectedTokenList),
@@ -283,6 +295,59 @@
             }
 
         };
+
+        function newUnitContainAllParentTokensTwice(selectedTokenList){
+            var currentUnit = DataService.getUnitById(selectedTokenList[0].parentId);
+
+            if(currentUnit.annotation_unit_tree_id !== "0"){
+                var parentUnit = DataService.getUnitById(DataService.getParentUnitId(currentUnit.annotation_unit_tree_id));
+
+                return compareUnitsTokens(selectedTokenList,currentUnit.tokens) && compareUnitsTokens(currentUnit.tokens,parentUnit.tokens);
+            }
+
+        }
+
+        function compareUnitsTokens(unitATokens,unitBTokens){
+            var result = true;
+            if(unitATokens.length === unitBTokens.length){
+                unitATokens.forEach(function(token){
+                    var elementPos = unitBTokens.map(function(x) {return x.id; }).indexOf(token.id);
+                    if(elementPos === -1){
+                        result = false;
+                    }
+                })
+            }else{
+                result = false;
+            }
+            return result;
+        }
+
+        function aUnitIsSelected(selectedTokenList){
+            var result = true;
+            var unitId = null;
+
+            if(selectedTokenList.length === 0){
+                return false;
+            }
+            unitId = selectedTokenList[0].inUnit;
+
+            if(unitId === null){
+                return false;
+            }
+            selectedTokenList.forEach(function(token){
+                if(unitId !== token.inUnit){
+                    result = false;
+                }
+            });
+
+            if(!result ){
+                return false
+            }
+
+            var tokenInUnit = selectedTokenList[0].inUnit;
+            tokenInUnit && DataService.getUnitById(tokenInUnit) ? _handler.updateSelectedUnit(tokenInUnit) : '';
+            return DataService.getUnitById(tokenInUnit);
+        }
 
         function updatePositionInUnitAttribute(selectedTokenList){
             selectedTokenList.forEach(function(token,index){
