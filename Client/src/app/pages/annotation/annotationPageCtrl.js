@@ -126,7 +126,7 @@
           vm.categories.forEach(function(categoryObj){
               if(categoryObj.shortcut_key && !categoryObj.fromParentLayer){
 
-                  HotKeysManager.addHotKey(categoryObj.shortcut_key);
+                  HotKeysManager.addHotKey(categoryObj.shortcut_key.toString().toLowerCase());
                   hotkeys.bindTo(scope)
                       .add({
                           combo: categoryObj.shortcut_key,
@@ -138,7 +138,7 @@
                           }
                       });
 
-                  HotKeysManager.addHotKey('shift+'+categoryObj.shortcut_key);
+                  HotKeysManager.addHotKey('shift+'+categoryObj.shortcut_key.toString().toLowerCase());
                   hotkeys.bindTo(scope)
                       .add({
                           combo: 'shift+'+categoryObj.shortcut_key,
