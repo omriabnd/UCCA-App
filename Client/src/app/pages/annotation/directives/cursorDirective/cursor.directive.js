@@ -40,7 +40,7 @@
                     var elementPos = unitNode.tokens.map(function(x) {return x.id; }).indexOf(args.token.id);
                     if(elementPos > -1){
                         $(elem).insertAfter( unitTokens[elementPos] );
-                        $scope.vm.cursorLocation = elementPos + 1;
+                        // $scope.vm.cursorLocation = elementPos + 1;
                     }
                 }
             });
@@ -90,7 +90,11 @@
                     var unitTokens = unit.find('.token-wrapper');
                     if($scope.vm.cursorLocation > 0){
                         if(shiftPressed){
+                            var token = DataService.getUnitById($scope.vm.unitId.toString()).tokens[$scope.vm.cursorLocation-1];
+                            token.tokenIsClicked = true;
+                            selectionHandlerService.setTokenClicked();
 
+                            $rootScope.$broadcast('tokenIsClicked',{token: token, parentId: $scope.vm.unitId});
                         }else if(ctrlPressed){
                             $scope.vm.cursorUpdated = true;
                         }else{

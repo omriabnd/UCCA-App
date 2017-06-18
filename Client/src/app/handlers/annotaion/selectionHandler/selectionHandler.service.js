@@ -118,6 +118,11 @@
                 }
 
                 this.selectedTokenList.forEach(function(token){
+                    var unitTokens = DataService.getUnitById(token.parentId).tokens;
+                    var tokenPosition = unitTokens.map(function(x) {return x.id; }).indexOf(token.id);
+                    if(tokenPosition > -1){
+                        unitTokens[tokenPosition].inUnit = null;
+                    }
                     token.inUnit = null;
                 });
 
@@ -368,7 +373,7 @@
 
         function updateNextTokenNotAdjacent(selectedTokenList){
             selectedTokenList.forEach(function(token,index){
-                if(index === selectedTokenList.length-1 || token.end_index + 2 === selectedTokenList[index+1].start_index){
+                if(index === selectedTokenList.length-1 || token.end_index + 2 === selectedTokenList[index+1].start_index || token.end_index + 1 === selectedTokenList[index+1].start_index){
                     token['nextTokenNotAdjacent'] = false;
                 }else if(token.end_index + 2 !== selectedTokenList[index+1].start_index){
                     token['nextTokenNotAdjacent'] = true;
@@ -379,7 +384,7 @@
         }
         function updateLastTokenNotAdjacent(selectedTokenList){
             selectedTokenList.forEach(function(token,index){
-                if(index === 0 || token.start_index - 2 === selectedTokenList[index-1].end_index){
+                if(index === 0 || token.start_index - 2 === selectedTokenList[index-1].end_index || token.start_index - 1 === selectedTokenList[index-1].end_index){
                     token['lastTokenNotAdjacent'] = false;
                 }else if(token.start_index - 2 !== selectedTokenList[index-1].end_index){
                     token['lastTokenNotAdjacent'] = true;
