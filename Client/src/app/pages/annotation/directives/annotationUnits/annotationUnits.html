@@ -29,7 +29,7 @@
     </div>
     <annotation-token  parent-id="{{dirCtrl.annotationUnitTreeId}}" token=token ng-repeat="token in dirCtrl.tokens track by $index"></annotation-token>
 </div>
-<div ng-repeat="unit in vm.dataBlock.AnnotationUnits">
+<div ng-repeat="unit in vm.dataBlock.AnnotationUnits" ng-if="vm.dataBlock.AnnotationUnits.length > 0">
     <annotation-units
             class="has-elements"
             ng-class="{'hidden-unit':vm.isUnitHidden(unit),'unit-collapse':vm.isUnitCollaped(vm),'child-unit' :unit != '0'}"

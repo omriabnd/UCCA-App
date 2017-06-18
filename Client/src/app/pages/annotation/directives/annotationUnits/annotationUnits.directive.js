@@ -102,7 +102,7 @@
             });
 
 
-            paintTokens($scope.vm.tokens,$scope.vm.dataBlock);
+            $scope.vm.dataBlock.AnnotationUnits.length > 0 ? paintTokens($scope.vm.tokens,$scope.vm.dataBlock) : '';
         }
 
         function isUnitHidden(vm){

@@ -103,7 +103,7 @@
 
                 setCategoriesColor(AnnotationTextService,allCategories);
                 setCategoriesAbbreviation(AnnotationTextService,allCategories);
-                if(!!DataService.currentTask.annotation_units){
+                if(DataService.currentTask.annotation_units.length > 0){
                     DataService.categories = allCategories;
                     DataService.createHashTables();
                     DataService.createTokensHashByTokensArrayForPassage(taskResponse.tokens);
