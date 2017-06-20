@@ -50,7 +50,7 @@
 
         }
 
-        function annotationUnitDirectiveLink($scope, elem, attrs) {
+        function annotationUnitDirectiveLink($scope, elem, attrs,$rootScope) {
             $scope.vm = $scope.dirCtrl;
             $scope.vm.dataBlock.tokens = $scope.vm.tokens;
             $scope.vm.dataBlock.tokenCopy = angular.copy($scope.vm.dataBlock.tokens)
@@ -66,11 +66,23 @@
                 $scope.vm.dataBlock.gui_status = "OPEN";
             }
 
+            $scope.$on('CreateRemoteUnit', function(event, args) {
+                if(args.unitId.toString() === $scope.vm.dataBlock.annotation_unit_tree_id ){
+                    selectionHandlerService.setCategoryForRemote(args.category);
+                    switchToRemoteMode($scope.vm)
+                }
+            });
+
             $scope.$on('ToggleSuccess', function(event, args) {
                 if(args.id.toString() === $scope.vm.dataBlock.annotation_unit_tree_id ){
                     var parentUnit = DataService.getUnitById(DataService.getParentUnitId($scope.vm.dataBlock.annotation_unit_tree_id ));
                     paintTokens(parentUnit.tokens,parentUnit);
-                }else{
+                }
+            });
+
+            $scope.$on('checkRestrictionForCurrentUnit', function(event, args) {
+                if(args.unitId.toString() === $scope.vm.dataBlock.annotation_unit_tree_id ){
+                    checkRestrictionForCurrentUnit(args.unitId);
                 }
             });
 
@@ -81,7 +93,17 @@
                     }
                     selectionHandlerService.updateSelectedUnit($scope.vm.dataBlock.annotation_unit_tree_id,true);
                     paintTokens($scope.vm.tokens,$scope.vm.dataBlock);
-                }else{
+
+                    $timeout(function(){
+                        var container = $('html, body'),
+                            scrollTo = $('#unit-'+selectionHandlerService.getSelectedUnitId());
+
+                        // Or you can animate the scrolling:
+                        container.animate({
+                            scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() - 100
+                        },1000, "linear");
+                    });
+
                 }
             });
 
@@ -366,9 +388,9 @@
                 if(currentUnit.unitType === "REMOTE"){
                     //UpdateUsedAsRemote
                     var remoteUnit = DataService.getUnitById(currentUnit.remote_original_id);
-                    var elementPos = remoteUnit.usedAsRemote.map(function(x) {return x; }).indexOf(currentUnit.annotation_unit_tree_id);
-                    if(elementPos > -1){
-                        remoteUnit.usedAsRemote.splice(elementPos,1);
+                    var elementPos = DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.annotation_unit_tree_id]
+                    if(elementPos){
+                        delete DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.annotation_unit_tree_id];
                     }
 
                     delete DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.annotation_unit_tree_id];
@@ -408,13 +430,27 @@
 
         function unitClicked(vm,index){
             if(selectionHandlerService.getUnitToAddRemotes() !== "0" && selectionHandlerService.getUnitToAddRemotes() !== index){
+                var unitUsed = DataService.getUnitById(selectionHandlerService.getUnitToAddRemotes()).AnnotationUnits.map(function(x) {return x.remote_original_id; }).indexOf(vm.unit.annotation_unit_tree_id);
+
+                if(unitUsed > -1){
+                    selectionHandlerService.setUnitToAddRemotes("0");
+                    $('.annotation-page-container').toggleClass('crosshair-cursor');
+                    open('app/pages/annotation/templates/errorModal.html','sm','Unit already exists as remote.',vm);
+                    return;
+                }
+                if(DataService.getUnitById(index).unitType === "REMOTE"){
+                    selectionHandlerService.setUnitToAddRemotes("0");
+                    $('.annotation-page-container').toggleClass('crosshair-cursor');
+                    open('app/pages/annotation/templates/errorModal.html','sm','Cannot add remote unit as remote.',vm);
+                    return;
+                }
                 // selectionHandlerService.disableTokenClicked();
                 DataService.unitType = 'REMOTE';
                 // var clickedUnit  = selectionHandlerService.getUnitToAddRemotes();
                 var objToPush = {
                     rowId : '',
                     numOfAnnotationUnits: 0,
-                    categories:[], // {color:defCtrl.definitionDetails.backgroundColor}
+                    categories: selectionHandlerService.getCategoryForRemote() || [], // {color:defCtrl.definitionDetails.backgroundColor}
                     comment:"",
                     rowShape:'',
                     unitType:'REMOTE',
@@ -428,6 +464,8 @@
 
                     ]
                 };
+
+                selectionHandlerService.clearCategoryForRemote();
 
                 objToPush["remote_original_id"] = vm.dataBlock.annotation_unit_tree_id;
 

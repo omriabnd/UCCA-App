@@ -130,6 +130,12 @@
       "combo": "ctrl+alt+t",
       "description": "Category Test",
       "callbackFunction":"unitToCategory"
+    },
+    {
+      "combo": "alt+x",
+      "description": "Reset",
+      "action": "keydown",
+      "callbackFunction":"resetAllAnnotations"
     }
   ]
 }

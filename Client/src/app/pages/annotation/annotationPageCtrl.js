@@ -45,6 +45,7 @@
           });
 
           $scope.$on('ResetSuccess', function(event, args) {
+              vm.categories = TaskMetaData.Categories;
               bindCategoriesHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService);
               bindReceivedDefaultHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService && !hotkeys.fromParentLayer);
           });
@@ -84,9 +85,28 @@
 
       function spacePressed(){
             var selectionList = selectionHandlerService.getSelectedTokenList();
-            if(selectionList.length){
+            if(isUnitSelected(selectionList)){
+                DataService.deleteUnit(selectionList[0].inUnit);
+                selectionHandlerService.clearTokenList();
+            }
+            else if(selectionList.length){
                 selectionHandlerService.toggleCategory();
             }
+      }
+
+      function isUnitSelected(selectionList){
+          var result = true;
+          var tokenIntUnit = selectionList[0].inUnit;
+          selectionList.forEach(function(token){
+              if(tokenIntUnit !== token.inUnit){
+                  result = false;
+              }
+          });
+          if(result){
+              return DataService.getUnitById(tokenIntUnit);
+          }
+          return result;
+
       }
 
       function goToMainMenu(res){
@@ -123,10 +143,11 @@
       }
 
       function bindCategoriesHotKeys(hotkeys,scope,rootScope,vm,HotKeysManager,dataService){
-          vm.categories.forEach(function(categoryObj){
+          TaskMetaData.Categories.forEach(function(categoryObj){
               if(categoryObj.shortcut_key && !categoryObj.fromParentLayer){
 
                   HotKeysManager.addHotKey(categoryObj.shortcut_key.toString().toLowerCase());
+                  hotkeys.del(categoryObj.shortcut_key.toString().toLowerCase());
                   hotkeys.bindTo(scope)
                       .add({
                           combo: categoryObj.shortcut_key,
@@ -135,10 +156,12 @@
                           callback: function() {
                               var functionToExecute = HotKeysManager.executeOperation(categoryObj);
                               selectionHandlerService[functionToExecute](categoryObj);
+                              $rootScope.$broadcast("ResetSuccess");
                           }
                       });
 
                   HotKeysManager.addHotKey('shift+'+categoryObj.shortcut_key.toString().toLowerCase());
+                  hotkeys.del(categoryObj.shortcut_key.toString().toLowerCase());
                   hotkeys.bindTo(scope)
                       .add({
                           combo: 'shift+'+categoryObj.shortcut_key,
@@ -146,6 +169,7 @@
                           action: 'keydown',
                           callback: function() {
                               var functionToExecute = HotKeysManager.executeOperation(categoryObj);
+                              $rootScope.$broadcast("CreateRemoteUnit",{unitId: selectionHandlerService.getSelectedUnitId(),category:categoryObj});
                               // vm.keyController[0]['addAsRemoteUnit'](categoryObj);
                           }
                       });
@@ -237,11 +261,14 @@
                                   break;
                               }
                               case 'moveDown':{
-                                  if(selectedUnitId.length === 1 && parseInt(selectedUnitId) >= DataService.tree.AnnotationUnits.length){
-                                      break;
-                                  }
+                                  // if(selectedUnitId.length === 1 && parseInt(selectedUnitId) >= DataService.tree.AnnotationUnits.length){
+                                  //     break;
+                                  // }
                                   var nextUnit = DataService.getNextUnit(selectedUnitId);
                                   var nextSibling = DataService.getSibling(selectedUnitId);
+                                  if(nextUnit === -1 && nextSibling === undefined){
+                                      return;
+                                  }
                                   if(nextSibling){
                                       selectionHandlerService.updateSelectedUnit(nextSibling.annotation_unit_tree_id);
                                       DataService.getUnitById(nextSibling.annotation_unit_tree_id).gui_status = "OPEN";
@@ -261,12 +288,17 @@
                                       DataService.getUnitById(parentId).gui_status = "OPEN";
                                       break;
                                   }
-                                  if(selectedUnitId === "1"){
+                                  if(selectedUnitId === "1" || selectedUnitId === "0"){
                                       selectionHandlerService.updateSelectedUnit("0");
                                       break;
                                   }
+
                                   var prevUnit = DataService.getPrevUnit(selectedUnitId);
                                   var prevSibling = DataService.getPrevSibling(selectedUnitId);
+
+                                  while(prevSibling.AnnotationUnits.length > 0){
+                                      prevSibling = prevSibling.AnnotationUnits[prevSibling.AnnotationUnits.length - 1];
+                                  }
 
                                   if(prevSibling === null){
                                       selectionHandlerService.updateSelectedUnit(prevUnit.annotation_unit_tree_id);
@@ -287,6 +319,25 @@
                                           }
                                       }
                                   }
+                                  break;
+                              }
+                              case 'deleteFromTree':{
+                                  var selectedUnitId = selectionHandlerService.getSelectedUnitId();
+
+                                  if(selectedUnitId !== '0'){
+                                      var parentUnitId = DataService.getParentUnitId(selectedUnitId);
+                                      DataService.deleteUnit(selectionHandlerService.getSelectedUnitId()).then(function(res){
+                                          selectionHandlerService.updateSelectedUnit(parentUnitId);
+                                      });
+                                  }
+                                  break;
+                              }
+                              case 'checkRestrictionForCurrentUnit':{
+                                  $rootScope.$broadcast("checkRestrictionForCurrentUnit",{unitId: selectedUnitId});
+                                  break;
+                              }
+                              case 'resetAllAnnotations':{
+                                  DataService.resetTree();
                                   break;
                               }
                               default:{

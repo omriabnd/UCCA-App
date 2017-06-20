@@ -27,7 +27,7 @@
 
         function annotationTokenDirectiveLink($scope, elem, attrs) {
             $scope.vm = $scope.dirCtrl;
-            $scope.vm.token['indexInParent'] = $scope.$parent.$index;
+            $scope.vm.token['indexInParent'] = !$scope.vm.token['indexInParent'] ? $scope.$parent.$index : $scope.vm.token['indexInParent'];
             $scope.vm.tokenInSelectionList = tokenInSelectionList;
 
             $scope.$on('tokenIsClicked', function(event, args) {
@@ -66,6 +66,14 @@
                 DataService.getUnitById(vm.token.inUnit).gui_status = "OPEN";
                 DataService.getUnitById(DataService.getParentUnitId(vm.token.inUnit)).gui_status = "OPEN";
                 selectionHandlerService.updateSelectedUnit(vm.token.inUnit);
+
+                var container = $('html, body'),
+                    scrollTo = $('#unit-'+vm.token.inUnit);
+
+                // Or you can animate the scrolling:
+                container.animate({
+                    scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() - 100
+                },1000, "linear");
             }
 
         }

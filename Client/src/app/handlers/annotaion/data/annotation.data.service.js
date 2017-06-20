@@ -130,7 +130,7 @@
         function toggleCategoryForUnit(unitId,category){
             return $q(function(resolve, reject) {
                 var unit = getUnitById(unitId);
-                var elementPos = unit.categories.map(function(x) {return x.id; }).indexOf(category.id);
+                var elementPos = category ? unit.categories.map(function(x) {return x.id; }).indexOf(category.id) : -1;
                 if(elementPos === -1){
                     unit.categories.push(category);
                 }else{
@@ -234,7 +234,7 @@
 
                 updateTreeIds(DataService.tree);
 
-                newObject.unitType !== "REMOTE" ? $rootScope.$broadcast("InsertSuccess",{dataBlock: { id: level, AnnotationUnits: getUnitById(level).AnnotationUnits} }) : '';
+                newObject.unitType !== "REMOTE" ? $rootScope.$broadcast("InsertSuccess",{dataBlock: { id: level, AnnotationUnits: getUnitById(level).AnnotationUnits},newUnitId: newObject.annotation_unit_tree_id }) : '';
 
                 return resolve({status: 'InsertSuccess',id: newObject.annotation_unit_tree_id});
             });
@@ -271,7 +271,7 @@
 
                 $rootScope.$broadcast("DeleteSuccess",{categories: unit.categories, id: unit.annotation_unit_tree_id});
 
-                resolve('DeleteSuccess');
+                return resolve('DeleteSuccess');
             });
         }
 
@@ -323,9 +323,9 @@
         }
 
         function sortUnits(a,b){
-            if(tokenStartIndexInParent(a.tokens[0]) > tokenStartIndexInParent(b.tokens[0])){
+            if(a.tokens[0].indexInParent > b.tokens[0].indexInParent){
                 return 1;
-            }else if(tokenStartIndexInParent(a.tokens[0]) < tokenStartIndexInParent(b.tokens[0])){
+            }else if(a.tokens[0].indexInParent < b.tokens[0].indexInParent){
                 return -1;
             }else{
                 return 0;
