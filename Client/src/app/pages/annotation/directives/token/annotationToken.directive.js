@@ -38,7 +38,11 @@
                     !ctrlPressed ? $scope.vm.tokenIsClicked = false : '';
                 }else if(args.parentId !== undefined && (args.parentId.toString() ===  $scope.vm.parentId )){
                     !ctrlPressed && !shiftPressed && !args.selectAllTokenInUnit ? selectionHandlerService.clearTokenList() : '';
-                    selectionHandlerService.addTokenToList($scope.vm.token,$scope.vm.parentId,args.selectAllTokenInUnit);
+                    if(selectionHandlerService.isTokenInList($scope.vm.token) && !args.doNotRemoveExistingToken){
+                        selectionHandlerService.removeTokenFromList($scope.vm.token.id);
+                    }else{
+                        selectionHandlerService.addTokenToList($scope.vm.token,$scope.vm.parentId,args.selectAllTokenInUnit);
+                    }
                     // $scope.vm.tokenIsClicked = true;
                 }
             });
@@ -58,6 +62,8 @@
             vm.tokenDbClick = tokenDbClick;
             vm.tokenUnitIsSelected = tokenUnitIsSelected;
             vm.initToken = initToken;
+            vm.mouseUpFromToken = mouseUpFromToken;
+            vm.currntToken = null;
         }
 
         function tokenDbClick(vm){
@@ -88,49 +94,60 @@
             return parentUnit.cursorLocation.toString();
         }
 
-        function addOnHover(vm){
+        function getAllTokensBetweenStartTokenToCurrentToken(startTokenIndex,endTokenIndex){
+            var selectedUnitId = selectionHandlerService.getSelectedUnitId();
+            var selectedUnit = DataService.getUnitById(selectedUnitId);
 
+            var copyTokenArray = angular.copy(selectedUnit.tokens);
+
+            return copyTokenArray.slice(startTokenIndex,endTokenIndex+1);
+        }
+
+        function addOnHover(vm){
+            //selectionHandlerService.getMouseMode()
             if(HotKeysManager.checkIfHotKeyIsPressed('shift')){
-                var selectedTokenList = selectionHandlerService.getSelectedTokenList();
-                var lastSelectedToken = selectedTokenList[selectedTokenList.length - 1];
-                if(lastSelectedToken !== undefined && lastSelectedToken['indexInParent'] + 1 !== vm.token['indexInParent']){
-                    var parentUnit = DataService.getUnitById(vm.token.parentId);
-                    if(lastSelectedToken['indexInParent'] < vm.token['indexInParent']){
-                        // selectionHandlerService.clearTokenList();
-                        for(var i= lastSelectedToken['indexInParent']+1; i<vm.token['indexInParent']+1; i++){
-                            if(parentUnit.tokens[i].parentId === undefined){
-                                parentUnit.tokens[i]['parentId'] = "0";
+
+                var startToken = selectionHandlerService.getSelectedToken();
+
+                if(startToken){
+                    var tokenArray = [];
+                    if(startToken.indexInParent <= vm.token.indexInParent){
+                        selectionHandlerService.clearTokenList();
+
+                        var selectedUnitId = selectionHandlerService.getSelectedUnitId();
+                        var selectedUnit = DataService.getUnitById(selectedUnitId);
+
+                        for(var i=startToken.indexInParent; i<=vm.token.indexInParent; i++){
+                            if(selectedUnit.tokens[i] === undefined){
+                                break;
                             }
-                            if(tokenInSelectionList({token:parentUnit.tokens[i]})){
-                                selectionHandlerService.removeTokenFromList(parentUnit.tokens[i].id);
-                            }else if(parentUnit.tokens[i].parentId){
-                                $rootScope.$broadcast('tokenIsClicked', {
-                                    token: parentUnit.tokens[i],
-                                    parentId: parentUnit.tokens[i].parentId,
-                                    selectAllTokenInUnit: false
-                                });
-                            }
+                            $rootScope.$broadcast('tokenIsClicked', {
+                                token: selectedUnit.tokens[i],
+                                parentId: selectedUnit.tokens[i].parentId || "0",
+                                selectAllTokenInUnit: false
+                            });
                         }
                     }else{
                         selectionHandlerService.clearTokenList();
-                        for(var k=0,i = lastSelectedToken['indexInParent']; i>vm.token['indexInParent']; i--,k++){
-                            if(parentUnit.tokens[i].parentId === undefined){
-                                parentUnit.tokens[i]['parentId'] = "0";
+
+                        var selectedUnitId = selectionHandlerService.getSelectedUnitId();
+                        var selectedUnit = DataService.getUnitById(selectedUnitId);
+
+                        for(var i=vm.token.indexInParent; i<=startToken.indexInParent; i++){
+                            if(selectedUnit.tokens[i] === undefined){
+                                break;
                             }
-                            if(tokenInSelectionList({token:parentUnit.tokens[i]})){
-                                selectionHandlerService.removeTokenFromList(parentUnit.tokens[i].id);
-                            }else if(parentUnit.tokens[i].parentId){
-                                $rootScope.$broadcast('tokenIsClicked',{
-                                    token: parentUnit.tokens[i],
-                                    parentId: parentUnit.tokens[i].parentId,
-                                    selectAllTokenInUnit: false
-                                });
-                            }
+                            $rootScope.$broadcast('tokenIsClicked', {
+                                token: selectedUnit.tokens[i],
+                                parentId: selectedUnit.tokens[i].parentId || "0",
+                                selectAllTokenInUnit: false
+                            });
                         }
                     }
 
+                }else{
+                    selectionHandlerService.setSelectedToken(vm.token);
                 }
-                tokenClicked(vm);
             }
         }
 
@@ -138,10 +155,14 @@
             console.log(index)
         }
 
-        function tokenClicked(vm){
+        function tokenClicked(vm,doNotUpdateSelectedToken){
             directive.tokenClicked = !directive.tokenClicked;
             vm.tokenIsClicked = !vm.tokenIsClicked;
             selectionHandlerService.setTokenClicked();
+
+            selectionHandlerService.setLastInsertedToken(vm.token);
+
+            !doNotUpdateSelectedToken ? selectionHandlerService.setSelectedToken(vm.token) : '';
 
             var tokenInUnit = DataService.getUnitById(vm.token.inUnit);
             if(vm.token.inUnit !== null && tokenInUnit){
@@ -171,9 +192,44 @@
             return elementPos > -1;
         }
 
+        function mouseUpFromToken(vm){
+            var selectedTokenArray = selectionHandlerService.getSelectedTokenList();
+            var direction = "UP"
+            if(selectionHandlerService.getLastInsertedToken().start_index > vm.token.start_index){
+                direction = "DOWN"
+            }
+            selectedTokenArray.forEach(function(token,index){
+                if(token.inUnit){
+                    var tokenUnit = DataService.getUnitById(token.inUnit);
+                    if(tokenUnit && tokenUnit.annotation_unit_tree_id !== '0'){
+                        var parentID = DataService.getParentUnitId(tokenUnit.annotation_unit_tree_id);
+                        for(var i=0; i<tokenUnit.tokens.length; i++){
+                            $rootScope.$broadcast('tokenIsClicked', {
+                                token: tokenUnit.tokens[i],
+                                parentId: parentID || "0",
+                                selectAllTokenInUnit: true,
+                                doNotRemoveExistingToken: true
+                            });
+                        }
+                        var parentUnit = DataService.getParentUnit(tokenUnit.tokens[0].parentId);
+                        var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(tokenUnit.tokens[0].id);
+                        if(parentUnit.tokens[elementPos].start_index < vm.token.start_index && direction === "DOWN"){
+                            $rootScope.$broadcast('moveCursor', {
+                                token: parentUnit.tokens[elementPos],
+                                parentId: DataService.getParentUnitId(tokenUnit.tokens[0].parentId) || "0"
+                            });
+                        }
+                    }
+                }
+                // $rootScope.$broadcast('moveCursor', {
+                //     token: vm.token,
+                //     parentId: vm.token.parentId || "0"
+                // });
+            })
+
+        }
+
 
     }
 
-})();/**
- * Created by Nissan PC on 05/06/2017.
- */
+})();

@@ -7,13 +7,16 @@
         .service('selectionHandlerService', selectionHandlerService);
 
     /** @ngInject */
-    function selectionHandlerService(DataService) {
+    function selectionHandlerService(DataService, $rootScope) {
         var selectedTokenList = [];
         var selectedUnit = "0";
+        var selectedToken = null;
         var tokenClicked = false;
         var selectionDirection = "DOWN";
         var unitToAddRemotes = "0";
         var categoryForRemote = [];
+        var mouseDown = false;
+        var lastSelectedToken = null;
 
 
         var _handler = {
@@ -22,6 +25,9 @@
             selectionDirection:selectionDirection,
             unitToAddRemotes:unitToAddRemotes,
             categoryForRemote:categoryForRemote,
+            mouseDown: mouseDown,
+            selectedToken: selectedToken,
+            lastSelectedToken:lastSelectedToken,
             getSelectedTokenList: function(){
                 return this.selectedTokenList;
             },
@@ -39,6 +45,18 @@
             },
             getUnitToAddRemotes: function(id){
                 return this.unitToAddRemotes;
+            },
+            setSelectedToken: function(token){
+                this.selectedToken = token;
+            },
+            getSelectedToken: function(){
+                return this.selectedToken;
+            },
+            setLastInsertedToken: function(token){
+                this.lastSelectedToken = token;
+            },
+            getLastInsertedToken: function(){
+                return this.lastSelectedToken;
             },
             addTokenToList: function(token,selectedUnit,groupUnit){
                 var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.id);
@@ -69,6 +87,10 @@
             },
             getSelectionDirection: function(mode){
                 return this.selectionDirection;
+            },
+            isTokenInList: function(token){
+                var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.id);
+                return elementPos > -1;
             },
             removeTokenFromList: function(tokenId){
                 var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(tokenId);
@@ -129,19 +151,7 @@
                         }
                         !tokenInUnit ? parentUnit.tokens[elementPos]['inUnit'] = null : '';
                     });
-                    //
-                    // this.selectedTokenList.forEach(function(token){
-                    //
-                    //     var unitTokens = DataService.getUnitById(token.parentId).tokens;
-                    //     var tokenPosition = unitTokens.map(function(x) {return x.id; }).indexOf(token.id);
-                    //     if(tokenPosition > -1 && ){
-                    //         unitTokens[tokenPosition].inUnit = null;
-                    //     }
-                    //     token.inUnit = null;
-                    // });
                 }
-
-
 
                 this.selectedTokenList = [];
             },
@@ -161,6 +171,12 @@
             },
             getSelectedUnitId: function(){
                 return this.selectedUnit;
+            },
+            toggleMouseUpDown: function(){
+              this.mouseDown = !this.mouseDown;
+            },
+            getMouseMode: function(){
+                return this.mouseDown;
             },
             initTree: function(data){
 
@@ -211,7 +227,9 @@
 
                         unit["remote_original_id"] = angular.copy(unit.annotation_unit_tree_id);
 
-                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[ unit.categories[0].id],null,unit).then(function(res){
+                        var unitCategory = unit.categories[0] ? DataService.hashTables.categoriesHashTable[ unit.categories[0].id] : null;
+
+                        _handler.toggleCategory(unitCategory,null,unit).then(function(res){
                             unit.categories.forEach(function(category,index){
                                 if(index === 0){
 
@@ -224,9 +242,9 @@
                         });
 
 
-                        if(unit.categories.length === 0){
-                            _handler.toggleCategory(null,null,unit);
-                        }
+                        // if(unit.categories.length === 0){
+                        //     _handler.toggleCategory(null,null,unit);
+                        // }
 
                         DataService.unitType = 'REGULAR';
 
@@ -241,14 +259,23 @@
                             if(remotePosition > -1){
                                 unitToAddTo["usedAsRemote"].push(DataService.getUnitById(unit.parent_id).AnnotationUnits[remotePosition].annotation_unit_tree_id);
                             }else{
-                                unitToAddTo["usedAsRemote"].push(unit.parent_id + "-" + unit.annotation_unit_tree_id);
+                                unitToAddTo["usedAsRemote"].push(unit.parent_id + "-" + DataService.getUnitById(unit.parent_id).AnnotationUnits.length);
                             }
                         }
 
                         if(DataService.unitsUsedAsRemote[unit.annotation_unit_tree_id] === undefined){
                             DataService.unitsUsedAsRemote[unit.annotation_unit_tree_id] = {};
                         }
-                        DataService.unitsUsedAsRemote[unit.annotation_unit_tree_id][unit.parent_id + "-" + unit.annotation_unit_tree_id] = true;
+
+                        var parentUnitUnits = DataService.getUnitById(unit.annotation_unit_tree_id);
+                        var amountOfRemotes = 0;
+                        parentUnitUnits.AnnotationUnits.forEach(function(unit){
+                            if(unit.unitType === "REMOTE"){
+                                amountOfRemotes++;
+                            }
+                        });
+
+                        DataService.unitsUsedAsRemote[unit.annotation_unit_tree_id][unit.parent_id + "-" + parseInt(parseInt(amountOfRemotes+1))] = true;
 
 
 
@@ -263,7 +290,7 @@
                         if(unit.categories.length === 0){
                             _handler.toggleCategory();
                         }else{
-                            _handler.toggleCategory(DataService.hashTables.categoriesHashTable[unit.categories[0].id],false,false,unit.gui_status,true)
+                            _handler.toggleCategory(DataService.hashTables.categoriesHashTable[unit.categories[0].id],false,false,unit,true)
                                 .then(function(){
                                     unit.categories.forEach(function(category,index){
                                         if(index === 0){
@@ -284,7 +311,7 @@
                 });
                 DataService.unitType = 'REGULAR';
             },
-            toggleCategory: function(category,justToggle,remote,gui_status,inInitStage){
+            toggleCategory: function(category,justToggle,remote,unit,inInitStage){
 
                 if(this.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(this.selectedTokenList)){
                     return
@@ -295,7 +322,8 @@
                     var newUnit = {
                         tokens : angular.copy(this.selectedTokenList),
                         categories:[],
-                        gui_status:gui_status
+                        gui_status:unit ? unit.gui_status : "OPEN",
+                        comment: unit ? unit.comment : ''
                     };
                     if(remote){
                         newUnit = angular.copy(remote);

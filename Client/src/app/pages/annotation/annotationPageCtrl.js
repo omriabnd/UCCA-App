@@ -96,12 +96,19 @@
 
       function isUnitSelected(selectionList){
           var result = true;
+
+          if(selectionList.length === 0) return false;
+
           var tokenIntUnit = selectionList[0].inUnit;
           selectionList.forEach(function(token){
               if(tokenIntUnit !== token.inUnit){
                   result = false;
               }
           });
+
+          if(tokenIntUnit === null){
+              return false;
+          }
           if(result){
               return DataService.getUnitById(tokenIntUnit);
           }
@@ -230,33 +237,32 @@
                           var selectedUnitId = selectionHandlerService.getSelectedUnitId();
                           switch(functionToExecute){
                               case 'moveRight':{
-                                  DataService.getUnitById(selectedUnitId).cursorLocation++;
+                                  // DataService.getUnitById(selectedUnitId).cursorLocation++;
 
                                   $rootScope.$broadcast("moveRight",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
                                   break;
                               }
                               case 'moveRightWithShift':{
-                                  DataService.getUnitById(selectedUnitId).cursorLocation++;
+                                  // DataService.getUnitById(selectedUnitId).cursorLocation++;
                                   $rootScope.$broadcast("moveRight",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
                                   break;
                               }
                               case 'moveRightWithCtrl':{
-                                  DataService.getUnitById(selectedUnitId).cursorLocation++;
                                   $rootScope.$broadcast("moveRight",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
                                   break;
                               }
                               case 'moveLeft':{
-                                  DataService.getUnitById(selectedUnitId).cursorLocation--;
+                                  // DataService.getUnitById(selectedUnitId).cursorLocation--;
                                   $rootScope.$broadcast("moveLeft",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
                                   break;
                               }
                               case 'moveLeftWithShift':{
-                                  DataService.getUnitById(selectedUnitId).cursorLocation--;
+                                  // DataService.getUnitById(selectedUnitId).cursorLocation--;
                                   $rootScope.$broadcast("moveLeft",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
                                   break;
                               }
                               case 'moveLeftWithCtrl':{
-                                  DataService.getUnitById(selectedUnitId).cursorLocation--;
+                                  // DataService.getUnitById(selectedUnitId).cursorLocation--;
                                   $rootScope.$broadcast("moveLeft",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
                                   break;
                               }
@@ -280,15 +286,16 @@
                                   }
                                   break;
                               }
-                              case 'moveUp':{
+                              case 'moveUp': {
                                   var splitedID = selectedUnitId.split("-");
-                                  if(splitedID.length > 1 && splitedID[splitedID.length-1] === "1"){
-                                      var parentId = DataService.getParentUnitId(selectedUnitId);
+                                  if (splitedID.length > 1 && splitedID[splitedID.length - 1] === "1") {
+                                      var parentId = splitedID.slice(0,splitedID.length-1).join('-');
+
                                       selectionHandlerService.updateSelectedUnit(parentId);
                                       DataService.getUnitById(parentId).gui_status = "OPEN";
                                       break;
                                   }
-                                  if(selectedUnitId === "1" || selectedUnitId === "0"){
+                                  if (selectedUnitId === "1" || selectedUnitId === "0") {
                                       selectionHandlerService.updateSelectedUnit("0");
                                       break;
                                   }
@@ -296,30 +303,31 @@
                                   var prevUnit = DataService.getPrevUnit(selectedUnitId);
                                   var prevSibling = DataService.getPrevSibling(selectedUnitId);
 
-                                  while(prevSibling.AnnotationUnits.length > 0){
+                                  while (prevSibling.AnnotationUnits.length > 0) {
                                       prevSibling = prevSibling.AnnotationUnits[prevSibling.AnnotationUnits.length - 1];
                                   }
 
-                                  if(prevSibling === null){
+                                  if (prevSibling === null) {
                                       selectionHandlerService.updateSelectedUnit(prevUnit.annotation_unit_tree_id);
                                       prevUnit.gui_status = "OPEN";
                                       break;
                                   }
-                                  if(prevSibling.annotation_unit_tree_id.length > prevUnit.annotation_unit_tree_id.length){
+                                  if (prevSibling.annotation_unit_tree_id.length > prevUnit.annotation_unit_tree_id.length) {
                                       selectionHandlerService.updateSelectedUnit(prevSibling.annotation_unit_tree_id);
                                       DataService.getUnitById(prevSibling.annotation_unit_tree_id).gui_status = "OPEN";
-                                  }else{
-                                      if(prevUnit){
-                                          selectionHandlerService.updateSelectedUnit(prevUnit.annotation_unit_tree_id);
-                                          DataService.getUnitById(prevUnit.annotation_unit_tree_id).gui_status = "OPEN";
-                                      }else{
-                                          if(prevSibling){
-                                              selectionHandlerService.updateSelectedUnit(prevSibling.annotation_unit_tree_id);
-                                              DataService.getUnitById(prevSibling.annotation_unit_tree_id).gui_status = "OPEN";
+                                  } else {
+                                      if (prevSibling) {
+                                          selectionHandlerService.updateSelectedUnit(prevSibling.annotation_unit_tree_id);
+                                          DataService.getUnitById(prevSibling.annotation_unit_tree_id).gui_status = "OPEN";
+                                      } else {
+                                          if (prevUnit && prevUnit.annotation_unit_tree_id !== selectedUnitId) {
+                                              selectionHandlerService.updateSelectedUnit(prevUnit.annotation_unit_tree_id);
+                                              DataService.getUnitById(prevUnit.annotation_unit_tree_id).gui_status = "OPEN";
+
                                           }
                                       }
+                                      break;
                                   }
-                                  break;
                               }
                               case 'deleteFromTree':{
                                   var selectedUnitId = selectionHandlerService.getSelectedUnitId();

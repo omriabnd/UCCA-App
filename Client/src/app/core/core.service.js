@@ -34,10 +34,20 @@
 			generateRestrictionObject: generateRestrictionObject,
 			parseSmartTableColumnData:parseSmartTableColumnData,
 			viewOnlyRuleOk:viewOnlyRuleOk,
-			promptAlert:promptAlert
+			promptAlert:promptAlert,
+            isEmptyObject:isEmptyObject
 		};
 		
 		return core;
+
+        function isEmptyObject(obj) {
+            for(var prop in obj) {
+                if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+                    return false;
+                }
+            }
+            return true;
+        }
 
 		function viewOnlyRuleOk(_viewOnlyRule){
 		    var isOk = false;

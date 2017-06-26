@@ -44,6 +44,7 @@
             getPrevSibling:getPrevSibling,
             getUnitById:getUnitById,
             getParentUnitId:getParentUnitId,
+            getParentUnit:getParentUnit,
             saveTask: saveTask,
             submitTask: submitTask,
             initTree:initTree,
@@ -107,6 +108,10 @@
             return $http.get(url).then(successFunction,errorFunction);
         }
 
+        function getParentUnit(unitId){
+            return getUnitById(getParentUnitId(unitId));
+        }
+
         function resetTree(){
             return $q(function(resolve, reject) {
                 try{
@@ -130,6 +135,10 @@
         function toggleCategoryForUnit(unitId,category){
             return $q(function(resolve, reject) {
                 var unit = getUnitById(unitId);
+
+                if(unit === null){
+                    reject('ToggleSuccess');
+                }
                 var elementPos = category ? unit.categories.map(function(x) {return x.id; }).indexOf(category.id) : -1;
                 if(elementPos === -1){
                     unit.categories.push(category);
@@ -174,7 +183,9 @@
                 }else{
                     newObject.annotation_unit_tree_id = level + '-' +  parseInt(parentUnit.AnnotationUnits.length + 1);
                 }
-                newObject.comment = "";
+
+
+                newObject.comment = newObject.comment || "";
 
                 var units = [];
 
@@ -224,7 +235,21 @@
                     return level;
                 }
 
+                //Update IndexInParent attribute
+                newObject.tokens.forEach(function(token,index){
+                    token.indexInParent = index;
+                });
+
                 parentUnit.AnnotationUnits.push(newObject);
+
+                var parentUnitTokens = parentUnit.tokens;
+
+                parentUnitTokens.forEach(function(token,index){
+                    var elementPos = newObject.tokens.map(function(x) {return x.id; }).indexOf(token.id);
+                    if(elementPos === -1){
+                        token['inUnit'] = null;
+                    }
+                });
 
                 parentUnit.gui_status = "OPEN";
 
@@ -256,7 +281,7 @@
                     parentUnit.AnnotationUnits = preArray.concat(unit.AnnotationUnits).concat(afterArray);
 
                     for(var i=0; i<parentUnit.AnnotationUnits.length; i++){
-                        if(parentUnit.AnnotationUnits[i].unitType === "IMPLICIT"){
+                        if(parentUnit.AnnotationUnits[i].unitType !== "REGULAR"){
                             parentUnit.AnnotationUnits.splice(i,1);
                             i--;
                         }
@@ -301,7 +326,28 @@
             }
             if(unit.AnnotationUnits && unit.AnnotationUnits.length > 0){
                 for (var i = 0; i < unit.AnnotationUnits.length; i++) {
+
+                    var oldId = angular.copy(unit.AnnotationUnits[i].annotation_unit_tree_id);
+
                     unit.AnnotationUnits[i].annotation_unit_tree_id = unit.annotation_unit_tree_id === "0" ? (i+1).toString() : treeId+"-"+(i+1).toString();
+
+                    if(oldId !== unit.AnnotationUnits[i].annotation_unit_tree_id){
+                        // console.log("Old id is : ", oldId, " new id is : ", unit.AnnotationUnits[i].annotation_unit_tree_id );
+                        if(DataService.unitsUsedAsRemote[oldId]){
+                            DataService.unitsUsedAsRemote[unit.AnnotationUnits[i].annotation_unit_tree_id] = angular.copy(DataService.unitsUsedAsRemote[oldId]);
+
+                            delete DataService.unitsUsedAsRemote[oldId];
+                        }else{
+                            for(var key in DataService.unitsUsedAsRemote){
+                                if(DataService.unitsUsedAsRemote[key][oldId]){
+                                    DataService.unitsUsedAsRemote[key][unit.AnnotationUnits[i].annotation_unit_tree_id] = true;
+
+                                    delete DataService.unitsUsedAsRemote[key][oldId];
+                                }
+                            }
+                        }
+                    }
+
                     unit.AnnotationUnits[i].tokens.forEach(function(token){
                         token.parentId = unit.AnnotationUnits[i].annotation_unit_tree_id;
 
@@ -323,9 +369,38 @@
         }
 
         function sortUnits(a,b){
-            if(a.tokens[0].indexInParent > b.tokens[0].indexInParent){
+            var aParentUnit = getParentUnit(a.annotation_unit_tree_id);
+            var bParentUnit = getParentUnit(b.annotation_unit_tree_id);
+
+            var aElementPos = aParentUnit.tokens.map(function(x) {return x.id; }).indexOf(a.tokens[0].id);
+            var bElementPos = bParentUnit.tokens.map(function(x) {return x.id; }).indexOf(b.tokens[0].id);
+
+            if(a.unitType !== "REGULAR" || b.unitType !== "REGULAR"){
+                if(a.unitType === "REGULAR" && b.unitType !== "REGULAR"){
+                    return 1;
+                }else if(b.unitType === "REGULAR" && a.unitType !== "REGULAR"){
+                    return -1;
+                }else{
+                    if(a.unitType === "REMOTE" && b.unitType === "IMPLICIT"){
+                        return -1;
+                    }else if(a.unitType === "IMPLICIT" && b.unitType === "REMOTE"){
+                        return 1;
+                    }else{
+                        if(a.unitType === "REMOTE" && b.unitType === "REMOTE"){
+                            if(a.remote_original_id > b.remote_original_id){
+                                return 1;
+                            }
+                            else if(a.remote_original_id < b.remote_original_id){
+                                return -1;
+                            }else{ return 0;}
+                        }
+                        return 0;
+                    }
+                }
+            }
+            else if(aParentUnit.tokens[aElementPos].indexInParent > bParentUnit.tokens[bElementPos].indexInParent){
                 return 1;
-            }else if(a.tokens[0].indexInParent < b.tokens[0].indexInParent){
+            }else if(aParentUnit.tokens[aElementPos].indexInParent < bParentUnit.tokens[bElementPos].indexInParent){
                 return -1;
             }else{
                 return 0;
@@ -609,6 +684,9 @@
         }
 
         function getParentUnitId(unitId){
+            if(unitId === null){
+                return null;
+            }
             unitId = unitId.toString();
             if(unitId.length == 1){
                 if(unitId =="0"){

@@ -42,6 +42,7 @@
             vm.toggleAnnotationUnitView = toggleAnnotationUnitView;
             vm.isUnitCollaped = isUnitCollaped;
             vm.isUnitHidden = isUnitHidden;
+            vm.toggleMouseUp = toggleMouseUp;
             vm.dataBlock = DataService.getUnitById(vm.unit.annotation_unit_tree_id);
 
             vm.dataBlock['cursorLocation'] = 0;
@@ -203,7 +204,7 @@
                     var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
                     var elementPos = childUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
                     var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
-                    if(elementPos !== -1){
+                    if(elementPos !== -1 && elementPosInThisUnit !== -1){
                         tokens[elementPosInThisUnit].borderStyle = "border : none;";
                     }
                 })
@@ -358,14 +359,20 @@
             }
         }
 
-        function toggleMouseUpDown(){
+        function toggleMouseUpDown(event){
+            HotKeysManager.updatePressedHotKeys({combo:'shift'},!shiftPressed);
             var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed("shift");
             var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed("ctrl");
             !shiftPressed && !ctrlPressed ? selectionHandlerService.clearTokenList() : '';
-            HotKeysManager.updatePressedHotKeys({combo:'shift'},!shiftPressed);
 
             shiftPressed = HotKeysManager.checkIfHotKeyIsPressed("shift");
-            shiftPressed && !ctrlPressed ? selectionHandlerService.clearTokenList() : '';
+            // shiftPressed && !ctrlPressed ? selectionHandlerService.clearTokenList() : '';
+            selectionHandlerService.toggleMouseUpDown();
+        }
+
+        function toggleMouseUp(event) {
+            HotKeysManager.updatePressedHotKeys({combo: 'shift'}, false);
+            HotKeysManager.updatePressedHotKeys({combo: 'ctrl'}, false);
         }
 
         function isUnitClicked(vm){
@@ -382,7 +389,7 @@
             var currentUnit = DataService.getUnitById(unitId);
 
 
-            if(DataService.unitsUsedAsRemote[unitId] !==  undefined){
+            if(DataService.unitsUsedAsRemote[unitId] !==  undefined && !Core.isEmptyObject(DataService.unitsUsedAsRemote[unitId])){
                 open('app/pages/annotation/templates/deleteAllRemoteModal.html','md',Object.keys(DataService.unitsUsedAsRemote[unitId]).length,vm);
             }else{
                 if(currentUnit.unitType === "REMOTE"){
