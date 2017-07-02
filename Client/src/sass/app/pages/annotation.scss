@@ -6,6 +6,11 @@
 .annotation-page-container{
 
 
+  .unit-cursor{
+    &.no_cursor{
+      opacity :0;
+    }
+  }
 
 
   annotation-units{
@@ -45,12 +50,12 @@
     display: block;
     margin-top: 10px;
     box-shadow: 0 0 0 black;
-    transition: box-shadow 0.3s linear;
+    
   }
 
   .selected-unit {
     box-shadow: 1px 3px 5px black;
-    transition: box-shadow 0.3s linear;
+  
   }
 
   .category-square {

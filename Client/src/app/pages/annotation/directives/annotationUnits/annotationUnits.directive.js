@@ -134,7 +134,9 @@
 
         function toggleAnnotationUnitView(vm){
             if(vm.dataBlock.gui_status === "OPEN"){
-                vm.dataBlock.gui_status = "COLLAPSE"
+                vm.dataBlock.gui_status = "COLLAPSE";
+
+                subTreeToCollapse(vm.dataBlock);
             }else{
                 vm.dataBlock.gui_status = "OPEN";
             }
@@ -350,13 +352,28 @@
             var hashTables = DataService.hashTables;
             var isUnitValidated = restrictionsValidatorService.checkRestrictionsOnFinish(unitToValidate,parentUnit,hashTables);
             if(isUnitValidated){
+                selectionHandlerService.updateSelectedUnit(parentUnit.annotation_unit_tree_id);
                 if(parentUnit.annotation_unit_tree_id === "0"){
                     unitToValidate.gui_status = 'HIDDEN';
                 }else{
                     unitToValidate.gui_status = 'COLLAPSE';
                 }
+
+                subTreeToCollapse(unitToValidate);
+
                 Core.showNotification('success','Annotation unit ' + unitToValidate.annotation_unit_tree_id + ' has finished successfully' )
             }
+
+            event.stopPropagation();
+        }
+
+        function subTreeToCollapse(subtree_root_unit){
+            return ;
+            subtree_root_unit.AnnotationUnits.forEach(function(unit){   
+               DataService.getUnitById(unit.annotation_unit_tree_id).gui_status = "COLLAPSE";
+
+               subTreeToCollapse(unit);
+            })
         }
 
         function toggleMouseUpDown(event){
@@ -435,7 +452,7 @@
             }
         }
 
-        function unitClicked(vm,index){
+        function unitClicked(vm,index, event){
             if(selectionHandlerService.getUnitToAddRemotes() !== "0" && selectionHandlerService.getUnitToAddRemotes() !== index){
                 var unitUsed = DataService.getUnitById(selectionHandlerService.getUnitToAddRemotes()).AnnotationUnits.map(function(x) {return x.remote_original_id; }).indexOf(vm.unit.annotation_unit_tree_id);
 
@@ -445,7 +462,7 @@
                     open('app/pages/annotation/templates/errorModal.html','sm','Unit already exists as remote.',vm);
                     return;
                 }
-                if(DataService.getUnitById(index).unitType === "REMOTE"){
+                if(DataService.getUnitById(index).unitType === "REMOTE" || selectionHandlerService.getUnitToAddRemotes().startsWith(index) || index.startsWith(selectionHandlerService.getUnitToAddRemotes())){
                     selectionHandlerService.setUnitToAddRemotes("0");
                     $('.annotation-page-container').toggleClass('crosshair-cursor');
                     open('app/pages/annotation/templates/errorModal.html','sm','Cannot add remote unit as remote.',vm);
@@ -491,7 +508,8 @@
 
 
             }
-            selectionHandlerService.updateSelectedUnit(index);
+            event.stopPropagation();
+            objToPush ? selectionHandlerService.updateSelectedUnit(objToPush.annotation_unit_tree_id) : selectionHandlerService.updateSelectedUnit(index);
         }
 
         function updateStartEndIndexForTokens(tokens){

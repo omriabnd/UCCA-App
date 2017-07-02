@@ -149,6 +149,9 @@
                         unit.categories = [];
                     }
                 }
+                DataService.getParentUnit(unit.annotation_unit_tree_id).gui_status = "OPEN";
+                DataService.getUnitById(unit.annotation_unit_tree_id).gui_status = "OPEN";
+
                 $rootScope.$broadcast("ToggleSuccess",{categories: unit.categories, id: unit.annotation_unit_tree_id});
                 resolve('ToggleSuccess');
             })
@@ -296,9 +299,11 @@
 
                 updateTreeIds(DataService.tree);
 
-                updateInUnitIdsForTokens(DataService.tree);
+                updateInUnitIdsForTokens(DataService.getParentUnit(unit.annotation_unit_tree_id));
 
                 $rootScope.$broadcast("DeleteSuccess",{categories: unit.categories, id: unit.annotation_unit_tree_id});
+
+                DataService.getParentUnit(unit.annotation_unit_tree_id).gui_status = "OPEN";
 
                 return resolve('DeleteSuccess');
             });
@@ -312,7 +317,9 @@
 
                     if(isTokenInUnit){
                         token.inUnit = isTokenInUnit;
-                }
+                    }else{
+                        token.inUnit = null;
+                    }
             })
 
             unit.AnnotationUnits.forEach(function(child_unit){

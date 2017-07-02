@@ -9,7 +9,7 @@
 
         var directive = {
             restrict:'E',
-            template:'<span class="unit-cursor" ng-if="vm.isCursorUnitClicked(vm,$parent.$index)">|</span>',
+            template:'<span class="unit-cursor" ng-class="{no_cursor:!vm.isCursorUnitClicked(vm,$parent.$index)}">|</span>',
             scope:{
                 unitId:"="
             },
@@ -80,6 +80,14 @@
                         if(nextToken === undefined) return;
 
                         var unit = DataService.getUnitById(nextToken.inUnit);
+                        // unitTokens = DataService.getUnitById(token.inUnit).tokens;
+                        // if(unitTokens.length > 1){
+                        //     var tokenPosition = unitTokens.map(function(x) {return x.id; }).indexOf(token.id);
+                        //     if(tokenPosition !== unitTokens.length - 1){
+                        //         nextToken = unitTokens[tokenPosition];
+                        //     }
+
+                        // }
                         if(token.inUnit === nextToken.inUnit && unit !== null && unit.annotation_unit_tree_id !== "0"){
                             if(unit.tokens === undefined){
                                 unit.tokens = unit.tokenCopy;

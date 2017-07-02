@@ -272,16 +272,23 @@
                                   // }
                                   var nextUnit = DataService.getNextUnit(selectedUnitId);
                                   var nextSibling = DataService.getSibling(selectedUnitId);
+
+                                  
                                   if(nextUnit === -1 && nextSibling === undefined){
                                       return;
                                   }
-                                  if(nextSibling){
+
+                                  while(nextUnit !== -1 && DataService.getUnitById(nextUnit).gui_status === "HIDDEN"){
+                                    nextUnit = DataService.getNextUnit(nextUnit);
+                                  }
+
+                                  if(nextSibling && nextSibling.gui_status !== "HIDDEN" && DataService.getParentUnit(nextSibling.annotation_unit_tree_id).gui_status === "OPEN"){
                                       selectionHandlerService.updateSelectedUnit(nextSibling.annotation_unit_tree_id);
-                                      DataService.getUnitById(nextSibling.annotation_unit_tree_id).gui_status = "OPEN";
+                                      // DataService.getUnitById(nextSibling.annotation_unit_tree_id).gui_status = "OPEN";
                                   }else{
-                                      if(nextUnit){
+                                      if(nextUnit && nextUnit !== -1){
                                           selectionHandlerService.updateSelectedUnit(nextUnit);
-                                          DataService.getUnitById(nextUnit).gui_status = "OPEN";
+                                          // DataService.getUnitById(nextUnit).gui_status = "OPEN";
                                       }
                                   }
                                   break;
@@ -301,28 +308,47 @@
                                   }
 
                                   var prevUnit = DataService.getPrevUnit(selectedUnitId);
+
+                                  // while(prevUnit.gui_status === "HIDDEN" || DataService.getParentUnit(prevUnit.annotation_unit_tree_id).gui_status === "COLLAPSE" || DataService.getParentUnit(prevUnit.annotation_unit_tree_id).gui_status === "HIDDEN"){
+                                  //   if(DataService.getPrevSibling(prevUnit.annotation_unit_tree_id) === null){
+                                  //     prevUnit = DataService.getPrevUnit(prevUnit.annotation_unit_tree_id);                                      
+                                  //   }else{
+                                  //     prevUnit = DataService.getPrevSibling(prevUnit.annotation_unit_tree_id);
+                                  //   }
+                                  // }
+
                                   var prevSibling = DataService.getPrevSibling(selectedUnitId);
 
-                                  while (prevSibling.AnnotationUnits.length > 0) {
-                                      prevSibling = prevSibling.AnnotationUnits[prevSibling.AnnotationUnits.length - 1];
+                                  while(prevSibling.gui_status === "HIDDEN"){
+                                    if(prevSibling.annotation_unit_tree_id == "1"){
+                                        prevSibling = DataService.getUnitById("0")
+                                    }else{
+                                      prevSibling = DataService.getPrevSibling(prevSibling.annotation_unit_tree_id)
+                                    }
                                   }
+
+                                  while(prevSibling.annotation_unit_tree_id != "0" && prevSibling.gui_status !== "COLLAPSE" && prevSibling.AnnotationUnits.length > 0){
+                                    prevSibling = prevSibling.AnnotationUnits[prevSibling.AnnotationUnits.length - 1];
+                                  }
+
+                                  
 
                                   if (prevSibling === null) {
                                       selectionHandlerService.updateSelectedUnit(prevUnit.annotation_unit_tree_id);
-                                      prevUnit.gui_status = "OPEN";
+                                      // prevUnit.gui_status = "OPEN";
                                       break;
                                   }
                                   if (prevSibling.annotation_unit_tree_id.length > prevUnit.annotation_unit_tree_id.length) {
                                       selectionHandlerService.updateSelectedUnit(prevSibling.annotation_unit_tree_id);
-                                      DataService.getUnitById(prevSibling.annotation_unit_tree_id).gui_status = "OPEN";
+                                      // DataService.getUnitById(prevSibling.annotation_unit_tree_id).gui_status = "OPEN";
                                   } else {
                                       if (prevSibling) {
                                           selectionHandlerService.updateSelectedUnit(prevSibling.annotation_unit_tree_id);
-                                          DataService.getUnitById(prevSibling.annotation_unit_tree_id).gui_status = "OPEN";
+                                          // DataService.getUnitById(prevSibling.annotation_unit_tree_id).gui_status = "OPEN";
                                       } else {
                                           if (prevUnit && prevUnit.annotation_unit_tree_id !== selectedUnitId) {
                                               selectionHandlerService.updateSelectedUnit(prevUnit.annotation_unit_tree_id);
-                                              DataService.getUnitById(prevUnit.annotation_unit_tree_id).gui_status = "OPEN";
+                                              // DataService.getUnitById(prevUnit.annotation_unit_tree_id).gui_status = "OPEN";
 
                                           }
                                       }
