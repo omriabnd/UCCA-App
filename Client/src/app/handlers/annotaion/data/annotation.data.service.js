@@ -259,6 +259,8 @@
 
                 updateTreeIds(DataService.tree);
 
+                updateInUnitIdsForTokens(DataService.tree);
+
                 newObject.unitType !== "REMOTE" ? $rootScope.$broadcast("InsertSuccess",{dataBlock: { id: level, AnnotationUnits: getUnitById(level).AnnotationUnits},newUnitId: newObject.annotation_unit_tree_id }) : '';
 
                 return resolve({status: 'InsertSuccess',id: newObject.annotation_unit_tree_id});
@@ -294,12 +296,30 @@
 
                 updateTreeIds(DataService.tree);
 
+                updateInUnitIdsForTokens(DataService.tree);
+
                 $rootScope.$broadcast("DeleteSuccess",{categories: unit.categories, id: unit.annotation_unit_tree_id});
 
                 return resolve('DeleteSuccess');
             });
         }
 
+        function updateInUnitIdsForTokens(unit){
+            unit.tokens.forEach(function(token){
+                token.parentId = unit.annotation_unit_tree_id;
+
+                    var isTokenInUnit = DataService.isTokenInUnit(unit,token);
+
+                    if(isTokenInUnit){
+                        token.inUnit = isTokenInUnit;
+                }
+            })
+
+            unit.AnnotationUnits.forEach(function(child_unit){
+                updateInUnitIdsForTokens(child_unit);
+            })
+
+        }
         function sortTree(annotationUnits) {
             if (annotationUnits.length > 1) {
                 annotationUnits.sort(sortUnits);
@@ -311,19 +331,6 @@
         }
 
         function updateTreeIds(unit,treeId){
-            if(unit.annotation_unit_tree_id){
-
-                unit.tokens.forEach(function(token){
-                    token.parentId = unit.annotation_unit_tree_id;
-
-                    var isTokenInUnit = DataService.isTokenInUnit(unit,token);
-
-                    if(isTokenInUnit){
-                        token.inUnit = isTokenInUnit;
-                    }
-                });
-
-            }
             if(unit.AnnotationUnits && unit.AnnotationUnits.length > 0){
                 for (var i = 0; i < unit.AnnotationUnits.length; i++) {
 
@@ -347,16 +354,6 @@
                             }
                         }
                     }
-
-                    unit.AnnotationUnits[i].tokens.forEach(function(token){
-                        token.parentId = unit.AnnotationUnits[i].annotation_unit_tree_id;
-
-                        var isTokenInUnit = DataService.isTokenInUnit(unit.AnnotationUnits[i],token);
-
-                        if(isTokenInUnit){
-                            token.inUnit = isTokenInUnit;
-                        }
-                    });
                     updateTreeIds(unit.AnnotationUnits[i],unit.AnnotationUnits[i].annotation_unit_tree_id);
                 }
             }else{

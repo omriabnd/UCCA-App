@@ -59,6 +59,9 @@
                 return this.lastSelectedToken;
             },
             addTokenToList: function(token,selectedUnit,groupUnit){
+                if(token.id === 15729){
+                    debugger
+                }
                 var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.id);
                 if(elementPos === -1){
                     !groupUnit ? _handler.removeTokenFromUnitTokens(token) : '';
