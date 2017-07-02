@@ -328,6 +328,7 @@
                                       }
                                       break;
                                   }
+                                  break;
                               }
                               case 'deleteFromTree':{
                                   var selectedUnitId = selectionHandlerService.getSelectedUnitId();

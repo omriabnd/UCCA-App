@@ -7,7 +7,7 @@
 	.constant('ENV_CONST', {
 		IS_DEV:false,
 		TEST_URL:"http://private-daea0-ucca.apiary-mock.com/api/v1",
-		PROD_URL:"http://localhost:8000/api/v1",
+		PROD_URL:"http://ucca.staging.cs.huji.ac.il/api/v1",
 		LOCAL_RESOURCES: "app/resources",
 		TASK_TYPE:{
 			ANNOTATION:"ANNOTATION",
