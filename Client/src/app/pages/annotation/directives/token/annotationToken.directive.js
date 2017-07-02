@@ -78,8 +78,8 @@
 
                 // Or you can animate the scrolling:
                 container.animate({
-                    scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() - 100
-                },1000, "linear");
+                    scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() - 300
+                },0, "linear");
             }
 
         }
@@ -195,7 +195,7 @@
         function mouseUpFromToken(vm){
             var selectedTokenArray = selectionHandlerService.getSelectedTokenList();
             var direction = "UP"
-            if(selectionHandlerService.getLastInsertedToken().start_index > vm.token.start_index){
+            if(selectionHandlerService.getLastInsertedToken() !== null && selectionHandlerService.getLastInsertedToken().start_index > vm.token.start_index){
                 direction = "DOWN"
             }
             selectedTokenArray.forEach(function(token,index){

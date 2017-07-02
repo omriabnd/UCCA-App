@@ -85,6 +85,10 @@
                 if(args.unitId.toString() === $scope.vm.dataBlock.annotation_unit_tree_id ){
                     checkRestrictionForCurrentUnit(args.unitId);
                 }
+                if(event){
+                    event.preventDefault();
+                    // event.stopPropagation();
+                }
             });
 
             $scope.$on('InsertSuccess', function(event, args) {
@@ -101,8 +105,8 @@
 
                         // Or you can animate the scrolling:
                         container.animate({
-                            scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() - 100
-                        },1000, "linear");
+                            scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() - 300
+                        },0, "linear");
                     });
 
                 }
@@ -269,16 +273,16 @@
         function borderForFirstAndLastToken(categories){
             switch(categories.length){
                 case 1:{
-                    return "border : 3px solid "+categories[0].backgroundColor+";";
+                    return "border : 3px solid "+categories[0].backgroundColor+"; margin-left: 3px;";
                 }
                 case 2:{
-                    return "border : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+";";
+                    return "border : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; margin-left: 3px;";
                 }
                 case 3:{
-                    return "border : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-left : 3px solid "+categories[2].backgroundColor+";";
+                    return "border : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-left : 3px solid "+categories[2].backgroundColor+"; margin-left: 3px;";
                 }
                 default:{
-                    return "border : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-left : 3px solid "+categories[2].backgroundColor+";border-right : 3px solid "+categories[3].backgroundColor+";";
+                    return "border : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-left : 3px solid "+categories[2].backgroundColor+";border-right : 3px solid "+categories[3].backgroundColor+"; margin-left: 3px;";
                 }
             }
         }
@@ -286,13 +290,13 @@
         function borderForFirstToken(token,categories){
             switch(categories.length){
                 case 1:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[0].backgroundColor+"; border-left : 3px solid "+categories[0].backgroundColor+";";
+                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[0].backgroundColor+"; border-left : 3px solid "+categories[0].backgroundColor+"; margin-left: 3px;";
                 }
                 case 2:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-left : 3px solid "+categories[0].backgroundColor+";";
+                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-left : 3px solid "+categories[0].backgroundColor+"; margin-left: 3px;";
                 }
                 default:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-left : 3px solid "+categories[2].backgroundColor+";";
+                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-left : 3px solid "+categories[2].backgroundColor+"; margin-left: 3px;";
                 }
             }
 
@@ -322,16 +326,16 @@
         function borderForLastToken(token,categories){
             switch(categories.length){
                 case 1:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[0].backgroundColor+"; border-right : 3px solid "+categories[0].backgroundColor+";";
+                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[0].backgroundColor+"; border-right : 3px solid "+categories[0].backgroundColor+"; margin-right: 3px;";
                 }
                 case 2:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-right : 3px solid "+categories[0].backgroundColor+";";
+                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-right : 3px solid "+categories[0].backgroundColor+"; margin-right: 3px;";
                 }
                 case 3:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-right : 3px solid "+categories[2].backgroundColor+";";
+                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-right : 3px solid "+categories[2].backgroundColor+"; margin-right: 3px;";
                 }
                 default:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-right : 3px solid "+categories[3].backgroundColor+";";
+                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-right : 3px solid "+categories[3].backgroundColor+"; margin-right: 3px;";
                 }
             }
 
@@ -364,7 +368,7 @@
                 Core.showNotification('success','Annotation unit ' + unitToValidate.annotation_unit_tree_id + ' has finished successfully' )
             }
 
-            event.stopPropagation();
+            event ? event.stopPropagation() : '';
         }
 
         function subTreeToCollapse(subtree_root_unit){
@@ -390,6 +394,23 @@
         function toggleMouseUp(event) {
             HotKeysManager.updatePressedHotKeys({combo: 'shift'}, false);
             HotKeysManager.updatePressedHotKeys({combo: 'ctrl'}, false);
+
+            var selectedTokensList = selectionHandlerService.getSelectedTokenList();
+
+            selectedTokensList.forEach(function(token){
+                if(token.inUnit && DataService.getUnitById(token.inUnit)){                    
+
+                    var parentUnit = DataService.getUnitById(token.parentId);
+                    var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inUnit === token.inUnit; });
+
+                    tokenGroup.forEach(function(tokenInGroup){
+                        var elementPos = selectedTokensList.map(function(x) {return x.id; }).indexOf(tokenInGroup.id);
+                        if(elementPos === -1){
+                            $rootScope.$broadcast('tokenIsClicked',{token: tokenInGroup, parentId: tokenInGroup.parentId,selectAllTokenInUnit: true});
+                        }
+                    })
+                }
+            })
         }
 
         function isUnitClicked(vm){
