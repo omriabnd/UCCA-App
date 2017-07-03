@@ -198,6 +198,8 @@
             if(selectionHandlerService.getLastInsertedToken() !== null && selectionHandlerService.getLastInsertedToken().start_index > vm.token.start_index){
                 direction = "DOWN"
             }
+            var tokenListLength = angular.copy(selectedTokenArray.length);
+
             selectedTokenArray.forEach(function(token,index){
                 if(token.inUnit){
                     var tokenUnit = DataService.getUnitById(token.inUnit);
@@ -220,6 +222,14 @@
                             });
                         }
                     }
+                }
+                if(index === tokenListLength - 1){
+                    var parentUnit = DataService.getParentUnit(selectedTokenArray[selectedTokenArray.length - 1].parentId);
+                    var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(selectedTokenArray[selectedTokenArray.length - 1].id);
+                    $rootScope.$broadcast('moveCursor', {
+                        token: parentUnit.tokens[elementPos + 1],
+                        parentId: DataService.getParentUnitId(selectedTokenArray[selectedTokenArray.length - 1].parentId) || "0"
+                    });
                 }
                 // $rootScope.$broadcast('moveCursor', {
                 //     token: vm.token,

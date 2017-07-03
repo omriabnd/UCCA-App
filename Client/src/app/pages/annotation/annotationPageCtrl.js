@@ -301,6 +301,16 @@
                                           // DataService.getUnitById(nextUnit).gui_status = "OPEN";
                                       }
                                   }
+
+                                  $timeout(function(){
+                                      var container = $('html, body'),
+                                          scrollTo = $('#unit-'+selectionHandlerService.getSelectedUnitId());
+
+                                      // Or you can animate the scrolling:
+                                      container.animate({
+                                          scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() - 300
+                                      },0, "linear");
+                                  });
                                   break;
                               }
                               case 'moveUp': {
@@ -362,8 +372,16 @@
 
                                           }
                                       }
-                                      break;
                                   }
+                                  $timeout(function(){
+                                      var container = $('html, body'),
+                                          scrollTo = $('#unit-'+selectionHandlerService.getSelectedUnitId());
+
+                                      // Or you can animate the scrolling:
+                                      container.animate({
+                                          scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() - 300
+                                      },0, "linear");
+                                  });
                                   break;
                               }
                               case 'deleteFromTree':{
