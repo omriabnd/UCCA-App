@@ -24,6 +24,7 @@
       vm.finishAll = finishAll;
       vm.goToMainMenu = goToMainMenu;
       vm.resetAllAnnotations = resetAllAnnotations;
+      vm.inRemoteMode = inRemoteMode;
 
       vm.fontSizes = [
           {preview:"AAA",name:"big",size:1},
@@ -36,11 +37,11 @@
 
 
       function init(){
-          $(document).on('keydown', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            // e.stopImmediatePropagation();
-          })
+          // $(document).on('keydown', function(e) {
+          //   e.preventDefault();
+          //   e.stopPropagation();
+          //   // e.stopImmediatePropagation();
+          // })
 
           $scope.$on('InsertSuccess', function(event, args) {
               if(args.dataBlock.id === 0 ){
@@ -62,6 +63,10 @@
 
       function setFontSize(fontSize){
           $('.main-body').css({'font-size':fontSize.size+'em'})
+      }
+
+      function inRemoteMode (){
+        return selectionHandlerService.getUnitToAddRemotes() !== "0";
       }
 
       function submitTask(){
@@ -89,14 +94,19 @@
       }
 
       function spacePressed(){
-            var selectionList = selectionHandlerService.getSelectedTokenList();
-            if(isUnitSelected(selectionList)){
-                DataService.deleteUnit(selectionList[0].inUnit);
-                selectionHandlerService.clearTokenList();
+            if(selectionHandlerService.getUnitToAddRemotes() !== "0"){
+              $rootScope.unitClicked($rootScope.currentVm,selectionHandlerService.getSelectedUnitId(),null)
+            }else{
+              var selectionList = selectionHandlerService.getSelectedTokenList();
+              if(isUnitSelected(selectionList)){
+                  DataService.deleteUnit(selectionList[0].inUnit);
+                  selectionHandlerService.clearTokenList();
+              }
+              else if(selectionList.length){
+                  selectionHandlerService.toggleCategory();
+              }
             }
-            else if(selectionList.length){
-                selectionHandlerService.toggleCategory();
-            }
+            
       }
 
       function isUnitSelected(selectionList){
@@ -157,11 +167,10 @@
       function bindCategoriesHotKeys(hotkeys,scope,rootScope,vm,HotKeysManager,dataService){
           TaskMetaData.Categories.forEach(function(categoryObj){
               if(categoryObj.shortcut_key && !categoryObj.fromParentLayer){
-
-                  HotKeysManager.addHotKey(categoryObj.shortcut_key.toString().toLowerCase());
+                  categoryObj.shortcut_key = categoryObj.shortcut_key.toString().toLowerCase();
+                  HotKeysManager.addHotKey(categoryObj.shortcut_key);
                   hotkeys.del(categoryObj.shortcut_key.toString().toLowerCase());
-                  hotkeys.bindTo(scope)
-                      .add({
+                  hotkeys.add({
                           combo: categoryObj.shortcut_key,
                           description: categoryObj.description,
                           action: 'keydown',
@@ -174,8 +183,7 @@
 
                   HotKeysManager.addHotKey('shift+'+categoryObj.shortcut_key.toString().toLowerCase());
                   hotkeys.del(categoryObj.shortcut_key.toString().toLowerCase());
-                  hotkeys.bindTo(scope)
-                      .add({
+                  hotkeys.add({
                           combo: 'shift+'+categoryObj.shortcut_key,
                           description: 'Remote category '+categoryObj.name,
                           action: 'keydown',
@@ -192,8 +200,7 @@
           vm.defaultHotKeys.ManualHotKeys.forEach(function(hotKeyObj){
 
               HotKeysManager.addHotKey(hotKeyObj.combo);
-              hotkeys.bindTo(scope)
-                  .add({
+              hotkeys.add({
                       combo: hotKeyObj.combo,
                       description: hotKeyObj.description,
                       action: hotKeyObj.action,
@@ -209,8 +216,7 @@
 
               HotKeysManager.addHotKey(hotKeyObj.combo);
 
-              hotkeys.bindTo(scope)
-                  .add({
+              hotkeys.add({
                       combo: hotKeyObj.combo,
                       description: hotKeyObj.description,
                       action: 'keyup',
@@ -219,7 +225,7 @@
                           e.preventDefault()
                       }
                   })
-                  .add({
+              hotkeys.add({
                       combo: hotKeyObj.combo,
                       description: hotKeyObj.description,
                       action: 'keydown',
@@ -232,8 +238,7 @@
           vm.defaultHotKeys.DefaultHotKeys.forEach(function(hotKeyObj){
 
               HotKeysManager.addHotKey(hotKeyObj.combo);
-              hotkeys.bindTo(scope)
-                  .add({
+              hotkeys.add({
                       combo: hotKeyObj.combo,
                       description: hotKeyObj.description,
                       action: hotKeyObj.action,

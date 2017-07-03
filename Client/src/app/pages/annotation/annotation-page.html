@@ -1,5 +1,5 @@
 <div class="annotation-page-container">
-    <div class="col-xs-2 side-bar" keep-on-top>
+    <div class="col-xs-2 side-bar" keep-on-top ng-class="{'no-events': vm.inRemoteMode()}">
         <div class="categories-container">
             <categories-directive ng-repeat="category in vm.categories track by $index" definition-details="category" definition-id="$index"></categories-directive>
         </div>

@@ -9,6 +9,12 @@
   }
 }
 
+.side-bar{
+  &.no-events {
+    pointer-events:none;
+  }
+}
+
 .annotation-page-container{
 
 

@@ -32,6 +32,7 @@
         function AnnotationUnitController(DataService) {
             var vm = this;
             vm.unitClicked = unitClicked;
+            $rootScope.unitClicked = vm.unitClicked;
             vm.isUnitClicked = isUnitClicked;
             vm.deleteUnit = deleteUnit;
             vm.toggleMouseUpDown = toggleMouseUpDown;
@@ -151,6 +152,9 @@
         }
 
         function unitIsSelected(vm){
+            if(selectionHandlerService.getSelectedUnitId() === vm.dataBlock.annotation_unit_tree_id){                
+                $rootScope.currentVm = vm;
+            }
             return selectionHandlerService.getSelectedUnitId() === vm.dataBlock.annotation_unit_tree_id;
         }
         function addCommentToUnit(unitId,vm){
@@ -227,18 +231,18 @@
                         if(elementPos !== -1 && elementPosInThisUnit !== -1){
                             if(unit.categories.length === 1 && unit.categories[0] === undefined || unit.categories.length === 0){
                                 unit.categories[0] = {
-                                    id:9999,
+                                    id:-1,
                                     backgroundColor: 'gray'
                                 }
                             }
                             childUnitTokens[elementPos].backgroundColor = unit.categories[0] ? unit.categories[0].backgroundColor : "transparent";
 
-                            if(unit.categories.length === 1 && unit.categories[0].id === 9999){
+                            if(unit.categories.length === 1 && unit.categories[0].id === -1){
                                 tokens[elementPosInThisUnit].borderStyle = "transparent";
                             }
 
                             if(unit.categories.length > 1){
-                                var elementPos = unit.categories.map(function(x) {return x.id; }).indexOf(9999);
+                                var elementPos = unit.categories.map(function(x) {return x.id; }).indexOf(-1);
                                 if(elementPos > -1){
                                     unit.categories.splice(unit.categories,1);
                                 }
@@ -413,7 +417,7 @@
             })
         }
 
-        function isUnitClicked(vm){
+        function isUnitClicked(vm){            
             return selectionHandlerService.getSelectedUnitId() === vm.dataBlock.annotation_unit_tree_id;
         }
 
@@ -529,7 +533,7 @@
 
 
             }
-            event.stopPropagation();
+            event ? event.stopPropagation() : '';
             objToPush ? selectionHandlerService.updateSelectedUnit(objToPush.annotation_unit_tree_id) : selectionHandlerService.updateSelectedUnit(index);
         }
 

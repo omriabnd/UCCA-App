@@ -442,7 +442,7 @@
                 delete unit.children_tokens;
             }
             unit.type === 'REMOTE' ? unit.type = 'REGULAR' : '';
-            if(unit.categories.length === 1 && unit.categories[0].id === null){
+            if(unit.categories.length === 1 && unit.categories[0].id === -1){
                 unit.categories = [];
             }
 
