@@ -37,11 +37,13 @@
 
 
       function init(){
-          // $(document).on('keydown', function(e) {
-          //   e.preventDefault();
-          //   e.stopPropagation();
-          //   // e.stopImmediatePropagation();
-          // })
+          $(document).on('keydown', function(e) {
+            if(!$(e.target).hasClass('unit-comment-text')){
+              e.preventDefault();
+              e.stopPropagation();
+              // e.stopImmediatePropagation();
+            }
+          })
 
           $scope.$on('InsertSuccess', function(event, args) {
               if(args.dataBlock.id === 0 ){

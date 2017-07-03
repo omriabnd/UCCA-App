@@ -581,6 +581,8 @@ textarea.unit-comment-text {
   }
   .side-bar {
       direction: rtl;
+      max-height: 700px;
+      overflow: auto;
       categories-directive {
           direction: ltr;
       }
@@ -596,8 +598,7 @@ textarea.unit-comment-text {
           direction: ltr;
       }
       .categories-container{
-        max-height: 600px;
-        overflow: auto;
+        
       }
   }
   .refinedCategory{
