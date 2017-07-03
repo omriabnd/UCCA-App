@@ -7,7 +7,7 @@
         .service('selectionHandlerService', selectionHandlerService);
 
     /** @ngInject */
-    function selectionHandlerService(DataService, $rootScope) {
+    function selectionHandlerService(DataService, $rootScope,$q) {
         var selectedTokenList = [];
         var selectedUnit = "0";
         var selectedToken = null;
@@ -309,67 +309,72 @@
             },
             toggleCategory: function(category,justToggle,remote,unit,inInitStage){
 
-
-
-                if(this.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(this.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(this.selectedTokenList)){
-                    return
-                }
-
-                if(!aUnitIsSelected(this.selectedTokenList,inInitStage) && (this.selectedTokenList.length && !justToggle) || remote || inInitStage){
-                    //This mean we selected token and now we need to create new unit.
-                    
-                    updateIndexInParentAttribute(this.selectedTokenList);
-                    updatePositionInUnitAttribute(this.selectedTokenList);
-                    updateNextTokenNotAdjacent(this.selectedTokenList);
-                    updateLastTokenNotAdjacent(this.selectedTokenList);
-
-                    var newUnit = {
-                        tokens : angular.copy(this.selectedTokenList),
-                        categories:[],
-                        gui_status:unit ? unit.gui_status : "OPEN",
-                        comment: unit ? unit.comment : ''
-                    };
-                    if(remote){
-                        newUnit = angular.copy(remote);
-                        var tempCat = angular.copy(newUnit.categories[0]);
-                        newUnit.categories = [];
-                        tempCat !== undefined ? newUnit.categories.push(DataService.hashTables.categoriesHashTable[tempCat.id]) : '';
-
-                        this.selectedUnit = newUnit.parent_id;
-
+                return $q(function(resolve, reject) {
+                    if(_handler.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(_handler.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(_handler.selectedTokenList,inInitStage)){
+                        return
                     }
 
-                    category !== null && !remote ? newUnit.categories.push(angular.copy(category)) : '';
-                    return DataService.insertToTree(newUnit,this.selectedUnit).then(function(res){
-                        if(res.status === "InsertSuccess"){
-                            _handler.updateSelectedUnit(res.id,true);
-                            // _handler.clearTokenList();
+                    if(!aUnitIsSelected(_handler.selectedTokenList,inInitStage) && (_handler.selectedTokenList.length && !justToggle) || remote || inInitStage){
+                        //_handler mean we selected token and now we need to create new unit.
+                        
+                        updateIndexInParentAttribute(_handler.selectedTokenList);
+                        updatePositionInUnitAttribute(_handler.selectedTokenList);
+                        updateNextTokenNotAdjacent(_handler.selectedTokenList);
+                        updateLastTokenNotAdjacent(_handler.selectedTokenList);
 
-                            return res.id;
+                        var newUnit = {
+                            tokens : angular.copy(_handler.selectedTokenList),
+                            categories:[],
+                            gui_status:unit ? unit.gui_status : "OPEN",
+                            comment: unit ? unit.comment : ''
+                        };
+                        if(remote){
+                            newUnit = angular.copy(remote);
+                            var tempCat = angular.copy(newUnit.categories[0]);
+                            newUnit.categories = [];
+                            tempCat !== undefined ? newUnit.categories.push(DataService.hashTables.categoriesHashTable[tempCat.id]) : '';
+
+                            _handler.selectedUnit = newUnit.parent_id;
+
                         }
-                    });
-                }else{
-                    if(justToggle){
-                        _handler.updateSelectedUnit(justToggle);
-                    }
-                    //Toggle the category for existing unit
-                    if(this.selectedUnit.toString() !== "0"){
-                        return DataService.toggleCategoryForUnit(this.selectedUnit,category).then(function(res){
-                            if(res.status === "ToggleSuccess"){
-                                _handler.updateSelectedUnit(res.id);
-                                _handler.clearTokenList();
+
+                        category !== null && !remote ? newUnit.categories.push(angular.copy(category)) : '';
+                        return DataService.insertToTree(newUnit,_handler.selectedUnit).then(function(res){
+                            if(res.status === "InsertSuccess"){
+                                _handler.updateSelectedUnit(res.id,true);
+                                // _handler.clearTokenList();
+
                                 return res.id;
                             }
-                        })
+                        });
+                    }else{
+                        if(justToggle){
+                            _handler.updateSelectedUnit(justToggle);
+                        }
+                        //Toggle the category for existing unit
+                        if(_handler.selectedUnit.toString() !== "0"){
+                            return DataService.toggleCategoryForUnit(_handler.selectedUnit,category).then(function(res){
+                                if(res.status === "ToggleSuccess"){
+                                    _handler.updateSelectedUnit(res.id);
+                                    _handler.clearTokenList();
+                                    return res.id;
+                                }
+                            })
+                        }
                     }
-                }
 
-                $rootScope.$broadcast("ResetSuccess");
+                    $rootScope.$broadcast("ResetSuccess");
+                })
+
+                
             }
 
         };
 
-        function checkifThereIsPartsOFUnitTokensInsideList(selectedTokenList){
+        function checkifThereIsPartsOFUnitTokensInsideList(selectedTokenList,inInitStage){
+            if(inInitStage){
+                return false;
+            }
             //Checks if the new unit contains only parts of existing units. if so, block the unit insertion.
             var result = false;
             var unitsObject = {};

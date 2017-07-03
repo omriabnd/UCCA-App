@@ -132,9 +132,16 @@
 
         }
 
-        function toggleCategoryForUnit(unitId,category){
+        function toggleCategoryForUnit(unitId,category){            
             return $q(function(resolve, reject) {
+
                 var unit = getUnitById(unitId);
+
+                if(!restrictionsValidatorService.checkRestrictionsBeforeInsert(getParentUnit(unit.annotation_unit_tree_id),unit,DataService.hashTables.tokensHashTable, category)){
+                    return reject("Failed") ;
+                }
+
+            
 
                 if(unit === null){
                     reject('ToggleSuccess');

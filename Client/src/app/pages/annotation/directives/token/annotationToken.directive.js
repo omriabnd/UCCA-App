@@ -225,11 +225,11 @@
                     }
                 }
                 if(index === tokenListLength - 1){
-                    var parentUnit = DataService.getParentUnit(selectedTokenArray[selectedTokenArray.length - 1].parentId);
+                    var parentUnit = selectedTokenArray[selectedTokenArray.length - 1].parentId ? DataService.getParentUnit(selectedTokenArray[selectedTokenArray.length - 1].parentId) :  DataService.getParentUnit("0");
                     var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(selectedTokenArray[selectedTokenArray.length - 1].id);
                     $rootScope.$broadcast('moveCursor', {
-                        token: parentUnit.tokens[elementPos + 1],
-                        parentId: DataService.getParentUnitId(selectedTokenArray[selectedTokenArray.length - 1].parentId) || "0"
+                        token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : parentUnit.tokens[elementPos],
+                        parentId: selectionHandlerService.getSelectedUnitId() || "0"
                     });
                 }
                 // $rootScope.$broadcast('moveCursor', {
