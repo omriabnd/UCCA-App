@@ -156,6 +156,7 @@
         }
 
         function tokenClicked(vm,doNotUpdateSelectedToken){
+
             directive.tokenClicked = !directive.tokenClicked;
             vm.tokenIsClicked = !vm.tokenIsClicked;
             selectionHandlerService.setTokenClicked();

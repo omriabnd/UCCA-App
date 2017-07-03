@@ -64,11 +64,7 @@
                     !groupUnit ? _handler.removeTokenFromUnitTokens(token) : '';
                     var copiedToken = angular.copy(token);
                     this.selectedTokenList.push(copiedToken);
-                    sortSelectedTokenList(this.selectedTokenList);
-                    updateIndexInParentAttribute(this.selectedTokenList);
-                    updatePositionInUnitAttribute(this.selectedTokenList);
-                    updateNextTokenNotAdjacent(this.selectedTokenList);
-                    updateLastTokenNotAdjacent(this.selectedTokenList);
+                    sortSelectedTokenList(this.selectedTokenList);                    
                 }
                 this.selectedUnit = selectedUnit;
             },
@@ -313,12 +309,20 @@
             },
             toggleCategory: function(category,justToggle,remote,unit,inInitStage){
 
-                if(this.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(this.selectedTokenList)){
+
+
+                if(this.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(this.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(this.selectedTokenList)){
                     return
                 }
 
                 if(!aUnitIsSelected(this.selectedTokenList,inInitStage) && (this.selectedTokenList.length && !justToggle) || remote || inInitStage){
                     //This mean we selected token and now we need to create new unit.
+                    
+                    updateIndexInParentAttribute(this.selectedTokenList);
+                    updatePositionInUnitAttribute(this.selectedTokenList);
+                    updateNextTokenNotAdjacent(this.selectedTokenList);
+                    updateLastTokenNotAdjacent(this.selectedTokenList);
+
                     var newUnit = {
                         tokens : angular.copy(this.selectedTokenList),
                         categories:[],
@@ -364,6 +368,29 @@
             }
 
         };
+
+        function checkifThereIsPartsOFUnitTokensInsideList(selectedTokenList){
+            //Checks if the new unit contains only parts of existing units. if so, block the unit insertion.
+            var result = false;
+            var unitsObject = {};
+
+            selectedTokenList.forEach(function(token){
+
+                if(token.inUnit !== null && DataService.getUnitById(token.inUnit) !== null){
+                    var existingUnit = DataService.getUnitById(token.inUnit);
+                    var sumOfTokenInList = selectedTokenList.filter(function(tokenInList) {
+                        return tokenInList.inUnit === token.inUnit ;
+                    });
+
+                    if(sumOfTokenInList.length !== existingUnit.tokens.length){
+                        result = true;
+                    }
+                    
+                }
+            })
+
+            return result;
+        }
 
         function newUnitContainAllParentTokensTwice(selectedTokenList){
             var currentUnit = DataService.getUnitById(selectedTokenList[0].parentId);
