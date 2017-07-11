@@ -28,6 +28,10 @@
             mouseDown: mouseDown,
             selectedToken: selectedToken,
             lastSelectedToken:lastSelectedToken,
+            updateIndexInParentAttribute:updateIndexInParentAttribute,
+            updatePositionInUnitAttribute:updatePositionInUnitAttribute,
+            updateNextTokenNotAdjacent:updateNextTokenNotAdjacent,
+            updateLastTokenNotAdjacent:updateLastTokenNotAdjacent,
             getSelectedTokenList: function(){
                 return this.selectedTokenList;
             },
@@ -64,7 +68,7 @@
                     !groupUnit ? _handler.removeTokenFromUnitTokens(token) : '';
                     var copiedToken = angular.copy(token);
                     this.selectedTokenList.push(copiedToken);
-                    sortSelectedTokenList(this.selectedTokenList);                    
+                    sortSelectedTokenList(this.selectedTokenList);
                 }
                 this.selectedUnit = selectedUnit;
             },
@@ -284,7 +288,7 @@
                             _handler.addTokenToList(DataService.hashTables.tokensHashTable[token.id],parentId)
                         });
                         if(unit.categories.length === 0){
-                            _handler.toggleCategory();
+                            _handler.toggleCategory(null,false,unit.is_remote_copy,unit,true);
                         }else{
                             _handler.toggleCategory(DataService.hashTables.categoriesHashTable[unit.categories[0].id],false,false,unit,true)
                                 .then(function(){
@@ -316,7 +320,7 @@
 
                     if(!aUnitIsSelected(_handler.selectedTokenList,inInitStage) && (_handler.selectedTokenList.length && !justToggle) || remote || inInitStage){
                         //_handler mean we selected token and now we need to create new unit.
-                        
+
                         updateIndexInParentAttribute(_handler.selectedTokenList);
                         updatePositionInUnitAttribute(_handler.selectedTokenList);
                         updateNextTokenNotAdjacent(_handler.selectedTokenList);
@@ -343,8 +347,8 @@
                             if(res.status === "InsertSuccess"){
                                 _handler.updateSelectedUnit(res.id,true);
                                 // _handler.clearTokenList();
-
-                                return res.id;
+                                return resolve({id: res.id});
+                                // return res.id;
                             }
                         });
                     }else{
@@ -357,7 +361,8 @@
                                 if(res.status === "ToggleSuccess"){
                                     _handler.updateSelectedUnit(res.id);
                                     _handler.clearTokenList();
-                                    return res.id;
+                                    // return res.id;
+                                    return resolve({id: res.id});
                                 }
                             })
                         }
@@ -366,7 +371,7 @@
                     $rootScope.$broadcast("ResetSuccess");
                 })
 
-                
+
             }
 
         };
@@ -390,7 +395,7 @@
                     if(sumOfTokenInList.length !== existingUnit.tokens.length){
                         result = true;
                     }
-                    
+
                 }
             })
 

@@ -132,7 +132,7 @@
 
         }
 
-        function toggleCategoryForUnit(unitId,category){            
+        function toggleCategoryForUnit(unitId,category){
             return $q(function(resolve, reject) {
 
                 var unit = getUnitById(unitId);
@@ -141,7 +141,7 @@
                     return reject("Failed") ;
                 }
 
-            
+
 
                 if(unit === null){
                     reject('ToggleSuccess');

@@ -77,6 +77,12 @@
       "description": "move Left With Shift",
       "action": "keydown",
       "callbackFunction":"moveLeftWithShift"
+    },
+    {
+      "combo": "esc",
+      "description": "move Left With Shift",
+      "action": "keydown",
+      "callbackFunction":"abortRemoteMode"
     }
   ],
   "DefaultHotKeysWithClick":[

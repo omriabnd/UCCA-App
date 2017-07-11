@@ -118,7 +118,7 @@
                     var parentUnit = DataService.getUnitById(DataService.getParentUnitId($scope.vm.dataBlock.annotation_unit_tree_id ));
                     RemoveBorder(parentUnit.tokens,parentUnit);
                 }else{
-                    paintTokens($scope.vm.tokens,$scope.vm.dataBlock);
+                    paintTokens($scope.vm.tokens,$scope.vm.dataBlock,true);
                 }
             });
 
@@ -152,7 +152,7 @@
         }
 
         function unitIsSelected(vm){
-            if(selectionHandlerService.getSelectedUnitId() === vm.dataBlock.annotation_unit_tree_id){                
+            if(selectionHandlerService.getSelectedUnitId() === vm.dataBlock.annotation_unit_tree_id){
                 $rootScope.currentVm = vm;
             }
             return selectionHandlerService.getSelectedUnitId() === vm.dataBlock.annotation_unit_tree_id;
@@ -221,13 +221,32 @@
             });
         }
 
-        function paintTokens(tokens, dataBlock){
+        function paintTokens(tokens, dataBlock,afterDelete){
             dataBlock.AnnotationUnits.forEach(function(unit,index){
                 if(unit.unitType !== "REMOTE"){
+                    if(afterDelete){
+                        unit.tokens.forEach(function(token){
+                          var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
+                          var elementPos = childUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
+                          var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
+                          token.indexInParent = elementPosInThisUnit;
+                          token.parentId = DataService.getParentUnit(token.parentId).annotation_unit_tree_id;
+                        })
+
+                        selectionHandlerService.updateIndexInParentAttribute(unit.tokens);
+                        selectionHandlerService.updatePositionInUnitAttribute(unit.tokens);
+                        selectionHandlerService.updateNextTokenNotAdjacent(unit.tokens);
+                        selectionHandlerService.updateLastTokenNotAdjacent(unit.tokens);
+                    }
+
                     unit.tokens.forEach(function(token){
                         var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
                         var elementPos = childUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
                         var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
+
+
+                        // token.indexInParent = elementPosInThisUnit;
+
                         if(elementPos !== -1 && elementPosInThisUnit !== -1){
                             if(unit.categories.length === 1 && unit.categories[0] === undefined || unit.categories.length === 0){
                                 unit.categories[0] = {
@@ -377,7 +396,7 @@
 
         function subTreeToCollapse(subtree_root_unit){
             return ;
-            subtree_root_unit.AnnotationUnits.forEach(function(unit){   
+            subtree_root_unit.AnnotationUnits.forEach(function(unit){
                DataService.getUnitById(unit.annotation_unit_tree_id).gui_status = "COLLAPSE";
 
                subTreeToCollapse(unit);
@@ -402,7 +421,7 @@
             var selectedTokensList = selectionHandlerService.getSelectedTokenList();
 
             selectedTokensList.forEach(function(token){
-                if(token.inUnit && DataService.getUnitById(token.inUnit)){                    
+                if(token.inUnit && DataService.getUnitById(token.inUnit)){
 
                     var parentUnit = DataService.getUnitById(token.parentId);
                     var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inUnit === token.inUnit; });
@@ -417,7 +436,7 @@
             })
         }
 
-        function isUnitClicked(vm){            
+        function isUnitClicked(vm){
             return selectionHandlerService.getSelectedUnitId() === vm.dataBlock.annotation_unit_tree_id;
         }
 
@@ -481,15 +500,18 @@
             if(selectionHandlerService.getUnitToAddRemotes() !== "0" && selectionHandlerService.getUnitToAddRemotes() !== index){
                 var unitUsed = DataService.getUnitById(selectionHandlerService.getUnitToAddRemotes()).AnnotationUnits.map(function(x) {return x.remote_original_id; }).indexOf(vm.unit.annotation_unit_tree_id);
 
+                if(index === 0){
+                  return;
+                }
                 if(unitUsed > -1){
                     selectionHandlerService.setUnitToAddRemotes("0");
-                    $('.annotation-page-container').toggleClass('crosshair-cursor');
+                    $('.annotation-page-container').removeClass('crosshair-cursor');
                     open('app/pages/annotation/templates/errorModal.html','sm','Unit already exists as remote.',vm);
                     return;
                 }
                 if(DataService.getUnitById(index).unitType === "REMOTE" || selectionHandlerService.getUnitToAddRemotes().startsWith(index) || index.startsWith(selectionHandlerService.getUnitToAddRemotes())){
                     selectionHandlerService.setUnitToAddRemotes("0");
-                    $('.annotation-page-container').toggleClass('crosshair-cursor');
+                    $('.annotation-page-container').removeClass('crosshair-cursor');
                     open('app/pages/annotation/templates/errorModal.html','sm','Cannot add remote unit as remote.',vm);
                     return;
                 }

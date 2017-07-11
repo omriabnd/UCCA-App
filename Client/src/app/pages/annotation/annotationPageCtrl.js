@@ -108,7 +108,7 @@
                   selectionHandlerService.toggleCategory();
               }
             }
-            
+
       }
 
       function isUnitSelected(selectionList){
@@ -248,6 +248,11 @@
                           var functionToExecute = HotKeysManager.executeOperation(hotKeyObj);
                           var selectedUnitId = selectionHandlerService.getSelectedUnitId();
                           switch(functionToExecute){
+                              case 'abortRemoteMode':{
+                                selectionHandlerService.setUnitToAddRemotes("0");
+                                $('.annotation-page-container').removeClass('crosshair-cursor');
+                                break;
+                              }
                               case 'moveRight':{
                                   // DataService.getUnitById(selectedUnitId).cursorLocation++;
 
@@ -285,7 +290,7 @@
                                   var nextUnit = DataService.getNextUnit(selectedUnitId);
                                   var nextSibling = DataService.getSibling(selectedUnitId);
 
-                                  
+
                                   if(nextUnit === -1 && nextSibling === undefined){
                                       return;
                                   }
@@ -333,7 +338,7 @@
 
                                   // while(prevUnit.gui_status === "HIDDEN" || DataService.getParentUnit(prevUnit.annotation_unit_tree_id).gui_status === "COLLAPSE" || DataService.getParentUnit(prevUnit.annotation_unit_tree_id).gui_status === "HIDDEN"){
                                   //   if(DataService.getPrevSibling(prevUnit.annotation_unit_tree_id) === null){
-                                  //     prevUnit = DataService.getPrevUnit(prevUnit.annotation_unit_tree_id);                                      
+                                  //     prevUnit = DataService.getPrevUnit(prevUnit.annotation_unit_tree_id);
                                   //   }else{
                                   //     prevUnit = DataService.getPrevSibling(prevUnit.annotation_unit_tree_id);
                                   //   }
@@ -353,7 +358,7 @@
                                     prevSibling = prevSibling.AnnotationUnits[prevSibling.AnnotationUnits.length - 1];
                                   }
 
-                                  
+
 
                                   if (prevSibling === null) {
                                       selectionHandlerService.updateSelectedUnit(prevUnit.annotation_unit_tree_id);

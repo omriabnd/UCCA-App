@@ -156,6 +156,9 @@
         }
 
         function tokenClicked(vm,doNotUpdateSelectedToken){
+            if(selectionHandlerService.getUnitToAddRemotes() !== "0"){
+              return;
+            }
 
             directive.tokenClicked = !directive.tokenClicked;
             vm.tokenIsClicked = !vm.tokenIsClicked;
