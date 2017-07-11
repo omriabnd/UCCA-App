@@ -157,6 +157,11 @@
 
         function checkIfUnitViolateForbidSiblingRestriction(parentAnnotationUnit,newAnnotationUnit,newCategory){
             for(var i=0; i< parentAnnotationUnit.AnnotationUnits.length; i++){
+
+                if(parentAnnotationUnit.AnnotationUnits[i] == undefined){
+                  continue
+                }
+
                 var currentAnnotationUnitSibling = parentAnnotationUnit.AnnotationUnits[i];
 
                 var updatetedCurrentCategory = angular.copy(currentAnnotationUnitSibling.categories);

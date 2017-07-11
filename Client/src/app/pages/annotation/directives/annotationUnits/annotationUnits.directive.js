@@ -224,20 +224,20 @@
         function paintTokens(tokens, dataBlock,afterDelete){
             dataBlock.AnnotationUnits.forEach(function(unit,index){
                 if(unit.unitType !== "REMOTE"){
-                    // if(afterDelete){
-                    //     unit.tokens.forEach(function(token){
-                    //       var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
-                    //       var elementPos = childUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
-                    //       var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
-                    //       token.indexInParent = elementPosInThisUnit;
-                    //       token.parentId = DataService.getParentUnit(token.parentId).annotation_unit_tree_id;
-                    //     })
-                    //
-                    //     selectionHandlerService.updateIndexInParentAttribute(unit.tokens);
-                    //     selectionHandlerService.updatePositionInUnitAttribute(unit.tokens);
-                    //     selectionHandlerService.updateNextTokenNotAdjacent(unit.tokens);
-                    //     selectionHandlerService.updateLastTokenNotAdjacent(unit.tokens);
-                    // }
+                    if(afterDelete){
+                        unit.tokens.forEach(function(token){
+                          var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
+                          var elementPos = childUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
+                          var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
+                          token.indexInParent = elementPosInThisUnit;
+                          token.parentId = DataService.getParentUnit(token.parentId).annotation_unit_tree_id;
+                        })
+
+                        selectionHandlerService.updateIndexInParentAttribute(unit.tokens);
+                        selectionHandlerService.updatePositionInUnitAttribute(unit.tokens);
+                        selectionHandlerService.updateNextTokenNotAdjacent(unit.tokens);
+                        selectionHandlerService.updateLastTokenNotAdjacent(unit.tokens);
+                    }
 
                     unit.tokens.forEach(function(token){
                         var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;

@@ -205,7 +205,7 @@
 
                             ]
                         };
-                        var newRowId = DataService.insertToTree(objToPush,unit.parent_id);
+                        var newRowId = DataService.insertToTree(objToPush,unit.parent_id,index != DataService.currentTask.annotation_units.length -1);
 
                         unit.categories.forEach(function(category,index){
                             _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.annotation_unit_tree_id);
@@ -229,13 +229,12 @@
 
                         var unitCategory = unit.categories[0] ? DataService.hashTables.categoriesHashTable[ unit.categories[0].id] : null;
 
-                        _handler.toggleCategory(unitCategory,null,unit).then(function(res){
+                        _handler.toggleCategory(unitCategory,null,unit,unit,index != DataService.currentTask.annotation_units.length -1).then(function(res){
                             unit.categories.forEach(function(category,index){
                                 if(index === 0){
 
                                 }else{
-                                    console.log(res)
-                                    _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],res);
+                                    _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],res.id);
                                 }
                                 _handler.clearTokenList();
                             });
@@ -310,6 +309,7 @@
 
                 });
                 DataService.unitType = 'REGULAR';
+                DataService.sortUndUpdate();
             },
             toggleCategory: function(category,justToggle,remote,unit,inInitStage){
 
@@ -330,7 +330,8 @@
                             tokens : angular.copy(_handler.selectedTokenList),
                             categories:[],
                             gui_status:unit ? unit.gui_status : "OPEN",
-                            comment: unit ? unit.comment : ''
+                            comment: unit ? unit.comment : '',
+                            annotation_unit_tree_id: unit && unit.annotation_unit_tree_id ? unit.annotation_unit_tree_id : null
                         };
                         if(remote){
                             newUnit = angular.copy(remote);
@@ -343,8 +344,9 @@
                         }
 
                         category !== null && !remote ? newUnit.categories.push(angular.copy(category)) : '';
-                        return DataService.insertToTree(newUnit,_handler.selectedUnit).then(function(res){
+                        return DataService.insertToTree(newUnit,_handler.selectedUnit,inInitStage).then(function(res){
                             if(res.status === "InsertSuccess"){
+
                                 _handler.updateSelectedUnit(res.id,true);
                                 // _handler.clearTokenList();
                                 return resolve({id: res.id});

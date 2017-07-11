@@ -53,6 +53,7 @@
             createHashTables:createHashTables,
             isTokenInUnit:isTokenInUnit,
             resetTree:resetTree,
+            sortUndUpdate:sortUndUpdate,
             REMOTE_TEMPS_OBJ_FOR_UPDATE_AFTER_DELETE_UNIT_FOR_UPDATE_AFTER_DELETE_UNIT:{},
             USED_AS_REMOTE_TEMPS_OBJ_FOR_UPDATE_AFTER_DELETE_UNIT_FOR_UPDATE_AFTER_DELETE_UNIT:{},
             createTokensHashByTokensArrayForPassage:createTokensHashByTokensArrayForPassage
@@ -171,6 +172,9 @@
                 selectedUnit.AnnotationUnits = [];
             }
             for(var i=0; i<selectedUnit.AnnotationUnits.length; i++){
+                if(selectedUnit.AnnotationUnits[i] == undefined){
+                  continue
+                }
                 var tokenPosition = selectedUnit.AnnotationUnits[i].tokens.map(function(x) {return x.id; }).indexOf(token.id);
                 if(tokenPosition > -1){
                     tokenInUnit = selectedUnit.AnnotationUnits[i].annotation_unit_tree_id;
@@ -180,19 +184,23 @@
             return tokenInUnit;
         }
 
-        function insertToTree(newObject,level){
+        function insertToTree(newObject,level,inInitStage){
             return $q(function(resolve, reject) {
 
                 var parentUnit = getUnitById(level);
+
                 if(!parentUnit.AnnotationUnits){
                     parentUnit.AnnotationUnits = [];
                 }
-                if(level.toString() === "0"){
-                    //Passage unit or it children units.
-                    newObject.annotation_unit_tree_id = parseInt(parentUnit.AnnotationUnits.length + 1).toString();
-                }else{
-                    newObject.annotation_unit_tree_id = level + '-' +  parseInt(parentUnit.AnnotationUnits.length + 1);
+                if(!newObject.annotation_unit_tree_id){
+                  if(level.toString() === "0"){
+                      //Passage unit or it children units.
+                      newObject.annotation_unit_tree_id = parseInt(parentUnit.AnnotationUnits.length + 1).toString();
+                  }else{
+                      newObject.annotation_unit_tree_id = level + '-' +  parseInt(parentUnit.AnnotationUnits.length + 1);
+                  }
                 }
+
 
 
                 newObject.comment = newObject.comment || "";
@@ -252,11 +260,34 @@
                 }
 
                 //Update IndexInParent attribute
-                newObject.tokens.forEach(function(token,index){
+                newObject.tokens.forEach(function(token,index,inInit){
                     token.indexInParent = index;
                 });
 
-                parentUnit.AnnotationUnits.push(newObject);
+                var indexToInsert = newObject.annotation_unit_tree_id.split("-");
+                var index_int = parseInt(indexToInsert[indexToInsert.length-1]);
+
+                if(newObject.is_remote_copy){
+                  index_int = (parentUnit.AnnotationUnits.length + 1).toString();
+                  for(var i=0; i<parentUnit.AnnotationUnits.length; i++){
+                    if(parentUnit.AnnotationUnits[i] == undefined){
+                      index_int = i + 1;
+                      break;
+                    }
+                  }
+
+                  newObject.annotation_unit_tree_id = newObject.parent_id + "-" + index_int.toString();
+                }
+
+                newObject.tokens.sort(function(a,b){
+                  if(a.start_index > b.start_index){
+                      return 1
+                  }else if(a.start_index < b.start_index){
+                      return -1
+                  }else return 0
+                })
+
+                parentUnit.AnnotationUnits[index_int - 1] = newObject;
 
                 var parentUnitTokens = parentUnit.tokens;
 
@@ -269,11 +300,11 @@
 
                 parentUnit.gui_status = "OPEN";
 
-                updateTreeIds(DataService.tree);
+                if(!inInitStage){
+                  sortUndUpdate()
+                }
 
-                sortTree(DataService.tree.AnnotationUnits);
 
-                updateTreeIds(DataService.tree);
 
                 updateInUnitIdsForTokens(DataService.tree);
 
@@ -281,6 +312,18 @@
 
                 return resolve({status: 'InsertSuccess',id: newObject.annotation_unit_tree_id});
             });
+        }
+
+        function sortUndUpdate(){
+
+          if(DataService.tree.AnnotationUnits.length > 0){
+            updateTreeIds(DataService.tree);
+
+            sortTree(DataService.tree.AnnotationUnits);
+
+            updateTreeIds(DataService.tree);
+          }
+
         }
 
         function deleteUnit(unitId){
@@ -300,6 +343,7 @@
 
                     for(var i=0; i<parentUnit.AnnotationUnits.length; i++){
                         if(parentUnit.AnnotationUnits[i].unitType !== "REGULAR"){
+                          delete DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id][parentUnit.AnnotationUnits[i].annotation_unit_tree_id];
                             parentUnit.AnnotationUnits.splice(i,1);
                             i--;
                         }
@@ -346,6 +390,9 @@
 
             }
             for (var i = 0; i < annotationUnits.length; i++) {
+                if(annotationUnits[i] == undefined){
+                  continue
+                }
                 sortTree(annotationUnits[i].AnnotationUnits || []);
             }
         }
@@ -353,6 +400,10 @@
         function updateTreeIds(unit,treeId){
             if(unit.AnnotationUnits && unit.AnnotationUnits.length > 0){
                 for (var i = 0; i < unit.AnnotationUnits.length; i++) {
+
+                    if(unit.AnnotationUnits[i] == undefined){
+                      continue
+                    }
 
                     var oldId = angular.copy(unit.AnnotationUnits[i].annotation_unit_tree_id);
 
@@ -582,7 +633,13 @@
 
                 for(var i=0; i<splittedUnitId.length; i++){
                     var unitIdToFind = splittedUnitId.slice(0,i+1).join("-");
-                    var unitIndex = tempUnit.AnnotationUnits.findIndex(function(unit){return unit.annotation_unit_tree_id == unitIdToFind});
+
+                    var unitIndex = tempUnit.AnnotationUnits.findIndex(function(unit){
+                      if(unit == undefined){
+                        return false;
+                      }
+                      return unit.annotation_unit_tree_id == unitIdToFind
+                    });
                     tempUnit.AnnotationUnits.length > 0 ? tempUnit = tempUnit.AnnotationUnits[unitIndex] : '';
                 }
                 return !!tempUnit && tempUnit.annotation_unit_tree_id == unitID ? tempUnit : null;

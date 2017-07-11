@@ -27,8 +27,6 @@
         </span>
 
     </div>
-    <annotation-token  parent-id="{{dirCtrl.annotationUnitTreeId}}" token=token ng-repeat="token in dirCtrl.tokens track by $index"></annotation-token>
+    <annotation-token  parent-id="{{dirCtrl.annotationUnitTreeId}}" token=token ng-repeat="token in dirCtrl.tokens track by $index | orderBy:start_index"></annotation-token>
 </div>
 <div ng-include="'app/pages/annotation/directives/annotationUnits/dataTreeRow.html'" ng-if="vm.dataBlock.AnnotationUnits.length > 0"></div>
-
-
