@@ -32,6 +32,7 @@ def tokenize(t):
   is_punctuation: a boolean as to whether this is a token that requires annotation (non-punctuation) or not
   """
 
+  t = t.strip()
   # defining linefeed and whitespace regexps
   linefeed = re.compile('[^\n]+')
   whitespace = re.compile('\S+')
@@ -93,7 +94,7 @@ def tokenize(t):
 
   output.sort(key=lambda x :-x["start_index"])
   # return the list without the first linefeed token, which is superfluous
-  return output[1:]
+  return output
 
 
 
