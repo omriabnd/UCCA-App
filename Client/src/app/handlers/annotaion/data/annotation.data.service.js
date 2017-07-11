@@ -199,29 +199,35 @@
 
                 var units = [];
 
-                newObject.tokens.forEach(function(token){
-                    if(token.inUnit !== null && token.inUnit !== undefined){
-                        var unitPos = units.map(function(x) {return x.id; }).indexOf(token.inUnit);
-                        if(unitPos === -1){
-                            units.push({
-                                id:token.inUnit
-                            });
-                        };
-                        //Find token in parent
-                        if(token.parentId === undefined){
-                            token.parentId = "0";
-                        }
-                        var parentUnit = DataService.getUnitById(token.parentId);
-                        if(parentUnit.tokens === undefined){
-                            parentUnit['tokens'] = parentUnit.tokenCopy;
-                        }
-                        var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(token.id);
+                if(newObject.unitType == "REMOTE"){
 
-                        if(elementPos > -1){
-                            parentUnit.tokens[elementPos].inUnit = newObject.annotation_unit_tree_id;
-                        }
-                    }
-                });
+                }else{
+                  newObject.tokens.forEach(function(token){
+                      if(token.inUnit !== null && token.inUnit !== undefined){
+                          var unitPos = units.map(function(x) {return x.id; }).indexOf(token.inUnit);
+                          if(unitPos === -1){
+                              units.push({
+                                  id:token.inUnit
+                              });
+                          };
+                          //Find token in parent
+                          if(token.parentId === undefined){
+                              token.parentId = "0";
+                          }
+                          var parentUnit = DataService.getUnitById(token.parentId);
+                          if(parentUnit.tokens === undefined){
+                              parentUnit['tokens'] = parentUnit.tokenCopy;
+                          }
+                          var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(token.id);
+
+                          if(elementPos > -1){
+                              parentUnit.tokens[elementPos].inUnit = newObject.annotation_unit_tree_id;
+                          }
+                      }
+                  });
+                }
+
+
 
                 if(units.length > 1){
                     units.forEach(function(unit){

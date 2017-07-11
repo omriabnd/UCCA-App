@@ -7,7 +7,7 @@
       .controller('tasksCtrl', tasksCtrl);
 
   /** @ngInject */
-  function tasksCtrl($scope, $rootScope, $filter,$state, editableOptions, editableThemes, $uibModal, tasksService, TableStructure, Core, TableData) {
+  function tasksCtrl($scope, $rootScope, $filter,$state, editableOptions, editableThemes, $uibModal, tasksService, TableStructure, Core, TableData, $timeout) {
 
     var vm = this;
     vm.searchTable = $state.current.name;
@@ -17,7 +17,12 @@
     vm.smartTableCanUseAction = smartTableCanUseAction;
     vm.editRow = editRow;
     vm.previewTask = Core.previewTask;
-    
+
+    $timeout(function(){
+        $rootScope.$hideSideBar = false;
+    })
+
+
     function smartTableCanUseAction(functionName,onlyForRoles,objType,onlyForTypes,statusPerms){
       /*
         logic wehn to show the button

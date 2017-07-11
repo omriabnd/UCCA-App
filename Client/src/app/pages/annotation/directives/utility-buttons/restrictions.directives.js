@@ -42,14 +42,7 @@
         defCtrl.unGroupUnit = unGroupUnit;
 
         function unGroupUnit(){
-            var unitId = selectionHandlerService.getSelectedUnitId();
-            var parentUnit = DataService.getParentUnitId(unitId);
-            if(unitId !== 0){
-                DataService.deleteUnit(unitId).then(function(res){
-                    selectionHandlerService.updateSelectedUnit(parentUnit);
-                });
-
-            }
+            selectionHandlerService.spacePressed();
         }
 
 

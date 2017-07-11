@@ -12,7 +12,7 @@
     /** @ngInject */
     function restrictionsValidatorService($timeout,$rootScope,$location,ENV_CONST,$uibModal,Core) {
         /*
-            %NAME%, %NAME_1%, %NAME_2% 
+            %NAME%, %NAME_1%, %NAME_2%
             will change to the category name in the alert modal
         */
         var errorMasseges ={
@@ -75,7 +75,7 @@
 
         function checkRestrictionsBeforeInsert(parentAnnotationUnit, newAnnotationUnit,tokensHashTable,newCategory){
             newAnnotationUnit.children_tokens = newAnnotationUnit.tokens;
-            var result = doesUnitContainsOnlyPunctuation(newAnnotationUnit,tokensHashTable);
+            var result = newAnnotationUnit.unitType != "IMPLICIT" && doesUnitContainsOnlyPunctuation(newAnnotationUnit,tokensHashTable);
             if(result){
                 var msg = errorMasseges['UNIT_CONTAIN_ONLY_PUNCTUATIONS'];
                 showErrorModal(msg);
@@ -110,7 +110,7 @@
             }
             return true;
         }
-        
+
         function doesUnitContainsOnlyPunctuation(newAnnotationUnit,tokensHashTable){
             var isOnlyPunc = true;
             newAnnotationUnit.children_tokens.forEach(function(token){
@@ -194,13 +194,13 @@
             VIOLATED_CATEGORY = {}
             var vaiolate = false;
             var categories_hash = hashTables.categoriesHashTable;
-            
+
             var violateUnitsCategoriesAmount = checkIfAllUnitsHaveAtLeastOneCategory(annotationUnit,categories_hash);
             // console.log("violateUnitsCategoriesAmount",violateUnitsCategoriesAmount);
-            
+
             if(!violateUnitsCategoriesAmount){
                 var vaiolateForbidSibling = checkIfForbidSiblingHandler(annotationUnit,parentUnit);
-                // console.log('vaiolateForbidSibling',vaiolateForbidSibling);                
+                // console.log('vaiolateForbidSibling',vaiolateForbidSibling);
                 if(!vaiolateForbidSibling){
                     var vaiolateForbidChild = checkIfForbidChildHandler(annotationUnit);
                     // console.log('vaiolateForbidChild',vaiolateForbidChild);
@@ -230,7 +230,7 @@
             }else{
                 vaiolate = true;
             }
-            
+
 
             if(!vaiolate){
                annotationUnit.gui_status = 'HIDDEN'
@@ -247,11 +247,11 @@
                 var currentChild = annotationUnit.AnnotationUnits[i];
                 var result = checkIfUnitViolateForbidChildRestriction(annotationUnit,currentChild);
                 restrictionResultHandleForForbidChild(result,annotationUnit);
-                
+
                 if(result){
                     return isVaioled = true
                 }
-                
+
             }
             return isVaioled
         }
@@ -262,11 +262,11 @@
                 var currentChild = parentUnit.AnnotationUnits[i];
                 var result = checkIfUnitViolateForbidSiblingRestriction(parentUnit,currentChild);
                 restrictionResultHandleForForbidSibling(result,annotationUnit);
-                
+
                 if(result){
                     return isVaioled = true
                 }
-                
+
             }
             return isVaioled
         }
@@ -301,7 +301,7 @@
                                         return true;
                                     }
                                 }
-                                
+
                             }
                         }
                     };
@@ -328,7 +328,7 @@
         function checkIfUnitViolateRequireSiblingAndAlert(annotationUnit,parentUnit,isCallingUnit){
 
             var result = checkIfUnitViolateRequireSiblingRestriction(annotationUnit,parentUnit);
-            
+
             if (result) {
                 if (isCallingUnit) {
                     restrictionResultHandler(result,annotationUnit,'REQUIRE_SIBLING');
@@ -345,18 +345,18 @@
                    return result;
                 }
             };
-            
-            return false; 
+
+            return false;
         }
-        
+
         function checkIfUnitViolateRequireSiblingRestriction(annotationUnit,parentUnit){
             var result = false;
             for(var i=0; i< annotationUnit.categories.length; i++){
-                // Go over all the unit categories, 
+                // Go over all the unit categories,
                 // and look if there is any category that exists in the restrictionsTables['REQUIRE_SIBLING'];
                 var currentCategory = annotationUnit.categories[i];
                 if(restrictionsTables['REQUIRE_SIBLING'][currentCategory.id]){
-                    // Prepare hash table that will hold the final result. 
+                    // Prepare hash table that will hold the final result.
                     // whether we found all the required categories.
                     var categoriesIdToLookForFoundNotFoundTable = createCategoriesIdToLookForFoundNotFoundTable({
                         parentCategory: currentCategory,
@@ -391,9 +391,9 @@
             }else{
                 console.log("annotationUnit " + annotationUnit.annotation_unit_tree_id + " is valid");
                 return result;
-            }    
+            }
         }
-        
+
         function checkIfUnitViolateRequireChildRestrictionAndAlert(annotationUnit){
             var result = checkIfUnitViolateRequireChildRestrictionDeep(annotationUnit);
             restrictionResultHandler(result,annotationUnit,'REQUIRE_CHILD')
@@ -527,7 +527,7 @@
             }
 
             if(!evaluationResult){
-                showErrorModal("Not all non-pangtuation tokens are in units.")
+                showErrorModal("Not all non-punctuation tokens are in units.")
                 return false
             }else{
                 for(var i=0; i<mainPassage.AnnotationUnits.length; i++){
@@ -586,7 +586,7 @@
             rootUnit.AnnotationUnits.forEach(function(unit){
                 if(NOT_ALL_TOKENS_IN_UNIT_ERROR){
                     return checkIfOk = false
-                }   
+                }
                 return checkIfAllTokenThatRequireAnnotationIsInUnit(unit,hash_tokens,checkIfOk)
             });
             return checkIfOk;
@@ -602,13 +602,13 @@
 
                 // check if at least one category is not default
                 var atLeastOnNotDefault = false;
-                
+
                 parentUnit.categories.some(function(currentCategory){
                     return atLeastOnNotDefault = (categories_hash[currentCategory.id] && categories_hash[currentCategory.id].was_default === false)
                 })
 
                 if(atLeastOnNotDefault){
-                    
+
                     var foundErrorResult = parentUnit.AnnotationUnits.some(function(unit){
                         if(checkAtLeastOneCategoryRecursion(unit,categories_hash) === false){
                             return true
@@ -618,7 +618,7 @@
                     return !foundErrorResult;
 
                 }else{
-                    return atLeastOnNotDefault; // = false 
+                    return atLeastOnNotDefault; // = false
                 }
             }
         }

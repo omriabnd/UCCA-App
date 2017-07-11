@@ -224,20 +224,20 @@
         function paintTokens(tokens, dataBlock,afterDelete){
             dataBlock.AnnotationUnits.forEach(function(unit,index){
                 if(unit.unitType !== "REMOTE"){
-                    if(afterDelete){
-                        unit.tokens.forEach(function(token){
-                          var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
-                          var elementPos = childUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
-                          var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
-                          token.indexInParent = elementPosInThisUnit;
-                          token.parentId = DataService.getParentUnit(token.parentId).annotation_unit_tree_id;
-                        })
-
-                        selectionHandlerService.updateIndexInParentAttribute(unit.tokens);
-                        selectionHandlerService.updatePositionInUnitAttribute(unit.tokens);
-                        selectionHandlerService.updateNextTokenNotAdjacent(unit.tokens);
-                        selectionHandlerService.updateLastTokenNotAdjacent(unit.tokens);
-                    }
+                    // if(afterDelete){
+                    //     unit.tokens.forEach(function(token){
+                    //       var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
+                    //       var elementPos = childUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
+                    //       var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
+                    //       token.indexInParent = elementPosInThisUnit;
+                    //       token.parentId = DataService.getParentUnit(token.parentId).annotation_unit_tree_id;
+                    //     })
+                    //
+                    //     selectionHandlerService.updateIndexInParentAttribute(unit.tokens);
+                    //     selectionHandlerService.updatePositionInUnitAttribute(unit.tokens);
+                    //     selectionHandlerService.updateNextTokenNotAdjacent(unit.tokens);
+                    //     selectionHandlerService.updateLastTokenNotAdjacent(unit.tokens);
+                    // }
 
                     unit.tokens.forEach(function(token){
                         var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
@@ -477,7 +477,7 @@
 
         function addAsRemoteUnit(vm,category,event){
             var clickedUnit = selectionHandlerService.getSelectedUnitId();
-            if(DataService.getUnitById(clickedUnit).unitType === "REMOTE"){
+            if(DataService.getUnitById(clickedUnit).unitType === "REMOTE" || DataService.getUnitById(clickedUnit).unitType === "IMPLICIT"){
                 // cant add remote unit to remote unit
                 return;
             }
@@ -500,10 +500,13 @@
             if(selectionHandlerService.getUnitToAddRemotes() !== "0" && selectionHandlerService.getUnitToAddRemotes() !== index){
                 var unitUsed = DataService.getUnitById(selectionHandlerService.getUnitToAddRemotes()).AnnotationUnits.map(function(x) {return x.remote_original_id; }).indexOf(vm.unit.annotation_unit_tree_id);
 
-                if(index === 0){
+                if(index == 0){
+                  selectionHandlerService.setUnitToAddRemotes("0");
+                  $('.annotation-page-container').removeClass('crosshair-cursor');
+                  open('app/pages/annotation/templates/errorModal.html','sm','Cannot add this unit as remote',vm);
                   return;
                 }
-                if(unitUsed > -1){
+                if(unitUsed > -1 || index == 0){
                     selectionHandlerService.setUnitToAddRemotes("0");
                     $('.annotation-page-container').removeClass('crosshair-cursor');
                     open('app/pages/annotation/templates/errorModal.html','sm','Unit already exists as remote.',vm);

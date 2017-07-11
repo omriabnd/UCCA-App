@@ -18,6 +18,7 @@
       vm.dataTree = DataService.tree.AnnotationUnits;
       vm.navBarItems = ENV_CONST.NAV_BAR_ITEMS;
       vm.spacePressed = spacePressed;
+      selectionHandlerService.spacePressed = spacePressed;
       vm.saveTask = saveTask;
       vm.setFontSize = setFontSize;
       vm.submitTask = submitTask;

@@ -17,6 +17,12 @@
 
 .annotation-page-container{
 
+  span.token.ng-binding.line-feed {
+      display: block;
+      height: 0;
+      overflow: hidden;
+  }
+
 
   .unit-cursor{
     &.no_cursor{
@@ -48,7 +54,7 @@
   span.token-wrapper.clicked {
     background: #337ab7;
   }
-  
+
   .remote-unit .token-wrapper {
     border: none !important;
   }
@@ -62,12 +68,12 @@
     display: block;
     margin-top: 10px;
     box-shadow: 0 0 0 black;
-    
+
   }
 
   .selected-unit {
     box-shadow: 1px 3px 5px black;
-  
+
   }
 
   .category-square {
@@ -598,7 +604,7 @@ textarea.unit-comment-text {
           direction: ltr;
       }
       .categories-container{
-        
+
       }
   }
   .refinedCategory{
@@ -628,4 +634,3 @@ textarea.unit-comment-text {
       }
   }
 }
-

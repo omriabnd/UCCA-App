@@ -69,7 +69,11 @@
         function tokenDbClick(vm){
             selectionHandlerService.clearTokenList();
             if(vm.token.inUnit !== null && vm.token.inUnit !== undefined){
-                DataService.getUnitById(vm.token.inUnit).gui_status = "OPEN";
+                var unit = DataService.getUnitById(vm.token.inUnit);
+                if(!unit){
+                  return;
+                }
+                unit.gui_status = "OPEN";
                 DataService.getUnitById(DataService.getParentUnitId(vm.token.inUnit)).gui_status = "OPEN";
                 selectionHandlerService.updateSelectedUnit(vm.token.inUnit);
 
@@ -228,7 +232,7 @@
                     }
                 }
                 if(index === tokenListLength - 1){
-                    var parentUnit = selectedTokenArray[selectedTokenArray.length - 1].parentId ? DataService.getParentUnit(selectedTokenArray[selectedTokenArray.length - 1].parentId) :  DataService.getParentUnit("0");
+                    var parentUnit = selectedTokenArray[selectedTokenArray.length - 1].parentId ? DataService.getUnitById(selectedTokenArray[selectedTokenArray.length - 1].parentId) :  DataService.getParentUnit("0");
                     var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(selectedTokenArray[selectedTokenArray.length - 1].id);
                     $rootScope.$broadcast('moveCursor', {
                         token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : parentUnit.tokens[elementPos],

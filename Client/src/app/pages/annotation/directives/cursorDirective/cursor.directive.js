@@ -36,8 +36,11 @@
                     var unit = $('#unit-'+$scope.vm.unitId.toString());
                     var unitTokens = unit.find('.token-wrapper');
 
-                    $(elem).insertBefore( unitTokens[args.token.indexInParent] );
-                    $scope.vm.cursorLocation = args.token.indexInParent;
+
+                    $scope.vm.cursorLocation = args.token.positionInUnit !== "Last" ? args.token.indexInParent : args.token.indexInParent+1;
+
+                    $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
+
 
                 }
             });
