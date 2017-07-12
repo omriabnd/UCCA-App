@@ -77,9 +77,9 @@
 
       function submitTask(){
         return saveChanges().then(function(){
-          return saveChanges("submit").then(function(){
-            $state.go('tasks',{},{refresh:true})
-            $timeout(function(){$rootScope.$hideSideBar = false;}) 
+          return saveChanges("submit").then(function(res){
+            $timeout(function(){$rootScope.$hideSideBar = false;})
+            goToMainMenu(res) 
           })
         })
       }
@@ -90,7 +90,20 @@
         mode = mode ? mode : 'draft';
         return uccaFactory.saveTask(mode,$scope.tokenizationTask).then(function(response){
           Core.showNotification("success","Task Saved");
+          return response;
         })
+      }
+
+      function goToMainMenu(res){
+          var projectId = this ? this.tokenizationTask.project.id : res.data.project.id;
+          var layerType = this ? this.tokenizationTask.project.layer.type : res.data.project.layer.type;
+          url: '/project/:id/tasks/:layerType',
+              $state.go('projectTasks',{
+                  id:projectId,
+                  layerType:layerType,
+                  refresh:true
+              });
+          $timeout(function(){$rootScope.$hideSideBar = false;})
       }
 
   }

@@ -1,6 +1,5 @@
 <div ng-repeat="unit in vm.dataBlock.AnnotationUnits">
     <annotation-units
-            ng-if="unit != undefined"
             class="has-elements"
             ng-class="{'hidden-unit':vm.isUnitHidden(unit),'unit-collapse':vm.isUnitCollaped(vm),'child-unit' :unit != '0'}"
             unit="unit"

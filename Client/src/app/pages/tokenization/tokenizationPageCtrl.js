@@ -38,17 +38,32 @@
     }
 
     function submitTask(){
-      return saveChanges("submit");
+      return saveChanges("submit").then(function(res){
+        goToMainMenu(res)
+      });
     }
 
     function saveChanges(mode){
-      vm.tokenizationTask.tokens = vm.textTokens;
-      vm.tokenizationTask.passage.text = vm.passageText;
-      mode = mode ? mode : 'draft';
-      UccaTokenizerService.saveTask(mode,vm.tokenizationTask).then(function(response){
+        $scope.tokenizationTask.tokens = $scope.savedTokens;
+        $scope.tokenizationTask.passage.text = $scope.tokenizedText;
+        mode = mode ? mode : 'draft';
+        return uccaFactory.saveTask(mode,$scope.tokenizationTask).then(function(response){
           Core.showNotification("success","Task Saved");
-      })
-    }
+          return response;
+        })
+      }
+
+    function goToMainMenu(res){
+          var projectId = this ? this.tokenizationTask.project.id : res.data.project.id;
+          var layerType = this ? this.tokenizationTask.project.layer.type : res.data.project.layer.type;
+          url: '/project/:id/tasks/:layerType',
+              $state.go('projectTasks',{
+                  id:projectId,
+                  layerType:layerType,
+                  refresh:true
+              });
+          $timeout(function(){$rootScope.$hideSideBar = false;})
+      }
   }
 
 })();
