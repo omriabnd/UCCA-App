@@ -11,7 +11,12 @@
       "email" : "admin.ucca2@cs.huji.ac.il",
       "is_superuser" : true,
       "is_staff" : true,
-      "is_active" : true
+      "is_active" : true,
+      "date_joined": "2017-07-17T08:43:46.279Z",
+        "groups": [
+            1
+        ],
+        "user_permissions": []
     }
   },
   {
