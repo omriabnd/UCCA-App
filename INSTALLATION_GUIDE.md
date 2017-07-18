@@ -125,3 +125,96 @@ execute:
 ```
 python manage.py loaddata superuser
 ```
+
+##Install the Client 
+go to path /Client
+
+
+###Install node modules
+```
+npm install
+```
+###Fetch external libraries via bower
+```
+bower install
+```
+###Add Client settings file
+create the file or copy from settings.demo.json
+Client/release/settings.json
+
+Add the following settings
+You may change the google analytics code according to your personal analytics
+
+```
+{
+    "HOST":"ucca.app",
+    "API_ENDPOINT":"http://ucca.app/api/v1",
+    "PROD_URL":"http://ucca.app/api/v1"
+    "GOOGLE_ANALYTICS_ID": "UA-92008127-2"
+ }
+```
+
+###Generate Client release files
+make sure you are in path /Client
+```
+gulp inject
+gulp serve:dist
+```
+
+##For Developers
+When changing Client Side files - in order of your changes to take effect
+While in the /Client directory execute:
+```
+gulp watch
+```
+
+make sure to change the files in the directory /Client/src
+any update in the src files will update the release files which are used by the client
+##Appendix A - nginx configuration example
+```
+server {
+    listen 80;
+    server_name ucca.app www.ucca.app;
+
+
+	root /home/vagrant/ucca/Client/release;
+        index index.html;
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location /static/ {
+        root /home/vagrant/ucca;
+    }
+
+    location /api {
+        root /home/vagrant/ucca/Server;
+	include         uwsgi_params;
+        uwsgi_pass      unix:/tmp/ucca.sock;
+    }
+
+	location /static {
+                alias /home/vagrant/Env/ucca/lib/python3.4/site-packages/rest_framework/static;
+                break;
+        }
+
+}
+```
+
+##Appendix B - uwsgi configuration example
+```
+[uwsgi]
+project = ucca
+base = /home/vagrant
+
+chdir = %(base)/%(project)/Server
+home = %(base)/Env/%(project)
+module = %(project).wsgi:application
+
+master = true
+processes = 5
+socket = /tmp/ucca.sock
+#socket = %(base)/%(project)/%(project).sock
+chmod-socket = 666
+vacuum = true
+
+daemonize = /tmp/ucca-uwsgi.log
+```
+
