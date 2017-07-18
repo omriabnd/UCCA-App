@@ -14,6 +14,8 @@
 		var is_dev = ($location.host() === 'localhost') || ENV_CONST.IS_DEV;
 		var url = (is_dev && ENV_CONST.IS_DEV ) ? ENV_CONST.TEST_URL : ENV_CONST.PROD_URL;
 
+		addGoogleAnalyticsSupport('UA-92008127-3');
+
 		/*var is_prod_server = ($location.absUrl().indexOf($rootScope.PROD_CONST.HOST) > -1);
 		if(is_prod_server){
 			// for ucca production server
