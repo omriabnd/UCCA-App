@@ -238,7 +238,9 @@
                           var elementPos = childUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
                           var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
                           token.indexInParent = elementPosInThisUnit;
-                          token.parentId = DataService.getParentUnit(token.parentId).annotation_unit_tree_id;
+                          if(DataService.getParentUnit(token.parentId)){
+                            token.parentId = DataService.getParentUnit(token.parentId).annotation_unit_tree_id;
+                          }
                         })
 
                         selectionHandlerService.updateIndexInParentAttribute(unit.tokens);

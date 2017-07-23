@@ -461,7 +461,11 @@
             selectedTokenList.forEach(function(token,index){
                 var parentUnitTokens;
                 if(token.parentId){
-                    parentUnitTokens = DataService.getUnitById(token.parentId).tokens;
+                    if(DataService.getUnitById(token.parentId) && DataService.getUnitById(token.parentId).tokens){
+                        parentUnitTokens = DataService.getUnitById(token.parentId).tokens;
+                    }else{
+                        return;
+                    }
                 }else{
                     parentUnitTokens = DataService.getUnitById("0").tokenCopy;
                 }

@@ -345,9 +345,17 @@
 
                     for(var i=0; i<parentUnit.AnnotationUnits.length; i++){
                         if(parentUnit.AnnotationUnits[i].unitType !== "REGULAR"){
-                          delete DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id][parentUnit.AnnotationUnits[i].annotation_unit_tree_id];
-                            parentUnit.AnnotationUnits.splice(i,1);
-                            i--;
+                            if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id]){
+                                if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id][parentUnit.AnnotationUnits[i].annotation_unit_tree_id]){
+                                    delete DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id][parentUnit.AnnotationUnits[i].annotation_unit_tree_id];
+                                    parentUnit.AnnotationUnits.splice(i,1);
+                                    i--;
+                                }
+                            }else{
+                                parentUnit.AnnotationUnits.splice(i,1);
+                                i--;
+                            }
+                          
                         }
                     }
                 }
@@ -643,7 +651,7 @@
                       }
                       return unit.annotation_unit_tree_id == unitIdToFind
                     });
-                    tempUnit.AnnotationUnits.length > 0 ? tempUnit = tempUnit.AnnotationUnits[unitIndex] : '';
+                    tempUnit.AnnotationUnits.length > 0 && unitIndex > -1 ? tempUnit = tempUnit.AnnotationUnits[unitIndex] : '';
                 }
                 return !!tempUnit && tempUnit.annotation_unit_tree_id == unitID ? tempUnit : null;
             }
