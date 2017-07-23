@@ -287,6 +287,8 @@
                   }else return 0
                 })
 
+                index_int - 1 > parentUnit.AnnotationUnits.length ? index_int =  parentUnit.AnnotationUnits.length + 1 : '';
+
                 parentUnit.AnnotationUnits[index_int - 1] = newObject;
 
                 var parentUnitTokens = parentUnit.tokens;
@@ -410,6 +412,7 @@
                     unit.AnnotationUnits[i].annotation_unit_tree_id = unit.annotation_unit_tree_id === "0" ? (i+1).toString() : treeId+"-"+(i+1).toString();
 
                     if(oldId !== unit.AnnotationUnits[i].annotation_unit_tree_id){
+
                         // console.log("Old id is : ", oldId, " new id is : ", unit.AnnotationUnits[i].annotation_unit_tree_id );
                         if(DataService.unitsUsedAsRemote[oldId]){
                             DataService.unitsUsedAsRemote[unit.AnnotationUnits[i].annotation_unit_tree_id] = angular.copy(DataService.unitsUsedAsRemote[oldId]);

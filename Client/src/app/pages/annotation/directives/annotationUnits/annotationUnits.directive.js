@@ -55,7 +55,11 @@
         function annotationUnitDirectiveLink($scope, elem, attrs,$rootScope) {
             $scope.vm = $scope.dirCtrl;
             $scope.vm.dataBlock.tokens = $scope.vm.tokens;
-            $scope.vm.dataBlock.tokenCopy = angular.copy($scope.vm.dataBlock.tokens)
+            $scope.vm.dataBlock.tokenCopy = angular.copy($scope.vm.dataBlock.tokens);
+
+            $scope.vm.dataBlock.tokens.forEach(function(token){
+                token.parentId = $scope.vm.dataBlock.annotation_unit_tree_id;
+            })
 
             if($scope.vm.dataBlock.children_tokens_hash === undefined){
                 $scope.vm.dataBlock.children_tokens_hash = {};
@@ -120,6 +124,10 @@
                 }else{
                     paintTokens($scope.vm.tokens,$scope.vm.dataBlock,true);
                 }
+
+                $scope.vm.dataBlock.tokens.forEach(function(token){
+                        token.parentId = $scope.vm.dataBlock.annotation_unit_tree_id;
+                })
             });
 
             $scope.$on('RemoveBorder', function(event, args) {

@@ -156,7 +156,7 @@
         }
 
         function initToken(vm,index){
-            console.log(index)
+            console.log(index);
         }
 
         function tokenClicked(vm,doNotUpdateSelectedToken){
