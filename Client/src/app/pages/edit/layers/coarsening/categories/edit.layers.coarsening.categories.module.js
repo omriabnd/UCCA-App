@@ -1,3 +1,4 @@
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -12,7 +13,7 @@
             .state('edit.layers.coarsening.categories', {
                 url: '/categories',
                 template: '<ui-view></ui-view>',
-                title: 'Edit Coarsening Layer Categories',
+                title: 'Edit Coarsening Layer',
                 abstract:true,
                 controllerAs: 'vm',
                 resolve:{
@@ -27,7 +28,7 @@
             .state('edit.layers.coarsening.categories.manage', {
                 url: '/categories',
                 templateUrl: 'app/pages/edit/layers/coarsening/categories/edit.layers.coarsening.categories.html',
-                title: 'Edit Categories',
+                title: 'Edit Coarsening Layer',
                 controller: 'EditCoarseningLayerCategoriesCtrl',
                 controllerAs: 'vm',
                 params:{
@@ -46,7 +47,7 @@
             .state('edit.layers.coarsening.categories.create', {
                 url: '/newctegories',
                 templateUrl: 'app/pages/edit/layers/coarsening/categories/edit.layers.coarsening.categories.create.html',
-                title: 'New Category',
+                title: 'Edit Coarsening Layer',
                 controller: 'EditCategoriesCtrl',
                 controllerAs: 'vm',
                 resolve:{

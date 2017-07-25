@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 import re
 import pdb
 from itertools import count
@@ -34,6 +32,7 @@ def tokenize(t):
   is_punctuation: a boolean as to whether this is a token that requires annotation (non-punctuation) or not
   """
 
+  t = t.strip()
   # defining linefeed and whitespace regexps
   linefeed = re.compile('[^\n]+')
   whitespace = re.compile('\S+')
@@ -53,7 +52,9 @@ def tokenize(t):
   for p, parag_offset in paragraphs:
 
     # the first token of each paragraph is a linefeed token
-    output.extend(tuples_to_dict([(parag_offset - 1, parag_offset - 1, '\n', True)]))
+    if parag_offset > 0:
+      output.extend(tuples_to_dict([(parag_offset - 1, parag_offset - 1, '\n', True)]))
+
 
     # split each paragraph into words by whitespace
     words = [(m.group(0), parag_offset + m.start()) for m in whitespace.finditer(p)]
@@ -91,8 +92,9 @@ def tokenize(t):
       # extend the list with new tokens
       output.extend(tuples_to_dict(token_candidates))
 
+  output.sort(key=lambda x :-x["start_index"])
   # return the list without the first linefeed token, which is superfluous
-  return output[1:]
+  return output
 
 
 

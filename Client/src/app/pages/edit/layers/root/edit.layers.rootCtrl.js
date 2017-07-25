@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -22,7 +23,7 @@
         //
         // updateTableDataAccordingToLayerType(layerType);
 
-        Core.init(this,EditTableStructure);
+        Core.init(this,EditTableStructure,editRootLayerService);
 
         vm.smartTableStructure.forEach(function(obj){
             var value = editRootLayerService.get(obj.key);
@@ -35,7 +36,7 @@
         }
 
         function manage (pageRoute){
-            $state.go('edit.layers.root.'+pageRoute);
+            $state.go('edit.layers.root.'+pageRoute,{chosenItem : null, itemRowIndex: null});
         }
 
         function edit (pageRoute,shouldEdit,obj,index,rowItem){
@@ -80,7 +81,7 @@
 
         function manageRestrictions(){
             console.log("manageRestriction");
-            $state.go('edit.layers.root.restrictions');
+            $state.go('edit.layers.root.restrictions',{chosenItem : null, itemRowIndex: null});
         }
 
         function getInnerSmartTableStructure(key){

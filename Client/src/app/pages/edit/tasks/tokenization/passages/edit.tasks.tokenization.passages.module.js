@@ -1,3 +1,4 @@
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -12,7 +13,7 @@
             .state('edit.tasks.tokenization.passages', {
                 url: '/tasks/tokenization',
                 template: '<ui-view></ui-view>',
-                title: 'Edit Tokenization Task Passages',
+                title: 'Edit Tokenization Task',
                 abstract:true,
                 controllerAs: 'vm',
                 resolve:{
@@ -27,7 +28,7 @@
             .state('edit.tasks.tokenization.passages.manage', {
                 url: '/tasks/tokenization/:id',
                 templateUrl: 'app/pages/edit/tasks/tokenization/passages/edit.tasks.tokenization.passages.html',
-                title: 'Edit Tokenization Task Passages',
+                title: 'Edit Tokenization Task',
                 controller: 'EditTokenizationTaskPassagesCtrl',
                 controllerAs: 'vm',
                 params:{
@@ -38,14 +39,14 @@
                         return editTokenizationTaskPassagesService.getEditTableStructure();
                     },
                     PassagesTableData: function(editTokenizationTaskPassagesService){
-                        return editTokenizationTaskPassagesService.getPassagesTableData();
+                        return editTokenizationTaskPassagesService.getTableData();
                     }
                 }
             })
             .state('edit.tasks.tokenization.passages.create', {
                 url: '/newpassage',
                 templateUrl: 'app/pages/edit/tasks/tokenization/passages/edit.tasks.tokenization.passages.create.html',
-                title: 'New Passage',
+                title: 'Edit Tokenization Task',
                 controller: 'EditPassagesCtrl',
                 controllerAs: 'vm',
                 resolve:{

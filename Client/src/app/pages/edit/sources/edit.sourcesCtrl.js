@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -10,7 +11,7 @@
   	var vm = this;
   	vm.upsert = upsert;
     vm.back = back;
-    Core.init(this,EditTableStructure);
+    Core.init(this,EditTableStructure,editSourcesService);
 
     vm.smartTableStructure.forEach(function(obj){
       obj.value = editSourcesService.get(obj.key);

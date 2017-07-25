@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -19,10 +20,10 @@
                     return service.tableData;
                 });
             },
-            getLayersTableData: function(id){
+            getLayersTableData: function(){
                 var _service = this;
-                return apiService.edit.projects.layer.getLayersTableData(id).then(function (res){
-                    angular.copy(res.data, _service.tableData);
+                return apiService.edit.projects.layer.getLayersTableData().then(function (res){
+                    angular.copy(res.data.results, _service.tableData);
                     return _service.tableData;
                 });
             }

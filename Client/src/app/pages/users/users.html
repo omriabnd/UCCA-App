@@ -1,10 +1,10 @@
-<div>
-	<button type="button" class="btn btn-sm btn-primary" ng-click="vm.editRow({})"  permission permission-only="'ADMIN'">Add New User</button>
-</div>
 <div
     ba-panel
     ba-panel-title="Search Form"
     ba-panel-class="with-scroll">
+    <div class="add-asset-btn-container">
+    	<button type="button" class="btn btn-sm btn-primary" ng-click="vm.editRow({})"  permission permission-only="['ADMIN']">Add New User</button>
+    </div>
   <div ng-include="'app/pages/form/layouts/widgets/search.html'"></div>
 </div>
 <div class="row">

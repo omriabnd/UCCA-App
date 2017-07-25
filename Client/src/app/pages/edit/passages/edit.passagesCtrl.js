@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -15,12 +16,12 @@
     vm.viewProjects = viewProjects;
     vm.refreshData = refreshData;
     vm.back = back;
-    Core.init(this,EditTableStructure);
+    Core.init(this,EditTableStructure,editPassagesService);
 
     vm.smartTableStructure.forEach(function(obj){
       obj.value = editPassagesService.get(obj.key);
       if(obj.key == 'type'){
-        obj.value = ENV_CONST.PASSAGE_TYPE[obj.value]
+        obj.value = ENV_CONST.PASSAGE_TYPE[obj.value] || ENV_CONST.PASSAGE_TYPE['PUBLIC']
       }
     });
 

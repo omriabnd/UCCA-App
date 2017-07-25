@@ -1,7 +1,5 @@
-/**
- * @author v.lugovksy
- * created on 16.12.2015
- */
+
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -12,7 +10,8 @@
   function fileReader($q) {
     var onLoad = function(reader, deferred, scope) {
       return function () {
-        scope.$apply(function () {
+        scope.$apply/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
           deferred.resolve(reader.result);
         });
       };
@@ -20,7 +19,8 @@
 
     var onError = function (reader, deferred, scope) {
       return function () {
-        scope.$apply(function () {
+        scope.$apply/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
           deferred.reject(reader.result);
         });
       };

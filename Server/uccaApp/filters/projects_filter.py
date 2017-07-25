@@ -1,5 +1,3 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 import rest_framework_filters as filters
 from django.db.models import Q
 
@@ -14,9 +12,9 @@ def created_by_users(self,request):
 
 class ProjectsFilter(filters.FilterSet):
     id = filters.NumberFilter(name='id', lookup_type='exact')
-    name = filters.CharFilter(name='name', lookup_type='contains')
-    description = filters.CharFilter(name='description', lookup_type='contains')
-    tooltip = filters.CharFilter(name='tooltip', lookup_type='contains')
+    name = filters.CharFilter(name='name', lookup_type='icontains')
+    description = filters.CharFilter(name='description', lookup_type='icontains')
+    tooltip = filters.CharFilter(name='tooltip', lookup_type='icontains')
     layer = filters.NumberFilter(name='layer', lookup_type='exact')
 
     is_default = filters.BooleanFilter(name='is_default', lookup_type='exact')

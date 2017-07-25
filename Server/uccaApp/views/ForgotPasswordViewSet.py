@@ -1,5 +1,3 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 import logging
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
@@ -8,9 +6,9 @@ from rest_framework import renderers
 from rest_framework import viewsets
 from rest_framework.views import APIView
 
-from uccaApp.util.functions import Send_Email
+from uccaApp.util.functions import Send_Email, send_forgot_password_email
 from uccaApp.util.permissions import IsPostMethod
-from uccaApp.models import Constants, Roles
+from uccaApp.models import Constants, Roles, LogLogin
 from uccaApp.models import Users
 from uccaApp.serializers.ForgotPasswordSerializer import ForgotPasswordSerializer
 from uccaApp.serializers.UsersSerializer import UsersSerializer
@@ -36,11 +34,21 @@ class ForgotPasswordViewSet(APIView):
         user.set_password(random_password)
         user.save()
 
-        Send_Email(user.email, random_password)
+        send_forgot_password_email(user.email, random_password)
 
         res = {
             "msg":"A message has been sent to you by email with your password"
         }
+
+        LogLogin(
+            login=user.first_name,
+            user_id=user,
+            action="forgot password",
+            data='ip: ' + LogLogin.get_client_ip(request) + '; browser: ' + request.META[
+                'HTTP_USER_AGENT'] + '; response: ' + str(res),
+            comment=""
+        ).save()
+
         return Response(res)
 
 

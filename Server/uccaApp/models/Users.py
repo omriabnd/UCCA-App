@@ -1,6 +1,7 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 from datetime import datetime
+
+from rest_framework.exceptions import ValidationError
+
 from uccaApp.models import Tabs, Constants, Roles
 from django.db import models
 from django.contrib.auth.models import User, Group
@@ -35,3 +36,8 @@ class Users(models.Model):
         User.objects.get(pk=user_id).groups.clear()
         # grant new group to user
         Group.objects.get(name=new_role_name).user_set.add(User.objects.get(pk=user_id))
+
+    def validate_email_unique(email):
+        exists = User.objects.filter(email=email)
+        if exists:
+            raise ValidationError("Email address %s already exits, must be unique" % email)

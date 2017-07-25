@@ -1,3 +1,4 @@
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -12,7 +13,7 @@
             .state('edit.passages.tasks', {
                 url: '/tasks',
                 templateUrl: 'app/pages/edit/passages/tasks/edit.passages.tasks.html',
-                title: 'View Passages Tasks',
+                title: 'Edit Passages',
                 controller: 'EditPassagesTasksCtrl',
                 controllerAs: 'vm',
                 resolve:{

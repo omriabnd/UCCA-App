@@ -1,6 +1,7 @@
 /**
  * Change top "Daily Downloads", "Active Users" values with animation effect
  */
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -11,12 +12,12 @@
   function animatedChange($timeout) {
     return {
       link: function (scope, element) {
-        $timeout(function () {
+        $timeout(function(){
           var newValue = element.attr('new-value');
           var oldvalue = parseInt(element.html());
 
           function changeValue(val) {
-            $timeout(function () {
+            $timeout(function(){
               element.html(val);
             }, 30);
           }
@@ -30,7 +31,7 @@
               changeValue(j);
             }
           }
-          $timeout(function () {
+          $timeout(function(){
             element.next().find('i').addClass('show-arr');
           }, 500);
         }, 3500);

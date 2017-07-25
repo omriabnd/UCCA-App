@@ -4,14 +4,19 @@
     "pk": 1,
     "fields": {
       "id": 1,
-      "username" : null, // TODO: need to be fetched from the config.py
-      "password" : null, // TODO: need to be fetched from the config.py
-      "first_name" : "yarin",
-      "last_name" : "slivka",
-      "email" : "yarin@zigit.co.il",
+      "username" : "adminucca",
+      "password" : "pbkdf2_sha256$36000$odJOwLIyKLAC$2LkBMxy61/uB+on4yDqCIHWkn0IOU8PsZFQXbXM9lyw=",
+      "first_name" : "admin",
+      "last_name" : "ucca",
+      "email" : "admin.ucca2@cs.huji.ac.il",
       "is_superuser" : true,
       "is_staff" : true,
-      "is_active" : true
+      "is_active" : true,
+      "date_joined": "2017-07-17T08:43:46.279Z",
+        "groups": [
+            1
+        ],
+        "user_permissions": []
     }
   },
   {
@@ -19,11 +24,11 @@
     "pk": 2,
     "fields": {
       "id": 1,
-      "first_name" : "yarin",
-      "last_name" : "slivka",
-      "email" : "yarin@zigit.co.il",
-      "organization" : "ZIGIT",
-      "affiliation" : "ZIGIT",
+      "first_name" : "user",
+      "last_name" : "ucca",
+      "email" : "user.ucca2@cs.huji.ac.il",
+      "organization" : "HUJI",
+      "affiliation" : "HUJI",
       "created_by" : 1,
       "role" : 1,
       "is_active" : true,

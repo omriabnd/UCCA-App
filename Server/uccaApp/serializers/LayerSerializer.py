@@ -1,5 +1,3 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 import json
 
 from django.contrib.auth.models import User
@@ -67,10 +65,13 @@ class LayerSerializer(serializers.ModelSerializer):
                 cat.id = lc.category_id.id
                 cat.category_id = lc.category_id
                 cat.parent = lc.parent_category_id
-                lc_obj = Layers_Categories.objects.get(layer_id=obj.id,category_id=lc.category_id.id)
-                cat.was_default = lc_obj.was_default
-                cat.shortcut_key = lc_obj.shortcut_key
-                lc_list.append(cat)
+                try:
+                    lc_obj = Layers_Categories.objects.get(layer_id=obj.id,category_id=lc.category_id.id)
+                    cat.was_default = lc_obj.was_default
+                    cat.shortcut_key = lc_obj.shortcut_key
+                    lc_list.append(cat)
+                except:
+                    lc_obj = None
 
         for lc in lc_list:
             lc_json.append(LayersCategoriesSerializer(lc).data)
@@ -148,7 +149,7 @@ class LayerSerializer(serializers.ModelSerializer):
         restrictions = validated_data['restrictions'] = self.initial_data['restrictions']
 
         # disable changing non-metaadata attrs if is parent of other layers
-        if self.is_parent_of_other_layer(instance) == False:
+        if self.is_parent_of_other_layer(instance) == False and self.already_in_use_in_a_project(instance) == False:
             # start update the connected tables [Layers_Categories , Layers_Categories_Restrictions]
             # update layer_categories - by reset
 
@@ -195,6 +196,11 @@ class LayerSerializer(serializers.ModelSerializer):
                 res.append(um)
         return res
 
+    def already_in_use_in_a_project(self,instance):
+        projects_list = instance.projects_set.all()
+        already_in_use = len(projects_list ) > 0
+        return already_in_use
+
     def is_parent_of_other_layer(self,instance):
         children_list = Layers.objects.all().filter(parent_layer_id=instance.id)
         is_parent = len(children_list) > 0
@@ -209,7 +215,11 @@ class LayerSerializer(serializers.ModelSerializer):
         newLayer.tooltip = validated_data['tooltip']
 
         if self.initial_data['parent'] is not None and self.initial_data['parent'] and newLayer.type !=  Constants.LAYER_TYPES_JSON['ROOT']: # no parent for root layer
-            newLayer.parent_layer_id = get_object_or_404(Layers,pk=self.initial_data['parent']['id'])
+            if(newLayer.type == Constants.LAYER_TYPES_JSON['REFINEMENT'] or newLayer.type == Constants.LAYER_TYPES_JSON['COARSENING']):
+                parent_id = self.initial_data['parent']['id']
+            else:
+                parent_id = self.initial_data['parent'][0]['id']
+            newLayer.parent_layer_id = get_object_or_404(Layers,pk=parent_id) # TODO: check if '[0]' is ok
 
         newLayer.save()
         return newLayer

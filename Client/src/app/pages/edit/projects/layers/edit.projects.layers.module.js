@@ -1,3 +1,4 @@
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -12,7 +13,7 @@
             .state('edit.projects.layers', {
                 url: '/layers',
                 templateUrl: 'app/pages/edit/projects/layers/edit.projects.layers.html',
-                title: 'Edit Project layer',
+                title: 'Edit Projects',
                 controller: 'EditProjectsLayersCtrl',
                 controllerAs: 'vm',
                 resolve:{

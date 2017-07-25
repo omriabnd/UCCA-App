@@ -1,10 +1,10 @@
-<div>
-	<button type="button" class="btn btn-sm btn-primary" ng-click="vm.editRow({'type':'Root'})">Add New Layer</button>
-</div>
 <div
     ba-panel
     ba-panel-title="Search Form"
     ba-panel-class="with-scroll">
+    <div class="add-asset-btn-container">
+        <button type="button" class="btn btn-sm btn-primary" ng-click="vm.editRow({'type':'Root'})" permission permission-only="['ADMIN','PROJECT_MANAGER']">Add New Root Layer</button>
+    </div>
   <div ng-include="'app/pages/form/layouts/widgets/search.html'"></div>
 </div>
 <div class="row">

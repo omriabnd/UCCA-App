@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -7,9 +8,9 @@
 
   /** @ngInject */
   function tasksService(apiService) {
-    apiService.tasks.getTasksTableData().then(function (res){
+    /*apiService.tasks.getTasksTableData().then(function (res){
       angular.copy(res.data.results, service.tableData);
-    });
+    });*/
     var service = {
         tableData:[],
         getTableStructure: function(){

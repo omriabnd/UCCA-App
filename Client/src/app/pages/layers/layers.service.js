@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -7,9 +8,9 @@
 
   /** @ngInject */
   function layersService(apiService) {
-    apiService.layers.getLayersTableData().then(function (res){
+    /*apiService.layers.getLayersTableData().then(function (res){
       angular.copy(res.data.results, service.tableData);
-    });
+    });*/
     var service = {
         tableData:[],
         getTableStructure: function(){

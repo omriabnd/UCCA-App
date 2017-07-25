@@ -1,5 +1,3 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 from rest_framework import serializers
 
 from uccaApp.models import Annotation_Remote_Units_Annotation_Units
@@ -41,18 +39,14 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
 
     def get_categories(self, obj):
         categories_json = []
+
         if hasattr(obj, 'is_remote_copy') == False or obj.is_remote_copy == False:
             categories = Annotation_Units_Categories.objects.all().filter(unit_id=obj.id,remote_parent_id=None )
-            for cat in categories:
-                categories_json.append(CategorySerializer_Simplify(cat.category_id).data)
         else:
-            # get all its remote_parent_id's
-            remote_units = Annotation_Remote_Units_Annotation_Units.objects.all().filter(remote_unit_id=obj.id)
-            for ru in remote_units:
-                # get all the categories belong to this remote_parent_id
-                categories = Annotation_Units_Categories.objects.all().filter(unit_id=obj.id, remote_parent_id=ru.unit_id.id)
-                for cat in categories:
-                    categories_json.append(CategorySerializer_Simplify(cat.category_id).data)
+            categories = Annotation_Units_Categories.objects.all().filter(unit_id=obj.id, remote_parent_id=obj.parent_id)
+
+        for cat in categories:
+                categories_json.append(CategorySerializer_Simplify(cat.category_id).data)
 
         return categories_json
 

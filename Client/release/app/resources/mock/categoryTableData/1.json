@@ -1,0 +1,16 @@
+[
+  {
+    "id": "5862e514c239c2462471928b",
+    "name": "www.docs.com",
+    "description": "Labore velit reprehenderit eu commodo reprehenderit occaecat laborum eiusmod mollit ea. Ea ad magna consectetur ex adipisicing culpa quis dolore. Nostrud nisi deserunt qui elit dolore tempor fugiat officia nostrud consectetur ad ea ex ullamco. Laborum amet mollit culpa sit duis sint ad dolore ut magna nisi sunt. Laboris nisi aute velit tempor sint tempor commodo voluptate consequat deserunt ullamco ullamco sit. Velit est laborum consectetur fugiat sunt laborum. Amet officia reprehenderit aliqua culpa eu.\r\n source",
+    "created_by": {
+      "id": "5862e51487044798237016e9",
+      "first_name": "Phillips",
+      "last_name": "Ball",
+      "name":"Phillips Ball"
+    },
+    "created_at": "2016-11-16T08:13:11 -02:00",
+    "updated_at": "2015-08-26T02:20:10 -03:00",
+    "is_active": true
+  }
+]

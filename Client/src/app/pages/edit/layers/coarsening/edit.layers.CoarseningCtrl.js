@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -22,7 +23,7 @@
         //
         // updateTableDataAccordingToLayerType(layerType);
 
-        Core.init(this,EditTableStructure);
+        Core.init(this,EditTableStructure,editCoarseningLayerService);
 
         vm.smartTableStructure.forEach(function(obj){
             var value = editCoarseningLayerService.get(obj.key);
@@ -35,7 +36,9 @@
         }
 
         function manage (pageRoute){
-            $state.go('edit.layers.coarsening.'+pageRoute,{parentId: editCoarseningLayerService.get('parent').id});
+            var _parent = editCoarseningLayerService.get('parent');
+            var _parentId = angular.isArray(_parent) ? _parent[0].id : _parent.id
+            $state.go('edit.layers.coarsening.'+pageRoute,{parentId: _parentId});
         }
 
         function edit (pageRoute,shouldEdit,obj,index,rowItem){
@@ -52,12 +55,14 @@
             editCoarseningLayerService.saveLayerDetails(obj).then(function(response){
                 $state.go("layers")
             },function(err){
-                $state.go("layers")
+                // $state.go("layers")
             })
         }
 
         function chooseCategory(){
-            $state.go('edit.layers.coarsening.categories.manage',{parentId: editCoarseningLayerService.get('parent').id});
+            var _parent = editCoarseningLayerService.get('parent');
+            var _parentId = angular.isArray(_parent) ? _parent[0].id : _parent.id
+            $state.go('edit.layers.coarsening.categories.manage',{parentId: _parentId});
         }
 
         function refreshData(key){

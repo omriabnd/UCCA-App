@@ -1,3 +1,4 @@
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -12,7 +13,7 @@
           .state('edit.passages.sources', {
             url: '/sources',
             template: '<ui-view></ui-view>',
-            title: 'Edit Sources',
+            title: 'Edit Passages',
             abstract:true,
             controllerAs: 'vm',
             resolve:{
@@ -22,7 +23,7 @@
           .state('edit.passages.sources.manage', {
             url: '/sources',
             templateUrl: 'app/pages/edit/passages/sources/edit.passages.sources.html',
-            title: 'Edit Sources',
+            title: 'Edit Passages',
             controller: 'EditPassagesSourcesCtrl',
             controllerAs: 'vm',
             resolve:{
@@ -33,7 +34,7 @@
           .state('edit.passages.sources.create', {
             url: '/newsources',
             templateUrl: 'app/pages/edit/passages/sources/edit.passages.sources.create.html',
-            title: 'New Source',
+            title: 'Edit Passages',
             controller: 'EditSourcesCtrl',
             controllerAs: 'vm',
             params:{

@@ -1,5 +1,3 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 import rest_framework_filters as filters
 
 from uccaApp.models import Users
@@ -7,11 +5,11 @@ from uccaApp.models import Users
 
 class UsersFilter(filters.FilterSet):
     id = filters.NumberFilter(name='id', lookup_type='exact')
-    first_name = filters.CharFilter(name='first_name', lookup_type='contains')
-    last_name = filters.CharFilter(name='last_name', lookup_type='contains')
-    email = filters.CharFilter(name='email', lookup_type='exact')
-    organization = filters.CharFilter(name='organization', lookup_type='contains')
-    affiliation = filters.CharFilter(name='affiliation', lookup_type='contains')
+    first_name = filters.CharFilter(name='first_name', lookup_type='icontains')
+    last_name = filters.CharFilter(name='last_name', lookup_type='icontains')
+    email = filters.CharFilter(name='email', lookup_type='icontains')
+    organization = filters.CharFilter(name='organization', lookup_type='icontains')
+    affiliation = filters.CharFilter(name='affiliation', lookup_type='icontains')
     role = filters.CharFilter(name='role__name', lookup_type='exact')
     is_active = filters.BooleanFilter(name='is_active', lookup_type='exact')
     created_by = filters.NumberFilter(name='created_by', lookup_type='exact')

@@ -1,5 +1,3 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 from django.db.models import Count
 from rest_framework import parsers
 from rest_framework import renderers
@@ -31,7 +29,7 @@ class PassagesProjectsViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
-        if has_permissions_to(self.request.user.id,'view_projects'):
+        if has_permissions_to(self.request,'view_projects'):
             # init
             param_passage_tasks = None
             projects_set = []

@@ -41,9 +41,9 @@
             var categoriesHash = {}
             categories.forEach(function(category){
                 if(categoriesHash[category.abbreviation]){
-                    categoriesHash[category.abbreviation].category.abbreviation +="_"+(categoriesHash[category.abbreviation].times)
+                    categoriesHash[category.abbreviation].category.abbreviation += (categoriesHash[category.abbreviation].times)
                     categoriesHash[category.abbreviation].times += 1;
-                    category.abbreviation+="_"+(categoriesHash[category.abbreviation].times)
+                    category.abbreviation += (categoriesHash[category.abbreviation].times)
                 }else{
                     categoriesHash[category.abbreviation] = {
                         "category" : category,
@@ -61,7 +61,7 @@
         }
 
         function toggleAnnotationGuiStatus(plusMinusElem){
-            if ($(plusMinusElem).hasClass('ion-minus-round')) {
+            if ($(plusMinusElem).hasClass('minus-round')) {
                 return ENV_CONST.ANNOTATION_GUI_STATUS.COLLAPSE
             }else{
                 return ENV_CONST.ANNOTATION_GUI_STATUS.OPEN
@@ -70,7 +70,9 @@
 
         function toggleAnnotationUnitView(element){
 
-            $rootScope.focusUnit($(element.toElement).closest('.categorized-word').find('.directive-info-data-container').first())
+            var elem = element.toElement ? element.toElement : element;
+
+            $rootScope.focusUnit($(elem).closest('.categorized-word').find('.directive-info-data-container').first())
             
             
             var currentTarget =element.currentTarget;

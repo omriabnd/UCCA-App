@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -16,14 +17,14 @@
         function upsert(obj){
             console.log("edit",obj);
             editTasksService.saveTaskDetails(obj).then(function(response){
-                $state.go("tasks")
+                $state.go("projectTasks")
             },function(err){
-                $state.go("tasks")
+                $state.go("projectTasks")
             })
         }
 
         function back(){
-            $state.go('tasks');
+            $state.go('projectTasks');
         }
 
         function choosePassage(){

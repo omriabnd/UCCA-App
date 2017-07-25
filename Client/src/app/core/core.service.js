@@ -1,6 +1,5 @@
+
 /* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-
-
 (function () {
   'use strict';
 
@@ -13,6 +12,7 @@
 		var core = {
 			init: init,
 			showMore: showMore,
+			showMoreWithoutJson: showMoreWithoutJson,
 			goNext: goNext,
 			search: search,
 			removeRow: removeRow,
@@ -28,22 +28,129 @@
 			validate: validate,
 			hasValue: hasValue,
 			previewTask: previewTask,
-			showAlert: showAlert
+			showAlert: showAlert,
+			exportAsset: exportAsset,
+			initCategoriesStringToArray: initCategoriesStringToArray,
+			generateRestrictionObject: generateRestrictionObject,
+			parseSmartTableColumnData:parseSmartTableColumnData,
+			viewOnlyRuleOk:viewOnlyRuleOk,
+			promptAlert:promptAlert,
+            isEmptyObject:isEmptyObject
 		};
 		
 		return core;
 
+        function isEmptyObject(obj) {
+            for(var prop in obj) {
+                if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+                    return false;
+                }
+            }
+            return true;
+        }
 
-		function smartTableCanUseAction(functionName,onlyForRoles,type){
-			return true
+		function viewOnlyRuleOk(_viewOnlyRule){
+		    var isOk = false;
+		    var viewOnlyRule = _viewOnlyRule || this;
+		    if(viewOnlyRule){
+		        switch(viewOnlyRule.validateFunction){
+		            case "hasValue":
+		                isOk = checkIfHasValueInAssetKey(viewOnlyRule.key)
+		                break;
+		        }
+		    }
+		    return isOk;
 		}
+		
+		function checkIfHasValueInAssetKey(assetKey){
+			if(core.currentService && core.currentService.Data){
+			    if(angular.isArray(core.currentService.Data[assetKey])){
+			        return core.currentService.Data[assetKey].length > 0
+			    }
+			    return !!core.currentService.Data[assetKey] 
+			}
+			return false;
+		}
+
+		function parseSmartTableColumnData(itemRow,value){
+			if(itemRow[value['key']]){
+				if(angular.isArray(itemRow[value['key']])){
+					return itemRow[value['key']].map(function(obj){
+						if(obj.name){
+							return obj.name+"("+obj.id+")"
+						}else if(obj.short_text){
+							return obj.short_text+"("+obj.id+")"
+						}else{
+							return obj.id
+						}
+					}).toString().split(",").join(", ")
+				}else{
+					return (itemRow[value['key']].name || itemRow[value['key']].short_text || itemRow[value['key']].id || itemRow[value['key']] )
+				}
+			}else{
+				return "";
+			}
+		}
+
+		function generateRestrictionObject(categoryOneArray,restrictionType,categoryTwoArray){
+		    categoryOneArray = categoryOneArray.map(function(cat){
+		        delete cat.description;
+		        delete cat.tooltip;
+		        return cat;
+		    })
+		    categoryTwoArray = categoryTwoArray.map(function(cat){
+		        delete cat.description;
+		        delete cat.tooltip;
+		        return cat;
+		    })
+		    return {
+		        categories_1: categoryOneArray,
+		        type:restrictionType.key,
+		        categories_2: categoryTwoArray
+		    }
+		}
+
+		function initCategoriesStringToArray(categoriesAsString){
+		    return JSON.parse(categoriesAsString.replace(/'/g,'"').replace(/True/g,'true').replace(/False/g,'false').replace(/None/g,'null'))
+		}
+
+		function exportAsset(){
+			var asset = angular.copy(this.currentService.Data, asset)
+			asset.description = fetchDescription(asset.description);
+			this.showMore(asset);
+		}
+
+		function fetchDescription(desc){
+			if(!!desc){
+				if(!!$(desc).text()){
+					return $(desc).text()
+				}else if(!!desc){
+					return desc
+				}else{
+					return "Asset as JSON"
+				}
+			}
+			return "Asset as JSON"
+		}
+
+		function smartTableCanUseAction(functionName,onlyForRoles){
+		  /*
+		    logic wehn to show the button
+		  */
+		  var permitted = true;
+		  if(!!onlyForRoles && onlyForRoles.length){
+		    permitted = (onlyForRoles.indexOf(core.user_role.name.toUpperCase()) > -1)
+		  }
+		  return permitted;
+		}
+
 		function goNext(currentPage) {
 			var tableScope = angular.element($('div[st-pagination]')).isolateScope();
 			if (tableScope.currentPage == tableScope.numPages) {
 				var vm = this;
 				vm.currentService.getTableData([{'searchKey':'offset','searchValue': vm.smartTableDataSafe.length}]).then(function (res) {
 					vm.smartTableDataSafe = vm.smartTableDataSafe.concat(res);
-					$timeout(function () {
+					$timeout(function(){
 						tableScope.selectPage(currentPage + 1);
 					})
 				});
@@ -73,7 +180,11 @@
 			return PermPermissionStore.getStore()[state_id.toString()].validationFunction[2](state_id.toString());
 		}
 
-		function showMore(obj, pagelink, size) {
+		function showMoreWithoutJson(obj, pagelink, size) {
+			this.showMore(obj, pagelink, size, true);
+		}
+
+		function showMore(obj, pagelink, size, hideJson) {
 			var pagelink = angular.isString(pagelink) ? pagelink || 'app/pages/ui/modals/modalTemplates/largeModal.html' : 'app/pages/ui/modals/modalTemplates/largeModal.html';
 			var size = size || 'lg';
 			$uibModal.open({
@@ -81,20 +192,38 @@
 				templateUrl: pagelink,
 				size: size,
 				scope: $rootScope.$new(),
-				controller: function ($scope) {
+				controller: ["$scope","$sce",function ($scope,$sce) {
 					$scope.htmlContent = obj.htmlContent;
 					$scope.name = obj.name;
-					$scope.description = obj.description;
-					$scope.jsonString = JSON.stringify(obj);
-				}
+					if(obj.description){
+					    $scope.description = $sce.trustAsHtml(obj.description);
+					}
+					if(!hideJson){
+						$scope.jsonString = JSON.stringify(obj);
+					}
+				}]
 			});
 		};
+
+		function promptAlert(message) {
+			var pagelink = 'app/pages/ui/modals/modalTemplates/dangerModal.html';
+			var size = 'md';
+			return $uibModal.open({
+				animation: true,
+				templateUrl: pagelink,
+				size: size,
+				scope: $rootScope.$new(),
+				controller: ["$scope",function ($scope) {
+					$scope.message = message
+				}]
+			});
+		}
 
 		function extractDataFromStructure(structure) {
 			var result = {};
 			for (var i = 0; i < structure.length; i++) {
 				if(structure[i].shouldSendToServer != false){
-					structure[i].type == "checkbox" ? result[structure[i].key] = structure[i].value : result[structure[i].key] = structure[i].value || null;
+					structure[i].type == "checkbox" ? result[structure[i].key] = !!structure[i].value : result[structure[i].key] = structure[i].value || null;
 				}
 			}
 			return result;
@@ -104,7 +233,7 @@
 			var searchBy = structure.map(function (structureObj) {
 				return {
 					"searchKey": structureObj.key,
-					"searchValue": structureObj.value
+					"searchValue": typeof structureObj.value == 'object' ? structureObj.value.label : structureObj.type == 'checkbox' ? !!structureObj.value : structureObj.value
 				}
 			}).filter(function (searchObj) {
 				searchObj.searchValue = searchObj.searchValue && searchObj.searchValue.value ? searchObj.searchValue.value : searchObj.searchValue;
@@ -116,15 +245,19 @@
 		function search(structure) {
 			console.log("searchBy", searchBy(structure));
 			var searchTerms = searchBy(structure);
+			$rootScope.$pageFinishedLoading = false;
 			core.currentService.getTableData(searchTerms).then(searchSuccess, searchFailed);
 		}
 
 		function searchSuccess(res) {
 			core.currentCtrl.smartTableDataSafe = res;
+			$rootScope.$pageFinishedLoading = true;
+			core.currentCtrl.$totalResults = $rootScope.$totalResults;
 		}
 
 		function searchFailed(err) {
-			console.log("removeCategoryFailed err :", err);
+			console.log("searchFailed err :", err);
+			$rootScope.$pageFinishedLoading = true;
 		}
 
 		function autoExecute() {
@@ -233,7 +366,7 @@
 			var _core = this;
 			var result = true;
 			structureToValidate.forEach(function(rowElement){
-				if(rowElement.validationRule.type == "Require" && rowElement.value == ""){
+				if(!!rowElement.validationRule && rowElement.validationRule.type == "Require" && rowElement.value == ""){
 					_core.showNotification('error',"Field "+rowElement.name+" is required.");
 					result = false;
 				}
@@ -273,16 +406,26 @@
 
 				vm.showMore = core.showMore;
 				
+				vm.viewOnlyRuleOk = core.viewOnlyRuleOk;
+
+				vm.showMoreWithoutJson = core.showMoreWithoutJson;
+
+				vm.parseSmartTableColumnData = core.parseSmartTableColumnData;
+				
 				vm.removeRow = core.removeRow;
 
 				vm.goNext = core.goNext;
 				
 				vm.search = core.search;
+				
+				vm.exportAsset = core.exportAsset;
 
 				vm.smartTablePageSize = core.tablePageSize;
 
 				vm.smartTableDataSafe = [].concat(vm.smartTableData)
-
+				
+				vm.$totalResults = $rootScope.$totalResults;
+				
 				vm.smartTableCanUseAction = core.smartTableCanUseAction
 
 				setTableVisibleFields(vm, smartTableStructure);

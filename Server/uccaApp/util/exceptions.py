@@ -1,12 +1,10 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 from rest_framework import status
 from rest_framework.exceptions import APIException
 
 
 class DependencyFailedException(APIException):
     status_code = status.HTTP_403_FORBIDDEN
-    default_detail = ('You need to fix object\'s dependencies')
+    default_detail = ('You need to fix asset\'s dependencies')
     default_code = 'error'
 
 class CreateDerivedLayerException(APIException):
@@ -37,7 +35,12 @@ class SaveTaskTypeDeniedException(APIException):
 
 class CreateAnnotationTaskDeniedException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = ('Annotation task must have a parent task')
+    default_detail = ('Annotation task must have a parent task, and it\'s layer must be the new task\'s parent layer.')
+    default_code = 'error'
+
+class CreateDerivedAnnotationTaskDeniedException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = ('The parent task is not yet submitted.')
     default_code = 'error'
 
 class CreateCoarseningAnnotationTaskDeniedException(APIException):

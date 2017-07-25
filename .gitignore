@@ -1,4 +1,4 @@
 *.pyc
-/Client/release
+/Client/release1
 settings.py
 *.log

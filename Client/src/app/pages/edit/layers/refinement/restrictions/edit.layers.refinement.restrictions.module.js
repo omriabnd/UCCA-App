@@ -1,3 +1,4 @@
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -12,7 +13,7 @@
             .state('edit.layers.refinement.restrictions', {
                 url: '/restrictions/:id',
                 templateUrl: 'app/pages/edit/layers/refinement/restrictions/edit.layers.refinement.restrictions.html',
-                title: 'Manage Restrictions',
+                title: 'Edit Refinement Layer',
                 controller: 'EditRefinementLayerRestrictionsCtrl',
                 controllerAs: 'vm',
                 params:{

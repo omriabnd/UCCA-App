@@ -234,7 +234,8 @@
                                 // stop event where we will know if it was a sort or item was
                                 // moved here from another list
                                 if(ui.item.sortable.received && !ui.item.sortable.isCanceled()) {
-                                    scope.$apply(function () {
+                                    scope.$apply/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
                                         ngModel.$modelValue.splice(ui.item.sortable.dropindex, 0,
                                             ui.item.sortable.moved);
                                     });
@@ -249,7 +250,8 @@
                                     ('dropindex' in ui.item.sortable) &&
                                     !ui.item.sortable.isCanceled()) {
 
-                                    scope.$apply(function () {
+                                    scope.$apply/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
                                         ngModel.$modelValue.splice(
                                             ui.item.sortable.dropindex, 0,
                                             ngModel.$modelValue.splice(ui.item.sortable.index, 1)[0]);
@@ -286,7 +288,8 @@
                                 // Remove the item from this list's model and copy data into item,
                                 // so the next list can retrive it
                                 if (!ui.item.sortable.isCanceled()) {
-                                    scope.$apply(function () {
+                                    scope.$apply/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
+(function () {
                                         ui.item.sortable.moved = ngModel.$modelValue.splice(
                                             ui.item.sortable.index, 1)[0];
                                     });

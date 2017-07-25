@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -27,8 +28,12 @@
     }
 
     function resendPasswordSuccess(res){
-      console.log("resend password success:", res.data.msg)
-      Core.showNotification("success",res.data.msg)
+      if(!res.data.error){
+        console.log("resend password success:", res.data.msg)
+        Core.showNotification("success",res.data.msg)
+      }else{
+        Core.showNotification("error",res.data.error)
+      }
     }
 
     function resendPasswordFailed(err){
@@ -53,7 +58,7 @@
       storageService.saveObjectInLocalStorage('user_role',Core.user_role);
       PermissionsService.setPermissions(res.profile.role.id).then(function(){
         $timeout(function(){$rootScope.$hideSideBar = false;}) 
-        $state.go('layers');
+        $state.go('tasks');
       });
     }
 

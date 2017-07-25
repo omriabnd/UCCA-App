@@ -1,5 +1,3 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 from rest_framework.generics import get_object_or_404
 
 from uccaApp.util.exceptions import SaveTaskTypeDeniedException, CantChangeSubmittedTaskExeption
@@ -60,6 +58,8 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         tokens_json = []
         for t in tokens:
             tokens_json.append(TokensSerializer(t).data)
+
+        tokens_json.sort(key=lambda x: x["start_index"])
         return tokens_json
 
     def get_annotation_units(self, obj):

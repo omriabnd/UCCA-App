@@ -3,71 +3,970 @@
 	  "model": "auth.permission",
 	  "pk": 1,
 	  "fields": {
-	    "id": 85,
-	    "name": "Can view users",
-	    "content_type_id":8,
-	    "codename":"view_users"
+	    "id": 1,
+	    "name": "Can add log entry",
+	    "content_type_id": 1,
+	    "codename":"add_logentry"
 	  }
 	},
 	{
 	  "model": "auth.permission",
 	  "pk": 2,
 	  "fields": {
-	    "id": 86,
-	    "name": "Can view categories",
-	    "content_type_id":9,
-	    "codename":"view_categories"
+	    "id": 2,
+	    "name": "Can change log entry",
+	    "content_type_id": 1,
+	    "codename":"change_logentry"
 	  }
 	},
 	{
 	  "model": "auth.permission",
 	  "pk": 3,
 	  "fields": {
-	    "id": 87,
-	    "name": "Can view tasks",
-	    "content_type_id":10,
-	    "codename":"view_tasks"
+	    "id": 3,
+	    "name": "Can delete log entry",
+	    "content_type_id": 1,
+	    "codename":"delete_logentry"
 	  }
 	},
 	{
 	  "model": "auth.permission",
 	  "pk": 4,
 	  "fields": {
-	    "id": 88,
-	    "name": "Can view passages",
-	    "content_type_id":12,
-	    "codename":"view_passages"
+	    "id": 4,
+	    "name": "Can add permission",
+	    "content_type_id": 2,
+	    "codename":"add_permission"
 	  }
 	},
 	{
 	  "model": "auth.permission",
 	  "pk": 5,
 	  "fields": {
-	    "id": 89,
-	    "name": "Can view projects",
-	    "content_type_id":13,
-	    "codename":"view_projects"
+	    "id": 5,
+	    "name": "Can change permission",
+	    "content_type_id": 2,
+	    "codename":"change_permission"
 	  }
 	},
 	{
 	  "model": "auth.permission",
 	  "pk": 6,
 	  "fields": {
-	    "id": 90,
-	    "name": "Can view layers",
-	    "content_type_id":14,
-	    "codename":"view_layers"
+	    "id": 6,
+	    "name": "Can delete permission",
+	    "content_type_id": 2,
+	    "codename":"delete_permission"
 	  }
 	},
 	{
 	  "model": "auth.permission",
 	  "pk": 7,
 	  "fields": {
+	    "id": 7,
+	    "name": "Can add group",
+	    "content_type_id": 3,
+	    "codename":"add_group"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 8,
+	  "fields": {
+	    "id": 8,
+	    "name": "Can change group",
+	    "content_type_id": 3,
+	    "codename":"change_group"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 9,
+	  "fields": {
+	    "id": 9,
+	    "name": "Can delete group",
+	    "content_type_id": 3,
+	    "codename":"delete_group"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 10,
+	  "fields": {
+	    "id": 10,
+	    "name": "Can add user",
+	    "content_type_id": 4,
+	    "codename":"add_user"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 11,
+	  "fields": {
+	    "id": 11,
+	    "name": "Can change user",
+	    "content_type_id": 4,
+	    "codename":"change_user"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 12,
+	  "fields": {
+	    "id": 12,
+	    "name": "Can delete user",
+	    "content_type_id": 4,
+	    "codename":"delete_user"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 13,
+	  "fields": {
+	    "id": 13,
+	    "name": "Can add content type",
+	    "content_type_id": 5,
+	    "codename":"add_contenttype"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 14,
+	  "fields": {
+	    "id": 14,
+	    "name": "Can change content type",
+	    "content_type_id": 5,
+	    "codename":"change_contenttype"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 15,
+	  "fields": {
+	    "id": 15,
+	    "name": "Can delete content type",
+	    "content_type_id": 5,
+	    "codename":"delete_contenttype"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 16,
+	  "fields": {
+	    "id": 16,
+	    "name": "Can add session",
+	    "content_type_id": 6,
+	    "codename":"add_session"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 17,
+	  "fields": {
+	    "id": 17,
+	    "name": "Can change session",
+	    "content_type_id": 6,
+	    "codename":"change_session"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 18,
+	  "fields": {
+	    "id": 18,
+	    "name": "Can delete session",
+	    "content_type_id": 6,
+	    "codename":"delete_session"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 19,
+	  "fields": {
+	    "id": 19,
+	    "name": "Can add layers_ categories",
+	    "content_type_id": 7,
+	    "codename":"add_layers_categories"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 20,
+	  "fields": {
+	    "id": 20,
+	    "name": "Can change layers_ categories",
+	    "content_type_id": 7,
+	    "codename":"change_layers_categories"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 21,
+	  "fields": {
+	    "id": 21,
+	    "name": "Can delete layers_ categories",
+	    "content_type_id": 7,
+	    "codename":"delete_layers_categories"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 22,
+	  "fields": {
+	    "id": 22,
+	    "name": "Can add derived_ layers_ categories_ categories",
+	    "content_type_id": 8,
+	    "codename":"add_derived_layers_categories_categories"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 23,
+	  "fields": {
+	    "id": 23,
+	    "name": "Can change derived_ layers_ categories_ categories",
+	    "content_type_id": 8,
+	    "codename":"change_derived_layers_categories_categories"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 24,
+	  "fields": {
+	    "id": 24,
+	    "name": "Can delete derived_ layers_ categories_ categories",
+	    "content_type_id": 8,
+	    "codename":"delete_derived_layers_categories_categories"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 25,
+	  "fields": {
+	    "id": 25,
+	    "name": "Can add layers_ categories_ restrictions",
+	    "content_type_id": 9,
+	    "codename":"add_layers_categories_restrictions"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 26,
+	  "fields": {
+	    "id": 26,
+	    "name": "Can change layers_ categories_ restrictions",
+	    "content_type_id": 9,
+	    "codename":"change_layers_categories_restrictions"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 27,
+	  "fields": {
+	    "id": 27,
+	    "name": "Can delete layers_ categories_ restrictions",
+	    "content_type_id": 9,
+	    "codename":"delete_layers_categories_restrictions"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 28,
+	  "fields": {
+	    "id": 28,
+	    "name": "Can add annotation_ units_ categories",
+	    "content_type_id": 10,
+	    "codename":"add_annotation_units_categories"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 29,
+	  "fields": {
+	    "id": 29,
+	    "name": "Can change annotation_ units_ categories",
+	    "content_type_id": 10,
+	    "codename":"change_annotation_units_categories"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 30,
+	  "fields": {
+	    "id": 30,
+	    "name": "Can delete annotation_ units_ categories",
+	    "content_type_id": 10,
+	    "codename":"delete_annotation_units_categories"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 31,
+	  "fields": {
+	    "id": 31,
+	    "name": "Can add roles_ tabs",
+	    "content_type_id": 11,
+	    "codename":"add_roles_tabs"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 32,
+	  "fields": {
+	    "id": 32,
+	    "name": "Can change roles_ tabs",
+	    "content_type_id": 11,
+	    "codename":"change_roles_tabs"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 33,
+	  "fields": {
+	    "id": 33,
+	    "name": "Can delete roles_ tabs",
+	    "content_type_id": 11,
+	    "codename":"delete_roles_tabs"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 34,
+	  "fields": {
+	    "id": 34,
+	    "name": "Can add annotation_ units",
+	    "content_type_id": 12,
+	    "codename":"add_annotation_units"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 35,
+	  "fields": {
+	    "id": 35,
+	    "name": "Can change annotation_ units",
+	    "content_type_id": 12,
+	    "codename":"change_annotation_units"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 36,
+	  "fields": {
+	    "id": 36,
+	    "name": "Can delete annotation_ units",
+	    "content_type_id": 12,
+	    "codename":"delete_annotation_units"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 37,
+	  "fields": {
+	    "id": 37,
+	    "name": "Can add annotation_ remote_ units_ annotation_ units",
+	    "content_type_id": 13,
+	    "codename":"add_annotation_remote_units_annotation_units"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 38,
+	  "fields": {
+	    "id": 38,
+	    "name": "Can change annotation_ remote_ units_ annotation_ units",
+	    "content_type_id": 13,
+	    "codename":"change_annotation_remote_units_annotation_units"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 39,
+	  "fields": {
+	    "id": 39,
+	    "name": "Can delete annotation_ remote_ units_ annotation_ units",
+	    "content_type_id": 13,
+	    "codename":"delete_annotation_remote_units_annotation_units"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 40,
+	  "fields": {
+	    "id": 40,
+	    "name": "Can add tokens",
+	    "content_type_id": 14,
+	    "codename":"add_tokens"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 41,
+	  "fields": {
+	    "id": 41,
+	    "name": "Can change tokens",
+	    "content_type_id": 14,
+	    "codename":"change_tokens"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 42,
+	  "fields": {
+	    "id": 42,
+	    "name": "Can delete tokens",
+	    "content_type_id": 14,
+	    "codename":"delete_tokens"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 43,
+	  "fields": {
+	    "id": 43,
+	    "name": "Can add tasks",
+	    "content_type_id": 15,
+	    "codename":"add_tasks"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 44,
+	  "fields": {
+	    "id": 44,
+	    "name": "Can change tasks",
+	    "content_type_id": 15,
+	    "codename":"change_tasks"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 45,
+	  "fields": {
+	    "id": 45,
+	    "name": "Can delete tasks",
+	    "content_type_id": 15,
+	    "codename":"delete_tasks"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 46,
+	  "fields": {
+	    "id": 46,
+	    "name": "Can add categories",
+	    "content_type_id": 16,
+	    "codename":"add_categories"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 47,
+	  "fields": {
+	    "id": 47,
+	    "name": "Can change categories",
+	    "content_type_id": 16,
+	    "codename":"change_categories"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 48,
+	  "fields": {
+	    "id": 48,
+	    "name": "Can delete categories",
+	    "content_type_id": 16,
+	    "codename":"delete_categories"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 49,
+	  "fields": {
+	    "id": 49,
+	    "name": "Can add users",
+	    "content_type_id": 17,
+	    "codename":"add_users"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 50,
+	  "fields": {
+	    "id": 50,
+	    "name": "Can change users",
+	    "content_type_id": 17,
+	    "codename":"change_users"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 51,
+	  "fields": {
+	    "id": 51,
+	    "name": "Can delete users",
+	    "content_type_id": 17,
+	    "codename":"delete_users"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 52,
+	  "fields": {
+	    "id": 52,
+	    "name": "Can add sources",
+	    "content_type_id": 18,
+	    "codename":"add_sources"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 53,
+	  "fields": {
+	    "id": 53,
+	    "name": "Can change sources",
+	    "content_type_id": 18,
+	    "codename":"change_sources"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 54,
+	  "fields": {
+	    "id": 54,
+	    "name": "Can delete sources",
+	    "content_type_id": 18,
+	    "codename":"delete_sources"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 55,
+	  "fields": {
+	    "id": 55,
+	    "name": "Can add layers",
+	    "content_type_id": 19,
+	    "codename":"add_layers"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 56,
+	  "fields": {
+	    "id": 56,
+	    "name": "Can change layers",
+	    "content_type_id": 19,
+	    "codename":"change_layers"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 57,
+	  "fields": {
+	    "id": 57,
+	    "name": "Can delete layers",
+	    "content_type_id": 19,
+	    "codename":"delete_layers"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 58,
+	  "fields": {
+	    "id": 58,
+	    "name": "Can add annotation_ units_ tokens",
+	    "content_type_id": 20,
+	    "codename":"add_annotation_units_tokens"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 59,
+	  "fields": {
+	    "id": 59,
+	    "name": "Can change annotation_ units_ tokens",
+	    "content_type_id": 20,
+	    "codename":"change_annotation_units_tokens"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 60,
+	  "fields": {
+	    "id": 60,
+	    "name": "Can delete annotation_ units_ tokens",
+	    "content_type_id": 20,
+	    "codename":"delete_annotation_units_tokens"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 61,
+	  "fields": {
+	    "id": 61,
+	    "name": "Can add projects",
+	    "content_type_id": 21,
+	    "codename":"add_projects"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 62,
+	  "fields": {
+	    "id": 62,
+	    "name": "Can change projects",
+	    "content_type_id": 21,
+	    "codename":"change_projects"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 63,
+	  "fields": {
+	    "id": 63,
+	    "name": "Can delete projects",
+	    "content_type_id": 21,
+	    "codename":"delete_projects"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 64,
+	  "fields": {
+	    "id": 64,
+	    "name": "Can add roles",
+	    "content_type_id": 22,
+	    "codename":"add_roles"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 65,
+	  "fields": {
+	    "id": 65,
+	    "name": "Can change roles",
+	    "content_type_id": 22,
+	    "codename":"change_roles"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 66,
+	  "fields": {
+	    "id": 66,
+	    "name": "Can delete roles",
+	    "content_type_id": 22,
+	    "codename":"delete_roles"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 67,
+	  "fields": {
+	    "id": 67,
+	    "name": "Can add tabs",
+	    "content_type_id": 23,
+	    "codename":"add_tabs"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 68,
+	  "fields": {
+	    "id": 68,
+	    "name": "Can change tabs",
+	    "content_type_id": 23,
+	    "codename":"change_tabs"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 69,
+	  "fields": {
+	    "id": 69,
+	    "name": "Can delete tabs",
+	    "content_type_id": 23,
+	    "codename":"delete_tabs"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 70,
+	  "fields": {
+	    "id": 70,
+	    "name": "Can add passages",
+	    "content_type_id": 24,
+	    "codename":"add_passages"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 71,
+	  "fields": {
+	    "id": 71,
+	    "name": "Can change passages",
+	    "content_type_id": 24,
+	    "codename":"change_passages"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 72,
+	  "fields": {
+	    "id": 72,
+	    "name": "Can delete passages",
+	    "content_type_id": 24,
+	    "codename":"delete_passages"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 73,
+	  "fields": {
+	    "id": 73,
+	    "name": "Can add Token",
+	    "content_type_id": 25,
+	    "codename":"add_token"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 74,
+	  "fields": {
+	    "id": 74,
+	    "name": "Can change Token",
+	    "content_type_id": 25,
+	    "codename":"change_token"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 75,
+	  "fields": {
+	    "id": 75,
+	    "name": "Can delete Token",
+	    "content_type_id": 25,
+	    "codename":"delete_token"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 76,
+	  "fields": {
+	    "id": 76,
+	    "name": "Can add site",
+	    "content_type_id": 26,
+	    "codename":"add_site"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 77,
+	  "fields": {
+	    "id": 77,
+	    "name": "Can change site",
+	    "content_type_id": 26,
+	    "codename":"change_site"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 78,
+	  "fields": {
+	    "id": 78,
+	    "name": "Can delete site",
+	    "content_type_id": 26,
+	    "codename":"delete_site"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 79,
+	  "fields": {
+	    "id": 79,
+	    "name": "Can add email address",
+	    "content_type_id": 27,
+	    "codename":"add_emailaddress"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 80,
+	  "fields": {
+	    "id": 80,
+	    "name": "Can change email address",
+	    "content_type_id": 27,
+	    "codename":"change_emailaddress"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 81,
+	  "fields": {
+	    "id": 81,
+	    "name": "Can delete email address",
+	    "content_type_id": 27,
+	    "codename":"delete_emailaddress"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 82,
+	  "fields": {
+	    "id": 82,
+	    "name": "Can add email confirmation",
+	    "content_type_id": 28,
+	    "codename":"add_emailconfirmation"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 83,
+	  "fields": {
+	    "id": 83,
+	    "name": "Can change email confirmation",
+	    "content_type_id": 28,
+	    "codename":"change_emailconfirmation"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 84,
+	  "fields": {
+	    "id": 84,
+	    "name": "Can delete email confirmation",
+	    "content_type_id": 28,
+	    "codename":"delete_emailconfirmation"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 85,
+	  "fields": {
+	    "id": 85,
+	    "name": "Can view users",
+	    "content_type_id": 8,
+	    "codename":"view_users"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 86,
+	  "fields": {
+	    "id": 86,
+	    "name": "Can view categories",
+	    "content_type_id": 9,
+	    "codename":"view_categories"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 87,
+	  "fields": {
+	    "id": 87,
+	    "name": "Can view tasks",
+	    "content_type_id": 10,
+	    "codename":"view_tasks"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 88,
+	  "fields": {
+	    "id": 88,
+	    "name": "Can view passages",
+	    "content_type_id": 12,
+	    "codename":"view_passages"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 89,
+	  "fields": {
+	    "id": 89,
+	    "name": "Can view projects",
+	    "content_type_id": 13,
+	    "codename":"view_projects"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 90,
+	  "fields": {
+	    "id": 90,
+	    "name": "Can view layers",
+	    "content_type_id": 14,
+	    "codename":"view_layers"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 91,
+	  "fields": {
 	    "id": 91,
 	    "name": "Can view sources",
-	    "content_type_id":23,
+	    "content_type_id": 23,
 	    "codename":"view_sources"
 	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 92,
+	  "fields": {
+	    "id": 92,
+	    "name": "Can add log action",
+	    "content_type_id": 29,
+	    "codename":"add_logaction"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 93,
+	  "fields": {
+	    "id": 93,
+	    "name": "Can change log action",
+	    "content_type_id": 29,
+	    "codename":"change_logaction"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 94,
+	  "fields": {
+	    "id": 94,
+	    "name": "Can delete log action",
+	    "content_type_id": 29,
+	    "codename":"delete_logaction"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 95,
+	  "fields": {
+	    "id": 95,
+	    "name": "Can add log login",
+	    "content_type_id": 30,
+	    "codename":"add_loglogin"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 96,
+	  "fields": {
+	    "id": 96,
+	    "name": "Can change log login",
+	    "content_type_id": 30,
+	    "codename":"change_loglogin"
+	  }
+	},
+	{
+	  "model": "auth.permission",
+	  "pk": 97,
+	  "fields": {
+	    "id": 97,
+	    "name": "Can delete log login",
+	    "content_type_id": 30,
+	    "codename":"delete_loglogin"
+	  }
 	}
-
 ]

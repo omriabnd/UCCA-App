@@ -1,5 +1,3 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 
 ROLE_NAMES_ENUM = {
     "ADMIN":"Admin",
@@ -92,3 +90,5 @@ COMMENTS_MAX_LENGTH = 1000
 DESCRIPTION_MAX_LENGTH = 20000
 
 PASSAGES_TEXT_MAX_LENGTH = 50000
+
+RESTRICTION_CATEGORIES_MAX_LENGTH = 100000

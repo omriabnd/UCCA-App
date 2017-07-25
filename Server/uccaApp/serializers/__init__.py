@@ -1,5 +1,3 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 from .CategorySerializer import *
 from .UsersSerializer import *
 from .GroupSerializer import *

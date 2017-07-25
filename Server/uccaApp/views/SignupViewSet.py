@@ -1,14 +1,12 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
 from rest_framework import parsers
 from rest_framework import renderers
 from rest_framework import viewsets
 
-from uccaApp.util.functions import Send_Email
+from uccaApp.util.functions import Send_Email, send_signup_email
 from uccaApp.util.permissions import IsPostMethod
-from uccaApp.models import Constants, Roles
+from uccaApp.models import Constants, Roles, LogLogin
 from uccaApp.models import Users
 from uccaApp.serializers.UsersSerializer import UsersSerializer
 from rest_framework.response import Response
@@ -47,9 +45,11 @@ class SignupViewSet(viewsets.ModelViewSet):
         random_password = User.objects.make_random_password()
         djangoUser.set_password(random_password)
 
+        Users.validate_email_unique(djangoUser.email)
+
         djangoUser.save()
 
-        Send_Email(djangoUser.email, random_password)
+        send_signup_email(djangoUser.email,random_password)
 
         newUser = Users()
         newUser.id = djangoUser.pk
@@ -68,5 +68,15 @@ class SignupViewSet(viewsets.ModelViewSet):
         res = {
           "result": userSerialiser.data
         }
+
+        LogLogin(
+            login=djangoUser.first_name,
+            user_id=djangoUser,
+            action="signup",
+            data='ip: ' + LogLogin.get_client_ip(request) + '; browser: ' + request.META[
+                'HTTP_USER_AGENT'] + '; response: ' + str(res),
+            comment=""
+        ).save()
+
         return Response(res)
 

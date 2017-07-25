@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -10,7 +11,7 @@
   	var vm = this;
   	vm.upsert = upsert;
     vm.back = back;
-    Core.init(vm,EditTableStructure);
+    Core.init(vm,EditTableStructure,editUsersService);
 
     // insertUserDataIntoStructure();
     vm.smartTableStructure.forEach(function(obj){
@@ -38,7 +39,7 @@
     }
 
     function failedUserCreation(err){
-        Core.showNotification('error',ENV_CONST.NOTIFICATIONS.GENERAL_ERROR);
+        // Core.showNotification('error',ENV_CONST.NOTIFICATIONS.GENERAL_ERROR);
     }
     
   }

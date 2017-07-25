@@ -1,6 +1,5 @@
+
 /* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-
-
 (function () {
   'use strict';
 
@@ -8,10 +7,7 @@
 	.constant('ENV_CONST', {
 		IS_DEV:false,
 		TEST_URL:"http://private-daea0-ucca.apiary-mock.com/api/v1",
-		PROD_URL:"http://localhost:8000/api/v1",
-		// PROD_URL:"http://192.168.0.118:8000/api/v1",
-		PROD_HUJI_HOST:"huji.ac.il", 
-		PROD_HUJI_API_ENDPOINT:"http://example.com/api/v1", 
+		PROD_URL:"http://ucca.staging.cs.huji.ac.il/api/v1",
 		LOCAL_RESOURCES: "app/resources",
 		TASK_TYPE:{
 			ANNOTATION:"ANNOTATION",
@@ -24,6 +20,12 @@
 			SUBMITTED:"SUBMITTED", 
 			REJECTED:"REJECTED"
 		},
+		TASK_STATUS_ID:{
+			NOT_STARTED:1,
+			ONGOING:2, 
+			SUBMITTED:3, 
+			REJECTED:4
+		},
 		ANNOTATION_TYPE:{
 			IMPLICIT:"IMPLICIT",
 			REGULAR:"REGULAR"
@@ -34,15 +36,15 @@
 				id:1,
 				TABS: ["1","2","3","4","5","6","7","8","9"]
 			},
-			PM:{
+			PROJECT_MANAGER:{
 				name:"Project Manager",
 				id:2,
-				TABS: ["1","2","3"]
+				TABS: ["2","3","4","5","6","7","8","9"]
 			},
 			ANNOTATOR:{
 				name:"Annotator",
 				id:3,
-				TABS: ["3","4"]
+				TABS: ["2","3"]
 			},
 			GUEST:{
 				name:"Guest",
@@ -127,13 +129,13 @@
 				tooltip:"Alt+b: Submit (unit will be considered completed)",
 				executeFunction:"submitTask"
 			},
-			/*{
+			{
 				id:4,
 				name:"Reset",
 				tooltip:"Alt+x: Reset annotation",
-				executeFunction:"resetAnnotation"
+				executeFunction:"resetAllAnnotations"
 			},
-			{
+			/*{
 				id:5,
 				name:"Help",
 				tooltip:"?: Help",

@@ -1,18 +1,15 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
   angular.module('zAdmin.pages', [
     'ui.router',
     'textAngular',
-    'zAdmin.pages.dashboard',
     'zAdmin.pages.ui',
-    'zAdmin.pages.components',
     'zAdmin.pages.edit',
     'zAdmin.pages.form',
     'zAdmin.pages.tables',
-    'zAdmin.pages.charts',
-    // 'zAdmin.pages.maps',
     'zAdmin.pages.auth',
     'zAdmin.pages.reg',
     'zAdmin.pages.profile',
@@ -25,13 +22,13 @@
     'zAdmin.pages.tasks',
     'zAdmin.pages.categories',
     'zAdmin.pages.annotation',
-    'zAdmin.pages.tokenization',
+    'zAdmin.pages.tokenization-v2',
     'zAdmin.permissions',
     'zAdmin.restrictionsValidator'
   ])
   .config(routeConfig)
   .run(run);
-
+  console.warn = function(){};
   var ifNotLoggedIn = function (authService,$state){
     if ( !authService.isLoggedIn ) {
       setTimeout(function(){
@@ -80,6 +77,7 @@
     $rootScope.$on('$stateChangeSuccess',
     function(event, toState, toParams, fromState, fromParams, error){
         $rootScope.$pageFinishedLoading = true;
+        if(ga) ga('send', 'pageview',$location.absUrl());
     });
 
     PermissionsService.init();

@@ -1,38 +1,32 @@
-<div class="directive-container">
+<div class="directive-container" ng-class="{'remote-unit':vm.dataBlock.unitType == 'REMOTE' || vm.dataBlock.unitType == 'IMPLICIT','selected-unit': dirCtrl.annotationUnitTreeId == '0' || vm.unitIsSelected(vm)}" id="unit-{{dirCtrl.annotationUnitTreeId}}" ng-mousedown="vm.toggleMouseUpDown($event)" ng-mouseup="vm.toggleMouseUp($event)" ng-click="vm.unitClicked(vm,dirCtrl.annotationUnitTreeId,$event)">
+    <div ng-show="vm.dataBlock.annotation_unit_tree_id !== '0' && vm.dataBlock.AnnotationUnits.length " class="expand-btn" ng-click="vm.toggleAnnotationUnitView(vm);" ng-if="vm.dataBlock.unitType === 'REGULAR'">
 
-
-    <div class="directive-info-data-container" id="directive-info-data-container-{{selCtrl.lineId}}">
-        <div class="row control-buttons-container" ng-show="selCtrl.lineId != 0">
-            <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Delete">
-                <i class="fa fa-times delete-btn unit-buttons" aria-hidden="true"  ng-click="selCtrl.removeAnnotationUnit(selCtrl.lineId,$event)"></i>
-            </a>
-            <span ng-if="selCtrl.dataBlock.unitType == 'REGULAR'">
-                <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Finish" ng-click="selCtrl.checkRestrictionForCurrentUnit(selCtrl.lineId,$event)">
-                    <b class="unit-buttons">F</b>
-                </a>
-                <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Comment" ng-click="selCtrl.addCommentToUnit($event);">
-                    <i class="socicon unit-buttons">}</i>
-                    <span class="comment-notification" ng-if="selCtrl.dataBlock.comment !=''">!</span>
-                </a>
-                <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Add Remote Unit">
-                    <i class="ion-plus-round unit-buttons" ng-click="selCtrl.switchToRemoteMode($event)"></i>
-                </a>
-            </span>
-
-        </div>
-        <span ng-if="selCtrl.lineId">{{selCtrl.lineId}}</span>
-        <span class="categories" ng-repeat="cat in selCtrl.dataBlock.categories">
-            <span class="category-abbreviation" 
-                    ng-class="{'shouldRefine': cat.shouldRefine,'refinedCategory':cat.refinedCategory}"
-                    ng-style="{'color':cat.color,'background-color':cat.backgroundColor}">{{cat.abbreviation}}</span>
-        </span>
-        <div class="text-wrapper" dir="{{selCtrl.languageAlign}}">
-            <div class="text" id="row-{{selCtrl.lineId}}" >
-                <span class="cursor" id="cursor-{{selCtrl.lineId}}">|</span>
-            </div>
-        </div>
+        <i ng-class="{'minus-round':vm.dataBlock.gui_status=='OPEN',
+            'plus-round':vm.dataBlock.gui_status=='COLLAPSE'}"
+        >
+        </i>
     </div>
+    <span class="unit-id" ng-if="vm.dataBlock.annotation_unit_tree_id !== '0'">{{dirCtrl.annotationUnitTreeId}}</span>
+    <unit-category ng-repeat="category in vm.unit.categories" color="category.backgroundColor" category-id="category.id" abbreviation="category.abbreviation"></unit-category>
+    <unit-cursor unit-id="dirCtrl.annotationUnitTreeId"></unit-cursor>
+    <div class="row control-buttons-container" ng-show="dirCtrl.annotationUnitTreeId != 0">
+        <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Delete">
+            <i class="fa fa-times delete-btn unit-buttons" aria-hidden="true"  ng-click="vm.deleteUnit(dirCtrl.annotationUnitTreeId,vm)"></i>
+        </a>
+        <span ng-if="vm.dataBlock.unitType == 'REGULAR'">
+            <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Finish" ng-click="vm.checkRestrictionForCurrentUnit(dirCtrl.annotationUnitTreeId,$event)">
+                <b class="unit-buttons">F</b>
+            </a>
+            <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Comment" ng-click="vm.addCommentToUnit(dirCtrl.annotationUnitTreeId,vm);">
+                <i class="socicon unit-buttons">}</i>
+                <span class="comment-notification" ng-if="dirCtrl.dataBlock.comment !=''">!</span>
+            </a>
+            <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Add Remote Unit">
+                <i class="ion-plus-round unit-buttons" ng-click="vm.switchToRemoteMode(vm,$event)"></i>
+            </a>
+        </span>
 
-    <div ng-include="'app/pages/annotation/directives/annotationUnits/dataTreeRow.html'" ng-if="selCtrl.lineId != '0'"></div>
-
+    </div>
+    <annotation-token  parent-id="{{dirCtrl.annotationUnitTreeId}}" token=token ng-repeat="token in dirCtrl.tokens track by $index"></annotation-token>
 </div>
+<div ng-include="'app/pages/annotation/directives/annotationUnits/dataTreeRow.html'" ng-if="vm.dataBlock.AnnotationUnits.length > 0"></div>

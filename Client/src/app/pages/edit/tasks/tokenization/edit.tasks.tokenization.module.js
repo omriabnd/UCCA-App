@@ -1,3 +1,4 @@
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -11,7 +12,7 @@
     function routeConfig($stateProvider) {
         $stateProvider
             .state('edit.tasks.tokenization', {
-                url: '/tokenization/:projectLayerType/:id',
+                url: '/tokenization/:projectLayerType/:projectId/:id',
                 templateUrl: 'app/pages/edit/edit.html',
                 title: 'Edit Tokenization Task',
                 controller: 'EditTokenizationTasksCtrl',

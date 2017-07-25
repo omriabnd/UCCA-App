@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -22,7 +23,7 @@
         //
         // updateTableDataAccordingToLayerType(layerType);
 
-        Core.init(this,EditTableStructure);
+        Core.init(this,EditTableStructure,editRefinementLayerService);
 
         vm.smartTableStructure.forEach(function(obj){
             var value = editRefinementLayerService.get(obj.key);
@@ -35,7 +36,9 @@
         }
 
         function manage (pageRoute){
-            $state.go('edit.layers.refinement.'+pageRoute,{parentId: editRefinementLayerService.get('parent').id});
+            var _parent = editRefinementLayerService.get('parent');
+            var _parentId = angular.isArray(_parent) ? _parent[0].id : _parent.id
+            $state.go('edit.layers.refinement.'+pageRoute,{parentId: _parentId});
         }
 
         function edit (pageRoute,shouldEdit,obj,index,rowItem){
@@ -52,12 +55,14 @@
             editRefinementLayerService.saveLayerDetails(obj).then(function(response){
                 $state.go("layers")
             },function(err){
-                $state.go("layers")
+                // $state.go("layers")
             })
         }
 
         function chooseCategory(){
-            $state.go('edit.layers.refinement.categories.manage',{parentId: editRefinementLayerService.get('parent').id});
+            var _parent = editRefinementLayerService.get('parent');
+            var _parentId = angular.isArray(_parent) ? _parent[0].id : _parent.id
+            $state.go('edit.layers.refinement.categories.manage',{parentId: _parentId});
         }
 
         function refreshData(key){

@@ -1,0 +1,50 @@
+[
+  {
+    "key": "id",
+    "name": "Id",
+    "order": 1,
+    "type": "text",
+    "filter": false,
+    "search": true,
+    "showInTable": true
+  },
+  {
+    "key": "name",
+    "name": "Name",
+    "order": 2,
+    "filter": false,
+    "search": true,
+    "type": "text",
+    "placeholder": "Enter Name...",
+    "value": "",
+    "showInTable": true
+  },
+  {
+    "key": "type",
+    "name": "Type",
+    "order": 6,
+    "filter": false,
+    "search": true,
+    "type": "text",
+    "placeholder": "Enter Type...",
+    "value": "",
+    "showInTable": true
+  },
+  {
+    "key": "actions",
+    "name": "Actions",
+    "order": 14,
+    "filter": false,
+    "search": false,
+    "showInTable": true,
+    "type": "select",
+    "buttons": [
+      {
+        "name": "Remove",
+        "order": 1,
+        "class":"btn-danger",
+        "functionName": "removeRow"
+      }
+    ]
+  }
+]

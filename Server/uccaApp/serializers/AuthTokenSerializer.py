@@ -1,10 +1,9 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
+from rest_framework.generics import get_object_or_404
 
 
 class AuthTokenSerializer(serializers.Serializer):
@@ -16,7 +15,8 @@ class AuthTokenSerializer(serializers.Serializer):
         password = attrs.get('password')
 
         if email and password:
-            my_user = User.objects.get(email=email)
+            queryset = User.objects.filter(email__icontains=email)
+            my_user = get_object_or_404(queryset)
             user = authenticate(username=my_user.username, password=password)
 
             if user:

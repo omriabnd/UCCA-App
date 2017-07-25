@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -21,16 +22,32 @@
             "abbreviation":obj.abbreviation
 
         };
+        if( currentService.get('type')=="EXTENSION" ){
+            var parentLayer = currentService.get('parent');
+            if(parentLayer[0]){
+                var itemNotAlreadyInParentLayer = Core.findItemInArrayById(LayerDetails.id,parentLayer[0].categories);
+                if(itemNotAlreadyInParentLayer == false){ // item is Already In Parent Layer
+                    Core.showNotification('error','Cant add this category. It is already located in the parent layer.')
+                    return;
+                }
+            }else{
+                Core.showNotification('error','Extension layer must have a parent layer.')
+                return;
+            }
+        }
         var itemAlreadySelected = Core.findItemInArrayById(LayerDetails.id,currentService.get('categories'));
         if(itemAlreadySelected){
             promptHotKeySelectionModal(obj,LayerDetails,ctrlToRefresh,currentService);
+        }else{
+            Core.showNotification('error','Category already exists.')
+            return;
         }
     }
 
     function promptHotKeySelectionModal(obj,LayerDetails,ctrlToRefresh,currentService){
         $uibModal.open({
             animation: true,
-            templateUrl: '../app/pages/edit/layers/select.hotkey.modal.html',
+            templateUrl: 'app/pages/edit/layers/select.hotkey.modal.html',
             size: 'md',
             resolve: {
                 items: function () {

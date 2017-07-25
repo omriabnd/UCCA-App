@@ -1,5 +1,3 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 
 from .Roles import *
 from .Tabs import *
@@ -19,4 +17,6 @@ from .Tokens import *
 from .Annotation_Units_Tokens import *
 from .Annotation_Units_Categories import *
 from .Annotation_Remote_Units_Annotation_Units import *
+from .Log_Login import *
+from .Log_Action import *
 

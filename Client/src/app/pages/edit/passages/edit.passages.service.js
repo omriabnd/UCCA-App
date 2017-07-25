@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -28,7 +29,7 @@
         },
         savePassageDataInDb: function(smartTableStructure){
           var bodyData = Core.extractDataFromStructure(smartTableStructure);
-          service.clearData();
+          // service.clearData();
           return bodyData.id ? apiService.edit.passages.putPassageData(bodyData).then(function (res){return res.data}) :  apiService.edit.passages.postPassageData(bodyData).then(function (res){return res.data});
         },
         initData:function(data){
@@ -42,7 +43,9 @@
           return this.Data[key] ? (this.Data[key].name ? this.Data[key].name : this.Data[key]) : "";
         },
         clearData: function(){
-          service.Data = {};
+          service.Data = {
+            is_active:true
+          };
         }
     }
     return service;

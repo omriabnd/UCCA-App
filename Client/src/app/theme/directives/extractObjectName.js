@@ -1,6 +1,7 @@
 /**
  * Auto expand textarea field
  */
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -16,9 +17,9 @@
             },
             link: function ($scope, elem) {
 
-                $timeout(function () {
+                $timeout(function(){
                     //DOM has finished rendering
-                    elem[0].value = $scope.fieldElem.name;
+                    elem[0].value = $scope.fieldElem ? $scope.fieldElem.name : '';
                 });
             }
         };

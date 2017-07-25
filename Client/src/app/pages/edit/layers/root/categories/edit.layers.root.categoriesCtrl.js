@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -6,9 +7,10 @@
         .controller('EditRootLayerCategoriesCtrl', EditRootLayerCategoriesCtrl);
 
     /** @ngInject */
-    function EditRootLayerCategoriesCtrl($scope,$state, EditTableStructure, editRootLayerService, editRootLayerCategoriesService, Core, EditTableData, $uibModal) {
+    function EditRootLayerCategoriesCtrl($scope,$state, EditTableStructure, editRootLayerService, editRootLayerCategoriesService, Core, EditTableData, $uibModal, editCategoriesService) {
         var vm = this;
         vm.edit = edit;
+        vm.upsert = upsert;
         vm.editRow = editRow;
         vm.newCategory = newCategory;
         vm.chooseRow = chooseRow;
@@ -29,6 +31,17 @@
             console.log(categoryRow);
         }
 
+        function upsert(obj){
+            console.log("edit",obj);
+            editCategoriesService.saveCategoryDetails(obj).then(function(response){
+                if($state.current.name.indexOf(".categories.create") > -1){
+                      var goToState = $state.current.name.replace("create","manage");
+                      $state.go(goToState,{},{reload:true});
+                }else{
+                    history.back();
+                }
+            })
+        }
 
         function editRow (obj,index){
             console.log("editRow",obj);

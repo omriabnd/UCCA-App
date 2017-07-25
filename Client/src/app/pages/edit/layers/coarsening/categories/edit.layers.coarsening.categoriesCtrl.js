@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -29,7 +30,7 @@
 
         function newCategory (obj,index){
             console.log("editRow",obj);
-            $state.go('edit.layers.categories.create',{});
+            $state.go('edit.layers.coarsening.categories.create',{});
             // $state.go('edit.passages.texts',{})
         }
 
@@ -56,7 +57,7 @@
         function promptHotKeySelectionModal(obj,LayerDetails,parentCtrl){
             $uibModal.open({
                 animation: true,
-                templateUrl: '../app/pages/edit/layers/select.hotkey.modal.html',
+                templateUrl: 'app/pages/edit/layers/select.hotkey.modal.html',
                 size: 'md',
                 resolve: {
                     items: function () {

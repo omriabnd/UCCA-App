@@ -1,3 +1,4 @@
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -12,7 +13,7 @@
             .state('edit.layers.refinement.categories', {
                 url: '/categories',
                 template: '<ui-view></ui-view>',
-                title: 'Edit Refinement Layer Categories',
+                title: 'Edit Refinement Layer',
                 abstract:true,
                 controllerAs: 'vm',
                 resolve:{
@@ -23,7 +24,7 @@
             .state('edit.layers.refinement.categories.manage', {
                 url: '/categories',
                 templateUrl: 'app/pages/edit/layers/refinement/categories/edit.layers.refinement.categories.html',
-                title: 'Edit Categories',
+                title: 'Edit Refinement Layer',
                 controller: 'EditRefinementLayerCategoriesCtrl',
                 controllerAs: 'vm',
                 params:{
@@ -41,8 +42,8 @@
             })
             .state('edit.layers.refinement.categories.create', {
                 url: '/newctegories',
-                templateUrl: 'app/pages/edit/layers/categories/refinement/categories/edit.layers.refinement.categories.create.html',
-                title: 'New Category',
+                templateUrl: 'app/pages/edit/layers/refinement/categories/edit.layers.refinement.categories.create.html',
+                title: 'Edit Refinement Layer',
                 controller: 'EditCategoriesCtrl',
                 controllerAs: 'vm',
                 resolve:{

@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -31,7 +32,7 @@
             },
             getParentCategoriesTableData:function(searchTerms){
                 return apiService.edit.layers.coarsening.categories.getParentCategoriesTableData(searchTerms).then(function (res){
-                    return res.data[0].categories;
+                    return res.data.results[0].categories
                 });
             }
         };

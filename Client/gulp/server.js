@@ -52,7 +52,7 @@ gulp.task('serve', ['watch'], function () {
 });
 
 gulp.task('serve:dist', ['build'], function () {
-  browserSyncInit(conf.paths.dist);
+  // browserSyncInit(conf.paths.dist);
 });
 
 gulp.task('serve:e2e', ['inject'], function () {

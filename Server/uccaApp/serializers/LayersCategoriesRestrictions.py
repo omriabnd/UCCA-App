@@ -1,4 +1,4 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
+import ast
 
 from rest_framework import serializers
 from uccaApp.models.Layers_Categories_Restrictions import Layers_Categories_Restrictions
@@ -6,20 +6,17 @@ from uccaApp.models.Layers_Categories_Restrictions import Layers_Categories_Rest
 
 class LayersCategoriesResrictionsSerializer(serializers.ModelSerializer):
   type = serializers.SerializerMethodField('resriction_type_referance')
+  categories_1 = serializers.SerializerMethodField('category_ids1_referance')
+  categories_2 = serializers.SerializerMethodField('category_ids2_referance')
 
   def resriction_type_referance(self, obj):
     return obj.resriction_type
 
-  categories_1 = serializers.SerializerMethodField('category_ids1_referance')
-
-
   def category_ids1_referance(self, obj):
-    return obj.category_ids1
-
-  categories_2 = serializers.SerializerMethodField('category_ids2_referance')
+    return ast.literal_eval(obj.category_ids1)
 
   def category_ids2_referance(self, obj):
-    return obj.category_ids2
+    return ast.literal_eval(obj.category_ids2)
 
 
   class Meta:

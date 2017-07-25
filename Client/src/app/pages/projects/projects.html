@@ -1,15 +1,16 @@
-<div>
-    <button type="button" class="btn btn-sm btn-primary" ng-click="vm.editRow({})" >Create New Project</button>
-</div>
 <div
-        ba-panel
-        ba-panel-title="Search Form"
-        ba-panel-class="with-scroll">
+    ba-panel
+    ba-panel-title="Search Form"
+    ba-panel-class="with-scroll">
+    <div class="add-asset-btn-container">
+        <button type="button" class="btn btn-sm btn-primary" ng-click="vm.editRow({})" 
+        permission permission-only="['ADMIN','PROJECT_MANAGER']">Create New Project</button>
+    </div>
     <div ng-include="'app/pages/form/layouts/widgets/search.html'"></div>
 </div>
 <div class="row">
     <div class="col-md-12">
-        <div ba-panel ba-panel-title="Users Table" ba-panel-class="with-scroll">
+        <div ba-panel ba-panel-title="Projects Table" ba-panel-class="with-scroll">
             <div include-with-scope="app/pages/tables/widgets/smartTable.html"></div>
         </div>
     </div>

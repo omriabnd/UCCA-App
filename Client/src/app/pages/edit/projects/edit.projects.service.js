@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -24,6 +25,7 @@
             },
             saveProjectDetails: function(smartTableStructure){
                 var bodyData = Core.extractDataFromStructure(smartTableStructure);
+                bodyData.layer = bodyData.layer[0];
                 return bodyData.id ? apiService.edit.projects.putProjectData(bodyData).then(function (res){return res.data}) :  apiService.edit.projects.postProjectData(bodyData).then(function (res){return res.data});
             },
             initData:function(data){
@@ -32,7 +34,7 @@
             },
             get:function(key){
                 if(!angular.isArray(this.Data[key])){
-                    if(this.Data[key] == ""){
+                    if(typeof this.Data[key] == "string" || typeof this.Data[key] == "boolean" || typeof this.Data[key] == "number"){
                         return this.Data[key];
                     }
                     return [this.Data[key]]
@@ -59,7 +61,7 @@
                     tooltip:"",
                     tasks:[],
                     created_by:"",
-                    is_active:"",
+                    is_active:true,
                     created_at:"",
                     updated_at:""
                 };

@@ -1,3 +1,4 @@
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
     /**
@@ -203,8 +204,8 @@
             return apiService.tokenization.getPassageData(passage_id);
         }
 
-        function saveTask(taskData){
-            return apiService.tokenization.putTaskData(taskData);
+        function saveTask(mode,taskData){
+            return apiService.tokenization.putTaskData(mode,taskData);
         }
 
         /**

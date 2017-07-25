@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -34,7 +35,15 @@
           return this.Data[key];
         },
         clearData: function(){
-          service.Data = {};
+          service.Data = {
+            id : "",
+            name : "",
+            text : "",
+            created_by : "",
+            created_at : "",
+            updated_at : "",
+            is_active : true
+          };
         }
     }
     return service;

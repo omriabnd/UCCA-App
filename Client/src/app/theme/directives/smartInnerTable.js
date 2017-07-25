@@ -1,6 +1,7 @@
 /**
  * Animated load block
  */
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -19,6 +20,7 @@
                 pageName:'=',
                 ctrlModule:'=',
                 viewOnly:'=',
+                viewOnlyRule:'=',
                 categoryName:'@',
                 managePageRoute:'=',
                 loadSelectDataStructure:'=',
@@ -34,7 +36,7 @@
         };
     }
     /** @ngInject */
-    function innerTableCtrl($scope, $state,$rootScope,apiService) {
+    function innerTableCtrl($scope, $state,$rootScope,apiService,Core) {
 
         var vm = this;
 
@@ -42,6 +44,8 @@
         vm.edit = goToEditPageThroughParentCtrl;
         vm.toggleItem = toggleItem;
         vm.removeRow = removeRow;
+        vm.runFunction = runFunction;
+        vm.viewOnlyRuleOk = Core.viewOnlyRuleOk.bind($scope.viewOnlyRule);
 
         $scope.ctrlModule.smartTableStructure.forEach(function(tableRow){
             if(tableRow.key == $scope.pageName){
@@ -67,6 +71,30 @@
             $scope.ctrlModule.refreshData($scope.pageName);
         }
 
+        function runFunction(functionName,obj,index){
+            switch(functionName){
+                case 'removeRow':
+                    removeRow(obj, index)
+                    break;
+                case 'edit':
+                    goToEditPageThroughParentCtrl(obj,index)
+                    break;
+                case 'toggleItem':
+                    toggleItem(category,categoryValue)
+                    break;
+                case 'manage':
+                    $scope.ctrlModule.manage($scope.managePageRoute);
+                    break;
+                case 'parseSmartTableColumnData':
+                    return $scope.ctrlModule[functionName](obj,index);// (itemRow,value)
+                    break;
+                default:
+                    $scope.ctrlModule[functionName](obj,index);
+                    break;
+                
+            }
+        }
+        
         function toggleItem(category,categoryValue){
             try{
                 $scope.ctrlModule.toggleItem($scope.categoryName,category,categoryValue);

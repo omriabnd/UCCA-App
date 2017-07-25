@@ -1,5 +1,4 @@
 /* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
-
 (function () {
     'use strict';
 
@@ -7,7 +6,8 @@
         "cfp.hotkeys",
         "zAdmin.annotation.data",
         "zAdmin.annotation.definitions",
-        "zAdmin.annotation.hotKeysManager"
+        "zAdmin.annotation.hotKeysManager",
+        "zAdmin.annotation.selectionHandler"
     ]);
 
 })();

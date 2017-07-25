@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -13,10 +14,12 @@
         vm.refreshData = refreshData;
         vm.manage = manage;
         vm.back = back;
-        Core.init(vm,EditTableStructure);
+        Core.init(vm,EditTableStructure,editProjectsService);
 
         vm.smartTableStructure.forEach(function(obj){
-            obj.value = editProjectsService.get(obj.key);
+            if(obj.dontBindToService != true){
+                obj.value = editProjectsService.get(obj.key);
+            }
         });
 
         function upsert(obj){
@@ -31,8 +34,10 @@
                         $state.go('projects');
                     }else{
                         Core.showNotification('success',"Project Saved.")
-                        editProjectsService.set("id",1234567890);
-                        refreshData("id");
+                        // editProjectsService.set("id",response.id);
+                        // refreshData("id");
+                        // $state.go('edit.projects',{id:response.id},{reload:true})
+                        $state.go('projects')
                     }
                     
                 }) 
@@ -45,10 +50,10 @@
             var canProceed = Core.checkDependenciesKeys(dependenciesKeys,vm.smartTableStructure);
 
             if(canProceed < 0){
-                if(formElem.managePageRoute == 'tasks'){
+                if(formElem == 'tasks' || formElem.managePageRoute == 'tasks'){ // formElem here its the pageRoute
                     $state.go('projectTasks',{id:$stateParams.id,layerType:editProjectsService.get('layer')[0].type})
                 }else{
-                    $state.go('edit.projects.'+formElem.managePageRoute)
+                    $state.go('edit.projects.'+formElem) // formElem here its the pageRoute
                 }
             }else{
                 Core.showNotification('error',formElem.validationRule.dependenciesKeys[canProceed].errorMessage);

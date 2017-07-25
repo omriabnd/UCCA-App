@@ -1,3 +1,4 @@
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -14,7 +15,7 @@
             controller: 'categoriesCtrl',
             controllerAs: 'vm',
             sidebarMeta: {
-              icon: 'ion-android-person',
+              icon: 'ion-ios-pricetag',
               order: 4,
               showOnSideBar:false
             },

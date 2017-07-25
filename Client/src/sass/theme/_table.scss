@@ -6,7 +6,8 @@ smart-inner-table {
           padding-top: 1px;
         }
         & > td {
-          max-width: 240px;
+          // max-width: 240px;
+          max-width: 100px;
           overflow: auto;
           text-overflow: initial;
         }
@@ -16,7 +17,8 @@ smart-inner-table {
 }
 
 .table {
-  margin-bottom: 0px;
+  // margin-bottom: 0px;
+  margin-bottom: 5px;
   & > thead {
     & > tr {
       & > th {
@@ -41,7 +43,8 @@ smart-inner-table {
         line-height: 35px;
         border-top: 1px solid $border-light;
         white-space: nowrap;
-        max-width: 240px;
+        // max-width: 240px;
+        max-width: 150px;
         overflow: hidden;
         text-overflow: ellipsis;
         &:first-child {
@@ -101,7 +104,14 @@ smart-inner-table {
 }
 
 .select-page-size-wrap {
-  width: 150px;
+  max-width: 220px;
+  position: absolute;
+  top: 5px;
+}
+.total-results{
+  position: absolute;
+  margin-left: 7px;
+  bottom: 20px;
 }
 
 .table .header-row th {

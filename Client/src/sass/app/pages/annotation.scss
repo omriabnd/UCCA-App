@@ -1,4 +1,129 @@
+@-webkit-keyframes blinker {
+  from { opacity: 1.0; }
+  to { opacity: 0.0; }
+}
+
+.auth-main{
+  .error-block{
+    color: #fff;
+  }
+}
+
+.side-bar{
+  &.no-events {
+    pointer-events:none;
+  }
+}
+
 .annotation-page-container{
+
+  span.token.ng-binding.line-feed {
+      display: block;
+      height: 0;
+      overflow: hidden;
+  }
+
+
+  .unit-cursor{
+    &.no_cursor{
+      opacity :0;
+    }
+  }
+
+
+  annotation-units{
+    .token.clicked{
+      color: white;
+      background-color: #337ab7;
+    }
+  }
+
+  .remote-unit {
+    background-color: #5b7c55;
+    color: white;
+
+    .token-wrapper {
+      pointer-events: none;
+    }
+
+    .unit-cursor{
+      display: none;
+    }
+  }
+
+  span.token-wrapper.clicked {
+    background: #337ab7;
+  }
+
+  .remote-unit .token-wrapper {
+    border: none !important;
+  }
+
+
+  .directive-container {
+    position: relative;
+    border: 1px solid black;
+    padding: 5px;
+    width: 100% !important;
+    display: block;
+    margin-top: 10px;
+    box-shadow: 0 0 0 black;
+
+  }
+
+  .selected-unit {
+    box-shadow: 1px 3px 5px black;
+
+  }
+
+  .category-square {
+    display: inline-block;
+    width: auto;
+    height: 18px;
+    position: relative;
+    top: 0px;
+    margin-right: 5px;
+    color: white;
+    padding: 2px;
+    border-radius: 0px
+  }
+
+  .hidden-unit {
+    height: 0;
+    overflow: hidden;
+  }
+
+  .child-unit  {
+    width: 99%;
+    float: right;
+    position: relative;
+  }
+
+  .horizontal-line {
+    width: 0.7%;
+    height: 2px;
+    background-color: black;
+    display: inline-block;
+    position: absolute;
+    top: 25px;
+    left: -0.7%;
+  }
+
+  span.token {
+    line-height: 25px;
+    margin: 0 3px;
+  }
+
+
+
+  annotation-units.has-elements.unit-collapse {
+    height: 0;
+    overflow: hidden;
+    animation: .3s all linear;
+    transition: height 1s;
+  }
+
+
   margin-top: 10px;
   .directive-info-data-container {
       outline: none;
@@ -16,6 +141,7 @@
 
   .main-body {
     height: 100%;
+    margin-bottom: 50px;
   }
 
   .side-bar{
@@ -29,6 +155,10 @@
     border: 1px solid black;
     border-radius: 3px;
     padding: 5px;
+  }
+  .line-categories-container {
+      display: inline-block;
+      margin-bottom: 2px;
   }
 
   .clickedToken{
@@ -71,6 +201,7 @@
   }
 
   .text-wrapper {
+    vertical-align: text-top;
     display: block;
     height: 25px !important;
     position: relative;
@@ -78,6 +209,8 @@
     left: 4px;
     height: auto !important;
     display: inline-block;
+    line-height: 22px;
+    max-width: 100%;
   }
   button.text-wrapper{
     width: calc(100% - 55px);
@@ -130,13 +263,6 @@
     top: 0px;
   }
 
-  annotation-units.has-elements {
-    border: 1px solid black;
-    box-shadow: 1px 3px 5px black;
-    padding: 5px;
-    width: 100% !important;
-    display: block;
-  }
 
   .directive-info-data-container {
     padding: 8px;
@@ -236,38 +362,67 @@
   }
 
   .expand-btn {
-      position: absolute;
-      left: 0px;
-      top: 10px;
-      color: #f00;
-      background-color: rgba(0, 0, 0, 0);
-      padding: 2px 5px;
-      /* border-radius: 30px; */
-      width: 15px;
-      height: 15px;
-      border: 1px solid #000;
+    position: absolute;
+    left: -20px;
+    top: 5px;
+    color: #f00;
+    background-color: transparent;
+    padding: 2px 5px;
+    /* border-radius: 30px; */
+    width: 15px;
+    height: 15px;
 
     .ion-minus-round, .ion-plus-round {
       position: relative;
       top: -3px;
       left: -4px;
     }
+    .minus-round, .plus-round {
+      position: relative;
+      top: -3px;
+      left: -4px;
+    }
+    .minus-round,.plus-round {
+        cursor: pointer;
+        background-size: cover;
+        background-repeat: no-repeat;
+        margin-top: 6px;
+        margin-left: 0px;
+        width: 15px;
+        height: 15px;
+        display: inline-block;
+        z-index: 9;
+    }
+    .minus-round {
+        background-image: url(../assets/img/app/huji/minus.jpg);
+    }
+    .plus-round {
+        background-image: url(../assets/img/app/huji/plus.jpg);
+    }
   }
-  
+
   .categorized-word {
     min-height: 10px;
 
   }
-  .closed-annotation-unit {
-    max-height: 0;
-    min-height: 0;
-    max-height: 43px;
-    overflow: hidden;
-    transition: .3s all, font-size 0s, margin 0s;
-    // overflow: hidden;
-    // -webkit-transition: .3s all;
-    // transition: .3s all;
-    // max-height: 40px;
+
+  .closed-annotation-unit .categorized-word {
+    height: none;
+    //max-height: 0;
+    //min-height: 0;
+    //max-height: 43px;
+    //overflow: hidden;
+    //transition: .3s all, font-size 0s, margin 0s;
+    //// overflow: hidden;
+    //// -webkit-transition: .3s all;
+    //// transition: .3s all;
+    //// max-height: 40px;
+    //&.categorized-word{
+    //  .directive-info-data-container {
+    //      height: 38px;
+    //      overflow-y: auto;
+    //  }
+    //}
   }
   .directive-container {
     min-height: 10px;
@@ -432,6 +587,8 @@ textarea.unit-comment-text {
   }
   .side-bar {
       direction: rtl;
+      max-height: 700px;
+      overflow: auto;
       categories-directive {
           direction: ltr;
       }
@@ -447,8 +604,7 @@ textarea.unit-comment-text {
           direction: ltr;
       }
       .categories-container{
-        max-height: 600px;
-        overflow: auto;
+
       }
   }
   .refinedCategory{
@@ -469,6 +625,12 @@ textarea.unit-comment-text {
 
   .selectable-word {
       margin: 0 1px;
+      margin-right: 4px;
+      display: inline-block;
+      height: 25px;
+      vertical-align: middle;
+      &.new-line {
+        display: inline;
+      }
   }
-} 
-
+}

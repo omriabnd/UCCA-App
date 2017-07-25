@@ -1,5 +1,3 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
 from rest_framework import status
@@ -11,7 +9,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_filters.backends import DjangoFilterBackend
 
-from uccaApp.util.functions import Send_Email, has_permissions_to
+from uccaApp.util.functions import Send_Email, has_permissions_to, send_invite_email
 from uccaApp.filters.users_filter import UsersFilter
 from uccaApp.models import Constants, Roles
 from uccaApp.models import Users
@@ -33,7 +31,7 @@ class UsersViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
     permission_classes = [IsAuthenticated]
-    queryset = Users.objects.all()
+    queryset = Users.objects.all().order_by('-updated_at')
     serializer_class = UsersSerializer
     parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
     renderer_classes = (renderers.JSONRenderer,)
@@ -45,14 +43,26 @@ class UsersViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
-        if has_permissions_to(self.request.user.id,'view_users'):
-            return self.queryset
+        if has_permissions_to(self.request,'view_users'):
+
+            param_user_details = None
+
+            # get user_role
+            user_role = self.request.user.groups.first().name
+            if  user_role == 'GUEST':
+                param_user_details = Users.objects.all().order_by('-updated_at')
+                # if the current user wants to see his own tasks
+                param_user_details = Users.objects.all().filter(id=self.request.user.id, is_active=True)
+            else:
+                param_user_details = Users.objects.all().order_by('-updated_at')
+
+            return param_user_details
         else:
             raise PermissionDenied
 
 
     def create(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'add_users'):
+        if has_permissions_to(self.request, 'add_users'):
             context = {
                 'request': self.request
             }
@@ -65,13 +75,15 @@ class UsersViewSet(viewsets.ModelViewSet):
             djangoUser.last_name = request.data['last_name']
             djangoUser.username = request.data['first_name'] + get_random_string(length=8)
 
-            # random_password = User.objects.make_random_password() # TODO: unmark this line
-            random_password = djangoUser.first_name # TODO: mark this line
+            random_password = User.objects.make_random_password()
+
             djangoUser.set_password(random_password)
+
+            Users.validate_email_unique(djangoUser.email)
 
             djangoUser.save()
 
-            Send_Email(djangoUser.email, random_password)
+            send_invite_email(inviterName=self.request.user.first_name, toEmail=djangoUser.email, password=random_password)
 
             newUser = Users()
             newUser.id = djangoUser.pk
@@ -81,7 +93,7 @@ class UsersViewSet(viewsets.ModelViewSet):
             newUser.email = request.data['email']
             newUser.organization = request.data['organization']
             newUser.affiliation = request.data['affiliation']
-            newUser.role = Roles.objects.get(id=4)
+            newUser.role = Roles.objects.get(id=request.data['role']['id'])
             newUser.set_group(newUser.id, newUser.role.name)
             newUser.created_by = ownerUser
             newUser.save()
@@ -96,7 +108,7 @@ class UsersViewSet(viewsets.ModelViewSet):
 
 
     def update(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'change_users'):
+        if has_permissions_to(self.request, 'change_users'):
             partial = kwargs.pop('partial', False)
             instance = self.get_object()
             new_role = Roles.objects.get(id=request.data['role']['id'])
@@ -121,7 +133,7 @@ class UsersViewSet(viewsets.ModelViewSet):
 
 
     def destroy(self, request, *args, **kwargs):
-        if has_permissions_to(self.request.user.id, 'delete_users'):
+        if has_permissions_to(self.request, 'delete_users'):
             instance = self.get_object()
             User.objects.get(pk=instance.id).delete()
             self.perform_destroy(instance)

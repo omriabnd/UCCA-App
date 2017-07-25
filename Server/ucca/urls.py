@@ -13,17 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url, include
-from django.conf.urls.i18n import i18n_patterns
+
 from django.contrib import admin
-from django.conf import settings
-from django.conf.urls.static import static
-
 from django.conf.urls import url, include
-from rest_auth.views import PasswordChangeView, LogoutView
 from rest_framework import routers
-from rest_framework.mixins import UpdateModelMixin
-
 from uccaApp import views
 
 API_VERSION = '1'
@@ -46,8 +39,8 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include(router.urls)),
     url(r'^api/v'+API_VERSION+'/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api/v'+API_VERSION+'/change_password', PasswordChangeView.as_view(),name='rest_password_change'),
-    url(r'^api/v'+API_VERSION+'/logout', LogoutView.as_view(),name='rest_logout'),
+    url(r'^api/v'+API_VERSION+'/change_password', views.PasswordChangeView.as_view(),name='rest_password_change'),
+    url(r'^api/v'+API_VERSION+'/logout', views.LogoutView.as_view(),name='rest_logout'),
     url(r'^api/v'+API_VERSION+'/users/(?P<user_id>[0-9]+)/projects', views.UsersProjectsViewSet.as_view({'get': 'list'}),name='user_projects'),
     url(r'^api/v'+API_VERSION+'/passages/(?P<passage_id>[0-9]+)/projects', views.PassagesProjectsViewSet.as_view({'get': 'list'}),name='passage_projects'),
     url(r'^api/v'+API_VERSION+'/users/(?P<user_id>[0-9]+)/tasks', views.UsersTasksViewSet.as_view({'get': 'list'}),name='user_tasks'),

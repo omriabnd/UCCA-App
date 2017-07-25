@@ -1,5 +1,3 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 from django.db.models import Count
 from rest_framework import parsers
 from rest_framework import renderers
@@ -20,7 +18,7 @@ class UsersProjectsViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
     permission_classes = []
-    queryset = Projects.objects.all()
+    queryset = Projects.objects.all().order_by('-updated_at')
     serializer_class = ProjectSerializer
     parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
     renderer_classes = (renderers.JSONRenderer,)
@@ -31,7 +29,7 @@ class UsersProjectsViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
-        if has_permissions_to(self.request.user.id,'view_projects'):
+        if has_permissions_to(self.request,'view_projects'):
             # init
             param_user_tasks = None
             projects_set = []

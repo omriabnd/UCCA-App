@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -13,12 +14,11 @@
             getEditTableStructure: function(){
                 return apiService.edit.tasks.tokenization.annotator.getAnnotatorsTableStructure().then(function (res){return res.data});
             },
-            getTableData: function(){
-                return service.Data;
-            },
-            getUserTableData: function(id){
-                apiService.users.getUsersTableData(id).then(function (res){
-                    angular.copy(res.data, service.Data);
+            getTableData: function(id){
+                var _service = this;
+                return apiService.users.getUsersTableData(id).then(function (res){
+                    angular.copy(res.data.results, _service.Data);
+                    return _service.Data;
                 });
             },
             get:function(key){

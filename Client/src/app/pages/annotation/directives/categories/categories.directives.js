@@ -33,45 +33,21 @@
     }
 
     /** @ngInject */
-    function DefinitionsController($scope,$rootScope,DataService, $timeout, $uibModal, restrictionsValidatorService,Core) {
+    function DefinitionsController($scope,$rootScope,DataService, $timeout, $uibModal, restrictionsValidatorService,Core,selectionHandlerService) {
         // Injecting $scope just for comparison
         var defCtrl = this;
 
         defCtrl.highLightSelectedWords = highLightSelectedWords;
         defCtrl.showCategoryInfo = showCategoryInfo;
-        
+
         function highLightSelectedWords(color) {
 
-            // $('.clickedToken').css('border','3px solid '+ defCtrl.definitionDetails.color);
-            // $('.clickedToken').removeClass('clickedToken');
-
             var parentUnitId = $rootScope.clckedLine;
-            // parentUnitId = parentUnitId.length == 1 ? parentUnitId[0] : parentUnitId.slice(1,parentUnitId.length).join('-');
             var parenUnit = DataService.getUnitById(parentUnitId);
             parentUnitId = '#row-'+parentUnitId;
             var parentUnitDomElement = $(parentUnitId);
 
-            var unitContainsAllParentUnitTokens = parentUnitDomElement.children().length-1 == $rootScope.selectedTokensArray.length;
-
-            if(!(parenUnit.containsAllParentUnits && unitContainsAllParentUnitTokens)){
-                $rootScope.currentCategoryID = defCtrl.definitionDetails.id;
-                $rootScope.currentCategoryColor = defCtrl.definitionDetails.color || 'rgb(0,0,0)';
-                $rootScope.currentCategoryBGColor = defCtrl.definitionDetails.backgroundColor || 'rgb(0,0,0)';
-                $rootScope.currentCategoryIsRefined = defCtrl.definitionDetails.refinedCategory;
-                $rootScope.currentCategoryAbbreviation = defCtrl.definitionDetails.abbreviation;
-                $rootScope.currentCategoryName = defCtrl.definitionDetails.name;
-                $rootScope.selectedTokensArray.sort(sortSelectedWordsArrayByWordIndex);
-                
-                if($rootScope.selectedTokensArray.length > 0){
-                    $rootScope.clckedLine = $rootScope.callToSelectedTokensToUnit($rootScope.clckedLine,unitContainsAllParentUnitTokens);
-                    DataService.updateDomWhenInsertFinishes();
-                }else{
-                    if(checkIfRowWasClicked($rootScope)){
-                        $rootScope.addCategoryToExistingRow();
-                    }
-                }
-                $rootScope.lastSelectedWordWithShiftPressed = undefined;
-            }
+            selectionHandlerService.toggleCategory(defCtrl.definitionDetails);
         }
 
         function preventIfPanctuation() {
@@ -103,6 +79,24 @@
             });
         };
         
+        /**
+         * Use the object's 'data-wordid' attribute in order to sorts the array in ascending order.
+         * @param a,b - array elements.
+         * @returns {number}
+         */
+        function sortSelectedWordsArrayByWordIndex(a,b){
+            // var aIndex = parseInt($(a).attr('data-wordid').split('-')[1]);
+            // var bIndex = parseInt($(b).attr('data-wordid').split('-')[1]);
+            var aIndex = $rootScope.getTokenIdFromDomElem(a);
+            var bIndex = $rootScope.getTokenIdFromDomElem(b);
+            if(aIndex < bIndex){
+                return -1;
+            }
+            if(aIndex > bIndex){
+                return 1;
+            }
+            return 0;
+        }
     }
 
 
@@ -111,22 +105,7 @@
         return rootScope.clckedLine != undefined && rootScope.clckedLine != '0';
     }
 
-    /**
-     * Use the object's 'data-wordid' attribute in order to sorts the array in ascending order.
-     * @param a,b - array elements.
-     * @returns {number}
-     */
-    function sortSelectedWordsArrayByWordIndex(a,b){
-        var aIndex = parseInt($(a).attr('data-wordid').split('-')[1]);
-        var bIndex = parseInt($(b).attr('data-wordid').split('-')[1]);
-        if(aIndex < bIndex){
-            return -1;
-        }
-        if(aIndex > bIndex){
-            return 1;
-        }
-        return 0;
-    }
+    
 
 
 })();

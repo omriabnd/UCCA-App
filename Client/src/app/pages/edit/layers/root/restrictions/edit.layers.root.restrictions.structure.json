@@ -55,12 +55,6 @@
         "showAs":"switch",
         "class":"btn-success",
         "functionName":"chooseRow"
-      },
-      {
-        "name":"Info",
-        "order":1,
-        "class":"btn-info",
-        "functionName":"showRestrictionInfo"
       }
     ]
   }

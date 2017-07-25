@@ -1,5 +1,3 @@
-# Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University.
-
 from django.shortcuts import render
 from django.contrib.auth.models import User, Group
 from rest_framework import generics
@@ -9,10 +7,12 @@ from uccaApp import services
 from .SourcesViewSet import *
 from .PassagesViewSet import *
 from .LoginViewSet import *
+from .LogoutViewSet import *
 from .CategoryViewSet import *
 from .UsersViewSet import *
 from .SignupViewSet import *
 from .ForgotPasswordViewSet import *
+from .PasswordChangeView import *
 from .LayersViewSet import *
 from .TasksViewSet import *
 from .ProjectesViewSet import *

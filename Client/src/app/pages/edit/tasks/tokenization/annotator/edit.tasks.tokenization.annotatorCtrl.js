@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -6,7 +7,7 @@
         .controller('EditTokenizationTaskAnnotatorCtrl', EditTokenizationTaskAnnotatorCtrl);
 
     /** @ngInject */
-    function EditTokenizationTaskAnnotatorCtrl($scope,$state, EditTableStructure, editTokenizationTaskAnnotatorService, editTokenizationTasksService, Core) {
+    function EditTokenizationTaskAnnotatorCtrl($scope,$state, EditTableStructure, editTokenizationTaskAnnotatorService, editTokenizationTasksService, Core, UserTableData) {
         var vm = this;
         vm.edit = edit;
         vm.editRow = editRow;
@@ -15,8 +16,8 @@
 
         var parentCtrl = $scope.$parent.vm;
 
-        vm.smartTableData = editTokenizationTaskAnnotatorService.getTableData();
-        Core.init(this,EditTableStructure);
+        vm.smartTableData = UserTableData;
+        Core.init(this,EditTableStructure,editTokenizationTaskAnnotatorService);
 
         vm.smartTableStructure.forEach(function(obj){
             obj.value = editTokenizationTaskAnnotatorService.get(obj.key);
@@ -41,7 +42,7 @@
                 "first_name":obj.first_name,
                 "last_name":obj.last_name
             }
-            editTokenizationTasksService.set("user",sourceDetails,0);
+            editTokenizationTasksService.set("user",sourceDetails,true);
             parentCtrl.refreshData("user");
         }
 

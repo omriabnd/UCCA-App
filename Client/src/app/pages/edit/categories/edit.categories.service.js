@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
@@ -32,10 +33,15 @@
           service.Data = data;
         },
         get:function(key){
-          return this.Data[key];
+            if( typeof this.Data[key] == 'object' && !!this.Data[key] && !!this.Data[key].name){
+                return this.Data[key].name;
+            }
+            return this.Data[key];
         },
         clearData: function(){
-          service.Data = {};
+          service.Data = {
+            is_active:true
+          };
         }
     }
     return service;

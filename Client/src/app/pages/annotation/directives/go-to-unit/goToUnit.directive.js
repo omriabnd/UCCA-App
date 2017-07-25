@@ -5,7 +5,7 @@
         .module('zAdmin.annotation.directives')
         .directive('goToUnit',goToUnitDirective);
 
-    function goToUnitDirective($rootScope,DataService) {
+    function goToUnitDirective($rootScope,DataService,AnnotationTextService) {
         return {
             restrict: 'A',
             scope: true,
@@ -13,14 +13,17 @@
             link: function ($scope, elem) {
 
                 $(elem).click(function(){
+
+                    // highlight the unit, and make its parent row focused
+
                     var unitId = $(this).attr('unit-wrapper-id');
                     var splittedUnitID = unitId.split('-');
 
                     var parentContainerId = $(event.toElement).attr('parent-index');
 
                     var parentContainer = $(this.parentElement.parentElement.parentElement).addClass('selected-row');
-                    $('.highlight-unit').removeClass('highlight-unit');
-                    $("[unit-wrapper-id="+unitId+"]").toggleClass('highlight-unit');
+                    // $('.highlight-unit').removeClass('highlight-unit');
+                    // $("[unit-wrapper-id="+unitId+"]").toggleClass('highlight-unit');
 
                     event.stopPropagation();
 
@@ -35,12 +38,14 @@
                     // $('.selected-row').removeClass('selected-row');
 
                     var parentContainer = $('#directive-info-data-container-'+childUnitId).addClass('selected-row');
-
                     // var childUnitId = splittedUnitID.slice(3,splittedUnitID.length).join('-');
                     var annotationUnit = $('#directive-info-data-container-'+childUnitId).parents('.categorized-word')
+
+                    var expandBtn = annotationUnit[1] ? $(annotationUnit[1]).find('.expand-btn') : $(annotationUnit[0]).find('.expand-btn');
                     // annotationUnit.removeClass('hidden');
                     $scope.$apply(function(){
                         DataService.getUnitById(childUnitId).gui_status = 'OPEN';
+                        AnnotationTextService.toggleAnnotationUnitView(expandBtn[0]);
                     })
 
                     event.stopPropagation();
@@ -81,8 +86,8 @@
             $(element).addClass('selected-row').delay(500);
         }    
 
-        $('.selectable-word').removeClass('clickedToken');
-        rootScope.selectedTokensArray = [];    
+        // $('.selectable-word').removeClass('clickedToken');
+        // rootScope.selectedTokensArray = [];    
     }
 
 

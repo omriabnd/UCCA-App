@@ -1,4 +1,5 @@
 
+/* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
 
@@ -56,7 +57,7 @@
         function promptHotKeySelectionModal(obj,LayerDetails,parentCtrl){
             $uibModal.open({
                 animation: true,
-                templateUrl: '../app/pages/edit/layers/select.hotkey.modal.html',
+                templateUrl: 'app/pages/edit/layers/select.hotkey.modal.html',
                 size: 'md',
                 resolve: {
                     items: function () {
@@ -83,6 +84,7 @@
             });
         }
         function showCategoryInfo(obj,index){
+            console.log("showCategoryInfo");
             var pagelink = pagelink || 'app/pages/ui/modals/modalTemplates/largeModal.html';
             var size = size || 'lg';
             $uibModal.open({
