@@ -16,13 +16,13 @@
             will change to the category name in the alert modal
         */
         var errorMasseges ={
-            FORBID_ANY_CHILD : 'category %NAME% cannot have any child.',
-            FORBID_CHILD : 'category %NAME_1% cannot have child with category %NAME_2%.',
-            FORBID_SIBLING: 'category %NAME_1% cannot have sibling with category %NAME_2%.',
-            REQUIRE_SIBLING: 'category %NAME_1% fails on a require_sibling constraint.',
-            REQUIRE_CHILD: 'category %NAME_1% fails on a require_child constraint.',
-            UNIT_CONTAIN_ONLY_PUNCTUATIONS : 'You cannot create annotation unit from only punctuation tokens',
-            NOT_COMPLETE : "all non-punctuation tokens must either be in a unit of their own or in an unanalyzable unit."
+            FORBID_ANY_CHILD : 'Category %NAME% cannot have any child.',
+            FORBID_CHILD : 'Category %NAME_1% cannot have child with category %NAME_2%.',
+            FORBID_SIBLING: 'Category %NAME_1% cannot have sibling with category %NAME_2%.',
+            REQUIRE_SIBLING: 'Category %NAME_1% fails on a require_sibling constraint.',
+            REQUIRE_CHILD: 'Category %NAME_1% fails on a require_child constraint.',
+            UNIT_CONTAIN_ONLY_PUNCTUATIONS : 'You cannot create annotation unit only from punctuation tokens',
+            NOT_COMPLETE : "All non-punctuation tokens must either be in a unit of their own or in an unanalyzable unit."
         };
         var restrictionsTables;
         var handler = {
@@ -200,7 +200,7 @@
             var vaiolate = false;
             var categories_hash = hashTables.categoriesHashTable;
 
-            var violateUnitsCategoriesAmount = checkIfAllUnitsHaveAtLeastOneCategory(annotationUnit,categories_hash);
+            var violateUnitsCategoriesAmount = false; //changed by Omri Abend 24.7 because restriction is not working properly //checkIfAllUnitsHaveAtLeastOneCategory(annotationUnit,categories_hash);
             // console.log("violateUnitsCategoriesAmount",violateUnitsCategoriesAmount);
 
             if(!violateUnitsCategoriesAmount){
@@ -296,6 +296,8 @@
                             var tokenInUnit = unitToken.inUnit;
                             if(tokenInUnit === null){
                                 // isViolated = true;
+                                console.log(unitToken);
+                                console.log(annotationUnit);
                                 showErrorModal(errorMasseges['NOT_COMPLETE']);
                                 return true;
                             }else{
@@ -522,12 +524,14 @@
         var NOT_ALL_TOKENS_IN_UNIT_ERROR = false;
         function evaluateFinishAll(mainPassage,fromSubmit,hashTables){
             var evaluationResult = true;
+
             if(fromSubmit){
                 var hash_tokens = hashTables.tokensHashTable;
-                checkIfAllTokenThatRequireAnnotationIsInUnit(mainPassage,hash_tokens,true);
-                if(NOT_ALL_TOKENS_IN_UNIT_ERROR){
-                    evaluationResult = false;
-                }
+                // Commented out by Omri Abend, 24/7 because it is not working properly
+                //checkIfAllTokenThatRequireAnnotationIsInUnit(mainPassage,hash_tokens,true);
+                //if(NOT_ALL_TOKENS_IN_UNIT_ERROR){
+                //    evaluationResult = false;
+                //}
                 NOT_ALL_TOKENS_IN_UNIT_ERROR = false;
             }
 
