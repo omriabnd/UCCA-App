@@ -6,6 +6,7 @@ from uccaApp.models.Annotation_Units import Annotation_Units
 class Annotation_Units_Categories(models.Model):
     unit_id = models.ForeignKey(Annotation_Units,related_name="unit_id",on_delete=models.CASCADE)
     category_id = models.ForeignKey(Categories, on_delete=models.PROTECT)
+    slot = models.IntegerField(null=False, default=1)  # Omri added Sep 12
     remote_parent_id = models.ForeignKey(Annotation_Units,null=True,blank=True, related_name="remote_parent_id",on_delete=models.CASCADE)
 
     class Meta:

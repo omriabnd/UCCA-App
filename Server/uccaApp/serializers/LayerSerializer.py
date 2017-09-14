@@ -1,4 +1,4 @@
-import json
+import json, pdb
 
 from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
@@ -39,10 +39,11 @@ class LayerSerializer(serializers.ModelSerializer):
 
     def get_restrictions(self,obj):
         layer_restrictions_json = []
-        if obj.type == Constants.LAYER_TYPES_JSON['ROOT'] or obj.type == Constants.LAYER_TYPES_JSON['EXTENSION'] :
-            layer_restrictions = Layers_Categories_Restrictions.objects.all().filter(layer_id=obj.id)
-            for lr in layer_restrictions:
-                layer_restrictions_json.append(LayersCategoriesResrictionsSerializer(lr).data)
+        # Omri Abend commented out Sep 13
+        #if obj.type == Constants.LAYER_TYPES_JSON['ROOT'] or obj.type == Constants.LAYER_TYPES_JSON['EXTENSION'] :
+        layer_restrictions = Layers_Categories_Restrictions.objects.all().filter(layer_id=obj.id)
+        for lr in layer_restrictions:
+            layer_restrictions_json.append(LayersCategoriesResrictionsSerializer(lr).data)
 
         return layer_restrictions_json
 
@@ -110,7 +111,8 @@ class LayerSerializer(serializers.ModelSerializer):
             "is_active",
             "created_by",
             "created_at",
-            "updated_at"
+            "updated_at",
+            "slotted"             # added Omri, Sep 12
         )
 
     def create(self, validated_data):
@@ -138,6 +140,8 @@ class LayerSerializer(serializers.ModelSerializer):
                     uniq_categories = self.group_by_category_id(categories)
                     self.save_layer_categories(newLayer, uniq_categories)
                     self.save_derived_categories(newLayer, categories)
+                # Omri Abend, Sep 13
+                self.save_derived_restrictions(newLayer)
 
         return newLayer
 
@@ -256,6 +260,20 @@ class LayerSerializer(serializers.ModelSerializer):
     def is_category_exsists_in_parent_layer(self,category,layer):
         found_category = get_object_or_404(Layers_Categories,layer_id=layer.id,category_id=category.id)
         return found_category is not None
+
+    def save_derived_restrictions(self,newLayer):
+        # read restrictions from the parent layer and save them in the newLayer
+        # Omri Abend, Sep 13
+        parent_forbid_restrictions = Layers_Categories_Restrictions.objects.all().filter(layer_id=newLayer.parent_layer_id.id,resriction_type=Constants.RESTRICTION_TYPES_JSON['FORBID_ANY_CHILD'])
+
+        for restriction in parent_forbid_restrictions:
+            newLayerCategoriesRestriction = Layers_Categories_Restrictions()
+            newLayerCategoriesRestriction.layer_id = newLayer
+            newLayerCategoriesRestriction.resriction_type = restriction.resriction_type
+            newLayerCategoriesRestriction.category_ids1 = restriction.category_ids1
+            newLayerCategoriesRestriction.category_ids2 = restriction.category_ids2
+            newLayerCategoriesRestriction.save()
+
 
     def save_derived_categories(self,newLayer,categories):
         if newLayer.type ==  Constants.LAYER_TYPES_JSON['REFINEMENT']:

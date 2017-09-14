@@ -1,6 +1,7 @@
+import pdb
 from rest_framework.generics import get_object_or_404
 
-from uccaApp.util.exceptions import SaveTaskTypeDeniedException, CantChangeSubmittedTaskExeption
+from uccaApp.util.exceptions import SaveTaskTypeDeniedException, CantChangeSubmittedTaskExeption, GetForInactiveTaskException
 from uccaApp.util.functions import get_value_or_none, active_obj_or_raise_exeption
 from uccaApp.util.tokenizer import isPunct
 from uccaApp.models import Annotation_Remote_Units_Annotation_Units
@@ -27,8 +28,13 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
     parent = serializers.SerializerMethodField()
     children = serializers.SerializerMethodField()
     tokens = serializers.SerializerMethodField()
-    annotation_units = serializers.SerializerMethodField()
+    annotation_units = serializers.SerializerMethodField() 
+    is_active = serializers.SerializerMethodField() 
 
+    def get_is_active(self,obj):
+        if not obj.is_active:
+            raise GetForInactiveTaskException
+        return obj.is_active
 
     def get_user(self,obj):
         return DjangoUserSerializer_Simplify(obj.annotator).data
@@ -227,6 +233,13 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             unit_category.unit_id = remote_annotation_unit.remote_unit_id
             unit_category.category_id = Categories.objects.get(id=cat['id'])
             unit_category.remote_parent_id = remote_annotation_unit.unit_id
+
+            # Omri added Sep 12:
+            if 'slot' in cat:    # Omri TODO: disallow the option not to specify a slot
+                unit_category.slot = cat['slot']
+            else:
+                unit_category.slot = 1
+
             unit_category.save()
         print('save_remote_annotation_categories - end')
 
@@ -269,6 +282,10 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             unit_category = Annotation_Units_Categories()
             unit_category.unit_id = annotation_unit
             unit_category.category_id = Categories.objects.get(id=cat['id'])
+            if 'slot' in cat:    # Omri TODO: disallow the option not to specify a slot
+                unit_category.slot = cat['slot']
+            else:
+                unit_category.slot = 1
             unit_category.remote_parent_id = None
             unit_category.save()
         print('save_annotation_categories - end')
@@ -285,7 +302,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
     def submit(self,instance):
         instance.status = 'SUBMITTED'
         print('submit')
-        instance.save()
+        instance.save(update_fields=['status'])
 
     def check_if_parent_task_ok_or_exception(self,instance):
         if instance.type == Constants.TASK_TYPES_JSON['TOKENIZATION']:

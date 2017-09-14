@@ -1,11 +1,16 @@
+import pdb
+
 from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
 from uccaApp.models import Users, Constants, Passages, Projects
+from django.dispatch import receiver
 
 
 class Tasks(models.Model):
+
     id = models.AutoField(primary_key=True)
 
     project = models.ForeignKey(Projects,null=False,blank=False,db_column="project_id", on_delete=models.PROTECT, default='')
@@ -29,3 +34,12 @@ class Tasks(models.Model):
 
     class Meta:
         db_table="tasks"
+
+    
+@receiver(post_save, sender=Tasks)
+def update_is_active_in_children(sender, instance, **kwargs):
+    if instance.status == Constants.TASK_STATUS_JSON['SUBMITTED'] and ('status' in kwargs['update_fields']):
+        child_tasks = Tasks.objects.filter(parent_task__id=instance.id).update(is_active=True)
+    
+    
+    

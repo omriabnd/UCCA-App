@@ -52,3 +52,14 @@ class CantChangeSubmittedTaskExeption(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = ('Cant change a submitted task')
     default_code = 'error'
+
+class OnlyActiveIfParentIsActiveException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = ('The parent task is not yet submitted; cannot set is_active to True')
+    default_code = 'error'
+
+class GetForInactiveTaskException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = ('Task must be active to edit or view')
+    default_code = 'error'
+    

@@ -1,3 +1,4 @@
+import pdb
 from rest_framework import serializers
 
 from uccaApp.models import Annotation_Remote_Units_Annotation_Units
@@ -8,13 +9,12 @@ from uccaApp.models.Categories import Categories
 from uccaApp.serializers import CategorySerializer_Simplify
 from uccaApp.serializers.TokenSerializer import TokensSerializer_Simplify, TokensSerializer
 from uccaApp.serializers.TaskSerializerSimple import TaskSerializer_Simplify
-
+from uccaApp.serializers.CategoryInUnitSerializer import CategoryInUnitSerializer
 
 class Annotation_UnitsSerializer_Simplify(serializers.ModelSerializer):
     class Meta:
         model = Annotation_Units
         fields = ('id')
-
 
 class Annotation_UnitsSerializer(serializers.ModelSerializer):
     # id = serializers.ReadOnlyField
@@ -22,7 +22,7 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
     is_remote_copy = serializers.SerializerMethodField()
     categories = serializers.SerializerMethodField()
     children_tokens = serializers.SerializerMethodField()
-    children = serializers.SerializerMethodField()
+    #children = serializers.SerializerMethodField()
     parent_id = serializers.SerializerMethodField()
 
     def get_parent_id(self,obj):
@@ -45,24 +45,31 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
         else:
             categories = Annotation_Units_Categories.objects.all().filter(unit_id=obj.id, remote_parent_id=obj.parent_id)
 
+        
         for cat in categories:
-                categories_json.append(CategorySerializer_Simplify(cat.category_id).data)
+                categories_json.append(CategoryInUnitSerializer(cat).data)
+
+        if categories:
+            pass
+            #pdb.set_trace()
 
         return categories_json
 
     def get_children_tokens(self, obj):
-        tokens = Annotation_Units_Tokens.objects.all().filter(unit_id=obj.id)
+        tokens = Annotation_Units_Tokens.objects.all().filter(unit_id=obj.id)   # Omri TODO: return only tokens that are direct children of unit
         tokens_json = []
         for t in tokens:
-            tokens_json.append(TokensSerializer_Simplify(t.token_id).data)
+            tokens_json.append(TokensSerializer_Simplify(t.token_id).data)   
         return tokens_json
 
+    """
     def get_children(self, obj):
-        children_annotation_units = Annotation_Units.objects.all().filter(parent_id=obj.id)
+        children_annotation_units = Annotation_Units.objects.all().filter(parent_id=obj.id)   # Omri TODO: remove this field
         children_json = []
         for cl in children_annotation_units:
             children_json.append(Annotation_UnitsSerializer(cl).data)
         return children_json
+    """
 
 
     class Meta:
@@ -76,7 +83,7 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
             'comment',
             'categories',
             'children_tokens',
-            'children',
+            #'children',
             'parent_id',
             'gui_status'
         )
