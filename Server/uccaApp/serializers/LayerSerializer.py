@@ -122,7 +122,7 @@ class LayerSerializer(serializers.ModelSerializer):
         restrictions = validated_data['restrictions'] = self.initial_data['restrictions']
 
         layer_type = validated_data['type']
-
+        
         if layer_type ==  Constants.LAYER_TYPES_JSON['ROOT']:
             newLayer = self.save_layer(validated_data)
             self.save_layer_categories(newLayer,categories)
@@ -217,6 +217,7 @@ class LayerSerializer(serializers.ModelSerializer):
         newLayer.type = validated_data['type']
         newLayer.description = validated_data['description']
         newLayer.tooltip = validated_data['tooltip']
+        newLayer.slotted = validated_data['slotted']
 
         if self.initial_data['parent'] is not None and self.initial_data['parent'] and newLayer.type !=  Constants.LAYER_TYPES_JSON['ROOT']: # no parent for root layer
             if(newLayer.type == Constants.LAYER_TYPES_JSON['REFINEMENT'] or newLayer.type == Constants.LAYER_TYPES_JSON['COARSENING']):

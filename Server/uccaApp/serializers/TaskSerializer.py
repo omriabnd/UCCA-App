@@ -30,7 +30,9 @@ class TaskInChartSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     parent = serializers.SerializerMethodField()
     children = serializers.SerializerMethodField()
-
+    #out_of_date = serializers.BooleanField(source='out_of_date')
+    #out_of_date = serializers.SerializerMethodField() # Added Sep 30
+    
     def get_user(self,obj):
         return DjangoUserSerializer_Simplify(obj.annotator).data
 
@@ -46,9 +48,18 @@ class TaskInChartSerializer(serializers.ModelSerializer):
         for cl in children_tasks:
             children_json.append(TaskSerializer_Simplify(cl).data)
         return children_json
-
-
-
+    
+    """
+    def get_out_of_date(self,obj):
+        if obj.project.layer.type != Constants.LAYER_TYPES_JSON['ROOT'] and obj.parent_task is not None:
+            num_of_submitted_review_tasks = \
+                Tasks.objects.all().filter(parent_task_id=obj.parent_task.id,\
+                                           type=Constants.TASK_TYPES_JSON['REVIEW'],status=Constants.TASK_STATUS_JSON['SUBMITTED']).count()
+            return (num_of_submitted_review_tasks > 0)
+        else:
+            return False
+    """
+        
     class Meta:
         model = Tasks
         fields = (
@@ -62,6 +73,8 @@ class TaskInChartSerializer(serializers.ModelSerializer):
             'passage',
             'is_demo',
             'manager_comment',
+            'user_comment',
+            'out_of_date',
             'is_active',
             'created_by',
             'created_at',

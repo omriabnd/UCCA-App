@@ -1,4 +1,3 @@
-import pdb
 from rest_framework.generics import get_object_or_404
 
 from uccaApp.util.exceptions import SaveTaskTypeDeniedException, CantChangeSubmittedTaskExeption, GetForInactiveTaskException
@@ -29,8 +28,9 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
     children = serializers.SerializerMethodField()
     tokens = serializers.SerializerMethodField()
     annotation_units = serializers.SerializerMethodField() 
-    is_active = serializers.SerializerMethodField() 
-
+    is_active = serializers.SerializerMethodField()
+    user_comment = serializers.CharField(allow_blank=True)
+    
     def get_is_active(self,obj):
         if not obj.is_active:
             raise GetForInactiveTaskException
@@ -72,11 +72,13 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         # **********************************
         #           AS ARRAY
         # **********************************
+        orig_obj = None
         annotation_units = Annotation_Units.objects.all().filter(task_id=obj.id).order_by('id')
 
         # handle new refinement or extention layer taks - get the parent annotation units - start
         if( len(annotation_units) == 0  and obj.parent_task is not None): # TODO: check if coarsening task is ok with that
             # get the parent task annotation units
+            orig_obj = obj
             obj = obj.parent_task
             annotation_units = Annotation_Units.objects.all().filter(task_id=obj.id).order_by('id')
         # handle new refinement or extention layer taks - get the parent annotation units - end
@@ -99,7 +101,14 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
                 # add the remote original unit to the json output
                 annotation_units_json.append(Annotation_UnitsSerializer(remote_original_unit).data)
 
-            annotation_units_json.append(Annotation_UnitsSerializer(au).data)
+            au_data = Annotation_UnitsSerializer(au).data
+
+            if (orig_obj and orig_obj.project.layer.type != Constants.LAYER_TYPES_JSON['ROOT']):
+                # take Annotation_UnitsSerializer(au).data, and alter slot to be 3+
+                for index,cat in enumerate(au_data['categories']):
+                    au_data['categories'][index]['slot'] = 3 + index
+            annotation_units_json.append(au_data)
+
         # return all array sorted with all the remote units in the end
         return sorted(annotation_units_json, key=operator.itemgetter('is_remote_copy'), reverse=False)
 
@@ -136,6 +145,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             'annotation_units',
             'is_demo',
             'manager_comment',
+            'user_comment',
             'is_active',
             'created_by',
             'created_at',

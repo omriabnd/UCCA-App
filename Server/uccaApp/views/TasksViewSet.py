@@ -22,7 +22,7 @@ class TasksViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
     """
-    queryset = Tasks.objects.all().order_by('-updated_at')
+    queryset = Tasks.objects.all().order_by('-out_of_date','-updated_at')
     serializer_class = TaskInChartSerializer
     parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
     renderer_classes = (renderers.JSONRenderer,)
@@ -38,13 +38,13 @@ class TasksViewSet(viewsets.ModelViewSet):
 
             # get all users tasks by user_id
             if  user_role == 'ADMIN':
-                param_user_tasks = Tasks.objects.all().order_by('-updated_at')
+                param_user_tasks = Tasks.objects.all().order_by('-out_of_date','-updated_at')
             elif user_role == 'PM' or user_role == 'PROJECT_MANAGER':
-                param_user_tasks = Tasks.objects.all().filter(created_by=self.request.user.id).order_by('-updated_at')
+                param_user_tasks = Tasks.objects.all().filter(created_by=self.request.user.id).order_by('-out_of_date','-updated_at')
             elif user_role == 'ANNOTATOR' or user_role == 'GUEST':
                 # if the current user wants to see his own tasks
                 # changed by Omri 23.7.17 to include demo tasks
-                param_user_tasks = (Tasks.objects.all().filter(is_demo=True, is_active=True,status=Constants.TASK_STATUS_JSON['SUBMITTED']).order_by('-updated_at') | Tasks.objects.all().filter(annotator=self.request.user.id, is_active=True).order_by('-updated_at')).distinct()
+                param_user_tasks = (Tasks.objects.all().filter(is_demo=True, is_active=True,status=Constants.TASK_STATUS_JSON['SUBMITTED']) | Tasks.objects.all().filter(annotator=self.request.user.id, is_active=True)).order_by('-out_of_date','-updated_at').distinct()
                 #param_user_tasks = Tasks.objects.all().filter(annotator=self.request.user.id, is_active=True).order_by('-updated_at')
 
             return param_user_tasks

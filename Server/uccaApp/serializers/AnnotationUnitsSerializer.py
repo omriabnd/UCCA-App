@@ -47,7 +47,7 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
 
         
         for cat in categories:
-                categories_json.append(CategoryInUnitSerializer(cat).data)
+            categories_json.append(CategoryInUnitSerializer(cat).data)
 
         if categories:
             pass
