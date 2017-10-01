@@ -176,6 +176,18 @@
     "showInTable": true
   },
   {
+    "key":"slotted",
+    "name":"Is Slotted",
+    "order":11,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Is Active...",
+    "value":true,
+    "showInTable":true,
+    "shouldSendToServer":true
+  },
+  {
     "key":"export",
     "order":99,
     "name":"Export Asset",

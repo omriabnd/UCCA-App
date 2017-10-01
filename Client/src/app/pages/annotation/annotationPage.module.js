@@ -43,7 +43,7 @@
             return this; // for testing purposes
         };
 
-        function getAnnotationTask(AnnotationTextService,$stateParams,DataService,restrictionsValidatorService,selectionHandlerService) {
+        function getAnnotationTask(AnnotationTextService,$stateParams,DataService,restrictionsValidatorService,selectionHandlerService,$rootScope) {
             return AnnotationTextService.getAnnotationTask($stateParams.taskId).then(function(taskResponse){
                 var layer_id = taskResponse.project.layer.id;
 
@@ -99,16 +99,62 @@
                 taskResponse.tokens = replaceEnterWithBr(taskResponse.tokens);
                 DataService.currentTask = taskResponse;
 
-                restrictionsValidatorService.initRestrictionsTables(taskResponse.project.layer.restrictions);
+                restrictionsValidatorService.initRestrictionsTables(taskResponse.project.layer.restrictions,selectionHandlerService);
 
                 setCategoriesColor(AnnotationTextService,allCategories);
                 setCategoriesAbbreviation(AnnotationTextService,allCategories);
+                
+                $rootScope.isSlottedLayerProject = DataService.currentTask.project.layer.slotted;
+                
                 if(!!DataService.currentTask.annotation_units){
                     DataService.categories = allCategories;
                     DataService.createHashTables();
                     DataService.createTokensHashByTokensArrayForPassage(taskResponse.tokens);
+                    
+                    if($rootScope.isSlottedLayerProject){
+                       for(var i =0; i < DataService.currentTask.annotation_units.length; i++){
+                           var currentUnit = DataService.currentTask.annotation_units[i];
+                           
+                           currentUnit.categories.sort(function(a,b){
+                               if(a.slot > 2 || b.slot > 2){
+                                  return 1
+                               }
+                               else if(a.slot > b.slot){
+                                  return 1;
+                               }else if(a.slot < b.slot){
+                                   return -1;
+                               }else{
+                                   return 0;
+                               }
+                               
+                           })
+                           for(var j=0; j<currentUnit.categories.length; j++){
+                               var currentcategory = currentUnit.categories[j];
+
+                               //Update slotOne attribute
+                               if(currentcategory.slot && currentcategory.slot === 1){
+                                  currentUnit.slotOne = true;
+                               }else{
+                                   currentUnit.slotOne = false;
+                               }
+
+                               //Update slotTwo attribute
+                               if(currentcategory.slot && currentcategory.slot === 2){
+                                  currentUnit.slotTwo = true;                                   
+                                   
+                               }else{
+                                   currentUnit.slotTwo = false;
+                               }
+                           }
+                           
+//                           if(!currentUnit.slotOne && currentUnit.slotTwo){
+//                              currentUnit.categories.splice(0,0,{id:-1});
+//                           }
+                       }
+                    }
                     selectionHandlerService.initTree();
-                }
+                }              
+                                
                 
                 return{
                     Task:taskResponse,

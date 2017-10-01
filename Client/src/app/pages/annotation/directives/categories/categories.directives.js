@@ -39,6 +39,14 @@
 
         defCtrl.highLightSelectedWords = highLightSelectedWords;
         defCtrl.showCategoryInfo = showCategoryInfo;
+        
+        var restictionTables = restrictionsValidatorService.getTables();
+        
+        if(restictionTables['FORBID_ANY_CHILD'][defCtrl.definitionDetails.id] !== undefined){
+           defCtrl.definitionDetails.forbidAnyChild = true;
+        }else{
+            defCtrl.definitionDetails.forbidAnyChild = false;
+        }
 
         function highLightSelectedWords(color) {
 

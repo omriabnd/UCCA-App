@@ -8,6 +8,17 @@
     "search":true,
     "showInTable":true,
     "orderInSearch":1
+  },  
+  {
+    "key":"out_of_date",
+    "name":"Out Of Date",
+    "order":14,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Out Of Date...",
+    "value":"",
+    "showInTable":true
   },
   {
     "key":"status",

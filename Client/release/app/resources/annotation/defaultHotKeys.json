@@ -1,6 +1,12 @@
 {
   "DefaultHotKeys":[
     {
+      "combo": "alt+i",
+      "description": "Add Implicit unit",
+      "action": "keydown",
+      "callbackFunction":"addImplicitUnit"
+    },
+    {
       "combo": "alt+f",
       "description": "Finish Unit",
       "action": "keydown",

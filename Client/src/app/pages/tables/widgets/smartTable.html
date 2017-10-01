@@ -23,7 +23,7 @@
       <td ng-repeat="(key,value) in vm.smartTableStructure track by $index"
           html-string-to-content elem-value="itemRow[value['key']]"
           language-align="{{::itemRow[value['key']]}}"
-          ng-class="{'table-id':$index==0,'table-object': (!!itemRow[value['key']].name || !!itemRow[value['key']][0].name || !!itemRow[value['key']].id || !!itemRow[value['key']][0].id) }"
+          ng-class="{'out-of-date':value.key == 'out_of_date' && itemRow[value['key']] != '', 'table-id':$index==0,'table-object': (!!itemRow[value['key']].name || !!itemRow[value['key']][0].name || !!itemRow[value['key']].id || !!itemRow[value['key']][0].id) }"
           ng-click="(!!itemRow[value['key']].name || !!itemRow[value['key']][0].name || !!itemRow[value['key']].id || !!itemRow[value['key']][0].id) && vm.showMore(itemRow[value['key']]);"
           ng-if="value.showInTable && value.key != 'actions'">
           {{::vm.parseSmartTableColumnData(itemRow,value)}}

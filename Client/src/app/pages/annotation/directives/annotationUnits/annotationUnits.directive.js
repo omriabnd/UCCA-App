@@ -304,44 +304,62 @@
         }
 
         function borderForFirstAndLastToken(categories){
-            switch(categories.length){
+            var actualCategories = categories.filter(function(category){
+                return category.id !== undefined;
+            })
+            switch(actualCategories.length){
+                case 0:{
+                    return "border: none;"
+                }    
                 case 1:{
-                    return "border : 3px solid "+categories[0].backgroundColor+"; margin-left: 3px;";
+                    return "border : 3px solid "+actualCategories[0].backgroundColor+"; margin-left: 3px;";
                 }
                 case 2:{
-                    return "border : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; margin-left: 3px;";
+                    return "border : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; margin-left: 3px;";
                 }
                 case 3:{
-                    return "border : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-left : 3px solid "+categories[2].backgroundColor+"; margin-left: 3px;";
+                    return "border : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-left : 3px solid "+categories[2].backgroundColor+"; margin-left: 3px;";
                 }
                 default:{
-                    return "border : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-left : 3px solid "+categories[2].backgroundColor+";border-right : 3px solid "+categories[3].backgroundColor+"; margin-left: 3px;";
+                    return "border : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-left : 3px solid "+categories[2].backgroundColor+";border-right : 3px solid "+categories[3].backgroundColor+"; margin-left: 3px;";
                 }
             }
         }
 
         function borderForFirstToken(token,categories){
-            switch(categories.length){
+            var actualCategories = categories.filter(function(category){
+                return category.id !== undefined;
+            })
+            switch(actualCategories.length){
+                case 0:{
+                    return "border: none;"
+                }
                 case 1:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[0].backgroundColor+"; border-left : 3px solid "+categories[0].backgroundColor+"; margin-left: 3px;";
+                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[0].backgroundColor+"; border-left : 3px solid "+actualCategories[0].backgroundColor+"; margin-left: 3px;";
                 }
                 case 2:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-left : 3px solid "+categories[0].backgroundColor+"; margin-left: 3px;";
+                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-left : 3px solid "+actualCategories[0].backgroundColor+"; margin-left: 3px;";
                 }
                 default:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-left : 3px solid "+categories[2].backgroundColor+"; margin-left: 3px;";
+                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-left : 3px solid "+actualCategories[2].backgroundColor+"; margin-left: 3px;";
                 }
             }
 
 
         }
         function borderForMiddleToken(token,categories){
-            switch(categories.length){
+            var actualCategories = categories.filter(function(category){
+                return category.id !== undefined;
+            })
+            switch(actualCategories.length){
+                case 0:{
+                    return "border: none;"
+                }
                 case 1:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[0].backgroundColor+";";
+                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[0].backgroundColor+";";
                 }
                 default:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+";";
+                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+";";
                 }
             }
 
@@ -357,18 +375,24 @@
         }
 
         function borderForLastToken(token,categories){
-            switch(categories.length){
+            var actualCategories = categories.filter(function(category){
+                return category.id !== undefined;
+            })
+            switch(actualCategories.length){
+                case 0:{
+                    return "border: none;"
+                }
                 case 1:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[0].backgroundColor+"; border-right : 3px solid "+categories[0].backgroundColor+"; margin-right: 3px;";
+                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[0].backgroundColor+"; border-right : 3px solid "+actualCategories[0].backgroundColor+"; margin-right: 3px;";
                 }
                 case 2:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-right : 3px solid "+categories[0].backgroundColor+"; margin-right: 3px;";
+                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-right : 3px solid "+actualCategories[0].backgroundColor+"; margin-right: 3px;";
                 }
                 case 3:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-right : 3px solid "+categories[2].backgroundColor+"; margin-right: 3px;";
+                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-right : 3px solid "+actualCategories[2].backgroundColor+"; margin-right: 3px;";
                 }
                 default:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+categories[1].backgroundColor+"; border-right : 3px solid "+categories[3].backgroundColor+"; margin-right: 3px;";
+                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-right : 3px solid "+actualCategories[3].backgroundColor+"; margin-right: 3px;";
                 }
             }
 
@@ -398,7 +422,7 @@
 
                 subTreeToCollapse(unitToValidate);
 
-                Core.showNotification('success','Annotation unit ' + unitToValidate.annotation_unit_tree_id + ' has finished successfully' )
+//                Core.showNotification('success','Annotation unit ' + unitToValidate.annotation_unit_tree_id + ' has finished successfully' )
             }
 
             event ? event.stopPropagation() : '';

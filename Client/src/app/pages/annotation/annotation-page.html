@@ -9,7 +9,7 @@
     </div>
     <div class="col-xs-10 main-body">
         <div class="nav-bar-container">
-            <nav-bar-item ng-repeat="item in vm.navBarItems track by $index" tool-tip="item.tooltip"></nav-bar-item>
+            <nav-bar-item ng-repeat="item in vm.navBarItems track by $index" tool-tip="item.tooltip" item-object="item"></nav-bar-item>
             <div class="available-font-sizes">
                 <div class="btn-group" uib-dropdown dropdown-append-to-body>
                   <button type="button" class="btn btn-primary " uib-dropdown-toggle>

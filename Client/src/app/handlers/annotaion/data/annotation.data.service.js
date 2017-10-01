@@ -135,12 +135,12 @@
 
         function toggleCategoryForUnit(unitId,category){
             return $q(function(resolve, reject) {
-
-                var unit = getUnitById(unitId);
-
-                if(!restrictionsValidatorService.checkRestrictionsBeforeInsert(getParentUnit(unit.annotation_unit_tree_id),unit,DataService.hashTables.tokensHashTable, category)){
-                    return reject("Failed") ;
+                
+                if(category.id == undefined){
+                   return reject();
                 }
+
+                var unit = getUnitById(unitId);              
 
 
 
@@ -149,10 +149,61 @@
                 }
                 var elementPos = category ? unit.categories.map(function(x) {return x.id; }).indexOf(category.id) : -1;
                 if(elementPos === -1){
-                    unit.categories.push(category);
+                    
+                if(!restrictionsValidatorService.checkRestrictionsBeforeInsert(getParentUnit(unit.annotation_unit_tree_id),unit,DataService.hashTables.tokensHashTable, category)){
+                    return reject("Failed") ;
+                }
+                    
+                if( restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction([category])){
+                    return true;
+                }
+                    
+                if($rootScope.isSlottedLayerProject){
+                    
+                        var firstSlotIndex = 0;
+                        for(var i=0; i<unit.categories.length; i++){
+                            var currentCategoy = unit.categories[i];
+                            if(currentCategoy.fromParentLayer){
+                               firstSlotIndex++;
+                            }
+                        }
+                    
+                        if(!unit.slotOne){
+                            unit.categories[firstSlotIndex] = category;
+                        }else if(!unit.slotTwo){
+                            unit.categories[firstSlotIndex+1] = category;
+                        }
+                    }else{
+                        unit.categories.push(category);
+                    }
+                    unit = updateUnitSlots(unit);
+                    
                 }else{
-                    if(unit.categories.length > 1){
-                        unit.categories.splice(elementPos,1);
+                    if(unit.categories.length > 1){                        
+                        
+                        if($rootScope.isSlottedLayerProject){
+                            var firstSlotIndex = 0;
+                            for(var i=0; i<unit.categories.length; i++){
+                                var currentCategoy = unit.categories[i];
+                                if(currentCategoy.fromParentLayer){
+                                   firstSlotIndex++;
+                                }
+                            }
+                            unit.categories[elementPos] = {};
+                            
+                            switch(elementPos-firstSlotIndex){
+                                case 0:
+                                    unit.slotOne = false;
+                                    break;
+                                case 1:
+                                    unit.slotTwo = false;
+                                    break;
+
+                            }
+                        }else{
+                            unit.categories.splice(elementPos,1);
+                        }
+                        
                     }else{
                         unit.categories = [];
                     }
@@ -185,8 +236,14 @@
         }
 
         function insertToTree(newObject,level,inInitStage){
-            return $q(function(resolve, reject) {
-
+            return $q(function(resolve, reject) { 
+                
+                if(!inInitStage && DataService.currentTask.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
+                    Core.showAlert("Cant create annotation units in refinement layer")
+                    console.log('ALERT - insertToTree -  prevent insert to tree when refinement layer');
+                    reject(selectedUnitId);
+                }
+                
                 var parentUnit = getUnitById(level);
 
                 if(!parentUnit.AnnotationUnits){
@@ -237,7 +294,13 @@
 
 
 
+                //Adding children to new unit
                 if(units.length > 1){
+                    
+                    if( restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction(newObject.categories)){
+                        return level;
+                    }
+                    
                     units.forEach(function(unit){
                         var parentUnitId = getParentUnitId(unit.id);
                         var parentUnit = getUnitById(parentUnitId);
@@ -245,12 +308,14 @@
                         if(newObject.AnnotationUnits === undefined){
                             newObject.AnnotationUnits = [];
                         }
-                        if(elementPos > -1){
+                        if(elementPos > -1){                        
                             newObject.AnnotationUnits.push(angular.copy(parentUnit.AnnotationUnits[elementPos]));
-                            parentUnit.AnnotationUnits.splice(elementPos,1);
+//                            parentUnit.AnnotationUnits.splice(elementPos,1);
                         }
                     })
                 }
+                
+                
 
                 newObject.unitType =  newObject.unitType ? newObject.unitType : "REGULAR";
 
@@ -258,6 +323,22 @@
                     // if no unit has been added, return the parent unitRowId
                     return level;
                 }
+                
+                //Removing children unit from parent unit
+                if(units.length > 1){
+                    
+                    units.forEach(function(unit){
+                        var parentUnitId = getParentUnitId(unit.id);
+                        var parentUnit = getUnitById(parentUnitId);
+                        var elementPos = parentUnit.AnnotationUnits.map(function(x) {return x.annotation_unit_tree_id; }).indexOf(unit.id);
+                        if(elementPos > -1){                        
+//                            newObject.AnnotationUnits.push(angular.copy(parentUnit.AnnotationUnits[elementPos]));
+                            parentUnit.AnnotationUnits.splice(elementPos,1);
+                        }
+                    })
+                }
+                
+                
 
                 //Update IndexInParent attribute
                 newObject.tokens.forEach(function(token,index,inInit){
@@ -288,6 +369,9 @@
                 })
 
                 index_int - 1 > parentUnit.AnnotationUnits.length ? index_int =  parentUnit.AnnotationUnits.length + 1 : '';
+                
+                //Update slots information
+                newObject = updateUnitSlots(newObject);
 
                 parentUnit.AnnotationUnits[index_int - 1] = newObject;
 
@@ -314,6 +398,30 @@
 
                 return resolve({status: 'InsertSuccess',id: newObject.annotation_unit_tree_id});
             });
+        }
+        
+        function updateUnitSlots(newObject){
+            
+            var firstSlotIndex = 0;
+            for(var i=0; i<newObject.categories.length; i++){
+                var currentCategoy = newObject.categories[i];
+                if(currentCategoy.fromParentLayer){
+                   firstSlotIndex++;
+                }
+            }
+            if(newObject.categories[firstSlotIndex] !== undefined && newObject.categories[firstSlotIndex].id && !newObject.categories[firstSlotIndex].fromParentLayer){
+               newObject.slotOne = true;
+            }else{
+               newObject.slotOne = false;
+            }
+            
+            if(newObject.categories[firstSlotIndex+1] !== undefined && newObject.categories[firstSlotIndex+1].id && !newObject.categories[firstSlotIndex+1].fromParentLayer){
+               newObject.slotTwo = true;
+            }else{
+               newObject.slotTwo = false;
+            }
+            
+            return newObject;
         }
 
         function sortUndUpdate(){
@@ -500,19 +608,49 @@
             return saveTask(true/* submit the task */)
         }
 
-
         function traversInTree(treeNode){
             var unit = {
                 annotation_unit_tree_id : treeNode.unitType === 'REMOTE' ? treeNode.remote_original_id : treeNode.annotation_unit_tree_id.toString(),
                 task_id: DataService.currentTask.id.toString(),
                 comment: treeNode.comment || '',
-                categories: filterCategoriesAtt(treeNode.categories) || [],
+                categories: angular.copy(filterCategoriesAtt(treeNode.categories) || []),
                 parent_id: treeNode.unitType === 'REMOTE' ? DataService.getParentUnitId(treeNode.annotation_unit_tree_id) : DataService.getParentUnitId(treeNode.annotation_unit_tree_id),
                 gui_status : treeNode.gui_status || "OPEN",
                 type: angular.copy(treeNode.unitType.toUpperCase()),
                 is_remote_copy: treeNode.unitType.toUpperCase() === 'REMOTE',
                 children_tokens: treeNode.annotation_unit_tree_id === "0" ? filterTokensAtt(angular.copy(treeNode.tokens)) : filterTokensAttForUnit(angular.copy(treeNode.tokens))
             };
+            if($rootScope.isSlottedLayerProject){
+                
+                var firstSlotIndex = 0;
+                for(var i=0; i<unit.categories.length; i++){
+                    var currentCategoy = unit.categories[i];
+                    if(currentCategoy.fromParentLayer){
+                       currentCategoy['slot'] = i+3;
+                       firstSlotIndex++;
+                    }
+                }
+                
+                if(treeNode.slotOne){
+                  unit.categories[firstSlotIndex]['slot'] = 1;
+                }
+                if(treeNode.slotTwo){
+                  unit.categories[firstSlotIndex+1]['slot'] = 2;
+                }
+                
+                for(var i=0; i<unit.categories.length; i++){
+                    var currnetCategory = unit.categories[i];
+                    if(currnetCategory.id == undefined){
+                        unit.categories.splice(i,1);
+                        i--;
+                    }
+                }
+                
+                if(!treeNode.slotOne && treeNode.slotTwo){
+                   return false;
+                }
+            }
+            
             if(unit.annotation_unit_tree_id === "0"){
                 delete unit.children_tokens;
             }
@@ -526,8 +664,13 @@
             }
             annotation_units.push(unit);
             for(var i=0; i<treeNode.AnnotationUnits.length; i++){
-                traversInTree(treeNode.AnnotationUnits[i]);
+                var output_val = traversInTree(treeNode.AnnotationUnits[i]);
+                if (!output_val) {
+                    return false;
+                }
             }
+            
+            return true;
         }
 
         function arrangeUnitTokens(unitId){
@@ -616,13 +759,18 @@
             var tokensCopy = angular.copy(DataService.tree.tokens);
             tokensCopy = filterTokensAtt(tokensCopy);
             // arrangeUnitTokens("0");
-            traversInTree(DataService.tree);
+            var traversResult = traversInTree(DataService.tree);
+            if (!traversResult) {
+                Core.showNotification('error','Cannot save if a unit has category in slot two but not in slot one.');
+                return $q.reject();
+            }
             var mode = shouldSubmit ? 'submit' : 'draft';
             DataService.currentTask['annotation_units'] = annotation_units;
             DataService.currentTask.tokens = [];
             DataService.currentTask.tokens= tokensCopy;
 
             for(var i=0; i<DataService.currentTask.annotation_units.length; i++){
+                
                 DataService.currentTask.annotation_units[i].tokens = [];
                 DataService.currentTask.annotation_units[i].tokens = DataService.currentTask.annotation_units[i].tokensCopy;
 

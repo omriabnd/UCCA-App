@@ -7,7 +7,7 @@
       .controller('AnnotationPageCtrl', AnnotationPageCtrl);
 
   /** @ngInject */
-  function AnnotationPageCtrl(DefaultHotKeys,TaskMetaData,AnnotationTextService,DataService,$rootScope,$scope,hotkeys,HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService,$timeout,$state, selectionHandlerService) {
+  function AnnotationPageCtrl(DefaultHotKeys,TaskMetaData,AnnotationTextService,DataService,$rootScope,$scope,hotkeys,HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService,$timeout,$state, selectionHandlerService,$uibModal) {
       var vm = this;
       vm.tokenizationTask = TaskMetaData.Task;
       vm.annotationTokens = vm.tokenizationTask.tokens;
@@ -26,6 +26,7 @@
       vm.goToMainMenu = goToMainMenu;
       vm.resetAllAnnotations = resetAllAnnotations;
       vm.inRemoteMode = inRemoteMode;
+      vm.addUserComment = addUserComment;
 
       vm.fontSizes = [
           {preview:"AAA",name:"big",size:1},
@@ -64,6 +65,9 @@
           bindReceivedDefaultHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService && !hotkeys.fromParentLayer);
       }
 
+      function addUserComment(){
+          open('app/pages/annotation/templates/commentOnUnitModal.html','sm','',vm)
+      }
       function setFontSize(fontSize){
           $('.main-body').css({'font-size':fontSize.size+'em'})
       }
@@ -97,15 +101,26 @@
       }
 
       function spacePressed(){
+            
             if(selectionHandlerService.getUnitToAddRemotes() !== "0"){
               $rootScope.unitClicked($rootScope.currentVm,selectionHandlerService.getSelectedUnitId(),null)
-            }else{
+            }else{              
               var selectionList = selectionHandlerService.getSelectedTokenList();
               if(isUnitSelected(selectionList)){
+                  if(DataService.currentTask.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
+                    Core.showAlert("Cant delete annotation units from refinement layer")
+                    console.log('ALERT - deleteFromTree -  prevent delete from tree when refinement layer');
+                    return false;
+                  }
                   DataService.deleteUnit(selectionList[0].inUnit);
                   selectionHandlerService.clearTokenList();
               }
               else if(selectionList.length){
+                  if(DataService.currentTask.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
+                    Core.showAlert("Cant create annotation units int refinement layer")
+                    console.log('ALERT - spacePressed -  prevent insert to tree when refinement layer');
+                    return false;
+                  }
                   selectionHandlerService.toggleCategory();
               }
             }
@@ -199,6 +214,44 @@
               }
           });
       }
+      
+      function open(page, size,message,vm) {
+            var remoteOriginalId = $rootScope.clckedLine;
+            var viewModal = vm;
+            $uibModal.open({
+                animation: true,
+                templateUrl: page,
+                size: size,
+                controller: function($scope){
+                    $scope.vm = viewModal;
+                    if(DataService.currentTask){
+                        $scope.comment = DataService.currentTask.user_comment;
+                    }
+
+                    $scope.message = message;
+
+                    $scope.saveComment = function(){
+                        DataService.currentTask.user_comment = $scope.comment;
+                    }
+
+                    var remoteOriginalTreeId = remoteOriginalId;
+                    $scope.deleteAllRemoteInstanceOfThisUnit = function(){
+
+                        for(var key in DataService.unitsUsedAsRemote[$scope.vm.dataBlock.annotation_unit_tree_id]){
+                            DataService.deleteUnit(key);
+                            delete DataService.unitsUsedAsRemote[$scope.vm.dataBlock.annotation_unit_tree_id][key];
+                        }
+                        DataService.deleteUnit($scope.vm.dataBlock.annotation_unit_tree_id);
+                        // selCtrl.updateUI(DataService.getUnitById($("[unit-wrapper-id="+$rootScope.clickedUnit+"]").attr('child-unit-id')));
+                    };
+                }
+            }).result.then(function(okRes){
+
+            },function(abortRes){
+
+            });
+        };
+      
       function bindReceivedDefaultHotKeys(hotkeys,scope,rootScope,vm,HotKeysManager,dataService){
           vm.defaultHotKeys.ManualHotKeys.forEach(function(hotKeyObj){
 
@@ -394,12 +447,34 @@
                               }
                               case 'deleteFromTree':{
                                   var selectedUnitId = selectionHandlerService.getSelectedUnitId();
+                                  var currentUnit = DataService.getUnitById(selectedUnitId);
+                                  if(DataService.currentTask.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
+                                    Core.showAlert("Cant delete annotation units from refinement layer")
+                                    console.log('ALERT - deleteFromTree -  prevent delete from tree when refinement layer');
+                                    return selectedUnitId;
+                                  }
 
                                   if(selectedUnitId !== '0'){
-                                      var parentUnitId = DataService.getParentUnitId(selectedUnitId);
-                                      DataService.deleteUnit(selectionHandlerService.getSelectedUnitId()).then(function(res){
-                                          selectionHandlerService.updateSelectedUnit(parentUnitId);
-                                      });
+                                        var currentUnit = DataService.getUnitById(selectedUnitId);
+                                      
+                                        if(DataService.unitsUsedAsRemote[selectedUnitId] !==  undefined && !Core.isEmptyObject(DataService.unitsUsedAsRemote[selectedUnitId])){
+                                            open('app/pages/annotation/templates/deleteAllRemoteModal.html','md',Object.keys(DataService.unitsUsedAsRemote[selectedUnitId]).length,vm);
+                                        }else{
+                                            if(currentUnit.unitType === "REMOTE"){
+                                                //UpdateUsedAsRemote
+                                                var remoteUnit = DataService.getUnitById(currentUnit.remote_original_id);
+                                                var elementPos = DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.annotation_unit_tree_id]
+                                                if(elementPos){
+                                                    delete DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.annotation_unit_tree_id];
+                                                }
+
+                                                delete DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.annotation_unit_tree_id];
+                                            }
+                                            var parentUnit = DataService.getParentUnitId(selectedUnitId);
+                                            DataService.deleteUnit(selectedUnitId).then(function(res){
+                                                selectionHandlerService.updateSelectedUnit(parentUnit);
+                                            })
+                                        }
                                   }
                                   break;
                               }
@@ -411,6 +486,10 @@
                                   DataService.resetTree();
                                   break;
                               }
+                              case 'addImplicitUnit':{
+                                  $rootScope.addImplicitUnit();
+                                  break;
+                              }
                               default:{
                                   vm[functionToExecute]();
                                   break;
@@ -419,7 +498,8 @@
 
                       }
                   })
-          });
+          });         
+          
       }
   }
 })();

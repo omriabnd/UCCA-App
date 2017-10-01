@@ -1,12 +1,11 @@
-
 /* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
 
   angular.module('zAdmin.const')
 	.constant('ENV_CONST', {
-		IS_DEV:false,
-		TEST_URL:"http://private-daea0-ucca.apiary-mock.com/api/v1",
+		IS_DEV:true,
+		TEST_URL:"http://ucca.development.cs.huji.ac.il/api/v1",
 		PROD_URL:"http://ucca.staging.cs.huji.ac.il/api/v1",
 		LOCAL_RESOURCES: "app/resources",
 		TASK_TYPE:{
@@ -152,6 +151,13 @@
 				name:"Main Menu",
 				tooltip:"Alt+m: Go To Main Menu",
 				executeFunction:"goToMainMenu"
+			},
+            {
+				id:8,
+				name:"User Comment",
+				tooltip:"Alt+c: Add user comment",
+				executeFunction:"addUserComment",
+                showWhenFull: true
 			}
 		],
 		PASSAGE_TYPE:{

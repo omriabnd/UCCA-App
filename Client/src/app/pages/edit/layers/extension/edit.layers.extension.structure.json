@@ -294,6 +294,18 @@
     "showInTable":true
   },
   {
+    "key":"slotted",
+    "name":"Is Slotted",
+    "order":11,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Is Active...",
+    "value":true,
+    "showInTable":true,
+    "shouldSendToServer":true
+  },
+  {
     "key":"restrictions",
     "name":"Restrictions",
     "order":7,

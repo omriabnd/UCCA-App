@@ -501,6 +501,7 @@
             })
 
         }
+        
         function updateLastTokenNotAdjacent(selectedTokenList){
             selectedTokenList.forEach(function(token,index){
                 if(index === 0 || token.indexInParent - 1 === selectedTokenList[index-1].indexInParent){
@@ -540,7 +541,7 @@
                 }
             })
         }
-
+        
         return _handler;
     }
 

@@ -40,6 +40,8 @@
         defCtrl.highLightSelectedWords = highLightSelectedWords;
         defCtrl.addImplicitUnit = addImplicitUnit;
         defCtrl.unGroupUnit = unGroupUnit;
+        
+        $rootScope.addImplicitUnit = addImplicitUnit;
 
         function unGroupUnit(){
             selectionHandlerService.spacePressed();

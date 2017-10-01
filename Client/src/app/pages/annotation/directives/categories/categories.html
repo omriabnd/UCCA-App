@@ -2,7 +2,8 @@
     title="{{defCtrl.definitionDetails.tooltip}}"
 	ng-class="{
 				'disabled':defCtrl.definitionDetails.fromParentLayer,
-				'childCategory':defCtrl.definitionDetails.parent != null
+				'childCategory':defCtrl.definitionDetails.parent != null,
+                'forbid-any-child': defCtrl.definitionDetails.forbidAnyChild
 			}">
     <span class="definition-color" id="definition-color-{{defCtrl.definitionId}}"></span>
     <button class="text-wrapper" 

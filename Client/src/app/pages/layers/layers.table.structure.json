@@ -125,6 +125,17 @@
     "showInTable":true
   },
   {
+    "key":"slotted",
+    "name":"Is Slotted",
+    "order":12,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Is Slotted...",
+    "value":true,
+    "showInTable":true
+  },
+  {
     "key":"restrictions",
     "name":"Restrictions",
     "order":11,

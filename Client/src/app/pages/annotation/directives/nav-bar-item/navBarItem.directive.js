@@ -12,7 +12,8 @@
             templateUrl:'app/pages/annotation/directives/nav-bar-item/navBarItem.html',
             scope:{
                 imagePath:'=',
-                toolTip:'='
+                toolTip:'=',
+                itemObject:'='
             },
             link: linkFunction,
             controller: ItemController,
@@ -31,12 +32,19 @@
     }
 
     /** @ngInject */
-    function ItemController($scope) {
+    function ItemController($scope, DataService) {
         // Injecting $scope just for comparison
         var vm = this;
         var annotationPageVM = $scope.$parent.vm;
         vm.itemClicked = itemClicked;
+        
+        if(vm.itemObject.showWhenFull){
+            vm.checkIfTaskHasComment = checkIfTaskHasComment;
+        }
 
+        function checkIfTaskHasComment(){
+            return DataService.currentTask && DataService.currentTask.user_comment !== "";
+        }
         function itemClicked(functionName){
             console.log(functionName);
             if(annotationPageVM[functionName]){

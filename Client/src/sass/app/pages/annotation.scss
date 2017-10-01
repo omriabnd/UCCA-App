@@ -85,7 +85,15 @@
     margin-right: 5px;
     color: white;
     padding: 2px;
-    border-radius: 0px
+    border-radius: 0px;
+      
+      &.open-slot {
+        width: 20px;
+        height: 20px;
+        position: relative;
+        top: 5px;
+        border: 1px solid #000;
+    }
   }
 
   .hidden-unit {
@@ -184,6 +192,15 @@
       margin: 0 0 5px 0;
       height: 30px;
       position: relative;
+      
+      &.forbid-any-child {
+          border: 3px solid #f00 !important;
+          
+          .definition-color {
+              height: 27px !important;
+              z-index: -1;
+          }
+      }
   }
 
   utility-buttons-directive .text-wrapper{
@@ -196,7 +213,6 @@
     bottom: 0;
     right: 10%;
     left: 30px;
-    padding-top: 5px;
     padding-left: 10px;
   }
 
@@ -347,7 +363,17 @@
       .item-container {
         display: inline-block;
         margin-bottom: 10px;
-        margin-right: 10px;
+        margin-right: 15px;
+        position:relative;
+
+        .task-has-comment {
+            color: #ff0 !important;
+            border: 1px solid #ff0 !important;
+        }
+        .task-has-comment:active {
+            color: #ff0 !important;
+            border: 1px solid #ff0 !important;
+        }
       }
     }
     .available-font-sizes {

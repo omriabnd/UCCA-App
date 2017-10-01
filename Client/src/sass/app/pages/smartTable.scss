@@ -3,4 +3,10 @@ table.table{
   tr.selected{
     background-color: rgba(10,106,161,0.5) !important;
   }
+
+  .out-of-date {
+	    text-align: center;
+	    background-color: rgb(0,165,153);
+	    color: rgb(208, 233, 230);
+	}
 }
