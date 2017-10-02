@@ -1,3 +1,4 @@
+
 from django.db.models import Count
 from rest_framework import parsers
 from rest_framework import renderers
@@ -22,7 +23,7 @@ class AnnotatorTasksViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializerAnnotator
     parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
     renderer_classes = (renderers.JSONRenderer,)
-
+    
     class Meta:
       model = Tasks
 

@@ -645,12 +645,14 @@
         var NOT_ALL_TOKENS_IN_UNIT_ERROR = false;
         function evaluateFinishAll(mainPassage,fromSubmit,hashTables){
             var evaluationResult = true;
+
             if(fromSubmit){
                 var hash_tokens = hashTables.tokensHashTable;
-                checkIfAllTokenThatRequireAnnotationIsInUnit(mainPassage,hash_tokens,true);
-                if(NOT_ALL_TOKENS_IN_UNIT_ERROR){
-                    evaluationResult = false;
-                }
+                // Commented out by Omri Abend, 24/7 because it is not working properly
+                //checkIfAllTokenThatRequireAnnotationIsInUnit(mainPassage,hash_tokens,true);
+                //if(NOT_ALL_TOKENS_IN_UNIT_ERROR){
+                //    evaluationResult = false;
+                //}
                 NOT_ALL_TOKENS_IN_UNIT_ERROR = false;
             }
 
