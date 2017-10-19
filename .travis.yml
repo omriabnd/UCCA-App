@@ -1,14 +1,39 @@
 dist: trusty
-language: python
-python: 3.6
-services:
-  - postgresql
-install:
-  - pip install django djangorestframework djangorestframework-filters django-rest-auth django-allauth psycopg2
-  - mv Server/ucca/settings.demo.py Server/ucca/settings.py
-before_script:
-  - psql -c 'create database "ucca-a";' -U postgres
-script:
-  - python Server/manage.py migrate
-  - python Server/manage.py test
+jobs:
+  include:
+    - language: python
+      python: 3.6
+      services:
+        - postgresql
+      install:
+        - cd Server
+        - pip install django djangorestframework django-filter==1.0.4 djangorestframework-filters django-rest-auth django-allauth psycopg2
+      before_script:
+        - psql -c 'create database "ucca-a";' -U postgres
+        - mv ucca/settings.demo.py ucca/settings.py
+        - python manage.py makemigrations
+        - python manage.py migrate
+        - python manage.py loaddata tabs
+        - python manage.py loaddata roles
+        - python manage.py loaddata roles_tabs
+        - python manage.py loaddata permissions
+        - python manage.py loaddata groups_permissions_admin
+        - python manage.py loaddata categories
+        - python manage.py loaddata sources
+        - python manage.py loaddata passages
+        - python manage.py loaddata superuser
+      script:
+        - python manage.py test
+    - language: node_js
+      node_js: 8.6
+      install:
+        - cd Client
+        - npm install angular jquery bootstrap@3 bower
+        - npm install
+        - bower install
+      before_script:
+        - mv release/settings.demo.json release/settings.demo.json
+      script:
+        - gulp inject
+        - gulp serve:dist
 
