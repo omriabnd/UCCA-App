@@ -28,9 +28,8 @@ jobs:
       node_js: 8.6
       install:
         - cd Client
-        - npm install angular jquery bootstrap@3 bower
+        - npm install bower
         - npm install
-        - bower install
       before_script:
         - mv release/settings.demo.json release/settings.demo.json
       script:
