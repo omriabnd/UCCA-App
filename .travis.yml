@@ -1,9 +1,14 @@
-  dist: trusty
-  language: python
-  python: 3.6
-  install:
-    - pip install django djangorestframework djangorestframework-filters django-rest-auth django-allauth psycopg2
-    - mv Server/ucca/settings.demo.py Server/ucca/settings.py 
-  script:
-    - python Server/manage.py test
+dist: trusty
+language: python
+python: 3.6
+services:
+  - postgresql
+install:
+  - pip install django djangorestframework djangorestframework-filters django-rest-auth django-allauth psycopg2
+  - mv Server/ucca/settings.demo.py Server/ucca/settings.py
+before_script:
+  - psql -c 'create database "ucca-a";' -U postgres
+script:
+  - python Server/manage.py migrate
+  - python Server/manage.py test
 
