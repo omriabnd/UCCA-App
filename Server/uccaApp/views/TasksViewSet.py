@@ -1,4 +1,5 @@
 from django.db.models import PROTECT
+from django.db.models import Q, F, Value
 from django.db.models import ProtectedError
 from rest_framework import parsers
 from rest_framework import renderers
@@ -23,6 +24,8 @@ class TasksViewSet(viewsets.ModelViewSet):
     API endpoint that allows groups to be viewed or edited.
     """
     queryset = Tasks.objects.all().order_by('-out_of_date','-updated_at')
+    #queryset = (Tasks.objects.all().filter(Q(parent_obseleted_by__isnull=False) | Q(obseleted_by__isnull=False)).order_by('-updated_at') | Tasks.objects.all().order_by('-updated_at')).distinct()
+        
     serializer_class = TaskInChartSerializer
     parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
     renderer_classes = (renderers.JSONRenderer,)

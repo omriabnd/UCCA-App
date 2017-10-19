@@ -373,6 +373,9 @@
         }
 
         function checkIfVoilateEachTokenInUnit(annotationUnit){
+            return false;
+
+            /*
             var isViolated = false;
             var sumOfNonPuctuationTokens = annotationUnit.tokens.filter(function(token) {
                 return token.require_annotation === false ;
@@ -409,6 +412,7 @@
                     return false;
                 }
             }
+            */
         }
 
         function oneOfTheUnitCategoriesHasForbidAnyChildRestriction(categories){
@@ -422,9 +426,6 @@
             return result;
         }
 
-        function checkIfVoilateEachTokenInUnitRestriction(annotationUnit){
-
-        }
 
         function checkIfUnitViolateRequireSiblingAndAlert(annotationUnit,parentUnit,isCallingUnit){
 
@@ -754,11 +755,15 @@
         }
 
         function checkIfAllUnitsHaveAtLeastOneCategory(parentUnit,categories_hash){
+            //TODO. Currently buggy, and therefore commented out.
+            return false;
+            /*
             var allOk = checkAtLeastOneCategoryRecursion(parentUnit,categories_hash);
             if(!allOk){
                 showErrorModal("All units must have at least one non-default category");
             }
             return !allOk;
+            */
         }
 
         function showErrorModal(message, violationUnit){

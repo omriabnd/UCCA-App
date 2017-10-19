@@ -23,10 +23,13 @@ class AnnotatorTasksViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializerAnnotator
     parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
     renderer_classes = (renderers.JSONRenderer,)
-    
+        
     class Meta:
       model = Tasks
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.context = {}
 
     def get_queryset(self):
         if has_permissions_to(self.request,'view_tasks'):
@@ -38,8 +41,12 @@ class AnnotatorTasksViewSet(viewsets.ModelViewSet):
         if(kwargs['save_type'] not in Constants.SAVE_TYPES):
             raise SaveTypeDeniedException
         if has_permissions_to(self.request, 'change_tasks'):
-            request.data['save_type'] = kwargs['save_type']
-            request.data['status'] = 'ONGOING'
+            self.context = dict(kwargs)
+            #self.context['status'] = 'ONGOING'
             return super(self.__class__, self).update(request)
         else:
             raise PermissionDenied
+
+    def get_serializer_context(self):
+        return self.context
+    

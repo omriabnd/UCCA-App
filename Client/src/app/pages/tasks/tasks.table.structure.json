@@ -21,6 +21,28 @@
     "showInTable":true
   },
   {
+    "key":"obseleted_by",
+    "name":"Obseleted By",
+    "order":15,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Obseleted By...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"parent_obseleted_by",
+    "name":"Parent Obseleted By",
+    "order":16,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Parent Obseleted By...",
+    "value":"",
+    "showInTable":true
+  },
+  {
     "key":"status",
     "name":"Status",
     "order":2,

@@ -6,7 +6,7 @@
 	.constant('ENV_CONST', {
 		IS_DEV:true,
 		TEST_URL:"http://ucca.development.cs.huji.ac.il/api/v1",
-		PROD_URL:"http://ucca.staging.cs.huji.ac.il/api/v1",
+		PROD_URL:"http://ucca.development.cs.huji.ac.il/api/v1",
 		LOCAL_RESOURCES: "app/resources",
 		TASK_TYPE:{
 			ANNOTATION:"ANNOTATION",

@@ -1,3 +1,4 @@
+import pdb
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.db import models
@@ -20,7 +21,7 @@ class Tasks(models.Model):
     status = models.CharField(max_length=256, choices = Constants.TASK_STATUS)
     is_demo = models.BooleanField()
     manager_comment = models.CharField(max_length=Constants.COMMENTS_MAX_LENGTH, default='')
-    user_comment = models.CharField(max_length=Constants.COMMENTS_MAX_LENGTH, default='',blank=False)
+    user_comment = models.CharField(max_length=Constants.COMMENTS_MAX_LENGTH, default='')
     
     created_by = models.ForeignKey(User, null=True, blank=True)
     is_active = models.BooleanField(default=True)
@@ -28,26 +29,41 @@ class Tasks(models.Model):
     updated_at = models.DateTimeField(auto_now=True, blank=True)
 
     out_of_date = models.BooleanField(default=False)
+    obseleted_by = models.IntegerField(null=True,default=None)
+    parent_obseleted_by = models.IntegerField(null=True,default=None)
     
-    #objects = UpdatedTasksManager()
-
+    """
     def get_out_of_date(self):
-        if self.project.layer.type != Constants.LAYER_TYPES_JSON['ROOT'] and self.parent_task is not None:
+        if self.project.layer.type != Constants.LAYER_TYPES_JSON['ROOT'] and \
+               self.parent_task is not None:
             num_of_submitted_review_tasks = \
                 Tasks.objects.all().filter(parent_task_id=self.parent_task.id,\
                                            type=Constants.TASK_TYPES_JSON['REVIEW'],status=Constants.TASK_STATUS_JSON['SUBMITTED']).count()
             return (num_of_submitted_review_tasks > 0)
         else:
             return False
+    """
 
     def save(self, *args, **kwargs):
-        self.out_of_date = self.get_out_of_date()
         super(Tasks, self).save(*args, **kwargs)
         if self.type == Constants.TASK_TYPES_JSON['REVIEW'] and \
                self.status == Constants.TASK_STATUS_JSON['SUBMITTED']:
+
+            # if obselete_by is still null, update it to self.id
+            if self.parent_task.obseleted_by is None:
+                self.parent_task.obseleted_by = self.id
+                self.parent_task.out_of_date = True
+                self.parent_task.save()
+
             # update all brothers of self, which are not review tasks (i.e., are deriviative tasks)
-            # to be out of date
-            Tasks.objects.all().filter(parent_task_id=self.parent_task.id).exclude(type=Constants.TASK_TYPES_JSON['REVIEW']).update(out_of_date=True)
+            # and have parent_obseleted_by as None, to have parent_obseleted_by to be self.id
+            Tasks.objects.all().filter(parent_task_id=self.parent_task.id,parent_obseleted_by=None).exclude(type=Constants.TASK_TYPES_JSON['REVIEW']).update(parent_obseleted_by=self.id,out_of_date=True)
+
+            ##### OBSELETE ########
+            # update all brothers of self, which are not review tasks (i.e., are deriviative tasks)
+            # to be out of date, and their obseleted_by and parent_obseleted_by
+            #Tasks.objects.all().filter(parent_task_id=self.parent_task.id).exclude(type=Constants.TASK_TYPES_JSON['REVIEW']).update(out_of_date=True)
+            ### END OBSELETE #######
             
     def __unicode__(self):
         return self.name
@@ -59,8 +75,8 @@ class Tasks(models.Model):
 
 @receiver(post_save, sender=Tasks)
 def update_is_active_in_children(sender, instance, **kwargs):
-    if instance.status == Constants.TASK_STATUS_JSON['SUBMITTED'] and ('status' in kwargs['update_fields']):
-        child_tasks = Tasks.objects.filter(parent_task__id=instance.id).update(is_active=True)
+    if instance.status == Constants.TASK_STATUS_JSON['SUBMITTED'] and kwargs['update_fields'] and ('status' in kwargs['update_fields']):
+        Tasks.objects.all().filter(parent_task_id=instance.id).update(is_active=True)
     
     
     

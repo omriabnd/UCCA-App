@@ -29,7 +29,6 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
     tokens = serializers.SerializerMethodField()
     annotation_units = serializers.SerializerMethodField() 
     is_active = serializers.SerializerMethodField()
-    user_comment = serializers.CharField(allow_blank=True)
     
     def get_is_active(self,obj):
         if not obj.is_active:
@@ -137,7 +136,6 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             'parent',
             'children',
             'type',
-            'status',
             'project',
             'user',
             'passage',
@@ -154,11 +152,11 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
 
 
     def update(self, instance, validated_data):
-        # disable saving a SUBMITTED task
         if instance.status == 'SUBMITTED':
             raise CantChangeSubmittedTaskExeption
 
-        save_type = self.initial_data['save_type']
+        # changed Oct 19
+        save_type = self.context['save_type']
         if(save_type  == 'draft'):
             self.save_draft(instance)
         elif (save_type  == 'submit'):
@@ -206,6 +204,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         self.check_if_parent_task_ok_or_exception(instance)
         self.reset_current_task(instance)
         remote_units_array = []
+        instance.user_comment = self.initial_data['user_comment']
         for au in self.initial_data['annotation_units']:
             annotation_unit = Annotation_Units()
             annotation_unit.annotation_unit_tree_id = au['annotation_unit_tree_id']

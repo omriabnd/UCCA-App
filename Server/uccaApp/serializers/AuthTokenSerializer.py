@@ -1,3 +1,4 @@
+import sys
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
@@ -16,6 +17,8 @@ class AuthTokenSerializer(serializers.Serializer):
 
         if email and password:
             queryset = User.objects.filter(email__icontains=email)
+            #sys.stderr.write(str(queryset)+'\n')
+            # bug, 17/10; this is the guilty line 
             my_user = get_object_or_404(queryset)
             user = authenticate(username=my_user.username, password=password)
 

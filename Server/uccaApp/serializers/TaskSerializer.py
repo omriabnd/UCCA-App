@@ -75,6 +75,8 @@ class TaskInChartSerializer(serializers.ModelSerializer):
             'manager_comment',
             'user_comment',
             'out_of_date',
+            'obseleted_by',
+            'parent_obseleted_by',
             'is_active',
             'created_by',
             'created_at',
@@ -99,7 +101,8 @@ class TaskInChartSerializer(serializers.ModelSerializer):
         newTask.type = validated_data['type']
         newTask.is_demo = validated_data['is_demo']
         newTask.manager_comment = validated_data['manager_comment']
-
+        newTask.user_comment = validated_data.get('user_comment','')
+        
         # Omri Abend (Sep 13)
         # tasks cannot be created with is_active=True if their parent is not submitted
         if (newTask.parent_task and newTask.parent_task.status != Constants.TASK_STATUS_JSON['SUBMITTED']):
