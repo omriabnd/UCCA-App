@@ -31,7 +31,7 @@ jobs:
         - npm install bower
         - npm install
       before_script:
-        - mv release/settings.demo.json release/settings.demo.json
+        - mv release/settings.demo.json release/settings.json
       script:
         - gulp inject
         - gulp serve:dist
