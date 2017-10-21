@@ -21,7 +21,7 @@ class Tasks(models.Model):
     status = models.CharField(max_length=256, choices = Constants.TASK_STATUS)
     is_demo = models.BooleanField()
     manager_comment = models.CharField(max_length=Constants.COMMENTS_MAX_LENGTH, default='')
-    user_comment = models.CharField(max_length=Constants.COMMENTS_MAX_LENGTH, default='')
+    user_comment = models.CharField(max_length=Constants.COMMENTS_MAX_LENGTH, default='', blank=True)
     
     created_by = models.ForeignKey(User, null=True, blank=True)
     is_active = models.BooleanField(default=True)
