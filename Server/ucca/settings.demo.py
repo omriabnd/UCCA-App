@@ -110,10 +110,7 @@ WSGI_APPLICATION = 'ucca.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'OPTIONS': {
-            'options': '-c search_path=ucca'
-        },
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'ucca-a',
         'USER': 'postgres',
         'PASSWORD': '', # TODO - Add your 'ucca-a' db password
