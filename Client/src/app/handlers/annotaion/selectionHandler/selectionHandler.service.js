@@ -179,137 +179,144 @@
                 return this.mouseDown;
             },
             initTree: function(data){
+                
+                return $q(function(resolve, reject) {
+                        DataService.currentTask.annotation_units.forEach(function(unit,index){
+                        var tokenStack = [];
+                        if(unit.type === "IMPLICIT"){
+                            var objToPush = {
+                                rowId : '',
+                                text : '<span>IMPLICIT UNIT</span>',
+                                numOfAnnotationUnits: 0,
+                                categories:[],
+                                comment:"",
+                                rowShape:'',
+                                unitType:'IMPLICIT',
+                                orderNumber: '-1',
+                                gui_status:'OPEN',
+                                usedAsRemote:[],
+                                children_tokens:[],
+                                containsAllParentUnits: false,
+                                tokens:[{
+                                    "text":"IMPLICIT UNIT",
+                                    "parentId":unit.parent_id,
+                                    "inUnit":null
+                                }],
+                                AnnotationUnits : [
 
-                DataService.currentTask.annotation_units.forEach(function(unit,index){
-                    var tokenStack = [];
-                    if(unit.type === "IMPLICIT"){
-                        var objToPush = {
-                            rowId : '',
-                            text : '<span>IMPLICIT UNIT</span>',
-                            numOfAnnotationUnits: 0,
-                            categories:[],
-                            comment:"",
-                            rowShape:'',
-                            unitType:'IMPLICIT',
-                            orderNumber: '-1',
-                            gui_status:'OPEN',
-                            usedAsRemote:[],
-                            children_tokens:[],
-                            containsAllParentUnits: false,
-                            tokens:[{
-                                "text":"IMPLICIT UNIT",
-                                "parentId":unit.parent_id,
-                                "inUnit":null
-                            }],
-                            AnnotationUnits : [
+                                ]
+                            };
+                            var newRowId = DataService.insertToTree(objToPush,unit.parent_id,index != DataService.currentTask.annotation_units.length -1);
 
-                            ]
-                        };
-                        var newRowId = DataService.insertToTree(objToPush,unit.parent_id,index != DataService.currentTask.annotation_units.length -1);
-
-                        unit.categories.forEach(function(category,index){
-                            _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.annotation_unit_tree_id);
-                            _handler.clearTokenList();
-                        });
-
-                    }else if(unit.is_remote_copy){
-
-                        DataService.unitType = 'REMOTE';
-
-                        unit["tokens"] = [];
-
-                        unit.unitType = "REMOTE";
-
-                        unit.children_tokens.forEach(function(token){
-                            unit["tokens"].push(DataService.hashTables.tokensHashTable[token.id]);
-                        });
-                        unit["children_tokens"] = unit["tokens"];
-
-                        unit["remote_original_id"] = angular.copy(unit.annotation_unit_tree_id);
-
-                        var unitCategory = unit.categories[0] ? DataService.hashTables.categoriesHashTable[ unit.categories[0].id] : null;
-
-                        _handler.toggleCategory(unitCategory,null,unit,unit,index != DataService.currentTask.annotation_units.length -1).then(function(res){
                             unit.categories.forEach(function(category,index){
-                                if(index === 0){
-
-                                }else{
-                                    _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],res.id);
-                                }
+                                _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.annotation_unit_tree_id);
                                 _handler.clearTokenList();
                             });
-                        });
 
+                        }else if(unit.is_remote_copy){
 
-                        // if(unit.categories.length === 0){
-                        //     _handler.toggleCategory(null,null,unit);
-                        // }
+                            DataService.unitType = 'REMOTE';
 
-                        DataService.unitType = 'REGULAR';
+                            unit["tokens"] = [];
 
-                        var unitToAddTo = DataService.getUnitById(unit.annotation_unit_tree_id);
+                            unit.unitType = "REMOTE";
 
-                        if(unitToAddTo){
-                            if(unitToAddTo.usedAsRemote === undefined){
-                                unitToAddTo["usedAsRemote"] = [];
-                            }
+                            unit.children_tokens.forEach(function(token){
+                                unit["tokens"].push(DataService.hashTables.tokensHashTable[token.id]);
+                            });
+                            unit["children_tokens"] = unit["tokens"];
 
-                            var remotePosition = DataService.getUnitById(unit.remote_original_id).AnnotationUnits.map(function(x) {return x.id; }).indexOf(unit.id);
-                            if(remotePosition > -1){
-                                unitToAddTo["usedAsRemote"].push(DataService.getUnitById(unit.parent_id).AnnotationUnits[remotePosition].annotation_unit_tree_id);
-                            }else{
-                                unitToAddTo["usedAsRemote"].push(unit.parent_id + "-" + DataService.getUnitById(unit.parent_id).AnnotationUnits.length);
-                            }
-                        }
+                            unit["remote_original_id"] = angular.copy(unit.annotation_unit_tree_id);
 
-                        if(DataService.unitsUsedAsRemote[unit.annotation_unit_tree_id] === undefined){
-                            DataService.unitsUsedAsRemote[unit.annotation_unit_tree_id] = {};
-                        }
+                            var unitCategory = unit.categories[0] ? DataService.hashTables.categoriesHashTable[ unit.categories[0].id] : null;
 
-                        var parentUnitUnits = DataService.getUnitById(unit.annotation_unit_tree_id);
-                        var amountOfRemotes = 0;
-                        parentUnitUnits.AnnotationUnits.forEach(function(unit){
-                            if(unit.unitType === "REMOTE"){
-                                amountOfRemotes++;
-                            }
-                        });
+                            _handler.toggleCategory(unitCategory,null,unit,unit,index != DataService.currentTask.annotation_units.length -1).then(function(res){
+                                unit.categories.forEach(function(category,index){
+                                    if(index === 0){
 
-                        DataService.unitsUsedAsRemote[unit.annotation_unit_tree_id][unit.parent_id + "-" + parseInt(parseInt(amountOfRemotes+1))] = true;
-
-
-
-                        // selectionHandlerService.setUnitToAddRemotes("0");
-                        $('.annotation-page-container').toggleClass('crosshair-cursor');
-
-                    }else if(unit.annotation_unit_tree_id !== "0"){
-                        unit.children_tokens.forEach(function(token){
-                            var parentId = unit.annotation_unit_tree_id.length === 1 ? "0" : unit.annotation_unit_tree_id.split("-").slice(0,unit.annotation_unit_tree_id.split("-").length-1).join("-");
-                            _handler.addTokenToList(DataService.hashTables.tokensHashTable[token.id],parentId)
-                        });
-                        if(unit.categories.length === 0){
-                            _handler.toggleCategory(null,false,unit.is_remote_copy,unit,true);
-                        }else{
-                            _handler.toggleCategory(DataService.hashTables.categoriesHashTable[unit.categories[0].id],false,false,unit,true)
-                                .then(function(){
-                                    unit.categories.forEach(function(category,index){
-                                        if(index === 0){
-                                            // _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],false,false,unit.gui_status);
-                                        }else{
-                                            _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.annotation_unit_tree_id,false);
-                                        }
-                                        _handler.clearTokenList();
-                                    });
+                                    }else{
+                                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],res.id);
+                                    }
+                                    _handler.clearTokenList();
                                 });
+                            });
 
 
+                            // if(unit.categories.length === 0){
+                            //     _handler.toggleCategory(null,null,unit);
+                            // }
+
+                            DataService.unitType = 'REGULAR';
+
+                            var unitToAddTo = DataService.getUnitById(unit.annotation_unit_tree_id);
+
+                            if(unitToAddTo){
+                                if(unitToAddTo.usedAsRemote === undefined){
+                                    unitToAddTo["usedAsRemote"] = [];
+                                }
+
+                                var remotePosition = DataService.getUnitById(unit.remote_original_id).AnnotationUnits.map(function(x) {return x.id; }).indexOf(unit.id);
+                                if(remotePosition > -1){
+                                    unitToAddTo["usedAsRemote"].push(DataService.getUnitById(unit.parent_id).AnnotationUnits[remotePosition].annotation_unit_tree_id);
+                                }else{
+                                    unitToAddTo["usedAsRemote"].push(unit.parent_id + "-" + DataService.getUnitById(unit.parent_id).AnnotationUnits.length);
+                                }
+                            }
+
+                            if(DataService.unitsUsedAsRemote[unit.annotation_unit_tree_id] === undefined){
+                                DataService.unitsUsedAsRemote[unit.annotation_unit_tree_id] = {};
+                            }
+
+                            var parentUnitUnits = DataService.getUnitById(unit.annotation_unit_tree_id);
+                            var amountOfRemotes = 0;
+                            parentUnitUnits.AnnotationUnits.forEach(function(unit){
+                                if(unit.unitType === "REMOTE"){
+                                    amountOfRemotes++;
+                                }
+                            });
+
+                            DataService.unitsUsedAsRemote[unit.annotation_unit_tree_id][unit.parent_id + "-" + parseInt(parseInt(amountOfRemotes+1))] = true;
+
+
+
+                            // selectionHandlerService.setUnitToAddRemotes("0");
+                            $('.annotation-page-container').toggleClass('crosshair-cursor');
+
+                        }else if(unit.annotation_unit_tree_id !== "0"){
+                            unit.children_tokens.forEach(function(token){
+                                var parentId = unit.annotation_unit_tree_id.length === 1 ? "0" : unit.annotation_unit_tree_id.split("-").slice(0,unit.annotation_unit_tree_id.split("-").length-1).join("-");
+                                _handler.addTokenToList(DataService.hashTables.tokensHashTable[token.id],parentId)
+                            });
+                            if(unit.categories.length === 0){
+                                _handler.toggleCategory(null,false,unit.is_remote_copy,unit,true);
+                            }else{
+                                _handler.toggleCategory(DataService.hashTables.categoriesHashTable[unit.categories[0].id],false,false,unit,true)
+                                    .then(function(){
+                                        unit.categories.forEach(function(category,index){
+                                            if(index === 0){
+                                                // _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],false,false,unit.gui_status);
+                                            }else{
+                                                _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.annotation_unit_tree_id,false);
+                                            }
+                                            _handler.clearTokenList();
+                                        });
+                                    });
+
+
+                            }
+                            _handler.clearTokenList();
                         }
-                        _handler.clearTokenList();
-                    }
 
 
-                });
-                DataService.unitType = 'REGULAR';
-                DataService.sortUndUpdate();
+                    });
+                    DataService.unitType = 'REGULAR';
+                    DataService.sortUndUpdate();
+
+                    _handler.updateSelectedUnit("0",false);
+                    return resolve({status: 'InitTreeFinished'});
+                })
+
+                
             },
             toggleCategory: function(category,justToggle,remote,unit,inInitStage){
 

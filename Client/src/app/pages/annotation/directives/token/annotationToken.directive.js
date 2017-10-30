@@ -160,6 +160,9 @@
         }
 
         function tokenClicked(vm,doNotUpdateSelectedToken){
+            if( vm.token.text === '<br>' ){
+               return;
+            }
             if(selectionHandlerService.getUnitToAddRemotes() !== "0"){
               return;
             }

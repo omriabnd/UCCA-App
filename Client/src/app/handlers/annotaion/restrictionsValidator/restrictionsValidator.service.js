@@ -185,8 +185,8 @@
             
             for(var i=0; i<newAnnotationUnit.categories.length; i++){
                 var currentCategory = newAnnotationUnit.categories[i];
-                if(currentCategory && restrictionsTables['FORBID_CHILD'][currentCategory.id]){
-                    for(var j=0; j<newAnnotationUnit.AnnotationUnits.length; j++){
+                if(currentCategory && restrictionsTables['FORBID_CHILD'][currentCategory.id]){                    
+                    for(var j=0; newAnnotationUnit.AnnotationUnits !== undefined && j<newAnnotationUnit.AnnotationUnits.length; j++){
                         var currentChild = newAnnotationUnit.AnnotationUnits[j];
                         for(var k=0; k<currentChild.categories.length; k++){
                             var currentChildCategory = currentChild.categories[k];

@@ -39,6 +39,8 @@
 
 
       function init(){
+          
+          selectionHandlerService.updateSelectedUnit("0",false);
           $(document).on('keydown', function(e) {
             if(!$(e.target).hasClass('unit-comment-text')){
               e.preventDefault();

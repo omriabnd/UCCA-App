@@ -44,5 +44,9 @@
   },
   "scripts": {
     "postinstall": "bower install"
+  },
+  "dependencies": {
+    "eslint-config-defaults": "^9.0.0",
+    "eslint-plugin-react": "^7.4.0"
   }
 }

@@ -145,7 +145,7 @@
 
 
                 if(unit === null){
-                    reject('ToggleSuccess');
+                    return reject('ToggleSuccess');
                 }
                 var elementPos = category ? unit.categories.map(function(x) {return x.id; }).indexOf(category.id) : -1;
                 if(elementPos === -1){
@@ -154,7 +154,7 @@
                     return reject("Failed") ;
                 }
                     
-                if( restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction([category])){
+                if( unit.AnnotationUnits && unit.AnnotationUnits.length > 0 && restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction([category])){
                     return true;
                 }
                     
@@ -387,7 +387,8 @@
                 parentUnit.gui_status = "OPEN";
 
                 if(!inInitStage){
-                  sortUndUpdate()
+                    // Removed code - The is sorUndUpdate in selectionHendler service in the end of initTree.
+                    //sortUndUpdate(inInitStage)
                 }
 
 
@@ -405,7 +406,7 @@
             var firstSlotIndex = 0;
             for(var i=0; i<newObject.categories.length; i++){
                 var currentCategoy = newObject.categories[i];
-                if(currentCategoy.fromParentLayer){
+                if(currentCategoy !== undefined || currentCategoy.fromParentLayer){
                    firstSlotIndex++;
                 }
             }
@@ -424,12 +425,12 @@
             return newObject;
         }
 
-        function sortUndUpdate(){
+        function sortUndUpdate(doSort){
 
           if(DataService.tree.AnnotationUnits.length > 0){
             updateTreeIds(DataService.tree);
 
-            sortTree(DataService.tree.AnnotationUnits);
+            doSort ? sortTree(DataService.tree.AnnotationUnits) : '';
 
             updateTreeIds(DataService.tree);
           }

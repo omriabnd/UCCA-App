@@ -152,7 +152,9 @@
 //                           }
                        }
                     }
-                    selectionHandlerService.initTree();
+                    selectionHandlerService.initTree().then(function(){
+                        selectionHandlerService.updateSelectedUnit("0",false);
+                    });
                 }              
                                 
                 
