@@ -7,7 +7,7 @@
       .controller('AnnotationPageCtrl', AnnotationPageCtrl);
 
   /** @ngInject */
-  function AnnotationPageCtrl(DefaultHotKeys,TaskMetaData,AnnotationTextService,DataService,$rootScope,$scope,hotkeys,HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService,$timeout,$state, selectionHandlerService,$uibModal,$document) {
+  function AnnotationPageCtrl(DefaultHotKeys,TaskMetaData,AnnotationTextService,DataService,$rootScope,$scope,hotkeys,HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService,$timeout,$state, selectionHandlerService,$uibModal) {
       var vm = this;
       vm.tokenizationTask = TaskMetaData.Task;
       vm.annotationTokens = vm.tokenizationTask.tokens;
@@ -35,6 +35,8 @@
       ];
 
       init();
+      
+      $rootScope.lastScrollPosMain = 0;
 
 
 
@@ -366,14 +368,23 @@
                                   }
 
                                   $timeout(function(){
-                                        var container = $('html, body'),
-                                            scrollTo = $('#unit-'+selectionHandlerService.getSelectedUnitId());
-                                      
-                                        var offset = 120;
-                                        var duration = 500; //milliseconds
+                                      var container = $('html, body'),
+                                          scrollTo = $('#unit-'+selectionHandlerService.getSelectedUnitId());
 
-                                        var someElement = angular.element(document.getElementById('unit-'+selectionHandlerService.getSelectedUnitId()+"_anchor"));
-                                        $document.scrollToElementAnimated(someElement, offset, duration);
+                                          // Or you can animate the scrolling:
+//                                        container.animate({
+//                                            scrollTop: scrollTo.offset().top - (container.offset().top + container.scrollTop()) - 300
+//                                        },0, "linear");
+                                      
+                                        var newOffset = Math.round($('#unit-'+selectionHandlerService.getSelectedUnitId()).offset().top) - Math.round($(window).height() * 1 / 3);
+                                        if ($rootScope.lastScrollPosMain >= 0 && Math.abs(newOffset - $rootScope.lastScrollPosMain) < 10) {
+                                                newOffset = $rootScope.lastScrollPosMain;
+                                        }
+                                        else {
+                                                $rootScope.lastScrollPosMain = newOffset;
+                                        }
+                                      
+                                        $('html, body').scrollTop(newOffset);
                                   });
                                   break;
                               }
@@ -438,13 +449,23 @@
                                       }
                                   }
                                   $timeout(function(){
-                                        var container = $('html, body'),
-                                            scrollTo = $('#unit-'+selectionHandlerService.getSelectedUnitId());
-                                        var offset = 120;
-                                        var duration = 500; //milliseconds
+                                      var container = $('html, body'),
+                                          scrollTo = $('#unit-'+selectionHandlerService.getSelectedUnitId());
 
-                                        var someElement = angular.element(document.getElementById('unit-'+selectionHandlerService.getSelectedUnitId()+"_anchor"));
-                                        $document.scrollToElementAnimated(someElement, offset, duration);
+                                      // Or you can animate the scrolling:
+//                                      container.animate({
+//                                          scrollTop: scrollTo.offset().top - (container.offset().top + container.scrollTop()) - 300
+//                                      },0, "linear");
+                                      
+                                        var newOffset = Math.round($('#unit-'+selectionHandlerService.getSelectedUnitId()).offset().top) - Math.round($(window).height() * 1 / 3);
+                                        if ($rootScope.lastScrollPosMain >= 0 && Math.abs(newOffset - $rootScope.lastScrollPosMain) < 10) {
+                                                newOffset = lastScrollPosMain;
+                                        }
+                                        else {
+                                                $rootScope.lastScrollPosMain = newOffset;
+                                        }
+                                      
+                                        $('html, body').scrollTop(newOffset);
                                   });
                                   break;
                               }

@@ -108,7 +108,7 @@
                         var container = $('html, body'),
                             scrollTo = $('#unit-'+selectionHandlerService.getSelectedUnitId());
                         
-                        var offset = 120;
+                        var offset = 80;
                         var duration = 500; //milliseconds
                         
                         var someElement = angular.element(document.getElementById('unit-'+selectionHandlerService.getSelectedUnitId()+"_anchor"));

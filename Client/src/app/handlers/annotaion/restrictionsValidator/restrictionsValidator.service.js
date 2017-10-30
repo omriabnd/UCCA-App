@@ -791,7 +791,7 @@
                     scrollTo = $('#unit-'+violationUnit.parentId);
 
                 // Or you can animate the scrolling:
-                var offset = 120;
+                var offset = 80;
                 var duration = 500; //milliseconds
 
                 var someElement = angular.element(document.getElementById('unit-'+selectionHandlerService.getSelectedUnitId()+"_anchor"));

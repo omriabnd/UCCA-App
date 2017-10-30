@@ -80,11 +80,15 @@
                 var container = $('html, body'),
                     scrollTo = $('#unit-'+vm.token.inUnit);
 
-                var offset = 120;
-                var duration = 500; //milliseconds
+                var newOffset = Math.round($('#unit-'+vm.token.inUnit).offset().top) - Math.round($(window).height() * 1 / 3);
+                if ($rootScope.lastScrollPosMain >= 0 && Math.abs(newOffset - $rootScope.lastScrollPosMain) < 10) {
+                        newOffset = $rootScope.lastScrollPosMain;
+                }
+                else {
+                        $rootScope.lastScrollPosMain = newOffset;
+                }
 
-                var someElement = angular.element(document.getElementById('unit-'+selectionHandlerService.getSelectedUnitId()+"_anchor"));
-                $document.scrollToElementAnimated(someElement, offset, duration);
+                $('html, body').scrollTop(newOffset);
             }
 
         }
