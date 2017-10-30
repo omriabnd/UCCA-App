@@ -5,7 +5,7 @@
         .directive('annotationToken',annotationTokenDirective);
 
     /** @ngInject */
-    function annotationTokenDirective($rootScope,selectionHandlerService,HotKeysManager,DataService) {
+    function annotationTokenDirective($rootScope,selectionHandlerService,HotKeysManager,DataService,$document) {
 
         var directive = {
             restrict:'E',
@@ -80,10 +80,11 @@
                 var container = $('html, body'),
                     scrollTo = $('#unit-'+vm.token.inUnit);
 
-                // Or you can animate the scrolling:
-                container.animate({
-                    scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() - 300
-                },0, "linear");
+                var offset = 120;
+                var duration = 500; //milliseconds
+
+                var someElement = angular.element(document.getElementById('unit-'+selectionHandlerService.getSelectedUnitId()+"_anchor"));
+                $document.scrollToElementAnimated(someElement, offset, duration);
             }
 
         }

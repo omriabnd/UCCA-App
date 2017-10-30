@@ -7,7 +7,7 @@
       .controller('AnnotationPageCtrl', AnnotationPageCtrl);
 
   /** @ngInject */
-  function AnnotationPageCtrl(DefaultHotKeys,TaskMetaData,AnnotationTextService,DataService,$rootScope,$scope,hotkeys,HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService,$timeout,$state, selectionHandlerService,$uibModal) {
+  function AnnotationPageCtrl(DefaultHotKeys,TaskMetaData,AnnotationTextService,DataService,$rootScope,$scope,hotkeys,HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService,$timeout,$state, selectionHandlerService,$uibModal,$document) {
       var vm = this;
       vm.tokenizationTask = TaskMetaData.Task;
       vm.annotationTokens = vm.tokenizationTask.tokens;
@@ -366,13 +366,14 @@
                                   }
 
                                   $timeout(function(){
-                                      var container = $('html, body'),
-                                          scrollTo = $('#unit-'+selectionHandlerService.getSelectedUnitId());
+                                        var container = $('html, body'),
+                                            scrollTo = $('#unit-'+selectionHandlerService.getSelectedUnitId());
+                                      
+                                        var offset = 120;
+                                        var duration = 500; //milliseconds
 
-                                      // Or you can animate the scrolling:
-                                      container.animate({
-                                          scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() - 300
-                                      },0, "linear");
+                                        var someElement = angular.element(document.getElementById('unit-'+selectionHandlerService.getSelectedUnitId()+"_anchor"));
+                                        $document.scrollToElementAnimated(someElement, offset, duration);
                                   });
                                   break;
                               }
@@ -437,13 +438,13 @@
                                       }
                                   }
                                   $timeout(function(){
-                                      var container = $('html, body'),
-                                          scrollTo = $('#unit-'+selectionHandlerService.getSelectedUnitId());
+                                        var container = $('html, body'),
+                                            scrollTo = $('#unit-'+selectionHandlerService.getSelectedUnitId());
+                                        var offset = 120;
+                                        var duration = 500; //milliseconds
 
-                                      // Or you can animate the scrolling:
-                                      container.animate({
-                                          scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() - 300
-                                      },0, "linear");
+                                        var someElement = angular.element(document.getElementById('unit-'+selectionHandlerService.getSelectedUnitId()+"_anchor"));
+                                        $document.scrollToElementAnimated(someElement, offset, duration);
                                   });
                                   break;
                               }

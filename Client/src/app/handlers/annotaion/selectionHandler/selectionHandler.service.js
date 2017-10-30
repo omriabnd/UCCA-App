@@ -32,6 +32,7 @@
             updatePositionInUnitAttribute:updatePositionInUnitAttribute,
             updateNextTokenNotAdjacent:updateNextTokenNotAdjacent,
             updateLastTokenNotAdjacent:updateLastTokenNotAdjacent,
+            getTreeLastId:getTreeLastId,
             getSelectedTokenList: function(){
                 return this.selectedTokenList;
             },
@@ -310,7 +311,7 @@
 
                     });
                     DataService.unitType = 'REGULAR';
-                    DataService.sortUndUpdate();
+                    //DataService.sortUndUpdate();
 
                     _handler.updateSelectedUnit("0",false);
                     return resolve({status: 'InitTreeFinished'});
@@ -547,6 +548,15 @@
                     return 0;
                 }
             })
+        }
+        
+        function getTreeLastId(currentUnit){
+            if(currentUnit.AnnotationUnits.length == 0){
+               return currentUnit.annotation_unit_tree_id;
+            }
+            
+            var lastChild =  currentUnit.AnnotationUnits[ currentUnit.AnnotationUnits.length - 1 ];
+            return getTreeLastId(lastChild);
         }
         
         return _handler;

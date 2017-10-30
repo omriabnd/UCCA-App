@@ -5,7 +5,7 @@
         .directive('annotationUnits',annotationUnitDirective);
 
     /** @ngInject */
-    function annotationUnitDirective($rootScope,DataService,selectionHandlerService,HotKeysManager,hotkeys,DefinitionsService, $timeout, $compile, $uibModal,restrictionsValidatorService, ENV_CONST, Core) {
+    function annotationUnitDirective($rootScope,DataService,selectionHandlerService,HotKeysManager,hotkeys,DefinitionsService, $timeout, $compile, $uibModal,restrictionsValidatorService, ENV_CONST, Core,$document) {
 
         var directive = {
             restrict:'E',
@@ -107,11 +107,12 @@
                     $timeout(function(){
                         var container = $('html, body'),
                             scrollTo = $('#unit-'+selectionHandlerService.getSelectedUnitId());
-
-                        // Or you can animate the scrolling:
-                        container.animate({
-                            scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() - 300
-                        },0, "linear");
+                        
+                        var offset = 120;
+                        var duration = 500; //milliseconds
+                        
+                        var someElement = angular.element(document.getElementById('unit-'+selectionHandlerService.getSelectedUnitId()+"_anchor"));
+                        $document.scrollToElementAnimated(someElement, offset, duration);
                     });
 
                 }

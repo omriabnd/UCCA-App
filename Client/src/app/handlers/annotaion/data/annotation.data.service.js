@@ -388,11 +388,9 @@
 
                 if(!inInitStage){
                     // Removed code - The is sorUndUpdate in selectionHendler service in the end of initTree.
-                    //sortUndUpdate(inInitStage)
+                    sortUndUpdate(true)
                 }
-
-
-
+                
                 updateInUnitIdsForTokens(DataService.tree);
 
                 newObject.unitType !== "REMOTE" ? $rootScope.$broadcast("InsertSuccess",{dataBlock: { id: level, AnnotationUnits: getUnitById(level).AnnotationUnits},newUnitId: newObject.annotation_unit_tree_id }) : '';
@@ -406,7 +404,7 @@
             var firstSlotIndex = 0;
             for(var i=0; i<newObject.categories.length; i++){
                 var currentCategoy = newObject.categories[i];
-                if(currentCategoy !== undefined || currentCategoy.fromParentLayer){
+                if(currentCategoy !== undefined || ( currentCategoy !== undefined && currentCategoy.fromParentLayer)){
                    firstSlotIndex++;
                 }
             }

@@ -43,7 +43,7 @@
             return this; // for testing purposes
         };
 
-        function getAnnotationTask(AnnotationTextService,$stateParams,DataService,restrictionsValidatorService,selectionHandlerService,$rootScope) {
+        function getAnnotationTask(AnnotationTextService,$stateParams,DataService,restrictionsValidatorService,selectionHandlerService,$rootScope,$timeout) {
             return AnnotationTextService.getAnnotationTask($stateParams.taskId).then(function(taskResponse){
                 var layer_id = taskResponse.project.layer.id;
 
@@ -152,17 +152,30 @@
 //                           }
                        }
                     }
-                    selectionHandlerService.initTree().then(function(){
+                    $rootScope.$pageFinishedLoading = false;
+                    return selectionHandlerService.initTree().then(function(){
                         selectionHandlerService.updateSelectedUnit("0",false);
+                        
+                        var lastUnitId = selectionHandlerService.getTreeLastId(DataService.tree);
+                        
+                        var lastUnitText = $('#unit-'+lastUnitId);
+                        
+                        return{
+                            Task:taskResponse,
+                            Layer: taskResponse.project.layer,
+                            Categories: allCategories
+                        }
                     });
+                }else{
+                    return{
+                        Task:taskResponse,
+                        Layer: taskResponse.project.layer,
+                        Categories: allCategories
+                    }
                 }              
                                 
                 
-                return{
-                    Task:taskResponse,
-                    Layer: taskResponse.project.layer,
-                    Categories: allCategories
-                }
+                
             });
         }
         function replaceEnterWithBr(tokensArray){

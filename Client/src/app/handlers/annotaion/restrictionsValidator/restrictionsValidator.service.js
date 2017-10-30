@@ -10,7 +10,7 @@
         .service('restrictionsValidatorService', restrictionsValidatorService);
 
     /** @ngInject */
-    function restrictionsValidatorService($timeout,$rootScope,$location,ENV_CONST,$uibModal,Core) {
+    function restrictionsValidatorService($timeout,$rootScope,$location,ENV_CONST,$uibModal,Core, $document) {
         /*
             %NAME%, %NAME_1%, %NAME_2%
             will change to the category name in the alert modal
@@ -56,7 +56,7 @@
             
             for(var i=0; i < categories.length; i++){
                 var currentCategoty = categories[i];
-                if(restrictionsTables['FORBID_ANY_CHILD'][currentCategoty.id] != undefined){
+                if(currentCategoty != undefined && restrictionsTables['FORBID_ANY_CHILD'][currentCategoty.id] != undefined){
                     var replacements  = {"%NAME%":currentCategoty.name};
                     var msg = errorMasseges['FORBID_ANY_CHILD'].replace(/%\w+%/g, function(all) {
                         return replacements[all] || all;
@@ -791,9 +791,11 @@
                     scrollTo = $('#unit-'+violationUnit.parentId);
 
                 // Or you can animate the scrolling:
-                container.animate({
-                    scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() - 300
-                },0, "linear");
+                var offset = 120;
+                var duration = 500; //milliseconds
+
+                var someElement = angular.element(document.getElementById('unit-'+selectionHandlerService.getSelectedUnitId()+"_anchor"));
+                $document.scrollToElementAnimated(someElement, offset, duration);
         }
     }
 

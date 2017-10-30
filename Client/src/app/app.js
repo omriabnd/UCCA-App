@@ -11,6 +11,7 @@ angular.module('zAdmin', [
   "xeditable",
   'ui.slimscroll',
   'ngJsTree',
+  'duScroll',
   'angular-progress-button-styles',
   'frapontillo.bootstrap-switch',
   'zAdmin.core',
