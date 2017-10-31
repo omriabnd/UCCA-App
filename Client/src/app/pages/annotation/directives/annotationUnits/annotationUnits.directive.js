@@ -416,6 +416,8 @@
             }
 
             event ? event.stopPropagation() : '';
+            
+            Core.scrollToUnit(parentUnit.annotation_unit_tree_id);
         }
 
         function subTreeToCollapse(subtree_root_unit){

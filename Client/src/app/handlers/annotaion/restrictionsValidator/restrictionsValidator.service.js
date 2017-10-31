@@ -373,9 +373,9 @@
         }
 
         function checkIfVoilateEachTokenInUnit(annotationUnit){
-            return false;
+            /*return false;*/
 
-            /*
+            
             var isViolated = false;
             var sumOfNonPuctuationTokens = annotationUnit.tokens.filter(function(token) {
                 return token.require_annotation === false ;
@@ -412,7 +412,6 @@
                     return false;
                 }
             }
-            */
         }
 
         function oneOfTheUnitCategoriesHasForbidAnyChildRestriction(categories){
@@ -655,6 +654,12 @@
                 //    evaluationResult = false;
                 //}
                 NOT_ALL_TOKENS_IN_UNIT_ERROR = false;
+                
+                var checkPassageTokenResult = checkIfAllTokenThatRequireAnnotationIsInUnit(mainPassage,hash_tokens);
+                if(checkPassageTokenResult === false){
+                    showErrorModal("Not all non-punctuation tokens are in units.")
+                    return false;
+                }
             }
 
             if(!evaluationResult){
@@ -787,7 +792,7 @@
             
             selectionHandlerServiceProvider.updateSelectedUnit(violationUnit.parentId);
             
-            Core.scrollToUnit(selectionHandlerService.getSelectedUnitId());
+            Core.scrollToUnit(violationUnit.parentId);
         }
     }
 

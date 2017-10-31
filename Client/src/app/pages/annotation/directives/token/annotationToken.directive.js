@@ -78,8 +78,6 @@
                 selectionHandlerService.updateSelectedUnit(vm.token.inUnit);
 
                 Core.scrollToUnit(vm.token.inUnit);
-
-                $('html, body').scrollTop(newOffset);
             }
 
         }

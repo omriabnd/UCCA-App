@@ -204,10 +204,10 @@
         "functionName":"previewTask"
       },
       {
-        "name":"Create New Annotatoin Task",
+        "name":"Create New Annotation Task",
         "order":4,
         "roles":["ADMIN","PROJECT_MANAGER"],
-        "types":["TOKENIZATION","ANNOTATION"],
+        "types":["TOKENIZATION"],
         "class":"btn-success",
         "functionName":"createNewAnnotatoinTask"
       },

@@ -165,6 +165,7 @@
 		  if(!!onlyForRoles && onlyForRoles.length){
 		    permitted = (onlyForRoles.indexOf(core.user_role.name.toUpperCase()) > -1)
 		  }
+        
 		  return permitted;
 		}
 
