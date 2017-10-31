@@ -77,7 +77,22 @@
                             $scope.vm.cursorLocation++;
                             !ctrlPressed ? selectionHandlerService.clearTokenList() : $scope.vm.cursorUpdated = true;
                         }
-                        var nextToken = DataService.getUnitById(args.unitId).tokens[token.indexInParent+1];
+                        var unitToCheckIn = DataService.getUnitById(args.unitId);
+
+                        var sameParentTokens = unitToCheckIn.tokens.filter(function(element,index,array){
+                            return element.inUnit == token.inUnit;
+                        })
+
+                        var nextToken = undefined;
+
+                        if(sameParentTokens.length > 1){
+                            for(var i=0; i< sameParentTokens.length; i++){
+                                var currentToken = sameParentTokens[i];
+                                if(currentToken.indexInParent != token.indexInParent){
+                                    nextToken = currentToken;
+                                }
+                            }
+                        }                        
 
                         //This is the last token
                         if(nextToken === undefined) return;
@@ -104,6 +119,18 @@
                             var sliceTokenArray = angular.copy(unit.tokens);
                             sliceTokenArray = sliceTokenArray.splice(tokenPosition,sliceTokenArray.length);
                             var elementPos = sliceTokenArray.map(function(x) {return x.positionInUnit; }).indexOf("Last");
+
+                            if(elementPos === -1){
+                                var firstAndLastPosition = 0;
+                                for(var i=0; i<sliceTokenArray.length; i++){
+                                    var current_token = sliceTokenArray[i];
+                                    if(current_token.positionInUnit == "FirstAndLast"){
+                                        firstAndLastPosition = i;
+                                    }
+                                }
+                                elementPos = firstAndLastPosition;
+                            }
+
                             var parentUnit = DataService.getParentUnit(unit.annotation_unit_tree_id);
                             elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(sliceTokenArray[elementPos].id);
 
@@ -134,7 +161,24 @@
                             $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
                             !ctrlPressed ? selectionHandlerService.clearTokenList() : $scope.vm.cursorUpdated = true;
                         }
-                        var prevToken = DataService.getUnitById(args.unitId).tokens[token.indexInParent-1];
+                        // var prevToken = DataService.getUnitById(args.unitId).tokens[token.indexInParent-1];
+
+                        var unitToCheckIn = DataService.getUnitById(args.unitId);
+
+                        var sameParentTokens = unitToCheckIn.tokens.filter(function(element,index,array){
+                            return element.inUnit == token.inUnit;
+                        })
+
+                        var prevToken = undefined;
+
+                        if(sameParentTokens.length > 1){
+                            for(var i=0; i< sameParentTokens.length; i++){
+                                var currentToken = sameParentTokens[i];
+                                if(currentToken.indexInParent != token.indexInParent){
+                                    prevToken = currentToken;
+                                }
+                            }
+                        }
 
                         //This is the last token
                         if(prevToken === undefined) return;
@@ -158,6 +202,18 @@
                             sliceTokenArray = sliceTokenArray.reverse();
 
                             var elementPos = sliceTokenArray.map(function(x) {return x.positionInUnit; }).indexOf("First");
+
+                            if(elementPos === -1){
+                                var firstAndLastPosition = 0;
+                                for(var i=sliceTokenArray.length-1; i>=0; i--){
+                                    var current_token = sliceTokenArray[i];
+                                    if(current_token.positionInUnit == "FirstAndLast"){
+                                        firstAndLastPosition = i;
+                                    }
+                                }
+                                elementPos = firstAndLastPosition;
+                            }
+
                             var parentUnit = DataService.getParentUnit(unit.annotation_unit_tree_id);
                             elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(sliceTokenArray[elementPos].id);
 
