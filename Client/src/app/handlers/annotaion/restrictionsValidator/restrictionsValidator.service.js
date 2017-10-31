@@ -756,14 +756,14 @@
 
         function checkIfAllUnitsHaveAtLeastOneCategory(parentUnit,categories_hash){
             //TODO. Currently buggy, and therefore commented out.
-            return false;
-            /*
+            /*return false;*/
+            
             var allOk = checkAtLeastOneCategoryRecursion(parentUnit,categories_hash);
             if(!allOk){
                 showErrorModal("All units must have at least one non-default category");
             }
             return !allOk;
-            */
+            
         }
 
         function showErrorModal(message, violationUnit){
