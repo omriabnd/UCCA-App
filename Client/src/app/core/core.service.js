@@ -49,6 +49,9 @@
             
             annotationUnit.gui_status = "OPEN";
             
+            if(annotationUnit.AnnotationUnits === undefined){
+            	return;
+            }
             if(annotationUnit.AnnotationUnits.length == 0){
                return;
             }
