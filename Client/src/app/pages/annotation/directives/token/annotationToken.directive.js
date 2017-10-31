@@ -5,7 +5,7 @@
         .directive('annotationToken',annotationTokenDirective);
 
     /** @ngInject */
-    function annotationTokenDirective($rootScope,selectionHandlerService,HotKeysManager,DataService,$document) {
+    function annotationTokenDirective($rootScope,selectionHandlerService,HotKeysManager,DataService,Core) {
 
         var directive = {
             restrict:'E',
@@ -77,16 +77,7 @@
                 DataService.getUnitById(DataService.getParentUnitId(vm.token.inUnit)).gui_status = "OPEN";
                 selectionHandlerService.updateSelectedUnit(vm.token.inUnit);
 
-                var container = $('html, body'),
-                    scrollTo = $('#unit-'+vm.token.inUnit);
-
-                var newOffset = Math.round($('#unit-'+vm.token.inUnit).offset().top) - Math.round($(window).height() * 1 / 3);
-                if ($rootScope.lastScrollPosMain >= 0 && Math.abs(newOffset - $rootScope.lastScrollPosMain) < 10) {
-                        newOffset = $rootScope.lastScrollPosMain;
-                }
-                else {
-                        $rootScope.lastScrollPosMain = newOffset;
-                }
+                Core.scrollToUnit(vm.token.inUnit);
 
                 $('html, body').scrollTop(newOffset);
             }

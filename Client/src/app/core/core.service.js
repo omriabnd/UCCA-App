@@ -8,7 +8,9 @@
 
 	/** @ngInject */
 	function Core($rootScope,$uibModal,$timeout,PermPermissionStore,PermRoleStore,storageService, toastr) {
-
+        
+        $rootScope.lastScrollPosMain = 0;
+        
 		var core = {
 			init: init,
 			showMore: showMore,
@@ -35,10 +37,32 @@
 			parseSmartTableColumnData:parseSmartTableColumnData,
 			viewOnlyRuleOk:viewOnlyRuleOk,
 			promptAlert:promptAlert,
-            isEmptyObject:isEmptyObject
+            isEmptyObject:isEmptyObject,
+            scrollToUnit:scrollToUnit
 		};
 		
 		return core;
+        
+        function scrollToUnit(unitID) {
+            $timeout(function(){
+                try{
+                    if($('#unit-'+unitID).offset() !== undefined){
+                       var newOffset = Math.round($('#unit-'+unitID).offset().top) - Math.round($(window).height() * 1 / 3);
+                        if ($rootScope.lastScrollPosMain >= 0 && Math.abs(newOffset - $rootScope.lastScrollPosMain) < 10) {
+                                newOffset = $rootScope.lastScrollPosMain;
+                        }
+                        else {
+                                $rootScope.lastScrollPosMain = newOffset;
+                        }
+
+                        $('html, body').scrollTop(newOffset);
+                    }                    
+                }catch(e){
+                    console.log("Scrool To unit failed : ", e);
+                }
+                
+            });            
+        }
 
         function isEmptyObject(obj) {
             for(var prop in obj) {

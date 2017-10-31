@@ -7,7 +7,7 @@
         .service('selectionHandlerService', selectionHandlerService);
 
     /** @ngInject */
-    function selectionHandlerService(DataService, $rootScope,$q) {
+    function selectionHandlerService(DataService, $rootScope,$q,Core) {
         var selectedTokenList = [];
         var selectedUnit = "0";
         var selectedToken = null;
@@ -356,6 +356,9 @@
                             if(res.status === "InsertSuccess"){
 
                                 _handler.updateSelectedUnit(res.id,true);
+                                
+                                Core.scrollToUnit(res.id);
+                                
                                 // _handler.clearTokenList();
                                 return resolve({id: res.id});
                                 // return res.id;

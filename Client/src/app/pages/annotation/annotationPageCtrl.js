@@ -35,10 +35,6 @@
       ];
 
       init();
-      
-      $rootScope.lastScrollPosMain = 0;
-
-
 
       function init(){
           
@@ -367,25 +363,8 @@
                                       }
                                   }
 
-                                  $timeout(function(){
-                                      var container = $('html, body'),
-                                          scrollTo = $('#unit-'+selectionHandlerService.getSelectedUnitId());
-
-                                          // Or you can animate the scrolling:
-//                                        container.animate({
-//                                            scrollTop: scrollTo.offset().top - (container.offset().top + container.scrollTop()) - 300
-//                                        },0, "linear");
-                                      
-                                        var newOffset = Math.round($('#unit-'+selectionHandlerService.getSelectedUnitId()).offset().top) - Math.round($(window).height() * 1 / 3);
-                                        if ($rootScope.lastScrollPosMain >= 0 && Math.abs(newOffset - $rootScope.lastScrollPosMain) < 10) {
-                                                newOffset = $rootScope.lastScrollPosMain;
-                                        }
-                                        else {
-                                                $rootScope.lastScrollPosMain = newOffset;
-                                        }
-                                      
-                                        $('html, body').scrollTop(newOffset);
-                                  });
+                                  Core.scrollToUnit(selectionHandlerService.getSelectedUnitId());
+                                  
                                   break;
                               }
                               case 'moveUp': {
@@ -448,25 +427,9 @@
                                           }
                                       }
                                   }
-                                  $timeout(function(){
-                                      var container = $('html, body'),
-                                          scrollTo = $('#unit-'+selectionHandlerService.getSelectedUnitId());
-
-                                      // Or you can animate the scrolling:
-//                                      container.animate({
-//                                          scrollTop: scrollTo.offset().top - (container.offset().top + container.scrollTop()) - 300
-//                                      },0, "linear");
-                                      
-                                        var newOffset = Math.round($('#unit-'+selectionHandlerService.getSelectedUnitId()).offset().top) - Math.round($(window).height() * 1 / 3);
-                                        if ($rootScope.lastScrollPosMain >= 0 && Math.abs(newOffset - $rootScope.lastScrollPosMain) < 10) {
-                                                newOffset = lastScrollPosMain;
-                                        }
-                                        else {
-                                                $rootScope.lastScrollPosMain = newOffset;
-                                        }
-                                      
-                                        $('html, body').scrollTop(newOffset);
-                                  });
+                                  
+                                  Core.scrollToUnit(selectionHandlerService.getSelectedUnitId());
+                                  
                                   break;
                               }
                               case 'deleteFromTree':{

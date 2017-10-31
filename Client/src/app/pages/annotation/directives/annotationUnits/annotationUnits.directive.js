@@ -103,18 +103,7 @@
                     }
                     selectionHandlerService.updateSelectedUnit($scope.vm.dataBlock.annotation_unit_tree_id,true);
                     paintTokens($scope.vm.tokens,$scope.vm.dataBlock);
-
-                    $timeout(function(){
-                        var container = $('html, body'),
-                            scrollTo = $('#unit-'+selectionHandlerService.getSelectedUnitId());
-                        
-                        var offset = 80;
-                        var duration = 500; //milliseconds
-                        
-                        var someElement = angular.element(document.getElementById('unit-'+selectionHandlerService.getSelectedUnitId()+"_anchor"));
-                        $document.scrollToElementAnimated(someElement, offset, duration);
-                    });
-
+                    
                 }
             });
 

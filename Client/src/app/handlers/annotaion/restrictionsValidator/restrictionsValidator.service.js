@@ -787,15 +787,7 @@
             
             selectionHandlerServiceProvider.updateSelectedUnit(violationUnit.parentId);
             
-            var container = $('html, body'),
-                    scrollTo = $('#unit-'+violationUnit.parentId);
-
-                // Or you can animate the scrolling:
-                var offset = 80;
-                var duration = 500; //milliseconds
-
-                var someElement = angular.element(document.getElementById('unit-'+selectionHandlerService.getSelectedUnitId()+"_anchor"));
-                $document.scrollToElementAnimated(someElement, offset, duration);
+            Core.scrollToUnit(selectionHandlerService.getSelectedUnitId());
         }
     }
 
