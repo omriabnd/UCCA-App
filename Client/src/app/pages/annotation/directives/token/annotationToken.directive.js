@@ -34,7 +34,7 @@
                 var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
 
-                if(args.token.id !== $scope.vm.token.id ){
+                if(args.token && args.token.id !== $scope.vm.token.id ){
                     !ctrlPressed ? $scope.vm.tokenIsClicked = false : '';
                 }else if(args.parentId !== undefined && (args.parentId.toString() ===  $scope.vm.parentId )){
                     !ctrlPressed && !shiftPressed && !args.selectAllTokenInUnit ? selectionHandlerService.clearTokenList() : '';

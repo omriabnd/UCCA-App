@@ -45,10 +45,10 @@
               e.stopPropagation();
               // e.stopImmediatePropagation();
             }
-            if(e.keyCode == 224 || e.keyCode == 17 || e.keyCode == 91 || e.keyCode == 93){
-                e.preventDefault();
-                e.stopPropagation();
-            }
+            // if(e.keyCode == 224 || e.keyCode == 17 || e.keyCode == 91 || e.keyCode == 93){
+            //     e.preventDefault();
+            //     e.stopPropagation();
+            // }
           })
 
           $scope.$on('InsertSuccess', function(event, args) {

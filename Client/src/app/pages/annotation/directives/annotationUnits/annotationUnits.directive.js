@@ -128,7 +128,7 @@
             });
 
 
-            $scope.vm.dataBlock.AnnotationUnits.length > 0 ? paintTokens($scope.vm.tokens,$scope.vm.dataBlock) : '';
+            ($scope.vm.dataBlock.AnnotationUnits && $scope.vm.dataBlock.AnnotationUnits.length > 0) ? paintTokens($scope.vm.tokens,$scope.vm.dataBlock) : '';
         }
 
         function isUnitHidden(vm){
@@ -412,12 +412,13 @@
 
                 subTreeToCollapse(unitToValidate);
 
+                Core.scrollToUnit(parentUnit.annotation_unit_tree_id);
 //                Core.showNotification('success','Annotation unit ' + unitToValidate.annotation_unit_tree_id + ' has finished successfully' )
             }
 
             event ? event.stopPropagation() : '';
             
-            Core.scrollToUnit(parentUnit.annotation_unit_tree_id);
+            
         }
 
         function subTreeToCollapse(subtree_root_unit){

@@ -49,7 +49,7 @@
                 // var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 // var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
 
-                if(args.parentId.toString() === $scope.vm.unitId.toString() ){
+                if(args.token && args.parentId.toString() === $scope.vm.unitId.toString() ){
                     var unit = $('#unit-'+$scope.vm.unitId.toString());
                     var unitTokens = unit.find('.token-wrapper');
                     var unitNode = DataService.getUnitById(args.parentId);
@@ -68,8 +68,12 @@
                 if(args.unitId === $scope.vm.unitId.toString()  && !$scope.vm.cursorUpdated){
                     var unit = $('#unit-'+$scope.vm.unitId.toString());
                     var unitTokens = unit.find('.token-wrapper');
-                    if($scope.vm.cursorLocation < unitTokens.length){
-                        var token = DataService.getUnitById(args.unitId).tokens[$scope.vm.cursorLocation];
+                    if($scope.vm.cursorLocation <= unitTokens.length){
+                        var tokenUnit = DataService.getUnitById(args.unitId);
+                        if($scope.vm.cursorLocation < 0 || $scope.vm.cursorLocation > tokenUnit.tokens.length){
+                            return;
+                        }
+                        var token = $scope.vm.cursorLocation == tokenUnit.tokens.length ? tokenUnit.tokens[$scope.vm.cursorLocation - 1] : tokenUnit.tokens[$scope.vm.cursorLocation];
                         if(shiftPressed){
                             $rootScope.$broadcast('tokenIsClicked',{token: token, parentId: $scope.vm.unitId, moveLeft: false});
                         }else{
@@ -78,6 +82,9 @@
                             !ctrlPressed ? selectionHandlerService.clearTokenList() : $scope.vm.cursorUpdated = true;
                         }
                         var unitToCheckIn = DataService.getUnitById(args.unitId);
+
+                        console.log(DataService.getUnitById(token.inUnit))
+
 
                         var sameParentTokens = unitToCheckIn.tokens.filter(function(element,index,array){
                             return element.inUnit == token.inUnit;
@@ -154,7 +161,11 @@
                     var doNotRemoveExistingToken = false;
                     if($scope.vm.cursorLocation > 0){
                         $scope.vm.cursorLocation--;
-                        var token = DataService.getUnitById(args.unitId).tokens[$scope.vm.cursorLocation];
+                        var tokenUnit = DataService.getUnitById(args.unitId);
+                        if($scope.vm.cursorLocation < 0 || $scope.vm.cursorLocation > tokenUnit.tokens.length){
+                            return;
+                        }
+                        var token = $scope.vm.cursorLocation == tokenUnit.tokens.length ? tokenUnit.tokens[$scope.vm.cursorLocation -1] : tokenUnit.tokens[$scope.vm.cursorLocation];
                         if(shiftPressed){
                             $rootScope.$broadcast('tokenIsClicked',{token: token, parentId: $scope.vm.unitId, moveLeft: true});
                         }else{
