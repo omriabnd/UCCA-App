@@ -45,11 +45,12 @@
                   <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul uib-dropdown-menu>
-                  <li>
+                  <li>                                            
                     <a  href 
                         ng-repeat="action in vm.smartTableStructure[vm.smartTableStructure.length-1].buttons track by $index"
                         ng-show="::vm.smartTableCanUseAction(action.functionName,action.roles,itemRow.type,action.types,{'status':itemRow.status,'accepteds':action.statuses})"
-                        ng-click="vm[action.functionName](itemRow,$parent.$index)">
+                        ng-click="vm[action.functionName](itemRow,$parent.$index)"
+                        ng-class="{'prevent-go-view-only': itemRow.is_active != true && action.order == 3}">
                         {{::action.name}}
                     </a>
                   </li>
