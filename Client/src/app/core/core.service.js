@@ -38,11 +38,26 @@
 			viewOnlyRuleOk:viewOnlyRuleOk,
 			promptAlert:promptAlert,
             isEmptyObject:isEmptyObject,
-            scrollToUnit:scrollToUnit
+            scrollToUnit:scrollToUnit,
+            openAllUnits:openAllUnits
 		};
 		
 		return core;
         
+        function openAllUnits(annotationUnit) {
+            console.log(annotationUnit);
+            
+            annotationUnit.gui_status = "OPEN";
+            
+            if(annotationUnit.AnnotationUnits.length == 0){
+               return;
+            }
+            
+            for(var i=0; i<annotationUnit.AnnotationUnits.length; i++){
+                openAllUnits(annotationUnit.AnnotationUnits[i]);
+            }
+            return annotationUnit;
+        }
         function scrollToUnit(unitID) {
             $timeout(function(){
                 try{

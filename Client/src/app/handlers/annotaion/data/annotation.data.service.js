@@ -372,6 +372,8 @@
                 
                 //Update slots information
                 newObject = updateUnitSlots(newObject);
+                
+                !inInitStage ? Core.openAllUnits(newObject) : "";
 
                 parentUnit.AnnotationUnits[index_int - 1] = newObject;
 
