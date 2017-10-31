@@ -22,7 +22,7 @@
 			checkForPagePermissions: checkForPagePermissions,
 			findItemInArrayById:findItemInArrayById,
 			findItemPositionInArrayById:findItemPositionInArrayById,
-			tablePageSize: 5,
+			tablePageSize: 10,
 			user_role: storageService.getObjectFromLocalStorage('user_role') || {"id":"4","Name":"Guest"},
 			smartTableCanUseAction:smartTableCanUseAction,
 			checkDependenciesKeys: checkDependenciesKeys,

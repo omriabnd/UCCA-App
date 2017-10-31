@@ -119,7 +119,7 @@
                     $rootScope.$broadcast("DeleteSuccess",{reset:true});
                     DataService.tree.AnnotationUnits = [];
 
-                    DataService.tree.AnnotationUnits.tokens.forEach(function(token){
+                    DataService.tree.tokens.forEach(function(token){
                         token["inParent"] = null;
                     });
 

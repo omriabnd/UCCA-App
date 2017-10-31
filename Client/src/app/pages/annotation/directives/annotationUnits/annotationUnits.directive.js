@@ -96,6 +96,10 @@
                 }
             });
 
+            $scope.$on('ResetFromBarSuccess', function(event, args) {
+                $scope.vm.dataBlock.cursorLocation = 0;
+            });
+
             $scope.$on('InsertSuccess', function(event, args) {
                 if(args.dataBlock.id.toString() === $scope.vm.dataBlock.annotation_unit_tree_id ){
                     if($scope.vm.dataBlock.AnnotationUnits.AnnotationUnits){

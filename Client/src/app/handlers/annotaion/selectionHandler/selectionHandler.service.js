@@ -135,6 +135,9 @@
                 return tokenInUnit;
             },
             clearTokenList: function(afterInsert){
+
+                console.log("Toke list cleared");
+
                 if(!afterInsert){
                     _handler.getSelectedTokenList().forEach(function(token){
                         if(token.parentId === undefined){

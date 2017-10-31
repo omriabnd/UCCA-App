@@ -173,7 +173,8 @@
                   console.log("reset All Annotations");
                   DataService.resetTree().then(function(res){
                       if(res === 'Success'){
-
+                        selectionHandlerService.updateSelectedUnit("0",false);
+                        $rootScope.$broadcast("ResetFromBarSuccess",{unitId: "0"});                        
                       }
                   })
               }
