@@ -466,6 +466,9 @@
                                   break;
                               }
                               case 'checkRestrictionForCurrentUnit':{
+                                  if(selectedUnitId === "0"){
+                                        return;
+                                  }
                                   $rootScope.$broadcast("checkRestrictionForCurrentUnit",{unitId: selectedUnitId});
                                   break;
                               }
