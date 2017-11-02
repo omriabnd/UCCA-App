@@ -133,7 +133,8 @@
 
                                //Update slotOne attribute
                                if(currentcategory.slot && currentcategory.slot === 1){
-                                  currentUnit.slotOne = true;
+                                   currentUnit.slotOne = true;
+                                   //console.log(currentUnit.id+" "+currentUnit.slotOne);
                                }else{
                                    currentUnit.slotOne = false;
                                }

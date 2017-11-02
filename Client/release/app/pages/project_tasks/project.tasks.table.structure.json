@@ -39,16 +39,26 @@
     "showInTable":true
   },
   {
-    "key":"manager_comment",
-    "name":"Manager Comment",
-    "order":3,
+    "key":"obseleted_by",
+    "name":"Obseleted By",
+    "order":15,
     "filter":true,
     "search":true,
-    "type":"text",
-    "placeholder":"Enter Comment...",
+    "type":"checkbox",
+    "placeholder":"Obseleted By...",
     "value":"",
-    "showInTable":true,
-    "orderInSearch":2
+    "showInTable":true
+  },
+  {
+    "key":"parent_obseleted_by",
+    "name":"Parent Obseleted By",
+    "order":16,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Parent Obseleted By...",
+    "value":"",
+    "showInTable":true
   },
   {
     "key":"project",
@@ -194,10 +204,10 @@
         "functionName":"previewTask"
       },
       {
-        "name":"Create New Annotatoin Task",
+        "name":"Create New Annotation Task",
         "order":4,
         "roles":["ADMIN","PROJECT_MANAGER"],
-        "types":["TOKENIZATION","ANNOTATION"],
+        "types":["TOKENIZATION"],
         "class":"btn-success",
         "functionName":"createNewAnnotatoinTask"
       },

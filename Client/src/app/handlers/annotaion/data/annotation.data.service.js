@@ -403,10 +403,10 @@
         
         function updateUnitSlots(newObject){
             
-            var firstSlotIndex = 0;
+            var firstSlotIndex = 0; //the first slot not occupied by the parent layer's categories
             for(var i=0; i<newObject.categories.length; i++){
                 var currentCategoy = newObject.categories[i];
-                if(currentCategoy !== undefined || ( currentCategoy !== undefined && currentCategoy.fromParentLayer)){
+                if(currentCategoy !== undefined && currentCategoy.fromParentLayer){
                    firstSlotIndex++;
                 }
             }

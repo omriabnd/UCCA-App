@@ -10,7 +10,7 @@ class LogAction(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(User,db_column='user_id', null=True, blank=True)
     action = models.CharField(max_length=100, default='')
-    data = models.CharField(max_length=100000, default='')
+    data = models.CharField(max_length=10000000, default='')
     comment = models.CharField(max_length=Constants.COMMENTS_MAX_LENGTH, default='')
     created_at = models.DateTimeField(default=timezone.now, blank=True)
 
