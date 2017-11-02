@@ -477,6 +477,8 @@
 
                 updateInUnitIdsForTokens(DataService.getParentUnit(unit.annotation_unit_tree_id));
 
+                $rootScope.$broadcast("resetCursor_"+parentUnit.annotation_unit_tree_id,{categories: unit.categories, id: parentUnit.annotation_unit_tree_id});
+
                 $rootScope.$broadcast("DeleteSuccess",{categories: unit.categories, id: unit.annotation_unit_tree_id});
 
                 DataService.getParentUnit(unit.annotation_unit_tree_id).gui_status = "OPEN";

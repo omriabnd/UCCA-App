@@ -45,6 +45,15 @@
                 }
             });
 
+            $scope.$on('resetCursor_'+$scope.vm.unitId, function(event, args) {
+                console.log("hey");
+
+                var unit = $('#unit-'+$scope.vm.unitId.toString());
+                var unitTokens = unit.find('.token-wrapper');
+                $scope.vm.cursorLocation = 0;
+                $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
+            });
+
             $scope.$on('tokenIsClicked', function(event, args) {
                 // var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 // var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
