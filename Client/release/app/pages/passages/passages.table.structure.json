@@ -48,6 +48,17 @@
     "value":""
   },
   {
+    "key":"external_id",
+    "name":"External ID",
+    "order":"5",
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "type":"text",
+    "placeholder":"Enter Content...",
+    "value":""
+  },
+  {
     "key":"is_active",
     "name":"Is Active",
     "order":"9",

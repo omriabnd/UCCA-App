@@ -32,6 +32,7 @@ class PassageSerializer(serializers.ModelSerializer):
             'text',
             'type',
             'source',
+            'external_id',
             'is_active',
             'created_by',
             'created_at',
