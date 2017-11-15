@@ -81,6 +81,7 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
             'type',
             'is_remote_copy',
             'comment',
+            'cluster',
             'categories',
             'children_tokens',
             #'children',
