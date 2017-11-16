@@ -341,11 +341,7 @@
     "value":[],
     "class":"btn-default",
     "functionName":"manageRestrictions",
-    "managePageRoute":"restrictions",
-    "viewOnlyRule":{
-        "key":"projects",
-        "validateFunction":"hasValue"
-    },
+      "managePageRoute":"restrictions",
     "tableStructure":[
       {
         "key":"categories_1",

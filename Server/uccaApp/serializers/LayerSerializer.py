@@ -112,7 +112,7 @@ class LayerSerializer(serializers.ModelSerializer):
             "created_by",
             "created_at",
             "updated_at",
-            "slotted"             # added Omri, Sep 12
+            "slotted"
         )
 
     def create(self, validated_data):
@@ -140,7 +140,6 @@ class LayerSerializer(serializers.ModelSerializer):
                     uniq_categories = self.group_by_category_id(categories)
                     self.save_layer_categories(newLayer, uniq_categories)
                     self.save_derived_categories(newLayer, categories)
-                # Omri Abend, Sep 13
                 self.save_derived_restrictions(newLayer)
 
         return newLayer
@@ -151,6 +150,12 @@ class LayerSerializer(serializers.ModelSerializer):
         validated_data['type'] = instance.type
         categories = validated_data['categories'] = self.initial_data.get('categories')
         restrictions = validated_data['restrictions'] = self.initial_data['restrictions']
+
+        # @TODO:
+        # update restrictions if it is a root layer; remove this upon release
+        if instance.type == Constants.LAYER_TYPES_JSON['ROOT'] and restrictions is not None:
+            Layers_Categories_Restrictions.objects.filter(layer_id=instance.id).delete()
+            self.save_root_restrictions(instance, restrictions)
 
         # disable changing non-metaadata attrs if is parent of other layers
         if self.is_parent_of_other_layer(instance) == False and self.already_in_use_in_a_project(instance) == False:
