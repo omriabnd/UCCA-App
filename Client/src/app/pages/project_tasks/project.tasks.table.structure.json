@@ -61,6 +61,17 @@
     "showInTable":true
   },
   {
+    "key":"manager_comment",
+    "name":"Manager Comment",
+    "order":18,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Manager Comment",
+    "value":"",
+    "showInTable":true
+  },
+  {
     "key":"project",
     "name":"Project",
     "order":4,
