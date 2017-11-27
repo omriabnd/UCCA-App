@@ -164,3 +164,8 @@ EMAIL_HOST_USER = "YOUR_USER_NAME"
 EMAIL_HOST_PASSWORD = "YOUR_PASSWORD"
 EMAIL_USE_SSL = "YOUR_SSL" # e.g. "ssl://smtp.gmail.com"
 REGISTRATION_LINK = "YOUR_REGISTRATION_LINK"
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass

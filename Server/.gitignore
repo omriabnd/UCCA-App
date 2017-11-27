@@ -9,3 +9,4 @@ Layers.cpython-34.pyc
 
 *.pyc
 env/
+local_settings.py
