@@ -1,0 +1,16 @@
+appdirs==1.4.3
+defusedxml==0.4.1
+Django==1.10.5
+django-allauth==0.30.0
+django-filter==0.15.3
+django-rest-auth==0.9.0
+djangorestframework==3.5.3
+djangorestframework-filters==0.9.1
+oauthlib==2.0.1
+packaging==16.8
+psycopg2==2.6.2
+pyparsing==2.2.0
+python3-openid==3.0.10
+requests==2.12.5
+requests-oauthlib==0.7.0
+six==1.10.0
