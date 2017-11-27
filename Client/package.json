@@ -44,7 +44,7 @@
   },
   "scripts": {
     "postinstall": "bower install",
-    "dev-server": "gulp watch"
+    "dev-server": "gulp serve"
   },
   "dependencies": {
     "eslint-config-defaults": "^9.0.0",
