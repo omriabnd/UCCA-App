@@ -5,8 +5,8 @@
   angular.module('zAdmin.const')
 	.constant('ENV_CONST', {
 		IS_DEV:true,
-		TEST_URL:"http://localhost:8000/api/v1",
-		PROD_URL:"http://localhost:8000/api/v1",
+		TEST_URL:"/api/v1",
+		PROD_URL:"/api/v1",
 		LOCAL_RESOURCES: "app/resources",
 		TASK_TYPE:{
 			ANNOTATION:"ANNOTATION",
