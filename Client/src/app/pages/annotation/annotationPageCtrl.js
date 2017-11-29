@@ -35,6 +35,39 @@
       ];
 
       init();
+      
+      
+      $scope.sortByPrototypes = function(cat){
+      	var selectedTokenList = selectionHandlerService.getSelectedTokenList();
+      	if(selectedTokenList.length == 0){
+	      	var selectedUnit = selectionHandlerService.getSelectedUnitId();
+	      	if(selectedUnit != undefined && selectedUnit != 0){
+	      		selectedTokenList = DataService.getUnitById(selectedUnit).tokenCopy;
+	      	}
+      	}
+      	
+      	selectedTokenList = selectedTokenList.map(function (token) {
+      	    return token.text;
+      	});
+      	
+      	$scope.selectedTokens = selectedTokenList.join(" ");
+      	
+      	var pt = {"in" : ["Locus", "Time"], "in between" : ["Locus"], "ago" : ["Interval", "Time"], "of" : ["Possessor", "Gestalt", "Identity"]};
+      	
+      	var prototypes = pt[$scope.selectedTokens] || [];
+      	
+      	var ind = prototypes.indexOf(cat.name);
+      	
+      	if (ind === -1) {
+      		return vm.categories.length;
+      	} else {
+      		return ind;
+      	}
+      }
+      
+      $scope.filterByRelevance = function(cat){
+          return !cat.fromParentLayer; // || (!cat.fromParentLayer && !!cat.parent && !!cat.parent.id)
+      }
 
       function init(){
           
@@ -493,7 +526,8 @@
 
                       }
                   })
-          });         
+          }); 
+          
           
       }
   }

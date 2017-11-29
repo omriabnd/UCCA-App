@@ -271,7 +271,7 @@
         
         function checkIfUnitVioledSlotOneRestriction(annotationUnit){
             if($rootScope.isSlottedLayerProject){
-               if(!annotationUnit.slotOne){
+               if(annotationUnit.categories[0].refinedCategory && !annotationUnit.slotOne){
                    
                     var replacements  = {"%NAME_1%": annotationUnit.annotation_unit_tree_id};
                     var msg = errorMasseges["SLOT_ONE_VIOLATION"].replace(/%\w+%/g, function(all) {
@@ -292,6 +292,7 @@
             var categories_hash = hashTables.categoriesHashTable;
 
             var violateSlottedLayerSlotOneRestriction = checkIfUnitVioledSlotOneRestriction(annotationUnit);
+            
             
             if(!violateSlottedLayerSlotOneRestriction){
                 var violateUnitsCategoriesAmount = checkIfAllUnitsHaveAtLeastOneCategory(annotationUnit,categories_hash);

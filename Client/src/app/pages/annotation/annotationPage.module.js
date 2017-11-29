@@ -47,21 +47,32 @@
             return AnnotationTextService.getAnnotationTask($stateParams.taskId).then(function(taskResponse){
                 var layer_id = taskResponse.project.layer.id;
 
-                var curentLayer = taskResponse.project.layer
-                var allCategories = curentLayer.categories;
+                var currentLayer = taskResponse.project.layer
+                var allCategories = currentLayer.categories;
 
-                if(!!curentLayer.parent){
+                if(!!currentLayer.parent){
                     // this is how we will know to style this category in derived layer
-                    allCategories.forEach(function(cat){return cat.refinedCategory = true})
+                    allCategories.forEach(function(cat){return cat.refinementCategory = true})
                 }
 
-                while( !!curentLayer.parent ){
-                    curentLayer.parent.categories.forEach(function(category){
-                        category.fromParentLayer = true
-                    })
-                    allCategories = allCategories.concat(curentLayer.parent.categories)
-                    curentLayer = curentLayer.parent;
+                var refinedCategories = [];
+                var refinementCategories = allCategories;
+                
+                while( !!currentLayer.parent ){
+                    currentLayer.parent.categories.forEach(function(category){
+	                        category.fromParentLayer = true;
+	                        category.refinedCategory = false;
+	                        if (refinementCategories.find(function(refinementCat){
+	                        	return refinementCat.parent.id === category.id
+	                        	})) {
+	                        		category.refinedCategory = true;
+	                        		refinedCategories.push(category);
+	                        }
+                        })
+                    allCategories = allCategories.concat(currentLayer.parent.categories);
+                    currentLayer = currentLayer.parent;
                 }
+//                allCategories = allCategories.concat(refinedCategories);
 
                 // sort and move the parent category to locat upper then the childrent categories
                 if(!!taskResponse.project.layer.parent){
@@ -84,18 +95,31 @@
                     }
                 });
 
-                var relvenatParentsCategories = allCategories.filter(function(cat){
+                var relevantParentsCategories = allCategories.filter(function(cat){
                     return !cat.fromParentLayer && !!cat.parent && !!cat.parent.id
                 });
 
-                relvenatParentsCategories.forEach(function(category){
-                    // var parentIndex = allCategories.findIndex(cat => cat.id == category.parent.id);
-                    var parentIndex = allCategories.findIndex(
-                        function(cat){ return cat.id==category.parent.id }
-                    );
-                    // this is how we will know to add style to this category
-                    allCategories[parentIndex]['shouldRefine'] = true
+                
+                refinedCategories.forEach(function(category){
+                  // var parentIndex = allCategories.findIndex(cat => cat.id == category.parent.id);
+                  var index = allCategories.findIndex(
+                      function(cat){ return cat.id==category.id }
+                  );
+                  // this is how we will know to add style to this category
+                  allCategories[index]['shouldRefine'] = true;
+//                  allCategories[index]["backgroundColor"] = "#ff0000";
                 });
+                
+//                relevantParentsCategories.forEach(function(category){
+//                    // var parentIndex = allCategories.findIndex(cat => cat.id == category.parent.id);
+//                    var parentIndex = allCategories.findIndex(
+//                        function(cat){ return cat.id==category.parent.id }
+//                    );
+//                    // this is how we will know to add style to this category
+//                    allCategories[parentIndex]['shouldRefine'] = true
+//                });
+                
+                
                 taskResponse.tokens = replaceEnterWithBr(taskResponse.tokens);
                 DataService.currentTask = taskResponse;
 
@@ -199,6 +223,8 @@
         function setCategoriesAbbreviation(AnnotationTextService,categories){
             AnnotationTextService.assignAbbreviationToCategories(categories);
         }
+        
     }
+    
 
 })();

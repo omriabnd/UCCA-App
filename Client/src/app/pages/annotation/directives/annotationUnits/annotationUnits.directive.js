@@ -132,7 +132,11 @@
             });
 
 
-            ($scope.vm.dataBlock.AnnotationUnits && $scope.vm.dataBlock.AnnotationUnits.length > 0) ? paintTokens($scope.vm.tokens,$scope.vm.dataBlock) : '';
+            if($scope.vm.dataBlock.AnnotationUnits && $scope.vm.dataBlock.AnnotationUnits.length > 0){
+            	paintTokens($scope.vm.tokens,$scope.vm.dataBlock);
+            }else{
+            	""; //$scope.vm.dataBlock.gui_status = "HIDDEN";
+            }
         }
 
         function isUnitHidden(vm){
@@ -269,6 +273,11 @@
                                 if(elementPos > -1){
                                     unit.categories.splice(unit.categories,1);
                                 }
+                            }
+                            
+                            if(!unit.categories[0].refinedCategory){
+                            	unit.gui_status = "HIDDEN";
+                            	unit.categories[0].backgroundColor = "transparent";
                             }
 
                             switch(token.positionInUnit){
