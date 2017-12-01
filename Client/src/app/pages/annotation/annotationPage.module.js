@@ -49,6 +49,19 @@
 
                 var currentLayer = taskResponse.project.layer
                 var allCategories = currentLayer.categories;
+                allCategories.sort(function(a, b) {
+                	  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
+                	  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+                	  if (nameA < nameB) {
+                	    return 1;
+                	  }
+                	  if (nameA > nameB) {
+                	    return -1;
+                	  }
+
+                	  // names must be equal
+                	  return 0;
+                	});
 
                 if(!!currentLayer.parent){
                     // this is how we will know to style this category in derived layer
@@ -74,11 +87,11 @@
                 }
 //                allCategories = allCategories.concat(refinedCategories);
 
-                // sort and move the parent category to locat upper then the childrent categories
+                // sort and move the parent category to locat upper then the children categories
                 if(!!taskResponse.project.layer.parent){
                     allCategories.forEach(function(cat,index){
                         if(!cat.parent){
-                            // move the parent categories to be before thr children categories
+                            // move the parent categories to be before the children categories
                             allCategories.move(index,0)
                         }
                     })
@@ -127,8 +140,10 @@
 
                 setCategoriesColor(AnnotationTextService,allCategories);
                 setCategoriesAbbreviation(AnnotationTextService,allCategories);
+                setCategoriesName(AnnotationTextService,allCategories);
                 
                 $rootScope.isSlottedLayerProject = DataService.currentTask.project.layer.slotted;
+                $rootScope.isRefinementLayerProject = DataService.currentTask.project.layer.type === "REFINEMENT";
                 
                 if(!!DataService.currentTask.annotation_units){
                     DataService.categories = allCategories;
@@ -138,6 +153,9 @@
                     if($rootScope.isSlottedLayerProject){
                        for(var i =0; i < DataService.currentTask.annotation_units.length; i++){
                            var currentUnit = DataService.currentTask.annotation_units[i];
+                           
+                           currentUnit.gui_status = "OPEN";
+//                           restrictionsValidatorService.checkRestrictionsOnFinish(currentUnit,DataService.getUnitById(currentUnit.parent),DataService.hashTables);
                            
                            currentUnit.categories.sort(function(a,b){
                                if(a.slot > 2 || b.slot > 2){
@@ -171,6 +189,7 @@
                                    currentUnit.slotTwo = false;
                                }
                            }
+                           
                            
 //                           if(!currentUnit.slotOne && currentUnit.slotTwo){
 //                              currentUnit.categories.splice(0,0,{id:-1});
@@ -222,6 +241,9 @@
         }
         function setCategoriesAbbreviation(AnnotationTextService,categories){
             AnnotationTextService.assignAbbreviationToCategories(categories);
+        }
+        function setCategoriesName(AnnotationTextService,categories){
+            AnnotationTextService.assignNameToCategories(categories);
         }
         
     }

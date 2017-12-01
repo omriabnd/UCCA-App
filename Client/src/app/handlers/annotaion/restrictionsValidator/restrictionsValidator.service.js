@@ -270,20 +270,31 @@
         }
         
         function checkIfUnitVioledSlotOneRestriction(annotationUnit){
-            if($rootScope.isSlottedLayerProject){
-               if(annotationUnit.categories[0].refinedCategory && !annotationUnit.slotOne){
-                   
-                    var replacements  = {"%NAME_1%": annotationUnit.annotation_unit_tree_id};
-                    var msg = errorMasseges["SLOT_ONE_VIOLATION"].replace(/%\w+%/g, function(all) {
-                        return replacements[all] || all;
-                    });
-                    showErrorModal(msg,annotationUnit);
-                    return true;
-               }
-            }
-            return false;
+            var violated;
+        	if($rootScope.isSlottedLayerProject){
+        		if($rootScope.isRefinementLayerProject){
+                    violated = annotationUnit.categories[0].refinedCategory && !annotationUnit.slotOne;
+        		}else{
+        			violated = !annotationUnit.slotOne;
+        		}
+        	}
+            	
+           if(violated){
+                var replacements  = {"%NAME_1%": annotationUnit.annotation_unit_tree_id};
+                var msg = errorMasseges["SLOT_ONE_VIOLATION"].replace(/%\w+%/g, function(all) {
+                    return replacements[all] || all;
+                });
+                showErrorModal(msg,annotationUnit);
+                return true;
+           }else{
+        	   return annotationUnit.AnnotationUnits.some(function(unit){
+        		   return checkIfUnitVioledSlotOneRestriction(unit);
+        	   });
+           }
+           return false;
             
         }
+
 
         var VIOLATED_CATEGORY = {}
         function checkRestrictionsOnFinish(annotationUnit,parentUnit,hashTables){
@@ -337,7 +348,9 @@
 
 
             if(!vaiolate){
-               annotationUnit.gui_status = 'HIDDEN'
+            	annotationUnit.gui_status = 'HIDDEN'
+            }else{
+            	annotationUnit.gui_status = 'OPEN'
             }
 
             return !vaiolate;

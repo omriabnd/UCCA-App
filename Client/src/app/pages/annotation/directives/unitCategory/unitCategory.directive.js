@@ -13,6 +13,7 @@
             scope:{
                 color:'=',
                 abbreviation:'=',
+                name:'=',
                 categoryId:'='
             },
             link: unitCategoryDirectiveLink,

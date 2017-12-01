@@ -69,7 +69,7 @@
             }
 
             if($scope.vm.dataBlock.gui_status === undefined){
-                $scope.vm.dataBlock.gui_status = "OPEN";
+                $scope.vm.dataBlock.gui_status = "HIDDEN";
             }
 
             $scope.$on('CreateRemoteUnit', function(event, args) {
@@ -227,6 +227,7 @@
             });
         }
 
+
         function paintTokens(tokens, dataBlock,afterDelete){
             dataBlock.AnnotationUnits.forEach(function(unit,index){
                 if(unit.unitType !== "REMOTE"){
@@ -246,9 +247,10 @@
                         selectionHandlerService.updateNextTokenNotAdjacent(unit.tokens);
                         selectionHandlerService.updateLastTokenNotAdjacent(unit.tokens);
                     }
+                    
 
                     unit.tokens.forEach(function(token){
-                        var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
+                      	var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
                         var elementPos = childUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
                         var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
 
@@ -263,7 +265,28 @@
                                 }
                             }
                             childUnitTokens[elementPos].backgroundColor = unit.categories[0] ? unit.categories[0].backgroundColor : "transparent";
+                            
+                            if(unit.categories[0].fromParentLayer && !unit.categories[0].refinedCategory){
 
+                            	var relevant = false;
+                            	unit.AnnotationUnits.forEach(function(childUnit){
+                            		paintTokens(childUnit.tokens, childUnit);
+                            		if(!childUnit.categories[0].fromParentLayer || childUnit.categories[0].refinedCategory){
+                            			relevant = true;
+                            		}
+                            	})
+                            	if(!relevant){
+                            		unit.categories[0].backgroundColor = "transparent";
+                                	unit.gui_status = "HIDDEN";
+                            	}else{
+//                            		unit.gui_status = "OPEN";
+                            	}
+//                            }else if(unit.categories.some(function(category){return category.refinementCategory})){
+//                             	unit.gui_status = "HIDDEN";
+                        	}else{
+//                        		unit.gui_status = "OPEN";
+                        	}
+                            
                             if(unit.categories.length === 1 && unit.categories[0].id === -1){
                                 tokens[elementPosInThisUnit].borderStyle = "transparent";
                             }
@@ -275,10 +298,6 @@
                                 }
                             }
                             
-                            if(!unit.categories[0].refinedCategory){
-                            	unit.gui_status = "HIDDEN";
-                            	unit.categories[0].backgroundColor = "transparent";
-                            }
 
                             switch(token.positionInUnit){
                                 case 'First': {
@@ -525,7 +544,8 @@
                 category = {
                     id : null,
                     color : 'gray',
-                    abbreviation : null
+                    abbreviation : null,
+                    name : null
                 };
 
             }
