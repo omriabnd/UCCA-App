@@ -50,8 +50,8 @@ gulp.1
 build
 
 /src/release
-/release
 /bower_components
+node_modules/
 /.tmp
 /debug.log
 /LICENSE.txt

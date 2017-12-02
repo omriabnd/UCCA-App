@@ -19,6 +19,7 @@
             getProjectLayer:getProjectLayer,
             assignColorsToCategories: assignColorsToCategories,
             assignAbbreviationToCategories: assignAbbreviationToCategories,
+            assignNameToCategories: assignNameToCategories,
             toggleAnnotationUnitView: toggleAnnotationUnitView,
             isRTL: isRTL,
         };
@@ -46,6 +47,22 @@
                     category.abbreviation += (categoriesHash[category.abbreviation].times)
                 }else{
                     categoriesHash[category.abbreviation] = {
+                        "category" : category,
+                        "times" : 1
+                    }
+                }
+            })
+        }
+        
+        function assignNameToCategories(categories){
+            var categoriesHash = {}
+            categories.forEach(function(category){
+                if(categoriesHash[category.name]){
+                    categoriesHash[category.name].category.name += (categoriesHash[category.name].times)
+                    categoriesHash[category.name].times += 1;
+                    category.name += (categoriesHash[category.name].times)
+                }else{
+                    categoriesHash[category.name] = {
                         "category" : category,
                         "times" : 1
                     }

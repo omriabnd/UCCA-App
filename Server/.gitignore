@@ -6,3 +6,7 @@ __pycache__
 workspace.xml
 settings.cpython-34.pyc
 Layers.cpython-34.pyc
+
+*.pyc
+env/
+local_settings.py

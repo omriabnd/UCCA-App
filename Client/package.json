@@ -43,7 +43,8 @@
     "wrench": "~1.5.8"
   },
   "scripts": {
-    "postinstall": "bower install"
+    "postinstall": "bower install",
+    "dev-server": "gulp serve"
   },
   "dependencies": {
     "eslint-config-defaults": "^9.0.0",
