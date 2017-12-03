@@ -27,9 +27,12 @@ DEBUG = True
 
 # python manage.py runserver 0.0.0.0:8000
 ALLOWED_HOSTS = [
-    '192.168.0.*',
-    'localhost',
-    '127.0.0.1',
+       'ucca.development',
+       'ucca.development.cs.huji.ac.il',
+       'ucca.cs.huji.ac.il',
+       'caledonian',
+       'e-webprojects.cs.huji.ac.il',
+       'e-webprojects'
 ]
 
 
@@ -108,13 +111,26 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ucca.wsgi.application'
 
 
+# Database
+# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'UccaDb'),
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ucca-a',
-        'USER': 'postgres',
-        'PASSWORD': '', # TODO - Add your 'ucca-a' db password
-        'HOST': '127.0.0.1',
+        'ENGINE': 'django.db.backends.postgresql',
+        'OPTIONS': {
+            'options': '-c search_path=ucca'
+        },
+        'NAME': 'ucca_development',
+        #'USER': 'pr_ucca',
+        #'PASSWORD': '',
+        'HOST': 'pgserver',
         'PORT': '5432',
     }
 }
@@ -156,16 +172,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+EMAIL_HOST = "mailhost.cs.huji.ac.il"
+EMAIL_PORT = 25
+REGISTRATION_LINK = "http://ucca.staging.cs.huji.ac.il/api/vi/register"
 
-# Email Configuration:
-EMAIL_HOST = "YOUR_HOST"
-EMAIL_PORT = 000 # YOUR_PORT
-EMAIL_HOST_USER = "YOUR_USER_NAME"
-EMAIL_HOST_PASSWORD = "YOUR_PASSWORD"
-EMAIL_USE_SSL = "YOUR_SSL" # e.g. "ssl://smtp.gmail.com"
-REGISTRATION_LINK = "YOUR_REGISTRATION_LINK"
-
-try:
-    from .local_settings import *
-except ImportError:
-    pass

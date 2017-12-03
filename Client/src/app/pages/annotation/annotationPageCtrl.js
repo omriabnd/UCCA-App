@@ -65,11 +65,13 @@
       }
       
       $scope.filterByRelevance = function(cat){
+          return true;
+          // commeting out Jakob's previous condition
+          // return !cat.fromParentLayer; 
 //    	  if(DataService.currentTask.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
-    		  return !cat.fromParentLayer; // || (!cat.fromParentLayer && !!cat.parent && !!cat.parent.id)
+    		   // || (!cat.fromParentLayer && !!cat.parent && !!cat.parent.id)
 //    	  }else{
 //    		  return true;
-//    	  }
       }
 
       function init(){
