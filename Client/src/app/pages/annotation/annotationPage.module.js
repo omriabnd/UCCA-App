@@ -47,27 +47,51 @@
             return AnnotationTextService.getAnnotationTask($stateParams.taskId).then(function(taskResponse){
                 var layer_id = taskResponse.project.layer.id;
 
-                var curentLayer = taskResponse.project.layer
-                var allCategories = curentLayer.categories;
+                var currentLayer = taskResponse.project.layer
+                var allCategories = currentLayer.categories;
+                allCategories.sort(function(a, b) {
+                	  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
+                	  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+                	  if (nameA < nameB) {
+                	    return 1;
+                	  }
+                	  if (nameA > nameB) {
+                	    return -1;
+                	  }
 
-                if(!!curentLayer.parent){
+                	  // names must be equal
+                	  return 0;
+                	});
+
+                if(!!currentLayer.parent){
                     // this is how we will know to style this category in derived layer
-                    allCategories.forEach(function(cat){return cat.refinedCategory = true})
+                    allCategories.forEach(function(cat){return cat.refinementCategory = true})
                 }
 
-                while( !!curentLayer.parent ){
-                    curentLayer.parent.categories.forEach(function(category){
-                        category.fromParentLayer = true
-                    })
-                    allCategories = allCategories.concat(curentLayer.parent.categories)
-                    curentLayer = curentLayer.parent;
+                var refinedCategories = [];
+                var refinementCategories = allCategories;
+                
+                while( !!currentLayer.parent ){
+                    currentLayer.parent.categories.forEach(function(category){
+	                        category.fromParentLayer = true;
+	                        category.refinedCategory = false;
+	                        if (refinementCategories.find(function(refinementCat){
+	                        	return refinementCat.parent.id === category.id
+	                        	})) {
+	                        		category.refinedCategory = true;
+	                        		refinedCategories.push(category);
+	                        }
+                        })
+                    allCategories = allCategories.concat(currentLayer.parent.categories);
+                    currentLayer = currentLayer.parent;
                 }
+//                allCategories = allCategories.concat(refinedCategories);
 
-                // sort and move the parent category to locat upper then the childrent categories
+                // sort and move the parent category to locat upper then the children categories
                 if(!!taskResponse.project.layer.parent){
                     allCategories.forEach(function(cat,index){
                         if(!cat.parent){
-                            // move the parent categories to be before thr children categories
+                            // move the parent categories to be before the children categories
                             allCategories.move(index,0)
                         }
                     })
@@ -84,18 +108,31 @@
                     }
                 });
 
-                var relvenatParentsCategories = allCategories.filter(function(cat){
+                var relevantParentsCategories = allCategories.filter(function(cat){
                     return !cat.fromParentLayer && !!cat.parent && !!cat.parent.id
                 });
 
-                relvenatParentsCategories.forEach(function(category){
-                    // var parentIndex = allCategories.findIndex(cat => cat.id == category.parent.id);
-                    var parentIndex = allCategories.findIndex(
-                        function(cat){ return cat.id==category.parent.id }
-                    );
-                    // this is how we will know to add style to this category
-                    allCategories[parentIndex]['shouldRefine'] = true
+                
+                refinedCategories.forEach(function(category){
+                  // var parentIndex = allCategories.findIndex(cat => cat.id == category.parent.id);
+                  var index = allCategories.findIndex(
+                      function(cat){ return cat.id==category.id }
+                  );
+                  // this is how we will know to add style to this category
+                  allCategories[index]['shouldRefine'] = true;
+//                  allCategories[index]["backgroundColor"] = "#ff0000";
                 });
+                
+//                relevantParentsCategories.forEach(function(category){
+//                    // var parentIndex = allCategories.findIndex(cat => cat.id == category.parent.id);
+//                    var parentIndex = allCategories.findIndex(
+//                        function(cat){ return cat.id==category.parent.id }
+//                    );
+//                    // this is how we will know to add style to this category
+//                    allCategories[parentIndex]['shouldRefine'] = true
+//                });
+                
+                
                 taskResponse.tokens = replaceEnterWithBr(taskResponse.tokens);
                 DataService.currentTask = taskResponse;
 
@@ -103,8 +140,10 @@
 
                 setCategoriesColor(AnnotationTextService,allCategories);
                 setCategoriesAbbreviation(AnnotationTextService,allCategories);
+                setCategoriesName(AnnotationTextService,allCategories);
                 
                 $rootScope.isSlottedLayerProject = DataService.currentTask.project.layer.slotted;
+                $rootScope.isRefinementLayerProject = DataService.currentTask.project.layer.type === "REFINEMENT";
                 
                 if(!!DataService.currentTask.annotation_units){
                     DataService.categories = allCategories;
@@ -114,6 +153,9 @@
                     if($rootScope.isSlottedLayerProject){
                        for(var i =0; i < DataService.currentTask.annotation_units.length; i++){
                            var currentUnit = DataService.currentTask.annotation_units[i];
+                           
+                           currentUnit.gui_status = "OPEN";
+//                           restrictionsValidatorService.checkRestrictionsOnFinish(currentUnit,DataService.getUnitById(currentUnit.parent),DataService.hashTables);
                            
                            currentUnit.categories.sort(function(a,b){
                                if(a.slot > 2 || b.slot > 2){
@@ -147,6 +189,7 @@
                                    currentUnit.slotTwo = false;
                                }
                            }
+                           
                            
 //                           if(!currentUnit.slotOne && currentUnit.slotTwo){
 //                              currentUnit.categories.splice(0,0,{id:-1});
@@ -199,6 +242,11 @@
         function setCategoriesAbbreviation(AnnotationTextService,categories){
             AnnotationTextService.assignAbbreviationToCategories(categories);
         }
+        function setCategoriesName(AnnotationTextService,categories){
+            AnnotationTextService.assignNameToCategories(categories);
+        }
+        
     }
+    
 
 })();

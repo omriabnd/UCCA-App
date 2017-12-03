@@ -12,9 +12,20 @@
     "value":""
   },
   {
+      "key": "external_id",
+      "name":"External ID",
+      "order":2,
+      "type":"text",
+      "placeholder":"Enter External ID...",
+      "showInTable":true,
+      "value":"",
+      "filter":true,
+      "search":true
+  },
+  {
     "key":"type",
     "name":"Type",
-    "order":2,
+    "order":3,
     "filter":true,
     "search":true,
     "type":"select",
@@ -43,7 +54,7 @@
   {
     "key":"source",
     "name":"Source",
-    "order":3,
+    "order":5,
     "filter":false,
     "search":false,
     "type":"button",
@@ -56,7 +67,7 @@
   {
     "key":"tasks",
     "name":"Tasks",
-    "order":5,
+    "order":8,
     "filter":false,
     "search":false,
     "type":"button",

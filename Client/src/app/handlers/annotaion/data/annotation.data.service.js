@@ -386,7 +386,7 @@
                     }
                 });
 
-                parentUnit.gui_status = "OPEN";
+//                parentUnit.gui_status = "OPEN";
 
                 if(!inInitStage){
                     // Removed code - The is sorUndUpdate in selectionHendler service in the end of initTree.
