@@ -112,24 +112,30 @@
 		NAV_BAR_ITEMS:[
 			{
 				id:1,
+				name:"Toggle Parents",
+				tooltip:"Toggle Parents",
+				executeFunction:"toggleParents"
+			},
+			{
+				id:2,
 				name:"Finish All",
 				tooltip:"Alt+a: Finish All",
 				executeFunction:"finishAll"
 			},
 			{
-				id:2,
+				id:3,
 				name:"Save",
 				tooltip:"Alt+s: Save",
 				executeFunction:"saveTask"
 			},
 			{
-				id:3,
+				id:4,
 				name:"Submit",
 				tooltip:"Alt+b: Submit (unit will be considered completed)",
 				executeFunction:"submitTask"
 			},
 			{
-				id:4,
+				id:5,
 				name:"Reset",
 				tooltip:"Alt+x: Reset annotation",
 				executeFunction:"resetAllAnnotations"
@@ -147,13 +153,13 @@
 				executeFunction:"openSettings"
 			},*/
 			{
-				id:7,
+				id:8,
 				name:"Main Menu",
 				tooltip:"Alt+m: Go To Main Menu",
 				executeFunction:"goToMainMenu"
 			},
             {
-				id:8,
+				id:9,
 				name:"User Comment",
 				tooltip:"Alt+c: Add user comment",
 				executeFunction:"addUserComment",
