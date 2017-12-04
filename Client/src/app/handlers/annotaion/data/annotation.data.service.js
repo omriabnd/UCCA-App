@@ -117,6 +117,7 @@
             return $q(function(resolve, reject) {
                 try{
                     $rootScope.$broadcast("DeleteSuccess",{reset:true});
+                    $rootScope.$broadcast("resetCursor_" + 0);
                     DataService.tree.AnnotationUnits = [];
 
                     DataService.tree.tokens.forEach(function(token){
@@ -129,7 +130,7 @@
                 }catch(e){
                     return resolve('Failed');
                 }
-            })
+            });
 
         }
 
