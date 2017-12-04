@@ -49,6 +49,9 @@
         }
 
         function highLightSelectedWords(color) {
+        	
+//        	this.preventIfNotRefined();
+//        	this.preventIfPunctuation();
 
             var parentUnitId = $rootScope.clckedLine;
             var parenUnit = DataService.getUnitById(parentUnitId);
@@ -57,11 +60,28 @@
 
             selectionHandlerService.toggleCategory(defCtrl.definitionDetails);
         }
+        
+        function preventIfNotRefined() {
+            var isNotRefined = false;
+            if($rootScope.selectedTokensArray.length == 1 && $rootScope.selectedTokensArray[0]){
+                // check if the selected unit is not refined
+//                var currentTokenId = $($rootScope.selectedTokensArray[0]).attr('token-id');
+//                var currentToken = DataService.hashTables.tokensHashTable[currentTokenId]
+            	var currentUnitId = $rootScope.selectedUnit;
+                var currentUnit = DataService.getUnitById(currentUnitId);
+                if(currentUnit.categories[0].refinedCategory==false){
+                    console.log("not refined",currentUnit.tokenCopy, currentUnit.categories[0].name);
+                    Core.showAlert("{{currentUnit.tokenCopy}}: The category {{currentUnit.categories[0].name}} is not being refined in this layer");
+                    isNotRefined = true;
+                }
+            }
+            return isNotRefined;
+        }
 
-        function preventIfPanctuation() {
+        function preventIfPunctuation() {
             var isPunc = false;
             if($rootScope.selectedTokensArray.length == 1 && $rootScope.selectedTokensArray[0]){
-                // check if the selected token is pangtuation
+                // check if the selected token is punctuation
                 var currentTokenId = $($rootScope.selectedTokensArray[0]).attr('token-id');
                 var currentToken = DataService.hashTables.tokensHashTable[currentTokenId]
                 if(currentToken.require_annotation==false){
@@ -112,8 +132,6 @@
     function checkIfRowWasClicked(rootScope){
         return rootScope.clckedLine != undefined && rootScope.clckedLine != '0';
     }
-
     
-
 
 })();
