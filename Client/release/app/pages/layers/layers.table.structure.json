@@ -1,0 +1,211 @@
+[
+  {
+    "key":"id",
+    "name":"Id",
+    "order":1,
+    "type":"text",
+    "filter":true,
+    "search":true,
+    "showInTable":true
+  },
+  {
+    "key":"name",
+    "name":"Name",
+    "order":2,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Name...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"tooltip",
+    "name":"Tooltip",
+    "order":3,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Tooltip...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"children",
+    "name":"Children",
+    "order":4,
+    "filter":true,
+    "search":false,
+    "type":"text",
+    "placeholder":"Children...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"parent",
+    "name":"Parent",
+    "order":5,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Parent...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"description",
+    "name":"Description",
+    "order":6,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"type",
+    "name":"Type",
+    "order":7,
+    "filter":true,
+    "search":true,
+    "type":"select",
+    "placeholder":"Enter Type...",
+    "value":"",
+    "showInTable":true,
+    "options":[
+      { "label": "ROOT", "id": 1 },
+      { "label": "EXTENSION", "id": 2 },
+      { "label": "COARSENING", "id": 3 },
+      { "label": "REFINEMENT", "id": 4 }
+    ]
+  },
+  {
+    "key":"created_by",
+    "name":"Created by",
+    "order":8,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"categories",
+    "name":"Categories",
+    "order":9,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"projects",
+    "name":"Projects",
+    "order":10,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"is_active",
+    "name":"Is Active",
+    "order":11,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Is Active...",
+    "value":true,
+    "showInTable":true
+  },
+  {
+    "key":"slotted",
+    "name":"Is Slotted",
+    "order":12,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Is Slotted...",
+    "value":true,
+    "showInTable":true
+  },
+  {
+    "key":"restrictions",
+    "name":"Restrictions",
+    "order":11,
+    "filter":false,
+    "search":false,
+    "type":"text",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":false
+  },
+  {
+    "key":"created_at",
+    "name":"Created at",
+    "order":12,
+    "filter":false,
+    "search":false,
+    "type":"text",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":false
+  },
+  {
+    "key":"updated_at",
+    "name":"Updated At",
+    "order":13,
+    "filter":false,
+    "search":false,
+    "type":"text",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":false
+  },
+  {
+    "key":"actions",
+    "name":"Actions",
+    "order":14,
+    "filter":false,
+    "search":false,
+    "showInTable":true,
+    "type":"sele",
+    "buttons":[
+      {
+        "name":"Remove",
+        "order":1,
+        "roles":["ADMIN","PROJECT_MANAGER"],
+        "functionName":"removeRow"
+      },
+      {
+        "name":"Edit",
+        "order":2,
+        "functionName":"editRow"
+      },
+      {
+        "name":"New extension Layer",
+        "order":4,
+        "roles":["ADMIN","PROJECT_MANAGER"],
+        "functionName":"createExtensionLayer"
+      },
+      {
+        "name":"New refinement Layer",
+        "order":5,
+        "roles":["ADMIN","PROJECT_MANAGER"],
+        "functionName":"createRefinementLayer"
+      },
+      {
+        "name":"New coarsening Layer",
+        "order":6,
+        "roles":["ADMIN","PROJECT_MANAGER"],
+        "functionName":"createCoarseningLayer"
+      }
+    ]
+  }
+]

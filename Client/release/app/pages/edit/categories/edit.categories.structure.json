@@ -1,0 +1,127 @@
+[
+  {
+    "key":"id",
+    "name":"Id",
+    "order":1,
+    "type":"text",
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "disabled":true
+  },
+  {
+    "key":"name",
+    "name":"Name",
+    "order":2,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Name...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"description",
+    "name":"Description",
+    "order":3,
+    "filter":true,
+    "search":true,
+    "type":"editor",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"tooltip",
+    "name":"Tooltip",
+    "order":4,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Tooltip...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"abbreviation",
+    "name":"Abbreviation",
+    "order":5,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Children...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"is_default",
+    "name":"Is Default",
+    "order":7,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Is Active...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"created_by",
+    "hideInAddNewAssetMode":true,
+    "name":"Created by",
+    "order":6,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Created by...",
+    "value":"",
+    "showInTable":true,
+    "disabled":true
+  },
+  {
+    "key":"created_at",
+    "name":"Created at",
+    "order":8,
+    "filter":false,
+    "search":false,
+    "type":"text",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":false
+  },
+  {
+    "key":"updated_at",
+    "name":"Updated At",
+    "order":9,
+    "filter":false,
+    "search":false,
+    "type":"text",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":false
+  },
+  {
+    "key":"is_active",
+    "name":"Is Active",
+    "order":10,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Is Active...",
+    "value":true,
+    "showInTable":true
+  },
+  {
+    "key":"export",
+    "order":99,
+    "name":"Export Asset",
+    "filter":false,
+    "search":false,
+    "type":"button",
+    "placeholder":"Export Asset",
+    "showInTable":true,
+    "value":[],
+    "class":"btn-default",
+    "shouldSendToServer": false,
+    "functionName":"exportAsset"
+  }
+]
