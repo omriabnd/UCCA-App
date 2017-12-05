@@ -27,6 +27,7 @@
       vm.resetAllAnnotations = resetAllAnnotations;
       vm.inRemoteMode = inRemoteMode;
       vm.addUserComment = addUserComment;
+      vm.toggleParents = toggleParents;
 
       vm.fontSizes = [
           {preview:"AAA",name:"big",size:1},
@@ -38,13 +39,16 @@
       
       
       $scope.sortByPrototypes = function(cat){
-      	var selectedTokenList = selectionHandlerService.getSelectedTokenList();
-      	if(selectedTokenList.length == 0){
-	      	var selectedUnit = selectionHandlerService.getSelectedUnitId();
-	      	if(selectedUnit != undefined && selectedUnit != 0){
-	      		selectedTokenList = DataService.getUnitById(selectedUnit).tokenCopy;
+    	var selectedTokenList = [];
+    	if (selectionHandlerService.getSelectedTokenList() != undefined){
+	      	selectedTokenList = selectionHandlerService.getSelectedTokenList();
+	      	if(selectedTokenList.length == 0){
+		      	var selectedUnit = selectionHandlerService.getSelectedUnitId();
+		      	if(selectedUnit != undefined && selectedUnit != 0){
+		      		selectedTokenList = DataService.getUnitById(selectedUnit).tokenCopy;
+		      	}
 	      	}
-      	}
+        }
       	
       	selectedTokenList = selectedTokenList.map(function (token) {
       	    return token.text;
@@ -64,14 +68,17 @@
       	}
       }
       
-      $scope.filterByRelevance = function(cat){
-          return true;
+      //$scope.filterByRelevance = function(cat){
+      //    return true;
           // commeting out Jakob's previous condition
-          // return !cat.fromParentLayer; 
-//    	  if(DataService.currentTask.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
-    		   // || (!cat.fromParentLayer && !!cat.parent && !!cat.parent.id)
-//    	  }else{
-//    		  return true;
+          // return !cat.fromParentLayer;
+      //}
+      $scope.notFromParentLayer = function(cat){
+    	  return !cat.fromParentLayer;
+      }
+      
+      $scope.fromParentLayer = function(cat){
+    	  return cat.fromParentLayer;
       }
 
       function init(){
@@ -105,6 +112,10 @@
           $timeout(function(){$rootScope.$hideSideBar = true;});
           bindCategoriesHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService);
           bindReceivedDefaultHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService && !hotkeys.fromParentLayer);
+      }
+      
+      function toggleParents(){
+    	  $scope.showParents = !$scope.showParents;
       }
 
       function addUserComment(){
