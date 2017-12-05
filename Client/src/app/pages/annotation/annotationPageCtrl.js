@@ -46,9 +46,15 @@
 		      	var selectedUnit = selectionHandlerService.getSelectedUnitId();
 		      	if(selectedUnit != undefined && selectedUnit != 0){
 		      		selectedTokenList = DataService.getUnitById(selectedUnit).tokenCopy;
+//		      		console.log(selectedTokenList)
 		      	}
 	      	}
         }
+//    	console.log(selectedTokenList)
+    	
+    	if(selectedTokenList == undefined){
+    		selectedTokenList = [];
+    	}
       	
       	selectedTokenList = selectedTokenList.map(function (token) {
       	    return token.text;
