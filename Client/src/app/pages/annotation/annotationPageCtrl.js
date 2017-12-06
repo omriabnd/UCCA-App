@@ -7,7 +7,7 @@
       .controller('AnnotationPageCtrl', AnnotationPageCtrl);
 
   /** @ngInject */
-  function AnnotationPageCtrl(DefaultHotKeys,TaskMetaData,AnnotationTextService,DataService,$rootScope,$scope,hotkeys,HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService,$timeout,$state, selectionHandlerService,$uibModal, $window) {
+  function AnnotationPageCtrl(DefaultHotKeys,TaskMetaData,AnnotationTextService,DataService,$rootScope,$scope,hotkeys,HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService,$timeout,$state, selectionHandlerService,$uibModal) {
       var vm = this;
       vm.tokenizationTask = TaskMetaData.Task;
       vm.annotationTokens = vm.tokenizationTask.tokens;
@@ -434,11 +434,12 @@
 
                                       selectionHandlerService.updateSelectedUnit(parentId);
                                       DataService.getUnitById(parentId).gui_status = "OPEN";
+                                      Core.scrollToUnit(selectionHandlerService.getSelectedUnitId());
                                       break;
                                   }
                                   if (selectedUnitId === "1" || selectedUnitId === "0") {
                                       selectionHandlerService.updateSelectedUnit("0");
-                                      $window.scrollTo(0, 0);
+                                      Core.scrollToUnit(selectionHandlerService.getSelectedUnitId());
                                       break;
                                   }
 
