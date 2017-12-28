@@ -116,6 +116,9 @@
                     var parentUnit = DataService.getUnitById(DataService.getParentUnitId($scope.vm.dataBlock.annotation_unit_tree_id ));
                     RemoveBorder(parentUnit.tokens,parentUnit);
                 }else{
+                   $scope.vm.tokens.forEach(function(token,index,inInit){
+                       token.indexInParent = index;
+                   });
                     paintTokens($scope.vm.tokens,$scope.vm.dataBlock,true);
                 }
 
@@ -242,7 +245,7 @@
                           }
                         })
 
-                        selectionHandlerService.updateIndexInParentAttribute(unit.tokens);
+                        // selectionHandlerService.updateIndexInParentAttribute(unit.tokens); // Is it needed?
                         selectionHandlerService.updatePositionInUnitAttribute(unit.tokens);
                         selectionHandlerService.updateNextTokenNotAdjacent(unit.tokens);
                         selectionHandlerService.updateLastTokenNotAdjacent(unit.tokens);

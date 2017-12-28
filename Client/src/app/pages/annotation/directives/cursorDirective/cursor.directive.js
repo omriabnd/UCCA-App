@@ -24,20 +24,26 @@
 
         return directive;
 
+        function setCursorPosition($scope, location) {
+            $scope.vm.cursorLocation = location;
+        }
+
+        function getUnitTokens($scope) {
+            var unit = $('#unit-'+$scope.vm.unitId.toString());
+            return unit.find('.token-wrapper');
+        }
+
         function unitCursorDirectiveLink($scope, elem, attrs) {
             $scope.vm = $scope.cursorCtrl;
-            $scope.vm.cursorLocation = 0;
+            setCursorPosition($scope, 0);
             $scope.vm.cursorUpdated = false;
 
             $scope.$on('moveCursor', function(event, args) {
-
                 if(args.parentId.toString() === $scope.vm.unitId.toString() ){
 
-                    var unit = $('#unit-'+$scope.vm.unitId.toString());
-                    var unitTokens = unit.find('.token-wrapper');
-
-
-                    $scope.vm.cursorLocation = args.token.positionInUnit !== "Last" ? args.token.indexInParent : args.token.indexInParent+1;
+                    var unitTokens = getUnitTokens($scope);
+                    var location = args.token.positionInUnit !== "Last" ? args.token.indexInParent : args.token.indexInParent+1;
+                    setCursorPosition($scope, location);
 
                     $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
 
@@ -46,11 +52,10 @@
             });
 
             $scope.$on('resetCursor_'+$scope.vm.unitId, function(event, args) {
-                console.log("hey");
+                console.log("hey, reset cursor", $scope.vm.unitId);
 
-                var unit = $('#unit-'+$scope.vm.unitId.toString());
-                var unitTokens = unit.find('.token-wrapper');
-                $scope.vm.cursorLocation = 0;
+                var unitTokens = getUnitTokens($scope);
+                setCursorPosition($scope, 0);
                 $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
             });
 
@@ -59,13 +64,13 @@
                 // var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
 
                 if(args.token && args.parentId.toString() === $scope.vm.unitId.toString() ){
-                    var unit = $('#unit-'+$scope.vm.unitId.toString());
-                    var unitTokens = unit.find('.token-wrapper');
+                    var unitTokens = getUnitTokens($scope);
+
                     var unitNode = DataService.getUnitById(args.parentId);
                     var elementPos = unitNode.tokens.map(function(x) {return x.id; }).indexOf(args.token.id);
                     if(elementPos > -1){
                         !args.moveLeft ? $(elem).insertAfter( unitTokens[elementPos] ) : $(elem).insertBefore( unitTokens[elementPos] );
-                        !args.moveLeft ? $scope.vm.cursorLocation = elementPos + 1 : $scope.vm.cursorLocation = elementPos;
+                        !args.moveLeft ? setCursorPosition($scope, elementPos + 1) : setCursorPosition($scope, elementPos);
                     }
 
                 }
@@ -75,8 +80,7 @@
                 var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
                 if(args.unitId === $scope.vm.unitId.toString()  && !$scope.vm.cursorUpdated){
-                    var unit = $('#unit-'+$scope.vm.unitId.toString());
-                    var unitTokens = unit.find('.token-wrapper');
+                    var unitTokens = getUnitTokens($scope);
                     if($scope.vm.cursorLocation <= unitTokens.length){
                         var tokenUnit = DataService.getUnitById(args.unitId);
                         if($scope.vm.cursorLocation < 0 || $scope.vm.cursorLocation > tokenUnit.tokens.length){
@@ -87,12 +91,12 @@
                             $rootScope.$broadcast('tokenIsClicked',{token: token, parentId: $scope.vm.unitId, moveLeft: false});
                         }else{
                             $(elem).insertAfter( unitTokens[$scope.vm.cursorLocation] );
-                            $scope.vm.cursorLocation++;
+                            setCursorPosition($scope, $scope.vm.cursorLocation + 1);
                             !ctrlPressed ? selectionHandlerService.clearTokenList() : $scope.vm.cursorUpdated = true;
                         }
                         var unitToCheckIn = DataService.getUnitById(args.unitId);
 
-                        console.log(DataService.getUnitById(token.inUnit))
+                        //console.log(DataService.getUnitById(token.inUnit))
 
 
                         var sameParentTokens = unitToCheckIn.tokens.filter(function(element,index,array){
@@ -150,12 +154,10 @@
                             var parentUnit = DataService.getParentUnit(unit.annotation_unit_tree_id);
                             elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(sliceTokenArray[elementPos].id);
 
-                            $scope.vm.cursorLocation = elementPos+1;
+                            setCursorPosition($scope, elementPos+1);
                             $scope.vm.cursorLocation === unitTokens.length ? $(elem).insertAfter( unitTokens[unitTokens.length - 1] ) : $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
                         }
-
                     }
-
                 }else if($scope.vm.cursorUpdated){
                     $scope.vm.cursorUpdated = false;
                 }
@@ -165,11 +167,11 @@
                 var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
                 if(args.unitId === $scope.vm.unitId.toString() &&  !$scope.vm.cursorUpdated){
-                    var unit = $('#unit-'+$scope.vm.unitId.toString());
-                    var unitTokens = unit.find('.token-wrapper');
+                    var unitTokens = getUnitTokens($scope);
+
                     var doNotRemoveExistingToken = false;
                     if($scope.vm.cursorLocation > 0){
-                        $scope.vm.cursorLocation--;
+                        setCursorPosition($scope, $scope.vm.cursorLocation - 1);
                         var tokenUnit = DataService.getUnitById(args.unitId);
                         if($scope.vm.cursorLocation < 0 || $scope.vm.cursorLocation > tokenUnit.tokens.length){
                             return;
@@ -237,7 +239,7 @@
                             var parentUnit = DataService.getParentUnit(unit.annotation_unit_tree_id);
                             elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(sliceTokenArray[elementPos].id);
 
-                            $scope.vm.cursorLocation = elementPos;
+                            setCursorPosition($scope, elementPos);
                             $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
                         }
                     }
