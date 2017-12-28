@@ -16,13 +16,13 @@
             will change to the category name in the alert modal
         */
         var errorMasseges ={
-            FORBID_ANY_CHILD : 'category %NAME% cannot have any child.',
-            FORBID_CHILD : 'category %NAME_1% cannot have child with category %NAME_2%.',
-            FORBID_SIBLING: 'category %NAME_1% cannot have sibling with category %NAME_2%.',
-            REQUIRE_SIBLING: 'category %NAME_1% requires one of the following categories : %NAME_2% as a sibling.',
-            REQUIRE_CHILD: 'category %NAME_1% requires one of the following categories : %NAME_2% as a child.',
+            FORBID_ANY_CHILD : 'Category %NAME% cannot have any child.',
+            FORBID_CHILD : 'Category %NAME_1% cannot have child with category %NAME_2%.',
+            FORBID_SIBLING: 'Category %NAME_1% cannot have sibling with category %NAME_2%.',
+            REQUIRE_SIBLING: 'Category %NAME_1% requires one of the following categories : %NAME_2% as a sibling.',
+            REQUIRE_CHILD: 'Category %NAME_1% requires one of the following categories : %NAME_2% as a child.',
             UNIT_CONTAIN_ONLY_PUNCTUATIONS : 'You cannot create annotation unit from only punctuation tokens',
-            NOT_COMPLETE : "all non-punctuation tokens must either be in a unit of their own or in an unanalyzable unit.",
+            NOT_COMPLETE : "All non-punctuation tokens must either be in a unit of their own or in an unanalyzable unit.",
             UNIT_FORBID_SLOTTED_LAYER_RULE: "Both slots are already occupied.",
             SLOT_ONE_VIOLATION: "Annotaion unit %NAME_1% is missing a category at slot 1."
         };
