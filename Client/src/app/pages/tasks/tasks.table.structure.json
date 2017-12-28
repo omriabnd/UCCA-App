@@ -21,24 +21,24 @@
     "showInTable":true
   },
   {
-    "key":"obseleted_by",
-    "name":"Obseleted By",
+    "key":"obsoleted_by",
+    "name":"Obsoleted By",
     "order":15,
     "filter":true,
     "search":true,
     "type":"checkbox",
-    "placeholder":"Obseleted By...",
+    "placeholder":"Obsoleted By...",
     "value":"",
     "showInTable":true
   },
   {
-    "key":"parent_obseleted_by",
-    "name":"Parent Obseleted By",
+    "key":"parent_obsoleted_by",
+    "name":"Parent Obsoleted By",
     "order":16,
     "filter":true,
     "search":true,
     "type":"checkbox",
-    "placeholder":"Parent Obseleted By...",
+    "placeholder":"Parent Obsoleted By...",
     "value":"",
     "showInTable":true
   },
