@@ -47,6 +47,10 @@
         }else{
             defCtrl.definitionDetails.forbidAnyChild = false;
         }
+        
+        if($scope.index < 10 && !defCtrl.definitionDetails.shortcut_key){
+        	defCtrl.definitionDetails['shortcut_key'] = '1';
+        }
 
         function highLightSelectedWords(color) {
         	

@@ -17,7 +17,8 @@
                 childDirective: '@',
                 categories: '=',
                 control: '=',
-                tokens:'='
+                tokens:'=',
+                showParents:'='
             },
             link: annotationUnitDirectiveLink,
             controller: AnnotationUnitController,
@@ -50,6 +51,7 @@
             vm.dataBlock.parentUnitId = DataService.getParentUnitId(vm.dataBlock.annotation_unit_tree_id);
             vm.dataBlock.annotation_unit_tree_id !== "0" ? updateStartEndIndexForTokens(vm.dataBlock.tokens) : '';
 
+//            vm.showParents = dirCtrl.showParents;
         }
 
         function annotationUnitDirectiveLink($scope, elem, attrs,$rootScope) {
@@ -140,6 +142,9 @@
             }else{
             	""; //$scope.vm.dataBlock.gui_status = "HIDDEN";
             }
+            
+//            $scope.showParents = true;
+            
         }
 
         function isUnitHidden(vm){
@@ -279,7 +284,7 @@
                             		}
                             	})
                             	if(!relevant){
-                            		unit.categories[0].backgroundColor = "transparent";
+                            		unit.categories[0].backgroundColor = "gray";
                                 	unit.gui_status = "HIDDEN";
                             	}else{
 //                            		unit.gui_status = "OPEN";

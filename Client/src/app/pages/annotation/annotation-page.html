@@ -1,13 +1,13 @@
 <div class="annotation-page-container">
     <div class="col-xs-2 side-bar" keep-on-top ng-class="{'no-events': vm.inRemoteMode()}">
     	<!-- <div class="container">
-           <span>{{selectedTokens}}</span>
+           <span>{{showParents}}</span>
         </div> -->
         <div class="categories-container" ng-show="showParents">
             <categories-directive ng-repeat="category in vm.categories | filter: fromParentLayer  track by vm.categories.indexOf(category)" definition-details="category" definition-id="vm.categories.indexOf(category)"></categories-directive>
         </div>
         <div class="categories-container">
-            <categories-directive ng-repeat="category in vm.categories | filter: notFromParentLayer | orderBy: sortByPrototypes track by vm.categories.indexOf(category)" definition-details="category" definition-id="vm.categories.indexOf(category)"></categories-directive>
+            <categories-directive ng-repeat="category in vm.categories | filter: notFromParentLayer | orderBy: sortByPrototypes as sortedCategories track by vm.categories.indexOf(category)" definition-details="category" definition-id="vm.categories.indexOf(category)"></categories-directive>
         </div>
         <div class="utility-buttons-container">
             <utility-buttons-directive ng-repeat="definition in vm.definitions track by $index" definition-details="definition" definition-id="$index"></utility-buttons-directive>

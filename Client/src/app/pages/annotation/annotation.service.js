@@ -21,7 +21,7 @@
             assignAbbreviationToCategories: assignAbbreviationToCategories,
             assignNameToCategories: assignNameToCategories,
             toggleAnnotationUnitView: toggleAnnotationUnitView,
-            isRTL: isRTL,
+            isRTL: isRTL
         };
 
         return textService;
@@ -104,7 +104,7 @@
                 rtlChars    = '\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC',
                 rtlDirCheck = new RegExp('^[^'+ltrChars+']*['+rtlChars+']');
             return rtlDirCheck.test(s);
-        };
+        }
 
     }
 

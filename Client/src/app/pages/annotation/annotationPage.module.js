@@ -65,7 +65,9 @@
 
                 if(!!currentLayer.parent){
                     // this is how we will know to style this category in derived layer
-                    allCategories.forEach(function(cat){return cat.refinementCategory = true})
+                    allCategories.forEach(function(cat){
+                    	cat.refinementCategory = true;
+                    	})
                 }
 
                 var refinedCategories = [];
@@ -95,10 +97,11 @@
                             allCategories.move(index,0)
                         }
                     })
-                }
-
+                }                
+                
                 allCategories.forEach(function(category,index){
                     category['callbackFunction'] = 'toggleCategory';
+                    
                     if(category.parent && category.parent.id){
                         // move the child category to be after its parent
                         // allCategories.move(index,allCategories.findIndex(cat => cat.id==category.parent.id)+1);
@@ -144,6 +147,8 @@
                 
                 $rootScope.isSlottedLayerProject = DataService.currentTask.project.layer.slotted;
                 $rootScope.isRefinementLayerProject = DataService.currentTask.project.layer.type === "REFINEMENT";
+                
+//              	$rootScope.showParents = true;
                 
                 if(!!DataService.currentTask.annotation_units){
                     DataService.categories = allCategories;
