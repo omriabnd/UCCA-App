@@ -3,6 +3,24 @@
 (function () {
   'use strict';
 
+  angular.module('zAdmin.pages').filter('customFilter', ['$parse', function($parse) {
+    return function(items, filters) {
+    	console.log("### custom filter")
+        var itemsLeft = items.slice();
+
+        Object.keys(filters).forEach(function(model) {
+            var value = filters[model],
+                getter = $parse(model);
+
+            itemsLeft = itemsLeft.filter(function(item) {
+                return getter(item) === value;
+            });
+        });
+
+        return itemsLeft;
+    };
+}])
+
   angular.module('zAdmin.pages.tables', [])
     .config(routeConfig);
 

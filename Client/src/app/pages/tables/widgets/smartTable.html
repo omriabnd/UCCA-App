@@ -7,7 +7,7 @@
     </label>
   </div>
   <span class="total-results" ng-if="vm.$totalResults">Total Results: {{vm.$totalResults}}<sup ng-if="vm.smartTableDataSafe.length < vm.$totalResults" title="There is more than 100 assets">*</sup></span>
-  <table class="table" st-table="vm.smartTableData" st-safe-src="vm.smartTableDataSafe">
+  <table class="table" st-table="vm.smartTableData" st-safe-src="vm.smartTableDataSafe" st-set-filter="customFilter">
     <thead>
     <tr class="sortable ">
       <th st-sort="{{header.key}}" ng-repeat="header in vm.smartTableStructure track by $index" ng-if="header.showInTable">{{::header.name}}</th>
