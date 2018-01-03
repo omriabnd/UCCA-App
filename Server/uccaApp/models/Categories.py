@@ -11,6 +11,7 @@ class Categories(models.Model):
     description = models.CharField(max_length=Constants.DESCRIPTION_MAX_LENGTH)
     tooltip = models.CharField(max_length=Constants.TOOLTIPS_MAX_LENGTH)
     is_default = models.NullBooleanField(blank=True,null=True)
+    is_metacategory = models.NullBooleanField(blank=True,null=True)
     abbreviation = models.CharField(null=True,blank=True,max_length=3)
     created_by = models.ForeignKey(User,null=True,blank=True)
     is_active = models.BooleanField(default=True)
