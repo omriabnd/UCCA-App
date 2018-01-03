@@ -42,8 +42,11 @@
                 if(args.parentId.toString() === $scope.vm.unitId.toString() ){
 
                     var unitTokens = getUnitTokens($scope);
-                    var location = args.token.positionInUnit !== "Last" ? args.token.indexInParent : args.token.indexInParent+1;
-                    setCursorPosition($scope, location);
+                    // var location = args.token.positionInUnit !== "Last" ? args.token.indexInParent : args.token.indexInParent+1; //old code
+                    // setCursorPosition($scope, location);
+                    if (args.token) {
+                        setCursorPosition($scope, args.token.indexInParent);
+                    }
 
                     $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
 
