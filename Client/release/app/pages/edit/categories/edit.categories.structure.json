@@ -65,6 +65,17 @@
     "showInTable":true
   },
   {
+    "key":"is_metacategory",
+    "name":"Is Meta Category",
+    "order":15,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Is Meta Category...",
+    "value":"",
+    "showInTable":true
+  },
+    {
     "key":"created_by",
     "hideInAddNewAssetMode":true,
     "name":"Created by",
