@@ -5,7 +5,9 @@
 				'childCategory':defCtrl.definitionDetails.parent != null,
                 'forbid-any-child': defCtrl.definitionDetails.forbidAnyChild
 			}">
-    <span class="definition-color" id="definition-color-{{defCtrl.definitionId}}" ng-style="{'color': defCtrl.definitionDetails.color}"><span ng-show="!defCtrl.definitionDetails.fromParentLayer">{{defCtrl.definitionDetails.shortcut_key}}</span></span>
+  <!--    <span class="definition-color" id="definition-color-{{defCtrl.definitionId}}" ng-style="{'color': defCtrl.definitionDetails.color}"><span ng-show="!defCtrl.definitionDetails.fromParentLayer">{{defCtrl.definitionDetails.shortcut_key}}</span></span>-->
+  <span class="definition-color" id="definition-color-{{defCtrl.definitionId}}" ng-style="{'color': defCtrl.definitionDetails.color}"><span ng-show="!defCtrl.definitionDetails.fromParentLayer">{{defCtrl.definitionDetails.shortcut_key}} {{defCtrl.definitionDetails.index + 1}}</span></span>
+  
     <!-- <span class="text" ng-style="{'color': defCtrl.definitionDetails.color}">{{defCtrl.definitionDetails.shortcut_key}}</span>
     <!--  </span> -->
     <button class="text-wrapper" 

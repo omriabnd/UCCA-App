@@ -1,4 +1,3 @@
-import pdb
 from rest_framework import serializers
 
 from uccaApp.models import Annotation_Remote_Units_Annotation_Units

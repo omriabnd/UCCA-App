@@ -313,10 +313,11 @@
                   $rootScope.$broadcast("ResetSuccess");
               }
     	  }
-    	  
+
+          // bind the top 9 sorted categories with the keyboard shortcuts 1-9
     	  for (i=0; i<9; i++){
-    		  var hotkey = "" + (i+1);
-    		  HotKeysManager.addHotKey(hotkey);
+    	      var hotkey = "" + (i+1);
+    	      HotKeysManager.addHotKey(hotkey);
               hotkeys.del(hotkey);
               hotkeys.add({
                       combo: hotkey,

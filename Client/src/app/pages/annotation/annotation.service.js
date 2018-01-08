@@ -74,6 +74,9 @@
             categories.forEach(function(category, index){
                 category.color = ENV_CONST.CATEGORIES_COLORS[index % ENV_CONST.CATEGORIES_COLORS.length].color
                 category.backgroundColor = ENV_CONST.CATEGORIES_COLORS[index % ENV_CONST.CATEGORIES_COLORS.length].backgroundColor
+                if (index < 9) {
+                    category.index = index
+                }
             })
         }
 
