@@ -617,7 +617,7 @@
                 annotation_unit_tree_id : treeNode.unitType === 'REMOTE' ? treeNode.remote_original_id : treeNode.annotation_unit_tree_id.toString(),
                 task_id: DataService.currentTask.id.toString(),
                 comment: treeNode.comment || '',
-                categories: angular.copy(filterCategoriesAtt(treeNode.categories) || []),
+                categories: filterCategoriesAtt(angular.copy(treeNode.categories)) || [],
                 parent_id: treeNode.unitType === 'REMOTE' ? DataService.getParentUnitId(treeNode.annotation_unit_tree_id) : DataService.getParentUnitId(treeNode.annotation_unit_tree_id),
                 gui_status : treeNode.gui_status || "OPEN",
                 type: angular.copy(treeNode.unitType.toUpperCase()),
