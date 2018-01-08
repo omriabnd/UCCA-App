@@ -23,6 +23,11 @@
                 <i class="socicon unit-buttons">}</i>
                 <span class="comment-notification" ng-if="dirCtrl.dataBlock.comment !=''">!</span>
             </a>
+            <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Cluster" ng-click="vm.addClusterToUnit(dirCtrl.annotationUnitTreeId,vm);">
+              <i class="socicon unit-buttons">}</i>
+              <span class="comment-notification" ng-if="dirCtrl.dataBlock.cluster !=''">!</span>
+            </a>
+
             <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Add Remote Unit">
                 <i class="ion-plus-round unit-buttons" ng-click="vm.switchToRemoteMode(vm,$event)"></i>
             </a>

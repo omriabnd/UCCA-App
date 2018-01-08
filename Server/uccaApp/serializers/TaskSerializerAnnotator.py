@@ -211,6 +211,8 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             annotation_unit.task_id = instance
             annotation_unit.type = au['type']
             annotation_unit.comment = au['comment']
+            annotation_unit.cluster = au['cluster']
+            
             annotation_unit.is_remote_copy = au['is_remote_copy']
 
             parent_id = None

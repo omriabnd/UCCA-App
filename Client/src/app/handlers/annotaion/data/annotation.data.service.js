@@ -262,6 +262,8 @@
 
 
                 newObject.comment = newObject.comment || "";
+                newObject.cluster = newObject.cluster || "";
+                
 
                 var units = [];
 
@@ -617,6 +619,7 @@
                 annotation_unit_tree_id : treeNode.unitType === 'REMOTE' ? treeNode.remote_original_id : treeNode.annotation_unit_tree_id.toString(),
                 task_id: DataService.currentTask.id.toString(),
                 comment: treeNode.comment || '',
+                cluster: treeNode.cluster || '',
                 categories: filterCategoriesAtt(angular.copy(treeNode.categories)) || [],
                 parent_id: treeNode.unitType === 'REMOTE' ? DataService.getParentUnitId(treeNode.annotation_unit_tree_id) : DataService.getParentUnitId(treeNode.annotation_unit_tree_id),
                 gui_status : treeNode.gui_status || "OPEN",
@@ -779,6 +782,7 @@
                 DataService.currentTask.annotation_units[i].tokens = DataService.currentTask.annotation_units[i].tokensCopy;
 
             }
+            console.log(DataService.currentTask);
             return apiService.annotation.putTaskData(mode,DataService.currentTask).then(function(res){
                 $rootScope.$broadcast("ResetSuccess");
                 return res;

@@ -39,6 +39,7 @@
             vm.toggleMouseUpDown = toggleMouseUpDown;
             vm.checkRestrictionForCurrentUnit = checkRestrictionForCurrentUnit;
             vm.addCommentToUnit = addCommentToUnit;
+            vm.addClusterToUnit = addClusterToUnit;
             vm.unitIsSelected =unitIsSelected;
             vm.switchToRemoteMode = switchToRemoteMode;
             vm.toggleAnnotationUnitView = toggleAnnotationUnitView;
@@ -175,6 +176,10 @@
             selectionHandlerService.updateSelectedUnit(unitId);
             open('app/pages/annotation/templates/commentOnUnitModal.html','sm','',vm)
         }
+        function addClusterToUnit(unitId,vm){
+            selectionHandlerService.updateSelectedUnit(unitId);
+            open('app/pages/annotation/templates/clusterOnUnitModal.html','sm','',vm)
+        }
         function open(page, size,message,vm) {
             var remoteOriginalId = $rootScope.clckedLine;
             var viewModal = vm;
@@ -186,6 +191,7 @@
                     $scope.vm = viewModal;
                     if(vm.dataBlock){
                         $scope.comment = $scope.vm.dataBlock.comment;
+                        $scope.cluster = $scope.vm.dataBlock.cluster;
                     }
 
                     $scope.message = message;
@@ -193,6 +199,12 @@
                     $scope.saveComment = function(){
                         $scope.vm.dataBlock.comment = $scope.comment;
                     }
+                    
+                    $scope.saveCluster = function(){
+                        $scope.vm.dataBlock.cluster = $scope.cluster;
+                        console.log('now');
+                    }
+
 
                     var remoteOriginalTreeId = remoteOriginalId;
                     $scope.deleteAllRemoteInstanceOfThisUnit = function(){
@@ -594,6 +606,7 @@
                     numOfAnnotationUnits: 0,
                     categories: selectionHandlerService.getCategoryForRemote() || [], // {color:defCtrl.definitionDetails.backgroundColor}
                     comment:"",
+                    cluster:"",
                     rowShape:'',
                     unitType:'REMOTE',
                     orderNumber: '-1',
