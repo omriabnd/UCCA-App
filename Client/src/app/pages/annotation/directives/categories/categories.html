@@ -6,7 +6,7 @@
                 'forbid-any-child': defCtrl.definitionDetails.forbidAnyChild
 			}">
   <!--    <span class="definition-color" id="definition-color-{{defCtrl.definitionId}}" ng-style="{'color': defCtrl.definitionDetails.color}"><span ng-show="!defCtrl.definitionDetails.fromParentLayer">{{defCtrl.definitionDetails.shortcut_key}}</span></span>-->
-  <span class="definition-color" id="definition-color-{{defCtrl.definitionId}}" ng-style="{'color': defCtrl.definitionDetails.color}"><span ng-show="!defCtrl.definitionDetails.fromParentLayer">{{defCtrl.definitionDetails.shortcut_key}} {{defCtrl.definitionDetails.index + 1}}</span></span>
+  <span class="definition-color" id="definition-color-{{defCtrl.definitionId}}" ng-style="{'color': defCtrl.definitionDetails.color}"><span style=ng-show="!defCtrl.definitionDetails.fromParentLayer">{{defCtrl.definitionDetails.shortcut_key}}</span></span>
   
     <!-- <span class="text" ng-style="{'color': defCtrl.definitionDetails.color}">{{defCtrl.definitionDetails.shortcut_key}}</span>
     <!--  </span> -->
@@ -14,7 +14,7 @@
 		ng-disabled="defCtrl.definitionDetails.fromParentLayer"
     	ng-click="defCtrl.highLightSelectedWords(defCtrl.definitionDetails.backgroundColor)">
         <span class="text">
-            {{defCtrl.definitionDetails.name}} {{!!defCtrl.definitionDetails.abbreviation ? "(" + defCtrl.definitionDetails.abbreviation + ")" : ""}}
+          {{defCtrl.definitionDetails.index + 1}}. {{defCtrl.definitionDetails.name}} {{!!defCtrl.definitionDetails.abbreviation ? "(" + defCtrl.definitionDetails.abbreviation + ")" : ""}}
             <!-- <b ng-if="defCtrl.definitionDetails.shortcut_key">[ {{defCtrl.definitionDetails.shortcut_key}} ]</b> -->
         </span>
         
