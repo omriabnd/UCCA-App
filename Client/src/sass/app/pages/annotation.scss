@@ -613,14 +613,14 @@ textarea.unit-comment-text {
     }
   }
   .side-bar {
-      direction: rtl;
+      direction: ltr;
       max-height: 700px;
       overflow: auto;
       categories-directive {
           direction: ltr;
       }
       .childCategory {
-          width: 90%;
+          width: 100%;
       }
       .text-wrapper{
         text-align: center;
