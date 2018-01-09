@@ -40,7 +40,7 @@
             vm.checkRestrictionForCurrentUnit = checkRestrictionForCurrentUnit;
             vm.addCommentToUnit = addCommentToUnit;
             vm.addClusterToUnit = addClusterToUnit;
-            vm.unitIsSelected =unitIsSelected;
+            vm.unitIsSelected = unitIsSelected;
             vm.switchToRemoteMode = switchToRemoteMode;
             vm.toggleAnnotationUnitView = toggleAnnotationUnitView;
             vm.isUnitCollaped = isUnitCollaped;
@@ -52,6 +52,8 @@
             vm.dataBlock.parentUnitId = DataService.getParentUnitId(vm.dataBlock.annotation_unit_tree_id);
             vm.dataBlock.annotation_unit_tree_id !== "0" ? updateStartEndIndexForTokens(vm.dataBlock.tokens) : '';
 
+            vm.dataBlock.categoriesTooltip = categoriesTooltip(vm);
+            
 //            vm.showParents = dirCtrl.showParents;
         }
 
@@ -150,6 +152,14 @@
 
         function isUnitHidden(vm){
             return vm.gui_status === "HIDDEN";
+        }
+
+        function categoriesTooltip(vm){
+            var output = '';
+            for (var index in vm.dataBlock.categories) {
+                output = output + ' ' + vm.dataBlock.categories[index].name;
+            }
+            return output;
         }
 
         function toggleAnnotationUnitView(vm){
