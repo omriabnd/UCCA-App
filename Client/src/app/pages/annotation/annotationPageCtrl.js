@@ -27,6 +27,7 @@
       vm.resetAllAnnotations = resetAllAnnotations;
       vm.inRemoteMode = inRemoteMode;
       vm.addUserComment = addUserComment;
+      vm.viewUserManual = viewUserManual;
       vm.toggleParents = toggleParents;
       vm.showParents = $scope.showParents;
       vm.sceneFunctionRoles = ENV_CONST.SCENE_FUNCTION_ROLES;
@@ -189,6 +190,12 @@
       function addUserComment(){
           open('app/pages/annotation/templates/commentOnUnitModal.html','sm','',vm)
       }
+
+      function viewUserManual(){
+          open('app/pages/annotation/templates/user_manual_v1.html','lg','',vm)
+      }
+
+      
       function setFontSize(fontSize){
           $('.main-body').css({'font-size':fontSize.size+'em'})
       }

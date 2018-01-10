@@ -89,6 +89,7 @@
                     var parentUnit = DataService.getUnitById(DataService.getParentUnitId($scope.vm.dataBlock.annotation_unit_tree_id ));
                     paintTokens(parentUnit.tokens,parentUnit);
                 }
+                $scope.vm.dataBlock.categoriesTooltip = categoriesTooltip($scope.vm);
             });
 
             $scope.$on('checkRestrictionForCurrentUnit', function(event, args) {

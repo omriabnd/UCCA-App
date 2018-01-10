@@ -140,30 +140,30 @@
 				tooltip:"Alt+x: Reset annotation",
 				executeFunction:"resetAllAnnotations"
 			},
-			/*{
-				id:5,
-				name:"Help",
-				tooltip:"?: Help",
-				executeFunction:"help"
-			},
 			{
 				id:6,
 				name:"Settings",
 				tooltip:"Alt+t: Settings",
 				executeFunction:"openSettings"
-			},*/
+			},
 			{
 				id:8,
 				name:"Main Menu",
 				tooltip:"Alt+m: Go To Main Menu",
 				executeFunction:"goToMainMenu"
 			},
-            {
+                        {
 				id:9,
 				name:"User Comment",
 				tooltip:"Alt+c: Add user comment",
 				executeFunction:"addUserComment",
-                showWhenFull: true
+                                showWhenFull: true
+                        },
+                        {
+				id:10,
+				name:"Help",
+				tooltip:"?: Help",
+				executeFunction:"viewUserManual"
 			}
 		],
 		PASSAGE_TYPE:{
