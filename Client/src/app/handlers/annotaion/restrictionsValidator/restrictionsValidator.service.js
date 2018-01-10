@@ -24,7 +24,9 @@
             UNIT_CONTAIN_ONLY_PUNCTUATIONS : 'You cannot create annotation unit from only punctuation tokens',
             NOT_COMPLETE : "all non-punctuation tokens must either be in a unit of their own or in an unanalyzable unit.",
             UNIT_FORBID_SLOTTED_LAYER_RULE: "Both slots are already occupied.",
-            SLOT_ONE_VIOLATION: "Annotaion unit %NAME_1% is missing a category at slot 1."
+            SLOT_ONE_VIOLATION: "Annotation unit %NAME_1% is missing a category at slot 1.",
+            NONRELEVANT_UNIT: "Annotation unit %NAME_1% with category %NAME_2% is not being refined in this layer.",
+            NONRELEVANT_PARENT_CATEGORY: "Category %NAME_1% is not a valid refinement of category %NAME_2%."
         };
         var selectionHandlerServiceProvider;
         var restrictionsTables;
@@ -140,7 +142,43 @@
                 showErrorModal(msg);
                 return false;
             }
+            result = checkIfUnitIsRefinableInRefinementLayer(newAnnotationUnit, newCategory);
+            if(result){
+            	var replacements  = {"%NAME_1%":result.unit, "%NAME_2%":result.category};
+                var msg = errorMasseges['NONRELEVANT_UNIT'].replace(/%\w+%/g, function(all) {
+                    return replacements[all] || all;
+                });
+                showErrorModal(msg);
+                return false;
+            }
+            result = checkIfRefinementCategoryIsChildOfParentCategory(newAnnotationUnit, newCategory);
+            if(result){
+            	var replacements  = {"%NAME_1%":result.refinement, "%NAME_2%":result.parent};
+                var msg = errorMasseges['NONRELEVANT_PARENT_CATEGORY'].replace(/%\w+%/g, function(all) {
+                    return replacements[all] || all;
+                });
+                showErrorModal(msg);
+                return false;
+            }
             return true;
+        }
+        
+        function checkIfUnitIsRefinableInRefinementLayer(unit, newCategory){
+        	var parentCategory = unit.categories[0];
+        	if($rootScope.isRefinementLayerProject && !!newCategory && !newCategory.fromParentLayer && !parentCategory.refinedCategory){
+        		return {"unit": unit.annotation_unit_tree_id, "category": parentCategory.name};
+        	}else{
+        		return null;
+        	}
+        }
+        
+        function checkIfRefinementCategoryIsChildOfParentCategory(unit, newCategory){
+        	var parentCategory = unit.categories[0];
+        	if($rootScope.isRefinementLayerProject && !!newCategory && !newCategory.fromParentLayer && parentCategory.id !== newCategory.parent.id){
+        		return {"refinement": newCategory.name, "parent": parentCategory.name};
+        	}else{
+        		return null;
+        	}
         }
         
         function checkSlottedLayerProjectRestriction(unit){
