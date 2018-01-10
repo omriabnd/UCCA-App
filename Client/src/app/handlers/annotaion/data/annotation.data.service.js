@@ -88,6 +88,7 @@
             DataService.currentTask.tokens.forEach(function(token){
                 DataService.hashTables.tokensHashTable[token.id] = token;
             });
+                        
             DataService.categories.forEach(function(category){
                 DataService.hashTables.categoriesHashTable[category.id] = category;
             });

@@ -137,6 +137,8 @@
                 
                 
                 taskResponse.tokens = replaceEnterWithBr(taskResponse.tokens);
+
+
                 DataService.currentTask = taskResponse;
 
                 restrictionsValidatorService.initRestrictionsTables(taskResponse.project.layer.restrictions,selectionHandlerService);
@@ -147,8 +149,14 @@
                 
                 $rootScope.isSlottedLayerProject = DataService.currentTask.project.layer.slotted;
                 $rootScope.isRefinementLayerProject = DataService.currentTask.project.layer.type === "REFINEMENT";
-                
-//              	$rootScope.showParents = true;
+
+                // we here add the createdByTokenization field for each token
+                // first, sort tokens by start_index
+                DataService.currentTask.tokens.sort(function(t1,t2){return t1.start_index - t2.start_index;});
+                // second, define createdByTokenization
+                for (var index=1; index < DataService.currentTask.tokens.length; index++) {
+                    DataService.currentTask.tokens[index].createdByTokenization = DataService.currentTask.tokens[index].require_annotation && (DataService.currentTask.tokens[index].start_index == DataService.currentTask.tokens[index-1].end_index+1);
+                }
                 
                 if(!!DataService.currentTask.annotation_units){
                     DataService.categories = allCategories;

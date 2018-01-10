@@ -36,6 +36,11 @@
       color: white;
       background-color: #337ab7;
     }
+
+    .token.created-by-tokenization::before {
+      content: "•";
+      color:red;
+    }                           
   }
 
   .remote-unit {
