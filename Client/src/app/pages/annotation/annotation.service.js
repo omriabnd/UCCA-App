@@ -33,7 +33,7 @@
         function getAnnotationTask(task_id){
             return apiService.annotation.getTaskData(task_id).then(function(response){return response.data});
         }
-
+        
         function getProjectLayer(layer_id){
             return apiService.annotation.getProjectLayer(layer_id).then(function(response){return response.data});
         }
@@ -41,7 +41,10 @@
         function assignAbbreviationToCategories(categories){
             var categoriesHash = {}
             categories.forEach(function(category){
-                if(categoriesHash[category.abbreviation]){
+                if(category.abbreviation == undefined) {
+                    category.abbreviation = '';
+                }
+                else if(categoriesHash[category.abbreviation]){
                     categoriesHash[category.abbreviation].category.abbreviation += (categoriesHash[category.abbreviation].times)
                     categoriesHash[category.abbreviation].times += 1;
                     category.abbreviation += (categoriesHash[category.abbreviation].times)
