@@ -47,7 +47,7 @@
             return AnnotationTextService.getAnnotationTask($stateParams.taskId).then(function(taskResponse){
                 var layer_id = taskResponse.project.layer.id;
 
-                var currentLayer = taskResponse.project.layer
+                var currentLayer = taskResponse.project.layer;
                 var allCategories = currentLayer.categories;
                 allCategories.sort(function(a, b) {
                 	  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
@@ -72,6 +72,11 @@
 
                 var refinedCategories = [];
                 var refinementCategories = allCategories;
+
+                
+                currentLayer.categories.forEach(function(category){
+	            category.fromParentLayer = false;                    
+                })
                 
                 while( !!currentLayer.parent ){
                     currentLayer.parent.categories.forEach(function(category){

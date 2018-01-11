@@ -14,7 +14,8 @@
                 color:'=',
                 abbreviation:'=',
                 name:'=',
-                categoryId:'='
+                categoryId:'=',
+                fromParentLayer:'='
             },
             link: unitCategoryDirectiveLink,
             replace:false
