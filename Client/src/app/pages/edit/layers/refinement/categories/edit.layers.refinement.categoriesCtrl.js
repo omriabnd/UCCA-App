@@ -48,10 +48,11 @@
                 "abbreviation":obj.abbreviation
 
             };
-            var itemNotAlreadySelected = Core.findItemInArrayById(LayerDetails.id,editRefinementLayerService.get('categories'));
-            if(itemNotAlreadySelected){
+            // DEBUG
+            //var itemNotAlreadySelected = Core.findItemInArrayById(LayerDetails.id,editRefinementLayerService.get('categories'));
+            //if(itemNotAlreadySelected){
                 promptHotKeySelectionModal(obj,LayerDetails,parentController);
-            }
+            //}
         }
 
         function promptHotKeySelectionModal(obj,LayerDetails,parentCtrl){

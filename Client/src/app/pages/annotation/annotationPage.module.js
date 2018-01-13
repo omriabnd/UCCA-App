@@ -177,7 +177,7 @@
                            
                            currentUnit.categories.sort(function(a,b){
                                if(a.slot > 2 || b.slot > 2){
-                                  return 1
+                                   return 1;
                                }
                                else if(a.slot > b.slot){
                                   return 1;

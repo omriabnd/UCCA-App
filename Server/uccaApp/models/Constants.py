@@ -72,7 +72,7 @@ TASK_STATUS_JSON = {
     'SUBMITTED':'SUBMITTED',
     'REJECTED':'REJECTED'
 }
-SAVE_TYPES = ['draft','submit']
+SAVE_TYPES = ['draft','submit','reset']
 
 ANNOTATION_UNIT_TYPES = [
     ('IMPLICIT','REGULAR'),
