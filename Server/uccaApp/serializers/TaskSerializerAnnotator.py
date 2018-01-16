@@ -168,6 +168,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
 
     def reset(self,instance):
         instance.status = Constants.TASK_STATUS_JSON['NOT_STARTED']
+        instance.user_comment = ''
         if (instance.type == Constants.TASK_TYPES_JSON['TOKENIZATION']):
             self.reset_tokenization_task(instance)
         else:

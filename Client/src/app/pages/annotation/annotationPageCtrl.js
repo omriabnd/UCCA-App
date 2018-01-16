@@ -297,10 +297,13 @@
                   $rootScope.resetAllAnnotations = true;
                   console.log("reset All Annotations");
                   DataService.resetTree().then(function(res){
-                      if(res === 'Success'){
-                        selectionHandlerService.updateSelectedUnit("0",false);
-                        $rootScope.$broadcast("ResetFromBarSuccess",{unitId: "0"});                        
+                      if (res) {
+                          window.location.reload(true);
+                          //$state.transitionTo($state.current, $state.$current.params, { reload: true, inherit: true, notify: true });
                       }
+                      //if(res === 'Success'){
+                      //    selectionHandlerService.updateSelectedUnit("0",false);
+                      //    $rootScope.$broadcast("ResetFromBarSuccess",{unitId: "0"});                                              //}
                   })
               }
           })

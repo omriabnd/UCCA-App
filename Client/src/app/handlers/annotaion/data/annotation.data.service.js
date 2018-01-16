@@ -115,6 +115,11 @@
         }
 
         function resetTree(){
+            return apiService.annotation.putTaskData('reset',DataService.currentTask).then(function(res){
+                return res;
+            });
+
+            /*
             return $q(function(resolve, reject) {
                 try{
                     $rootScope.$broadcast("DeleteSuccess",{reset:true});
@@ -132,7 +137,7 @@
                     return resolve('Failed');
                 }
             });
-
+            */
         }
 
         function toggleCategoryForUnit(unitId,category){
