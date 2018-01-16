@@ -166,6 +166,9 @@
                 $rootScope.currentVm = vm;
             }
             var unitIsSelect = selectionHandlerService.getSelectedUnitId() === vm.dataBlock.annotation_unit_tree_id;
+            if (selectionHandlerService.getSelectedUnitId() == 0) {
+                highlightTokensInUnit0([]);
+            }
             if (unitIsSelect) {
                 highlightTokensInUnit0(vm.tokens);
             }

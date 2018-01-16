@@ -23,6 +23,9 @@
       overflow: hidden;
   }
 
+  span.token.ng-binding.bold {
+    font-weight: bold;
+  }
 
   .unit-cursor{
     &.no_cursor{
