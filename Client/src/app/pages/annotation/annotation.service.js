@@ -38,6 +38,7 @@
             return apiService.annotation.getProjectLayer(layer_id).then(function(response){return response.data});
         }
         
+        
         function assignAbbreviationToCategories(categories){
             var categoriesHash = {}
             categories.forEach(function(category){

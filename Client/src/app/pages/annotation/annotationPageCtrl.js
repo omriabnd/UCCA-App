@@ -29,7 +29,7 @@
       vm.addUserComment = addUserComment;
       vm.viewUserManual = viewUserManual;
       vm.toggleParents = toggleParents;
-      vm.showParents = $scope.showParents;
+//      vm.showParents = $scope.showParents;
       vm.sceneFunctionRoles = ENV_CONST.SCENE_FUNCTION_ROLES;
       vm.defaultCategoryHotkeys = ENV_CONST.DEFAULT_CATEGORY_HOTKEYS;
 //      $scope.toggleParents = DataService.toggleParents;
@@ -122,35 +122,19 @@
 //      		return ind;
 //      	}
       }
-
-      //$scope.filterByRelevance = function(cat){
-      //    return true;
-          // commeting out Jakob's previous condition
-          // return !cat.fromParentLayer;
-      //}
-      $scope.notFromParentLayer = function(cat){
-    	  return !cat.fromParentLayer;
-      }
       
       $scope.fromParentLayer = function(cat){
     	  return cat.fromParentLayer;
       }
       
-      function toggleParents(){
-
-          console.log($scope.sortedCategories);
-    	  
-		  $scope.showParents = !$scope.showParents;
-		  DataService.currentTask.annotation_units.forEach(function(unit){
-	    	  unit.categories.forEach(function(category) {
-	    		  if(category.fromParentLayer){
-	    			  category.show = !category.show;
-	    			  }
-	    	  });
-		  })
+      $scope.notFromParentLayer = function(cat){
+    	  return !cat.fromParentLayer;
       }
       
-//      $scope.showParents = true;
+      function toggleParents(){
+		  $scope.showParents = !$scope.showParents;
+		  $rootScope.$broadcast("ToggleParents",{});
+      }
       
 
       function init(){
