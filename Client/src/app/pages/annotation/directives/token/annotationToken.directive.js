@@ -47,9 +47,16 @@
                 }
             });
 
+            $scope.$on('highlightTokens', function(event, args) {
+                $scope.vm.token.highlightStyle = ''; // reset pre highlight
+                for (var i=0; i<args.tokens.length;i++)
+                {
+                    if ($scope.vm.token.id === args.tokens[i].id) {
+                        $scope.vm.token.highlightStyle = "font-weight: bold;";
+                    }
+                }
+            })
         }
-
-
 
 
         function AnnotationTokenController() {

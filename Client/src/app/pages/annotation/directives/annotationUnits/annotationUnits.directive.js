@@ -45,6 +45,7 @@
             vm.isUnitCollaped = isUnitCollaped;
             vm.isUnitHidden = isUnitHidden;
             vm.toggleMouseUp = toggleMouseUp;
+            vm.highlightTokensInUnit0 = highlightTokensInUnit0;
             vm.dataBlock = DataService.getUnitById(vm.unit.annotation_unit_tree_id);
 
             vm.dataBlock['cursorLocation'] = 0;
@@ -181,8 +182,20 @@
             if(selectionHandlerService.getSelectedUnitId() === vm.dataBlock.annotation_unit_tree_id){
                 $rootScope.currentVm = vm;
             }
-            return selectionHandlerService.getSelectedUnitId() === vm.dataBlock.annotation_unit_tree_id;
+            var unitIsSelect = selectionHandlerService.getSelectedUnitId() === vm.dataBlock.annotation_unit_tree_id;
+            if (selectionHandlerService.getSelectedUnitId() == 0) {
+                highlightTokensInUnit0([]);
+            }
+            if (unitIsSelect) {
+                highlightTokensInUnit0(vm.tokens);
+            }
+            return unitIsSelect;
         }
+
+        function highlightTokensInUnit0(tokens) {
+            $rootScope.$broadcast('highlightTokens',{tokens: tokens});
+        }
+
         function addCommentToUnit(unitId,vm){
             selectionHandlerService.updateSelectedUnit(unitId);
             open('app/pages/annotation/templates/commentOnUnitModal.html','sm','',vm)
