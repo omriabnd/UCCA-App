@@ -9,7 +9,7 @@
         </i>
     </div>
     <span class="unit-id" ng-if="vm.dataBlock.annotation_unit_tree_id !== '0'">{{dirCtrl.annotationUnitTreeId}}</span>
-    <unit-category ng-repeat="category in vm.unit.categories" ng-if="!category.fromParentLayer" color="category.backgroundColor" category-id="category.id" abbreviation="category.abbreviation" name="category.name"></unit-category>
+    <unit-category ng-repeat="category in vm.unit.categories" ng-if="!category.fromParentLayer || showParents" color="category.backgroundColor" category-id="category.id" abbreviation="category.abbreviation" name="category.name" from-parent-layer="category.fromParentLayer"></unit-category>
     <unit-cursor unit-id="dirCtrl.annotationUnitTreeId"></unit-cursor>
     <div class="row control-buttons-container" ng-show="dirCtrl.annotationUnitTreeId != 0">
         <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Delete">
