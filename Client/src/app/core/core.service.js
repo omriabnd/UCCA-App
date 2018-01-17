@@ -37,9 +37,10 @@
 			parseSmartTableColumnData:parseSmartTableColumnData,
 			viewOnlyRuleOk:viewOnlyRuleOk,
 			promptAlert:promptAlert,
-            isEmptyObject:isEmptyObject,
-            scrollToUnit:scrollToUnit,
-            openAllUnits:openAllUnits
+                    isEmptyObject:isEmptyObject,
+                    scrollToUnit:scrollToUnit,
+                    scrollToTop:scrollToTop,
+                    openAllUnits:openAllUnits
 		};
 		
 		return core;
@@ -61,6 +62,14 @@
             }
             return annotationUnit;
         }
+
+            function scrollToTop() {
+                $timeout(function(){
+                    $rootScope.lastScrollPosMain = 0;
+                    $('html, body').scrollTop(0);
+                });
+            }
+            
         function scrollToUnit(unitID) {
             $timeout(function(){
                 try{
@@ -76,7 +85,7 @@
                         $('html, body').scrollTop(newOffset);
                     }                    
                 }catch(e){
-                    console.log("Scrool To unit failed : ", e);
+                    console.log("Scroll to unit failed : ", e);
                 }
                 
             });            

@@ -168,7 +168,7 @@
           $timeout(function(){$rootScope.$hideSideBar = true;});
           bindCategoriesHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService);
           bindReceivedDefaultHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService && !hotkeys.fromParentLayer);
-      
+          Core.scrollToTop();      
       }
 
       function addUserComment(){
