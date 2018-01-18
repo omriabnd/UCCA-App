@@ -89,6 +89,18 @@
       "description": "move Left With Shift",
       "action": "keydown",
       "callbackFunction":"abortRemoteMode"
+    },
+    {
+      "combo": "tab",
+      "description": "Move right to next relevant unit",
+      "action": "keydown",
+      "callbackFunction":"moveToNextRelevant"
+    },
+    {
+      "combo": "shift+tab",
+      "description": "Move left to next relevant unit",
+      "action": "keydown",
+      "callbackFunction":"moveToNextRelevant"
     }
   ],
   "DefaultHotKeysWithClick":[
