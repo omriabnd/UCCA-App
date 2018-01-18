@@ -92,12 +92,12 @@
                         }
                         var unitToCheckIn = DataService.getUnitById(args.unitId);
 
-                        console.log(DataService.getUnitById(token.inUnit))
+                        console.log(DataService.getUnitById(token.inUnit));
 
 
                         var sameParentTokens = unitToCheckIn.tokens.filter(function(element,index,array){
                             return element.inUnit == token.inUnit;
-                        })
+                        });
 
                         var nextToken = undefined;
 
@@ -243,6 +243,90 @@
                     }
                 }else if($scope.vm.cursorUpdated){
                     $scope.vm.cursorUpdated = false;
+                }
+            });
+            
+            $scope.$on('moveToNextRelevant', function(event, args) {
+                var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
+            	
+                if(args.unitId === $scope.vm.unitId.toString()  && !$scope.vm.cursorUpdated){
+                    var unit = $('#unit-'+$scope.vm.unitId.toString());
+                    var unitTokens = unit.find('.token-wrapper');
+                    
+                    if($scope.vm.cursorLocation <= unitTokens.length){
+                    	var tokenUnit = DataService.getUnitById(args.unitId);
+                        if($scope.vm.cursorLocation < 0 || $scope.vm.cursorLocation > tokenUnit.tokens.length){
+                            return;
+                        }
+                        var token = tokenUnit.tokens[$scope.vm.cursorLocation - 1];
+                        
+                        var oldUnit = token != undefined ? DataService.getUnitById(token.inUnit) : undefined;
+                        var unitToCheckIn = tokenUnit;
+
+                        var nextUnit = undefined;
+                        var annotationUnits = unitToCheckIn.AnnotationUnits;
+                        var tokens = unitToCheckIn.tokens;
+                        if(shiftPressed){
+                        	annotationUnits = annotationUnits.slice().reverse();
+                        	tokens = tokens.slice().reverse();
+                        }
+                        var oldUnitIndex = oldUnit != undefined ? annotationUnits.map(function(x) {return x.annotation_unit_tree_id; }).indexOf(oldUnit.annotation_unit_tree_id) : undefined;
+                        if(annotationUnits.length > 0 && oldUnitIndex != undefined){
+                            for(var i=oldUnitIndex+1; i<annotationUnits.length; i++){
+                                var currentUnit = annotationUnits[i];
+                                if(!!currentUnit && !!currentUnit.categories && (!$rootScope.isRefinementLayerProject || currentUnit.categories[0].refinedCategory)){
+                                	nextUnit = currentUnit;
+                                	break;
+                                }
+                            }
+                        }
+                        
+                        if(nextUnit === undefined) {
+                        	var nextToken = undefined;
+                        	if(tokens.length > 0){
+                                for(var i=0; i< tokens.length; i++){
+                                	var currentToken = tokens[i];
+                                    var currentUnit = DataService.getUnitById(currentToken.inUnit);
+                                    if(!!currentUnit && !!currentUnit.categories && (!$rootScope.isRefinementLayerProject || currentUnit.categories[0].refinedCategory)){
+                                    	nextToken = currentToken;
+                                    	nextUnit = currentUnit;
+                                    	break;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        //This is the last token
+                        if(nextUnit === undefined) return;
+
+                        var unit = nextUnit;
+                        
+                        
+                        console.log(unit);
+                        
+                        if(unit !== null && unit.annotation_unit_tree_id !== "0"){
+	                        if(unit.tokens === undefined){
+	                            unit.tokens = unit.tokenCopy;
+	                        }
+	                        
+	                        if(!!oldUnit && (!oldUnit.parentUnitId || oldUnit.parentUnitId === "0")){
+	                        	oldUnit.gui_status = "HIDDEN";
+	                        }
+	                        unit.gui_status = "OPEN";
+	                        
+	                        selectionHandlerService.clearTokenList();
+	                        unit.tokens.forEach(function(curr_token){
+	                            $rootScope.$broadcast('tokenIsClicked',{token: curr_token, parentId: $scope.vm.unitId, moveLeft: false, selectAllTokenInUnit: true});
+	                        });
+	
+	                        $scope.vm.cursorLocation = unitToCheckIn.tokens.map(function(x) {return x.id; }).indexOf(unit.tokens[unit.tokens.length-1].id) + 1;
+	                        $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
+	                    }
+
+                    }
+
+                }else if($scope.vm.cursorUpdated){
+	                    $scope.vm.cursorUpdated = false;
                 }
             });
         }

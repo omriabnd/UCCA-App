@@ -159,7 +159,7 @@
                        for(var i =0; i < DataService.currentTask.annotation_units.length; i++){
                            var currentUnit = DataService.currentTask.annotation_units[i];
                            
-                           currentUnit.gui_status = "OPEN";
+//                           currentUnit.gui_status = "OPEN";
 //                           restrictionsValidatorService.checkRestrictionsOnFinish(currentUnit,DataService.getUnitById(currentUnit.parent),DataService.hashTables);
                            
                            currentUnit.categories.sort(function(a,b){

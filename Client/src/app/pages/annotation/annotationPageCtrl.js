@@ -443,6 +443,12 @@
                                   $rootScope.$broadcast("moveRight",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
                                   break;
                               }
+                              case 'moveToNextRelevant':{
+                                  // DataService.getUnitById(selectedUnitId).cursorLocation++;
+
+                                  $rootScope.$broadcast("moveToNextRelevant",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
+                                  break;
+                              }
                               case 'moveRightWithShift':{
                                   // DataService.getUnitById(selectedUnitId).cursorLocation++;
                                   $rootScope.$broadcast("moveRight",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
