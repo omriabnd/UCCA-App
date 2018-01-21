@@ -87,6 +87,17 @@
     "showInTable":false
   },
   {
+    "key":"is_metacategory",
+    "name":"Is Meta Category",
+    "order":5,
+    "filter":false,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Children...",
+    "value":"",
+    "showInTable":false
+  },
+  {
     "key":"actions",
     "name":"Actions",
     "order":11,

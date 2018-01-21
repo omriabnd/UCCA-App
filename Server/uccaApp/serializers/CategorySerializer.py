@@ -23,6 +23,7 @@ class CategorySerializer(serializers.ModelSerializer):
             'abbreviation',
             'tooltip',
             'is_default',
+            'is_metacategory',
             'is_active',
             'created_by',
             'created_at',

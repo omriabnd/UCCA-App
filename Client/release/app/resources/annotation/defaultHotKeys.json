@@ -7,7 +7,7 @@
       "callbackFunction":"addImplicitUnit"
     },
     {
-      "combo": "alt+f",
+      "combo": "enter",
       "description": "Finish Unit",
       "action": "keydown",
       "callbackFunction":"checkRestrictionForCurrentUnit"

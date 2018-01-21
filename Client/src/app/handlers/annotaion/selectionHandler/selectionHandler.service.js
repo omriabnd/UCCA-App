@@ -194,6 +194,7 @@
                                 numOfAnnotationUnits: 0,
                                 categories:[],
                                 comment:"",
+                                cluster:"",
                                 rowShape:'',
                                 unitType:'IMPLICIT',
                                 orderNumber: '-1',
@@ -342,6 +343,7 @@
                             categories:[],
                             gui_status:unit ? unit.gui_status : "OPEN",
                             comment: unit ? unit.comment : '',
+                            cluster: unit ? unit.cluster : '',
                             annotation_unit_tree_id: unit && unit.annotation_unit_tree_id ? unit.annotation_unit_tree_id : null
                         };
                         if(remote){

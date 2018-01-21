@@ -38,7 +38,8 @@
             vm.toggleMouseUpDown = toggleMouseUpDown;
             vm.checkRestrictionForCurrentUnit = checkRestrictionForCurrentUnit;
             vm.addCommentToUnit = addCommentToUnit;
-            vm.unitIsSelected =unitIsSelected;
+            vm.addClusterToUnit = addClusterToUnit;
+            vm.unitIsSelected = unitIsSelected;
             vm.switchToRemoteMode = switchToRemoteMode;
             vm.toggleAnnotationUnitView = toggleAnnotationUnitView;
             vm.isUnitCollaped = isUnitCollaped;
@@ -51,6 +52,7 @@
             vm.dataBlock.parentUnitId = DataService.getParentUnitId(vm.dataBlock.annotation_unit_tree_id);
             vm.dataBlock.annotation_unit_tree_id !== "0" ? updateStartEndIndexForTokens(vm.dataBlock.tokens) : '';
 
+            vm.dataBlock.categoriesTooltip = categoriesTooltip(vm);
         }
 
         function annotationUnitDirectiveLink($scope, elem, attrs,$rootScope) {
@@ -72,6 +74,10 @@
             if($scope.vm.dataBlock.gui_status === undefined){
                 $scope.vm.dataBlock.gui_status = "HIDDEN";
             }
+            
+            $scope.$on('ToggleParents', function(event, args) {
+                $scope.showParents = !$scope.showParents;
+            });
 
             $scope.$on('CreateRemoteUnit', function(event, args) {
                 if(args.unitId.toString() === $scope.vm.dataBlock.annotation_unit_tree_id ){
@@ -85,6 +91,7 @@
                     var parentUnit = DataService.getUnitById(DataService.getParentUnitId($scope.vm.dataBlock.annotation_unit_tree_id ));
                     paintTokens(parentUnit.tokens,parentUnit);
                 }
+                $scope.vm.dataBlock.categoriesTooltip = categoriesTooltip($scope.vm);
             });
 
             $scope.$on('checkRestrictionForCurrentUnit', function(event, args) {
@@ -141,10 +148,20 @@
             }else{
             	""; //$scope.vm.dataBlock.gui_status = "HIDDEN";
             }
+            
         }
+        
 
         function isUnitHidden(vm){
             return vm.gui_status === "HIDDEN";
+        }
+
+        function categoriesTooltip(vm){
+            var output = '';
+            for (var index in vm.dataBlock.categories) {
+                output = output + ' ' + vm.dataBlock.categories[index].name;
+            }
+            return output;
         }
 
         function toggleAnnotationUnitView(vm){
@@ -183,6 +200,10 @@
             selectionHandlerService.updateSelectedUnit(unitId);
             open('app/pages/annotation/templates/commentOnUnitModal.html','sm','',vm)
         }
+        function addClusterToUnit(unitId,vm){
+            selectionHandlerService.updateSelectedUnit(unitId);
+            open('app/pages/annotation/templates/clusterOnUnitModal.html','sm','',vm)
+        }
         function open(page, size,message,vm) {
             var remoteOriginalId = $rootScope.clckedLine;
             var viewModal = vm;
@@ -194,6 +215,7 @@
                     $scope.vm = viewModal;
                     if(vm.dataBlock){
                         $scope.comment = $scope.vm.dataBlock.comment;
+                        $scope.cluster = $scope.vm.dataBlock.cluster;
                     }
 
                     $scope.message = message;
@@ -201,6 +223,12 @@
                     $scope.saveComment = function(){
                         $scope.vm.dataBlock.comment = $scope.comment;
                     }
+                    
+                    $scope.saveCluster = function(){
+                        $scope.vm.dataBlock.cluster = $scope.cluster;
+                        console.log('now');
+                    }
+
 
                     var remoteOriginalTreeId = remoteOriginalId;
                     $scope.deleteAllRemoteInstanceOfThisUnit = function(){
@@ -292,7 +320,7 @@
                             		}
                             	})
                             	if(!relevant){
-                            		unit.categories[0].backgroundColor = "transparent";
+                            		unit.categories[0].backgroundColor = "gray";
                                 	unit.gui_status = "HIDDEN";
                             	}else{
 //                            		unit.gui_status = "OPEN";
@@ -602,6 +630,7 @@
                     numOfAnnotationUnits: 0,
                     categories: selectionHandlerService.getCategoryForRemote() || [], // {color:defCtrl.definitionDetails.backgroundColor}
                     comment:"",
+                    cluster:"",
                     rowShape:'',
                     unitType:'REMOTE',
                     orderNumber: '-1',

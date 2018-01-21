@@ -25,6 +25,7 @@
 
   span.token.ng-binding.bold {
     font-weight: bold;
+    color: red;
   }
 
   .unit-cursor{
@@ -39,7 +40,13 @@
       color: white;
       background-color: #337ab7;
     }
+
+    .token.created-by-tokenization::before {
+      content: "•";
+      color:red;
+    }                           
   }
+
 
   .remote-unit {
     background-color: #5b7c55;
@@ -97,6 +104,11 @@
         top: 5px;
         border: 1px solid #000;
     }
+
+      &.category-faded {
+        opacity:0.2;
+      } 
+
   }
 
   .hidden-unit {
@@ -187,6 +199,7 @@
       display: inline-block;
       position: relative;
       border-right: 1px solid #808080;
+      padding: 5px 10px 5px 10px;
   }
 
   .annotation-type {
@@ -615,14 +628,14 @@ textarea.unit-comment-text {
     }
   }
   .side-bar {
-      direction: rtl;
+      direction: ltr;
       max-height: 700px;
       overflow: auto;
       categories-directive {
           direction: ltr;
       }
       .childCategory {
-          width: 90%;
+          width: 100%;
       }
       .text-wrapper{
         text-align: center;

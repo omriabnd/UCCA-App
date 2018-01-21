@@ -29,8 +29,8 @@ class Tasks(models.Model):
     updated_at = models.DateTimeField(auto_now=True, blank=True)
 
     out_of_date = models.BooleanField(default=False)
-    obseleted_by = models.IntegerField(null=True,default=None)
-    parent_obseleted_by = models.IntegerField(null=True,default=None)
+    obsoleted_by = models.IntegerField(null=True,default=None)
+    parent_obsoleted_by = models.IntegerField(null=True,default=None)
     
     """
     def get_out_of_date(self):
@@ -49,22 +49,17 @@ class Tasks(models.Model):
         if self.type == Constants.TASK_TYPES_JSON['REVIEW'] and \
                self.status == Constants.TASK_STATUS_JSON['SUBMITTED']:
 
-            # if obselete_by is still null, update it to self.id
-            if self.parent_task.obseleted_by is None:
-                self.parent_task.obseleted_by = self.id
+            # if obsolete_by is still null, update it to self.id
+            if self.parent_task.obsoleted_by is None:
+                self.parent_task.obsoleted_by = self.id
                 self.parent_task.out_of_date = True
                 self.parent_task.save()
 
             # update all brothers of self, which are not review tasks (i.e., are deriviative tasks)
-            # and have parent_obseleted_by as None, to have parent_obseleted_by to be self.id
-            Tasks.objects.all().filter(parent_task_id=self.parent_task.id,parent_obseleted_by=None).exclude(type=Constants.TASK_TYPES_JSON['REVIEW']).update(parent_obseleted_by=self.id,out_of_date=True)
+            # and have parent_obsoleted_by as None, to have parent_obsoleted_by to be self.id
+            Tasks.objects.all().filter(parent_task_id=self.parent_task.id,parent_obsoleted_by=None).exclude(type=Constants.TASK_TYPES_JSON['REVIEW']).update(parent_obsoleted_by=self.id,out_of_date=True)
 
-            ##### OBSELETE ########
-            # update all brothers of self, which are not review tasks (i.e., are deriviative tasks)
-            # to be out of date, and their obseleted_by and parent_obseleted_by
-            #Tasks.objects.all().filter(parent_task_id=self.parent_task.id).exclude(type=Constants.TASK_TYPES_JSON['REVIEW']).update(out_of_date=True)
-            ### END OBSELETE #######
-            
+
     def __unicode__(self):
         return self.name
     

@@ -21,7 +21,7 @@
             assignAbbreviationToCategories: assignAbbreviationToCategories,
             assignNameToCategories: assignNameToCategories,
             toggleAnnotationUnitView: toggleAnnotationUnitView,
-            isRTL: isRTL,
+            isRTL: isRTL
         };
 
         return textService;
@@ -33,15 +33,19 @@
         function getAnnotationTask(task_id){
             return apiService.annotation.getTaskData(task_id).then(function(response){return response.data});
         }
-
+        
         function getProjectLayer(layer_id){
             return apiService.annotation.getProjectLayer(layer_id).then(function(response){return response.data});
         }
         
+        
         function assignAbbreviationToCategories(categories){
             var categoriesHash = {}
             categories.forEach(function(category){
-                if(categoriesHash[category.abbreviation]){
+                if(category.abbreviation == undefined) {
+                    category.abbreviation = '';
+                }
+                else if(categoriesHash[category.abbreviation]){
                     categoriesHash[category.abbreviation].category.abbreviation += (categoriesHash[category.abbreviation].times)
                     categoriesHash[category.abbreviation].times += 1;
                     category.abbreviation += (categoriesHash[category.abbreviation].times)
@@ -74,6 +78,9 @@
             categories.forEach(function(category, index){
                 category.color = ENV_CONST.CATEGORIES_COLORS[index % ENV_CONST.CATEGORIES_COLORS.length].color
                 category.backgroundColor = ENV_CONST.CATEGORIES_COLORS[index % ENV_CONST.CATEGORIES_COLORS.length].backgroundColor
+                if (index < 9) {
+                    category.index = index
+                }
             })
         }
 
@@ -104,7 +111,7 @@
                 rtlChars    = '\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC',
                 rtlDirCheck = new RegExp('^[^'+ltrChars+']*['+rtlChars+']');
             return rtlDirCheck.test(s);
-        };
+        }
 
     }
 

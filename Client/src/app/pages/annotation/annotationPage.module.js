@@ -47,7 +47,7 @@
             return AnnotationTextService.getAnnotationTask($stateParams.taskId).then(function(taskResponse){
                 var layer_id = taskResponse.project.layer.id;
 
-                var currentLayer = taskResponse.project.layer
+                var currentLayer = taskResponse.project.layer;
                 var allCategories = currentLayer.categories;
                 allCategories.sort(function(a, b) {
                 	  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
@@ -65,11 +65,18 @@
 
                 if(!!currentLayer.parent){
                     // this is how we will know to style this category in derived layer
-                    allCategories.forEach(function(cat){return cat.refinementCategory = true})
+                    allCategories.forEach(function(cat){
+                    	cat.refinementCategory = true;
+                    	})
                 }
 
                 var refinedCategories = [];
                 var refinementCategories = allCategories;
+
+                
+                currentLayer.categories.forEach(function(category){
+	            category.fromParentLayer = false;                    
+                })
                 
                 while( !!currentLayer.parent ){
                     currentLayer.parent.categories.forEach(function(category){
@@ -95,10 +102,11 @@
                             allCategories.move(index,0)
                         }
                     })
-                }
-
+                }                
+                
                 allCategories.forEach(function(category,index){
                     category['callbackFunction'] = 'toggleCategory';
+                    
                     if(category.parent && category.parent.id){
                         // move the child category to be after its parent
                         // allCategories.move(index,allCategories.findIndex(cat => cat.id==category.parent.id)+1);
@@ -134,6 +142,8 @@
                 
                 
                 taskResponse.tokens = replaceEnterWithBr(taskResponse.tokens);
+
+
                 DataService.currentTask = taskResponse;
 
                 restrictionsValidatorService.initRestrictionsTables(taskResponse.project.layer.restrictions,selectionHandlerService);
@@ -144,6 +154,14 @@
                 
                 $rootScope.isSlottedLayerProject = DataService.currentTask.project.layer.slotted;
                 $rootScope.isRefinementLayerProject = DataService.currentTask.project.layer.type === "REFINEMENT";
+
+                // we here add the createdByTokenization field for each token
+                // first, sort tokens by start_index
+                DataService.currentTask.tokens.sort(function(t1,t2){return t1.start_index - t2.start_index;});
+                // second, define createdByTokenization
+                for (var index=1; index < DataService.currentTask.tokens.length; index++) {
+                    DataService.currentTask.tokens[index].createdByTokenization = DataService.currentTask.tokens[index].require_annotation && (DataService.currentTask.tokens[index].start_index == DataService.currentTask.tokens[index-1].end_index+1);
+                }
                 
                 if(!!DataService.currentTask.annotation_units){
                     DataService.categories = allCategories;
@@ -159,7 +177,7 @@
                            
                            currentUnit.categories.sort(function(a,b){
                                if(a.slot > 2 || b.slot > 2){
-                                  return 1
+                                   return 1;
                                }
                                else if(a.slot > b.slot){
                                   return 1;

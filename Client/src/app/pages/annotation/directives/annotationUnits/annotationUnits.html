@@ -1,6 +1,6 @@
 
 <a id="unit-{{dirCtrl.annotationUnitTreeId}}_anchor" style="display: none;">Anchor</a>
-<div class="directive-container" ng-class="{'remote-unit':vm.dataBlock.unitType == 'REMOTE' || vm.dataBlock.unitType == 'IMPLICIT','selected-unit': dirCtrl.annotationUnitTreeId == '0' || vm.unitIsSelected(vm)}" id="unit-{{dirCtrl.annotationUnitTreeId}}" ng-mousedown="vm.toggleMouseUpDown($event)" ng-mouseup="vm.toggleMouseUp($event)" ng-click="vm.unitClicked(vm,dirCtrl.annotationUnitTreeId,$event)">
+<div class="directive-container" ng-class="{'remote-unit':vm.dataBlock.unitType == 'REMOTE' || vm.dataBlock.unitType == 'IMPLICIT','selected-unit': dirCtrl.annotationUnitTreeId == '0' || vm.unitIsSelected(vm)}" id="unit-{{dirCtrl.annotationUnitTreeId}}" ng-mousedown="vm.toggleMouseUpDown($event)" ng-mouseup="vm.toggleMouseUp($event)" ng-click="vm.unitClicked(vm,dirCtrl.annotationUnitTreeId,$event)" title="{{vm.dataBlock.categoriesTooltip}}">
     <div ng-show="vm.dataBlock.annotation_unit_tree_id !== '0' && vm.dataBlock.AnnotationUnits.length " class="expand-btn" ng-click="vm.toggleAnnotationUnitView(vm);" ng-if="vm.dataBlock.unitType === 'REGULAR'">
 
         <i ng-class="{'minus-round':vm.dataBlock.gui_status=='OPEN',
@@ -9,7 +9,7 @@
         </i>
     </div>
     <span class="unit-id" ng-if="vm.dataBlock.annotation_unit_tree_id !== '0'">{{dirCtrl.annotationUnitTreeId}}</span>
-    <unit-category ng-repeat="category in vm.unit.categories" ng-if="!category.fromParentLayer" color="category.backgroundColor" category-id="category.id" abbreviation="category.abbreviation" name="category.name"></unit-category>
+    <unit-category ng-repeat="category in vm.unit.categories" ng-if="!category.fromParentLayer || showParents" color="category.backgroundColor" category-id="category.id" abbreviation="category.abbreviation" name="category.name" from-parent-layer="category.fromParentLayer"></unit-category>
     <unit-cursor unit-id="dirCtrl.annotationUnitTreeId"></unit-cursor>
     <div class="row control-buttons-container" ng-show="dirCtrl.annotationUnitTreeId != 0">
         <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Delete">
@@ -23,6 +23,11 @@
                 <i class="socicon unit-buttons">}</i>
                 <span class="comment-notification" ng-if="dirCtrl.dataBlock.comment !=''">!</span>
             </a>
+            <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Cluster" ng-click="vm.addClusterToUnit(dirCtrl.annotationUnitTreeId,vm);">
+              <i class="socicon unit-buttons">}</i>
+              <span class="comment-notification" ng-if="dirCtrl.dataBlock.cluster !=''">!</span>
+            </a>
+
             <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Add Remote Unit">
                 <i class="ion-plus-round unit-buttons" ng-click="vm.switchToRemoteMode(vm,$event)"></i>
             </a>

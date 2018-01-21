@@ -1,14 +1,24 @@
 <div class="annotation-page-container">
     <div class="col-xs-2 side-bar" keep-on-top ng-class="{'no-events': vm.inRemoteMode()}">
-    	<!-- <div class="container">
-           <span>{{selectedTokens}}</span>
-        </div> -->
-        <div class="categories-container" ng-show="showParents">
-            <categories-directive ng-repeat="category in vm.categories | filter: fromParentLayer  track by vm.categories.indexOf(category)" definition-details="category" definition-id="vm.categories.indexOf(category)"></categories-directive>
-        </div>
-        <div class="categories-container">
-            <categories-directive ng-repeat="category in vm.categories | filter: notFromParentLayer | orderBy: sortByPrototypes track by vm.categories.indexOf(category)" definition-details="category" definition-id="vm.categories.indexOf(category)"></categories-directive>
-        </div>
+	    <div class="categories-container">
+        	<div ng-repeat="parentCategory in vm.categories | filter: fromParentLayer  track by vm.categories.indexOf(parentCategory)">
+            	<categories-directive  ng-show="showParents" definition-details="parentCategory" definition-id="vm.categories.indexOf(parentCategory)"></categories-directive>
+	    	</div>
+	    </div>
+	    <div class="categories-container">
+	    	<table width="100%">
+	        	<col style="width: 10%" />
+	        	<col />
+	        	<tr ng-repeat="category in vm.categories | filter: notFromParentLayer | orderBy: sortByPrototypes as sortedCategories track by vm.categories.indexOf(category)">
+		        	<td>
+		        		<span class="text" ng-show="!category.fromParentLayer && $index <= 8">{{$index+1}}: </span>
+		        	</td>
+		        	<td>
+		        		<categories-directive definition-details="category" definition-id="vm.categories.indexOf(category)"></categories-directive>
+		        	</td>
+	        	</tr>
+	        </table>
+	    </div>
         <div class="utility-buttons-container">
             <utility-buttons-directive ng-repeat="definition in vm.definitions track by $index" definition-details="definition" definition-id="$index"></utility-buttons-directive>
         </div>

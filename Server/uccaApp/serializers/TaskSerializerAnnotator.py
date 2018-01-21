@@ -155,22 +155,31 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         if instance.status == 'SUBMITTED':
             raise CantChangeSubmittedTaskExeption
 
-        # changed Oct 19
         save_type = self.context['save_type']
         if(save_type  == 'draft'):
             self.save_draft(instance)
         elif (save_type  == 'submit'):
             self.submit(instance)
-
+        elif (save_type == 'reset'):
+            self.reset(instance)
+    
         return instance
 
 
-
+    def reset(self,instance):
+        instance.status = Constants.TASK_STATUS_JSON['NOT_STARTED']
+        instance.user_comment = ''
+        if (instance.type == Constants.TASK_TYPES_JSON['TOKENIZATION']):
+            self.reset_tokenization_task(instance)
+        else:
+            self.reset_current_task(instance)
+        instance.save()
+        
 
     def save_draft(self,instance):
         instance.status = 'ONGOING'
         print('save_draft')
-        if(instance.type == Constants.TASK_TYPES_JSON['TOKENIZATION']):
+        if (instance.type == Constants.TASK_TYPES_JSON['TOKENIZATION']):
             self.save_tokenization_task(instance)
         elif (instance.type == Constants.TASK_TYPES_JSON['ANNOTATION']):
             self.save_annotation_task(instance)
@@ -178,6 +187,14 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             self.save_review_task(instance)
         instance.save()
 
+
+    def reset_tokenization_task(self,instance):
+        self.check_if_parent_task_ok_or_exception(instance)
+        instance.tokens_set.all().delete()
+
+    def reset_annotation_task(self,instance):
+        self.check_if_parent_task_ok_or_exception(instance)
+        instance.tokens_set.all().delete()
 
     def save_tokenization_task(self,instance):
         print('save_tokenization_task - start')
@@ -195,9 +212,6 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
 
 
 
-
-
-
     def save_annotation_task(self,instance):
         print('save_annotation_task - start')
         # mainly saving an annotations units array
@@ -211,6 +225,8 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             annotation_unit.task_id = instance
             annotation_unit.type = au['type']
             annotation_unit.comment = au['comment']
+            annotation_unit.cluster = au['cluster']
+            
             annotation_unit.is_remote_copy = au['is_remote_copy']
 
             parent_id = None

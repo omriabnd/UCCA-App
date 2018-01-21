@@ -59,6 +59,7 @@
                     numOfAnnotationUnits: 0,
                     categories:[], // {color:defCtrl.definitionDetails.backgroundColor}
                     comment:"",
+                    cluster:"",
                     rowShape:'',
                     unitType:'IMPLICIT',
                     orderNumber: '-1',
