@@ -37,6 +37,7 @@
         }
 
         function chooseRow(obj,index){
+            console.log('extension: chooseRow');
             return editLayerCtrl.chooseRow(obj,index,editExtensionLayerService,parentCtrl)
         }
 

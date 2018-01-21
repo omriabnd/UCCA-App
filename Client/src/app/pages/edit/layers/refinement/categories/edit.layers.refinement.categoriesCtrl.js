@@ -40,7 +40,6 @@
         }
 
         function chooseRow(obj,index){
-            console.log("chooseRow "+index,obj);
             var LayerDetails = {
                 "id":obj.id,
                 "name":obj.name,
@@ -48,11 +47,7 @@
                 "abbreviation":obj.abbreviation
 
             };
-            // DEBUG
-            //var itemNotAlreadySelected = Core.findItemInArrayById(LayerDetails.id,editRefinementLayerService.get('categories'));
-            //if(itemNotAlreadySelected){
-                promptHotKeySelectionModal(obj,LayerDetails,parentController);
-            //}
+            //promptHotKeySelectionModal(obj,LayerDetails,parentController);
         }
 
         function promptHotKeySelectionModal(obj,LayerDetails,parentCtrl){
@@ -67,13 +62,12 @@
                 },
                 controller: function($scope, $uibModalInstance) {
                     $scope.categoryHotKey = null;
-
                     $scope.save = function() {
                         if($scope.categoryHotKey != null && $scope.categoryHotKey != ''){
                             obj.selected = true;
-                            LayerDetails.shortcut_key = $scope.categoryHotKey;
-                            editRefinementLayerService.set("categories",LayerDetails);
-                            parentCtrl.refreshData("categories");
+                            obj.shortcut_key = $scope.categoryHotKey;
+                            //editRefinementLayerService.set("categories",LayerDetails);
+                            //parentCtrl.refreshData("categories");
                             $uibModalInstance.dismiss('cancel');
                         }
                     };
@@ -132,11 +126,19 @@
                     "id":categoryName.id,
                     "name":categoryName.name
                 };
+                var LayerDetails = {
+                    "id":categoryName.id,
+                    "shortcut_key":categoryName.shortcut_key,
+                    "abbreviation":categoryName.abbreviation
+                };
+                promptHotKeySelectionModal(categoryObj,LayerDetails,parentController);
+                
                 itemNotAlreadySelected = Core.findItemInArrayById(categoryObj.id,newMergedCategories);
                 if(itemNotAlreadySelected){
                     newMergedCategories.push(categoryObj);
                     categoryName.selected = true;
                 }
+
             }
         }
 

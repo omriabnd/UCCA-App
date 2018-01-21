@@ -48,6 +48,7 @@
             $state.go('edit.sources',{id:obj.id})
         }
         function chooseRow(obj,index){
+            console.log('chooseRow: root');
             return editLayerCtrl.chooseRow(obj,index,editRootLayerService,parentCtrl)
         }
         

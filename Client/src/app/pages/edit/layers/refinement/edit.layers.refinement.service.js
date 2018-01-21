@@ -126,16 +126,17 @@
     }
 
     function prepareLayerCategoriesForSend(smartTableStructure){
-        var structure = angular.copy(smartTableStructure, structure)
+        //refinement
+        var structure = angular.copy(smartTableStructure, structure);
         structure.forEach(function(rowObj){
             if(rowObj.key == 'categories'){
-                console.log(rowObj);
                 var parsedCategories = [];
                 rowObj.value.forEach(function(valueObj){
                     valueObj.category.forEach(function(categoryObj){
                         var category = {
                             id: categoryObj.id,
                             name: categoryObj.name,
+                            shortcut_key: categoryObj.shortcut_key,
                             parent: {
                                 id: valueObj.parent_category[0].id,
                                 name: valueObj.parent_category[0].name
