@@ -156,14 +156,16 @@
                 }
                 var elementPos = category ? unit.categories.map(function(x) {return x.id; }).indexOf(category.id) : -1;
                 if(elementPos === -1){
-                    
-                if(!restrictionsValidatorService.checkRestrictionsBeforeInsert(getParentUnit(unit.annotation_unit_tree_id),unit,DataService.hashTables.tokensHashTable, category)){
-                    return reject("Failed") ;
-                }
-                    
-                if( unit.AnnotationUnits && unit.AnnotationUnits.length > 0 && restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction([category])){
-                    return true;
-                }
+
+                    /**
+                     * Commented out Jan 24 for debugging purposes (Omri and Talya)
+                     */
+                    //   if(!restrictionsValidatorService.checkRestrictionsBeforeInsert(getParentUnit(unit.annotation_unit_tree_id),unit,DataService.hashTables.tokensHashTable, category)){
+                    //  return reject("Failed") ;
+                    //}
+                    //if( unit.AnnotationUnits && unit.AnnotationUnits.length > 0 && restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction([category])){
+                    //    return true;
+                    //}
                     
                 if($rootScope.isSlottedLayerProject){
                     
@@ -243,14 +245,17 @@
         }
 
         function insertToTree(newObject,level,inInitStage){
-            return $q(function(resolve, reject) { 
-                
+            return $q(function(resolve, reject) {
+
+                // if (newObject.unitType == "IMPLICIT") {
+                //     debugger;
+                // }
+
                 if(!inInitStage && DataService.currentTask.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
                     Core.showAlert("Cant create annotation units in refinement layer")
                     console.log('ALERT - insertToTree -  prevent insert to tree when refinement layer');
                     reject(selectedUnitId);
                 }
-                
                 var parentUnit = getUnitById(level);
 
                 if(!parentUnit.AnnotationUnits){
@@ -305,10 +310,13 @@
 
                 //Adding children to new unit
                 if(units.length > 1){
-                    
-                    if( restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction(newObject.categories)){
-                        return level;
-                    }
+
+                    /**
+                     * Commented out Jan 24 for debugging purposes (Omri and Talya)
+                     */
+                    //if( restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction(newObject.categories)){
+                    //    return level;
+                    //}
                     
                     units.forEach(function(unit){
                         var parentUnitId = getParentUnitId(unit.id);
@@ -328,10 +336,13 @@
 
                 newObject.unitType =  newObject.unitType ? newObject.unitType : "REGULAR";
 
-                if(newObject.unitType !== "IMPLICIT" && !restrictionsValidatorService.checkRestrictionsBeforeInsert(parentUnit,newObject,DataService.hashTables.tokensHashTable)){
+                /**
+                 * Commented out Jan 24 for debugging purposes (Omri and Talya)
+                */
+                //if(newObject.unitType !== "IMPLICIT" && !restrictionsValidatorService.checkRestrictionsBeforeInsert(parentUnit,newObject,DataService.hashTables.tokensHashTable)){
                     // if no unit has been added, return the parent unitRowId
-                    return level;
-                }
+                //    return level;
+                //}
                 
                 //Removing children unit from parent unit
                 if(units.length > 1){
@@ -354,9 +365,23 @@
                     token.indexInParent = index;
                 });
 
+                /**
+                 * This part computes index_int, which is the index where the unit will be inserted into the list
+                 * of children for the current parent unit.
+                  */
                 var indexToInsert = newObject.annotation_unit_tree_id.split("-");
                 var index_int = parseInt(indexToInsert[indexToInsert.length-1]);
 
+
+                /**
+                 * If the unit to be inserted (newObject) is a remote unit, find the first slot in AnnotationUnits
+                 * that is empty, and set that as the index where newObject will be inserted. If there is none,
+                 * set the index for insertion to be at the end.
+                 */
+                /**
+                 * TODO: after modifying the backend to return tree_ids of remote units as their actual display
+                 *       tree_ids, remove this part of the code and check if the tree is built correctly.
+                 */
                 if(newObject.is_remote_copy){
                   index_int = (parentUnit.AnnotationUnits.length + 1).toString();
                   for(var i=0; i<parentUnit.AnnotationUnits.length; i++){
@@ -366,9 +391,16 @@
                     }
                   }
 
+                    /**
+                     * For remote units, the annotation_unit_tree_id is that of the unit it was cloned from. Therefore,
+                     * we need to update it and this is done in the following line.
+                     */
                   newObject.annotation_unit_tree_id = newObject.parent_id + "-" + index_int.toString();
                 }
 
+                /**
+                 * Sort the tokens.
+                 */
                 newObject.tokens.sort(function(a,b){
                   if(a.start_index > b.start_index){
                       return 1
@@ -399,7 +431,7 @@
 
                 if(!inInitStage){
                     // Removed code - The is sorUndUpdate in selectionHendler service in the end of initTree.
-                    sortUndUpdate(true)
+                    //sortUndUpdate(true)
                 }
                 
                 updateInUnitIdsForTokens(DataService.tree);
@@ -526,6 +558,12 @@
                 sortTree(annotationUnits[i].AnnotationUnits || []);
             }
         }
+
+        /**
+         * This function updates the tree IDs so that the index of the unit in the AnnotationUnits array of its parent is consistent
+         * with the annotation_unit_tree_id data member.
+         * TODO: BUGGY. CHECK AGAIN AFTER MODIFYING THE BACKEND.
+         */
 
         function updateTreeIds(unit,treeId){
             if(unit.AnnotationUnits && unit.AnnotationUnits.length > 0){

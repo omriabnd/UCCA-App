@@ -211,6 +211,10 @@
 
                                 ]
                             };
+
+                            /**
+                             * insertToTree for implicit units
+                             */
                             var newRowId = DataService.insertToTree(objToPush,unit.parent_id,index != DataService.currentTask.annotation_units.length -1);
 
                             unit.categories.forEach(function(category,index){
@@ -357,6 +361,9 @@
                         }
 
                         category !== null && !remote ? newUnit.categories.push(angular.copy(category)) : '';
+                        /**
+                         * InsertToTree for regular (non-implicit) units
+                         */
                         return DataService.insertToTree(newUnit,_handler.selectedUnit,inInitStage).then(function(res){
                             if(res.status === "InsertSuccess"){
 
