@@ -744,30 +744,28 @@
 
         function checkIfAllTokenThatRequireAnnotationIsInUnit(rootUnit,hash_tokens,checkIfOk){
             var rootUnit = rootUnit;
+            if (rootUnit.unitType == 'IMPLICIT') {
+                return false;
+            }
+            
             if(NOT_ALL_TOKENS_IN_UNIT_ERROR){
                 return checkIfOk = false
             }
             Object.keys(rootUnit.children_tokens_hash).some(function(tokenId){
                 var token = hash_tokens[tokenId];
-                // if there is only one token and its non pangtuation
+                console.log("checkIfAllTokenThatRequireAnnotationIsInUnit",token,rootUnit);
+
+                // if there is only one token and it requires annotation
                 if(rootUnit.annotation_unit_tree_id == "0"){
                     rootUnit.children_tokens = rootUnit.children_tokens_hash;
                 }
-                if(token.require_annotation && Object.keys(rootUnit.children_tokens).length > 1){
-
+                if(token.require_annotation && Object.keys(rootUnit.children_tokens_hash).length > 1){
                     if(token.inUnit === null){
                         checkIfOk = false;
                         NOT_ALL_TOKENS_IN_UNIT_ERROR = true;
                         console.log("REQUIRE_ANNOTATION",token);
                         return true; // its only break from the some loop
                     }
-                    // check if the current rootUnit has category that forbid_any_child
-                    // if(isForbidAnyChild(rootUnit) == false){
-                    //     checkIfOk = false;
-                    //     NOT_ALL_TOKENS_IN_UNIT_ERROR = true;
-                    //     // console.log("REQUIRE_ANNOTATION",token);
-                    //     return true; // its only break from the some loop
-                    // }
                 }
             })
 
