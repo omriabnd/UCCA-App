@@ -100,13 +100,13 @@
                 }
                 if(event){
                     event.preventDefault();
-                    // event.stopPropagation();
                 }
             });
 
-            $scope.$on('ResetFromBarSuccess', function(event, args) {
-                $scope.vm.dataBlock.cursorLocation = 0;
-            });
+            // OBSOLETE
+            //$scope.$on('ResetFromBarSuccess', function(event, args) {
+            //    $scope.vm.dataBlock.cursorLocation = 0;
+            //});
 
             $scope.$on('InsertSuccess', function(event, args) {
                 if(args.dataBlock.id.toString() === $scope.vm.dataBlock.annotation_unit_tree_id ){

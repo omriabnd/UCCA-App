@@ -26,7 +26,8 @@
                 unitType:'REGULAR',
                 containsAllParentUnits: false,
                 AnnotationUnits : [],
-                gui_status: 'OPEN'
+                gui_status: 'OPEN',
+                tokens: []
             },
             lastInsertedUnitIndex: lastInsertedUnitIndex,
             unitType:unitType,
@@ -278,9 +279,7 @@
 
                 var units = [];
 
-                if(newObject.unitType == "REMOTE"){
-
-                }else{
+                if(newObject.unitType != "REMOTE"){
                   newObject.tokens.forEach(function(token){
                       if(token.inUnit !== null && token.inUnit !== undefined){
                           var unitPos = units.map(function(x) {return x.id; }).indexOf(token.inUnit);
@@ -305,8 +304,6 @@
                       }
                   });
                 }
-
-
 
                 //Adding children to new unit
                 if(units.length > 1){
@@ -419,13 +416,14 @@
                 parentUnit.AnnotationUnits[index_int - 1] = newObject;
 
                 var parentUnitTokens = parentUnit.tokens;
-
+                
                 parentUnitTokens.forEach(function(token,index){
                     var elementPos = newObject.tokens.map(function(x) {return x.id; }).indexOf(token.id);
                     if(elementPos === -1){
                         token['inUnit'] = null;
                     }
                 });
+                
 
 //                parentUnit.gui_status = "OPEN";
 

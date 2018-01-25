@@ -64,6 +64,8 @@
                 return this.lastSelectedToken;
             },
             addTokenToList: function(token,selectedUnit,groupUnit){
+                //console.log('add token to list',token);
+                //console.log('selectedTokenList',this.selectedTokenList);
                 var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.id);
                 if(elementPos === -1){
                     !groupUnit ? _handler.removeTokenFromUnitTokens(token) : '';
@@ -136,7 +138,7 @@
             },
             clearTokenList: function(afterInsert){
 
-                console.log("Toke list cleared");
+                console.log("Token list cleared");
 
                 if(!afterInsert){
                     _handler.getSelectedTokenList().forEach(function(token){

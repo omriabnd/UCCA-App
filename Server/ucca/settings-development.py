@@ -14,7 +14,8 @@ DATABASES = {
         'OPTIONS': {
             'options': '-c search_path=ucca'
         },
-        'NAME': 'ucca_development',
+        #'NAME': 'ucca_development',
+        'NAME': 'ucca_production',        
         #'USER': 'pr_ucca',
         #'PASSWORD': '',
         'HOST': 'pgserver',
