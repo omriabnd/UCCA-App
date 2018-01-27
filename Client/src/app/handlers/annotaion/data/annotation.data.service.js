@@ -150,25 +150,20 @@
 
                 var unit = getUnitById(unitId);              
 
-
-
                 if(unit === null){
                     return reject('ToggleSuccess');
                 }
                 var elementPos = category ? unit.categories.map(function(x) {return x.id; }).indexOf(category.id) : -1;
-                if(elementPos === -1){
+                if(elementPos === -1) {
 
-                    /**
-                     * Commented out Jan 24 for debugging purposes (Omri and Talya)
-                     */
-                    //   if(!restrictionsValidatorService.checkRestrictionsBeforeInsert(getParentUnit(unit.annotation_unit_tree_id),unit,DataService.hashTables.tokensHashTable, category)){
-                    //  return reject("Failed") ;
-                    //}
-                    //if( unit.AnnotationUnits && unit.AnnotationUnits.length > 0 && restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction([category])){
-                    //    return true;
-                    //}
+                    if(!restrictionsValidatorService.checkRestrictionsBeforeInsert(getParentUnit(unit.annotation_unit_tree_id),unit,DataService.hashTables.tokensHashTable, category)){
+                      return reject("Failed") ;
+                    }
+                    if( unit.AnnotationUnits && unit.AnnotationUnits.length > 0 && restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction([category])){
+                        return true;
+                    }
                     
-                if($rootScope.isSlottedLayerProject){
+                    if($rootScope.isSlottedLayerProject){
                     
                         var firstSlotIndex = 0;
                         for(var i=0; i<unit.categories.length; i++){
@@ -308,12 +303,9 @@
                 //Adding children to new unit
                 if(units.length > 1){
 
-                    /**
-                     * Commented out Jan 24 for debugging purposes (Omri and Talya)
-                     */
-                    //if( restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction(newObject.categories)){
-                    //    return level;
-                    //}
+                    if(!inInitStage && restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction(newObject.categories)){
+                        return level;
+                    }
                     
                     units.forEach(function(unit){
                         var parentUnitId = getParentUnitId(unit.id);
@@ -333,13 +325,10 @@
 
                 newObject.unitType =  newObject.unitType ? newObject.unitType : "REGULAR";
 
-                /**
-                 * Commented out Jan 24 for debugging purposes (Omri and Talya)
-                */
-                //if(newObject.unitType !== "IMPLICIT" && !restrictionsValidatorService.checkRestrictionsBeforeInsert(parentUnit,newObject,DataService.hashTables.tokensHashTable)){
+                if(!inInitStage && newObject.unitType !== "IMPLICIT" && !restrictionsValidatorService.checkRestrictionsBeforeInsert(parentUnit,newObject,DataService.hashTables.tokensHashTable)){
                     // if no unit has been added, return the parent unitRowId
-                //    return level;
-                //}
+                    return level;
+                }
                 
                 //Removing children unit from parent unit
                 if(units.length > 1){
