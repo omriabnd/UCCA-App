@@ -66,6 +66,7 @@ class LayerSerializer(serializers.ModelSerializer):
                 cat.id = lc.category_id.id
                 cat.category_id = lc.category_id
                 cat.parent = lc.parent_category_id
+                
                 try:
                     lc_obj = Layers_Categories.objects.get(layer_id=obj.id,category_id=lc.category_id.id)
                     cat.was_default = lc_obj.was_default

@@ -154,9 +154,10 @@
                     return reject('ToggleSuccess');
                 }
                 var elementPos = category ? unit.categories.map(function(x) {return x.id; }).indexOf(category.id) : -1;
-                if(elementPos === -1) {
 
-                    if(!restrictionsValidatorService.checkRestrictionsBeforeInsert(getParentUnit(unit.annotation_unit_tree_id),unit,DataService.hashTables.tokensHashTable, category)){
+                //if the category isn't assigned to that unit yet - add it
+                if(elementPos === -1) {
+                    if (!restrictionsValidatorService.checkRestrictionsBeforeInsert(getParentUnit(unit.annotation_unit_tree_id),unit,DataService.hashTables.tokensHashTable, category)){
                       return reject("Failed") ;
                     }
                     if( unit.AnnotationUnits && unit.AnnotationUnits.length > 0 && restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction([category])){
@@ -172,7 +173,7 @@
                                firstSlotIndex++;
                             }
                         }
-                    
+                        
                         if(!unit.slotOne){
                             unit.categories[firstSlotIndex] = category;
                         }else if(!unit.slotTwo){
@@ -183,7 +184,9 @@
                     }
                     unit = updateUnitSlots(unit);
                     
-                }else{
+                }
+                //if the category is already assigned to a unit, remove it
+                else{
                     if(unit.categories.length > 1){                        
                         
                         if($rootScope.isSlottedLayerProject){
@@ -418,7 +421,7 @@
 
                 if(!inInitStage){
                     // Removed code - The is sorUndUpdate in selectionHendler service in the end of initTree.
-                    //sortUndUpdate(true)
+                    sortUndUpdate(true)
                 }
                 
                 updateInUnitIdsForTokens(DataService.tree);
@@ -547,39 +550,48 @@
         }
 
         /**
-         * This function updates the tree IDs so that the index of the unit in the AnnotationUnits array of its parent is consistent
-         * with the annotation_unit_tree_id data member.
+         * This function updates the tree IDs so that the index of the unit in the AnnotationUnits 
+         * array of its parent is consistent with the annotation_unit_tree_id data member.
          * TODO: BUGGY. CHECK AGAIN AFTER MODIFYING THE BACKEND.
          */
-
         function updateTreeIds(unit,treeId){
             if(unit.AnnotationUnits && unit.AnnotationUnits.length > 0){
+
+                // remove all empty elements in the array
+                //for (var i = 0; i < unit.AnnotationUnits.length; i++) {
+                //    if (unit.AnnotationUnits[i] == undefined) {
+                //        unit.AnnotationUnits.splice(i,1);
+                //        i--;
+                //    }
+                //}
+                
                 for (var i = 0; i < unit.AnnotationUnits.length; i++) {
 
                     if(unit.AnnotationUnits[i] == undefined){
                       continue
                     }
 
+                    // the old tree id of the unit
                     var oldId = angular.copy(unit.AnnotationUnits[i].annotation_unit_tree_id);
 
-                    unit.AnnotationUnits[i].annotation_unit_tree_id = unit.annotation_unit_tree_id === "0" ? (i+1).toString() : treeId+"-"+(i+1).toString();
+                    // updating the id of the unit according to its place in the array
+                    unit.AnnotationUnits[i].annotation_unit_tree_id = (unit.annotation_unit_tree_id === "0" ? (i+1).toString() : treeId+"-"+(i+1).toString());
 
+                    // if the Id has changed, change the remote units references
                     if(oldId !== unit.AnnotationUnits[i].annotation_unit_tree_id){
 
-                        // console.log("Old id is : ", oldId, " new id is : ", unit.AnnotationUnits[i].annotation_unit_tree_id );
                         if(DataService.unitsUsedAsRemote[oldId]){
                             DataService.unitsUsedAsRemote[unit.AnnotationUnits[i].annotation_unit_tree_id] = angular.copy(DataService.unitsUsedAsRemote[oldId]);
-
                             delete DataService.unitsUsedAsRemote[oldId];
                         }else{
                             for(var key in DataService.unitsUsedAsRemote){
                                 if(DataService.unitsUsedAsRemote[key][oldId]){
                                     DataService.unitsUsedAsRemote[key][unit.AnnotationUnits[i].annotation_unit_tree_id] = true;
-
                                     delete DataService.unitsUsedAsRemote[key][oldId];
                                 }
                             }
                         }
+                        
                     }
                     updateTreeIds(unit.AnnotationUnits[i],unit.AnnotationUnits[i].annotation_unit_tree_id);
                 }

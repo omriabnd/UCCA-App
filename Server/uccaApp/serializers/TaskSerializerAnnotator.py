@@ -97,8 +97,12 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
                 remote_original_unit.is_remote_copy = True
                 # set the parent_id to be the remote's one
                 remote_original_unit.parent_id = ru.unit_id
+                # setting the cloned_from tree_id
+                cloned_from_tree_id = remote_original_unit.annotation_unit_tree_id
+                # set the annotation_unit_tree_id to be that of the remote unit
+                remote_original_unit.annotation_unit_tree_id = ru.remote_unit_tree_id
                 # add the remote original unit to the json output
-                annotation_units_json.append(Annotation_UnitsSerializer(remote_original_unit).data)
+                annotation_units_json.append(Annotation_UnitsSerializer(remote_original_unit,context={'cloned_from_tree_id': cloned_from_tree_id}).data)
 
             au_data = Annotation_UnitsSerializer(au).data
 
@@ -107,7 +111,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
                 for index,cat in enumerate(au_data['categories']):
                     au_data['categories'][index]['slot'] = 3 + index
             annotation_units_json.append(au_data)
-
+            
         # return all array sorted with all the remote units in the end
         return sorted(annotation_units_json, key=operator.itemgetter('is_remote_copy'), reverse=False)
 
@@ -283,7 +287,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         remote_unit = Annotation_Remote_Units_Annotation_Units()
         # remote_unit.unit_id means that it is the parent
         remote_unit.unit_id = annotation_unit.parent_id
-        # remote_unit.remote_unit_id means that it is the remote unit
+        # remote_unit.remote_unit_id means that it is the unit it was cloned from
         remote_unit_id = get_object_or_404(Annotation_Units, annotation_unit_tree_id=annotation_unit.annotation_unit_tree_id, task_id=annotation_unit.task_id )
         remote_unit.remote_unit_id = remote_unit_id
         remote_unit.save()

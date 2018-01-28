@@ -13,7 +13,7 @@ class LayersCategoriesSerializer(serializers.ModelSerializer):
     description = serializers.SerializerMethodField()
     abbreviation = serializers.SerializerMethodField()
     tooltip = serializers.SerializerMethodField()
-
+    is_metacategory = serializers.SerializerMethodField()
 
     def get_id(self,obj):
         return obj.category_id_id
@@ -30,8 +30,11 @@ class LayersCategoriesSerializer(serializers.ModelSerializer):
     def get_tooltip(self,obj):
         return obj.category_id.tooltip
 
+    def get_is_metacategory(self,obj):
+        return obj.category_id.is_metacategory
+
     class Meta:
         model = Layers_Categories
-        fields = ('id','name','shortcut_key','was_default','parent','description','abbreviation','tooltip')
+        fields = ('id','name','shortcut_key','was_default','parent','description','abbreviation','tooltip','is_metacategory')
 
 

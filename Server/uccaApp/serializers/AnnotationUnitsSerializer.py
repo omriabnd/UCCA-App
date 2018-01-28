@@ -23,7 +23,11 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
     children_tokens = serializers.SerializerMethodField()
     #children = serializers.SerializerMethodField()
     parent_id = serializers.SerializerMethodField()
+    cloned_from_tree_id = serializers.SerializerMethodField()
 
+    def get_cloned_from_tree_id(self,obj):
+        return self.context.get("cloned_from_tree_id")
+        
     def get_parent_id(self,obj):
         parent_unit = obj.parent_id
         if parent_unit is not None:
@@ -43,7 +47,6 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
             categories = Annotation_Units_Categories.objects.all().filter(unit_id=obj.id,remote_parent_id=None )
         else:
             categories = Annotation_Units_Categories.objects.all().filter(unit_id=obj.id, remote_parent_id=obj.parent_id)
-
         
         for cat in categories:
             categories_json.append(CategoryInUnitSerializer(cat).data)
@@ -76,6 +79,7 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'annotation_unit_tree_id',
+            'cloned_from_tree_id',
             'task_id',
             'type',
             'is_remote_copy',

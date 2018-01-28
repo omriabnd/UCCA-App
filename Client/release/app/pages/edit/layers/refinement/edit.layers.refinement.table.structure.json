@@ -32,6 +32,17 @@
     "showInTable": true
   },
   {
+    "key": "category_reorderings",
+    "name": "Category Reorderings (JSON)",
+    "order": 15,
+    "filter": true,
+    "search": true,
+    "type": "text",
+    "placeholder": "Enter Category Reorderings...",
+    "value": "",
+    "showInTable": true
+  },
+  {
     "key": "parent",
     "name": "Parent",
     "order": 11,
