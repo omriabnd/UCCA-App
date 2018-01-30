@@ -64,6 +64,8 @@
                 return this.lastSelectedToken;
             },
             addTokenToList: function(token,selectedUnit,groupUnit){
+                //console.log('add token to list',token);
+                //console.log('selectedTokenList',this.selectedTokenList);
                 var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.id);
                 if(elementPos === -1){
                     !groupUnit ? _handler.removeTokenFromUnitTokens(token) : '';
@@ -136,7 +138,7 @@
             },
             clearTokenList: function(afterInsert){
 
-                console.log("Toke list cleared");
+                console.log("Token list cleared");
 
                 if(!afterInsert){
                     _handler.getSelectedTokenList().forEach(function(token){
@@ -211,6 +213,10 @@
 
                                 ]
                             };
+
+                            /**
+                             * insertToTree for implicit units
+                             */
                             var newRowId = DataService.insertToTree(objToPush,unit.parent_id,index != DataService.currentTask.annotation_units.length -1);
 
                             unit.categories.forEach(function(category,index){
@@ -357,6 +363,9 @@
                         }
 
                         category !== null && !remote ? newUnit.categories.push(angular.copy(category)) : '';
+                        /**
+                         * InsertToTree for regular (non-implicit) units
+                         */
                         return DataService.insertToTree(newUnit,_handler.selectedUnit,inInitStage).then(function(res){
                             if(res.status === "InsertSuccess"){
 

@@ -102,6 +102,7 @@ class LayerSerializer(serializers.ModelSerializer):
             "name",
             "description",
             "type",
+            "category_reorderings",
             "tooltip",
             "parent",
             "children",
@@ -120,8 +121,8 @@ class LayerSerializer(serializers.ModelSerializer):
         validated_data['created_by'] = ownerUser
         categories = validated_data['categories'] = self.initial_data['categories']
         restrictions = validated_data['restrictions'] = self.initial_data['restrictions']
-
         layer_type = validated_data['type']
+
         
         if layer_type ==  Constants.LAYER_TYPES_JSON['ROOT']:
             newLayer = self.save_layer(validated_data)
@@ -133,7 +134,7 @@ class LayerSerializer(serializers.ModelSerializer):
             if newLayer is not None:
                 if newLayer.type ==  Constants.LAYER_TYPES_JSON['EXTENSION']:
                     self.save_layer_categories(newLayer, categories)
-                elif newLayer.type ==  Constants.LAYER_TYPES_JSON['REFINEMENT']:
+                elif newLayersavee ==  Constants.LAYER_TYPES_JSON['REFINEMENT']:
                     self.save_layer_categories(newLayer, categories)
                     self.save_derived_categories(newLayer, categories)
                 elif newLayer.type == Constants.LAYER_TYPES_JSON['COARSENING']:
@@ -146,8 +147,9 @@ class LayerSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
 
-        # avoid changing the layer's type
+        # avoid changing the layer's type, and the category_reorderings
         validated_data['type'] = instance.type
+        
         categories = validated_data['categories'] = self.initial_data.get('categories')
         restrictions = validated_data['restrictions'] = self.initial_data['restrictions']
 
@@ -223,6 +225,7 @@ class LayerSerializer(serializers.ModelSerializer):
         newLayer.description = validated_data['description']
         newLayer.tooltip = validated_data['tooltip']
         newLayer.slotted = validated_data['slotted']
+        newLayer.category_reorderings = validated_data['category_reorderings']
 
         if self.initial_data['parent'] is not None and self.initial_data['parent'] and newLayer.type !=  Constants.LAYER_TYPES_JSON['ROOT']: # no parent for root layer
             if(newLayer.type == Constants.LAYER_TYPES_JSON['REFINEMENT'] or newLayer.type == Constants.LAYER_TYPES_JSON['COARSENING']):

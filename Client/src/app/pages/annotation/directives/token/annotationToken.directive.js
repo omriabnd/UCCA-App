@@ -47,6 +47,7 @@
                 }
             });
 
+            /*
             $scope.$on('highlightTokens', function(event, args) {
                 $scope.vm.token.highlightStyle = ''; // reset pre highlight
                 for (var i=0; i<args.tokens.length;i++)
@@ -56,6 +57,7 @@
                     }
                 }
             })
+            */
         }
 
 

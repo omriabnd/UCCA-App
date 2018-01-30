@@ -18,16 +18,8 @@ class Layers(models.Model):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=Constants.DESCRIPTION_MAX_LENGTH)
     tooltip = models.CharField(max_length=Constants.TOOLTIPS_MAX_LENGTH)
-
-
-    # Doulberg suggested Sep 9:
-    # slot = models.IntegerField(null=False, default=1)
-    # then run manage.py preparemigration
-    # run manage.py migrate
-    # run update on existing rows in layers for defaulting slot to 1
-    # Add by Omri, Sep 12:
     slotted = models.BooleanField(null=False, default=False)
-    
+    category_reorderings = models.TextField(default='', null=True)
     
     created_by = models.ForeignKey(User, null=True, blank=True)
     is_active = models.BooleanField(default=True)
