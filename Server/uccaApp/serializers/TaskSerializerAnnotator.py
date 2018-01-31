@@ -98,9 +98,9 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
                 # set the parent_id to be the remote's one
                 remote_original_unit.parent_id = ru.unit_id
                 # setting the cloned_from tree_id
-                cloned_from_tree_id = remote_original_unit.annotation_unit_tree_id
-                # set the annotation_unit_tree_id to be that of the remote unit
-                remote_original_unit.annotation_unit_tree_id = ru.remote_unit_tree_id
+                cloned_from_tree_id = remote_original_unit.tree_id
+                # set the tree_id to be that of the remote unit
+                remote_original_unit.tree_id = ru.remote_unit_tree_id
                 # add the remote original unit to the json output
                 annotation_units_json.append(Annotation_UnitsSerializer(remote_original_unit,context={'cloned_from_tree_id': cloned_from_tree_id}).data)
 
@@ -225,7 +225,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         instance.user_comment = self.initial_data['user_comment']
         for au in self.initial_data['annotation_units']:
             annotation_unit = Annotation_Units()
-            annotation_unit.annotation_unit_tree_id = au['annotation_unit_tree_id']
+            annotation_unit.tree_id = au['tree_id']
             annotation_unit.task_id = instance
             annotation_unit.type = au['type']
             annotation_unit.comment = au['comment']
@@ -234,14 +234,15 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             annotation_unit.is_remote_copy = au['is_remote_copy']
 
             parent_id = None
-            if au['parent_id']:
-                parent_id = get_object_or_404(Annotation_Units, annotation_unit_tree_id=au['parent_id'],task_id=instance.id)
+            if au['parent_tree_id']:
+                parent_id = get_object_or_404(Annotation_Units, tree_id=au['parent_tree_id'],task_id=instance.id)
 
             annotation_unit.parent_id = parent_id
             annotation_unit.gui_status = au['gui_status']
 
-            if annotation_unit.is_remote_copy == True:
+            if annotation_unit.is_remote_copy:
                 annotation_unit.remote_categories = get_value_or_none('categories', au)
+                annotation_unit.cloned_from_tree_id = au['cloned_from_tree_id']
                 remote_units_array.append(annotation_unit)
             else:
                 instance.annotation_units_set.add(annotation_unit,bulk=False)
@@ -285,11 +286,17 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
 
     def save_annotation_remote_unit(self,annotation_unit):
         remote_unit = Annotation_Remote_Units_Annotation_Units()
+
         # remote_unit.unit_id means that it is the parent
         remote_unit.unit_id = annotation_unit.parent_id
+
         # remote_unit.remote_unit_id means that it is the unit it was cloned from
-        remote_unit_id = get_object_or_404(Annotation_Units, annotation_unit_tree_id=annotation_unit.annotation_unit_tree_id, task_id=annotation_unit.task_id )
+        remote_unit_id = get_object_or_404(Annotation_Units, tree_id=annotation_unit.cloned_from_tree_id, task_id=annotation_unit.task_id )
         remote_unit.remote_unit_id = remote_unit_id
+
+        # saving the tree_id of the remote unit
+        remote_unit.remote_unit_tree_id =annotation_unit.tree_id
+
         remote_unit.save()
         return remote_unit
 

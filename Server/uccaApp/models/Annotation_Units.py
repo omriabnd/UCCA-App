@@ -4,7 +4,7 @@ from uccaApp.models import Constants,Tasks
 
 class Annotation_Units(models.Model):
     id = models.AutoField(primary_key=True)
-    annotation_unit_tree_id = models.CharField(null=False,blank=False,max_length=Constants.ANNOTATION_UNIT_ID_MAXLENGTH,default='1')
+    tree_id = models.CharField(null=False,blank=False,max_length=Constants.ANNOTATION_UNIT_ID_MAXLENGTH,default='1')
     task_id = models.ForeignKey(Tasks,on_delete=models.PROTECT)
     type = models.CharField(max_length=50, choices=Constants.ANNOTATION_UNIT_TYPES)
     comment = models.CharField(max_length=Constants.COMMENTS_MAX_LENGTH, default='')

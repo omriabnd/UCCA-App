@@ -21,17 +21,18 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
     is_remote_copy = serializers.SerializerMethodField()
     categories = serializers.SerializerMethodField()
     children_tokens = serializers.SerializerMethodField()
+    #tree_id = serializers.SerializerMethodField()
     #children = serializers.SerializerMethodField()
-    parent_id = serializers.SerializerMethodField()
+    parent_tree_id = serializers.SerializerMethodField()
     cloned_from_tree_id = serializers.SerializerMethodField()
 
     def get_cloned_from_tree_id(self,obj):
         return self.context.get("cloned_from_tree_id")
         
-    def get_parent_id(self,obj):
+    def get_parent_tree_id(self,obj):
         parent_unit = obj.parent_id
         if parent_unit is not None:
-            return parent_unit.annotation_unit_tree_id
+            return parent_unit.tree_id
         return None
 
     def get_is_remote_copy(self, obj):
@@ -64,21 +65,12 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
             tokens_json.append(TokensSerializer_Simplify(t.token_id).data)   
         return tokens_json
 
-    """
-    def get_children(self, obj):
-        children_annotation_units = Annotation_Units.objects.all().filter(parent_id=obj.id)   # Omri TODO: remove this field
-        children_json = []
-        for cl in children_annotation_units:
-            children_json.append(Annotation_UnitsSerializer(cl).data)
-        return children_json
-    """
-
 
     class Meta:
         model = Annotation_Units
         fields = (
             'id',
-            'annotation_unit_tree_id',
+            'tree_id',
             'cloned_from_tree_id',
             'task_id',
             'type',
@@ -88,6 +80,6 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
             'categories',
             'children_tokens',
             #'children',
-            'parent_id',
+            'parent_tree_id',
             'gui_status'
         )

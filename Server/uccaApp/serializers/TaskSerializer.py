@@ -238,7 +238,7 @@ class TaskInChartSerializer(serializers.ModelSerializer):
             for parent_au in parent_task_annotation_units:
                 parent_au = Annotation_UnitsSerializer(parent_au).data
                 annotation_unit = Annotation_Units()
-                annotation_unit.annotation_unit_tree_id = parent_au['annotation_unit_tree_id']
+                annotation_unit.tree_id = parent_au['tree_id']
                 annotation_unit.task_id = Tasks.objects.get(id=parent_au['task_id'])
                 annotation_unit.type = parent_au['type']
                 annotation_unit.comment = parent_au['comment']
@@ -259,13 +259,13 @@ class TaskInChartSerializer(serializers.ModelSerializer):
                     remote_original_unit = Annotation_Units.objects.get(id=ru.remote_unit_id.id, task_id=task.parent_task.id)
 
                     remote_original_unit_in_coarsening_task = Annotation_Units.objects.get(
-                        annotation_unit_tree_id=remote_original_unit.annotation_unit_tree_id, task_id=task.id)
+                        tree_id=remote_original_unit.tree_id, task_id=task.id)
 
                     unit_id_remote_original_unit = Annotation_Units.objects.get(
                         id=ru.unit_id.id, task_id=task.parent_task.id)
 
                     unit_id_remote_original_unit_in_coarsening_task = Annotation_Units.objects.get(
-                        annotation_unit_tree_id=unit_id_remote_original_unit.annotation_unit_tree_id, task_id=task.id)
+                        tree_id=unit_id_remote_original_unit.tree_id, task_id=task.id)
 
                     # set the remote is_remote_copy = true
                     remote_original_unit_in_coarsening_task.is_remote_copy = True
@@ -336,7 +336,7 @@ class TaskInChartSerializer(serializers.ModelSerializer):
         remote_unit.unit_id = annotation_unit.parent_id
         # remote_unit.remote_unit_id means that it is the remote unit
         remote_unit_id = get_object_or_404(Annotation_Units,
-                                           annotation_unit_tree_id=annotation_unit.annotation_unit_tree_id,
+                                           tree_id=annotation_unit.tree_id,
                                            task_id=annotation_unit.task_id)
         remote_unit.remote_unit_id = remote_unit_id
         remote_unit.save()
@@ -367,7 +367,7 @@ class TaskInChartSerializer(serializers.ModelSerializer):
 
     def get_parent_annotation_unit_or_none(self,parent_au_id,task_id):
         try:
-            return Annotation_Units.objects.get(annotation_unit_tree_id=parent_au_id, task_id=task_id)
+            return Annotation_Units.objects.get(tree_id=parent_au_id, task_id=task_id)
         except:
             return None
 
