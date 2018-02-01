@@ -124,6 +124,19 @@
     "showInTable":true,
     "shouldSendToServer":true
   },
+    {
+    "key":"category_reorderings",
+    "name":"Category Re-orderings (JSON)",
+    "order":13,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter JSON...",
+    "value":"",
+    "showInTable":true,
+    "shouldSendToServer":true
+  },
+
   {
     "key":"type",
     "name":"Type",
