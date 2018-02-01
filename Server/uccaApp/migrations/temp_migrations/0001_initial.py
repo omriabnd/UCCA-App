@@ -252,8 +252,8 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(blank=True, default=datetime.datetime.now)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('out_of_date', models.BooleanField(default=False)),
-                ('obsoleted_by', models.IntegerField(default=None, null=True)),
-                ('parent_obsoleted_by', models.IntegerField(default=None, null=True)),
+                ('obseleted_by', models.IntegerField(default=None, null=True)),
+                ('parent_obseleted_by', models.IntegerField(default=None, null=True)),
             ],
             options={
                 'db_table': 'tasks',
