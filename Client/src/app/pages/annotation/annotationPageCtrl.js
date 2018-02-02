@@ -34,7 +34,13 @@
       vm.defaultCategoryHotkeys = ENV_CONST.DEFAULT_CATEGORY_HOTKEYS;
 //      $scope.toggleParents = DataService.toggleParents;
 //      toggleParents = DataService.toggleParents;
-
+      
+      try{
+    	  vm.categoryReorderings = JSON.parse(DataService.currentTask.project.layer.category_reorderings);
+      }catch(SyntaxError){
+    	  vm.categoryReorderings = {};
+      }
+      
       vm.fontSizes = [
           {preview:"AAA",name:"big",size:1},
           {preview:"AA",name:"normal",size:0.9},
@@ -43,7 +49,21 @@
 
       init();
       
+      function getParentCategory(unit){
+    	  if (!!unit && !!unit.categories){
+	    	  for(var i=0; i<unit.categories.length; i++){
+	    		  var category = unit.categories[i];
+	    		  if(category.fromParentLayer){
+	    			  return category;
+	    		  }
+	    	  }
+    	  }
+    	  return null;
+      }
+      
       $scope.sortByPrototypes = function(category){
+
+          /*<<<<<<< HEAD
 //    	var selectedTokenList = [];
 //    	var selectedUnitId;
 //        var selectedUnit;
@@ -121,6 +141,60 @@
 //      	} else {
 //      		return ind;
 //      	}
+=======*/
+		  var selectedUnitId = selectionHandlerService.getSelectedUnitId();
+		  var selectedUnit = DataService.getUnitById(selectedUnitId);
+
+		  var selectedTokenList = selectionHandlerService.getSelectedTokenList();
+		  if(selectedTokenList != undefined && selectedTokenList.length > 0){
+			  selectedUnit = DataService.getUnitById(selectedTokenList[0].inUnit);
+		  }else if(selectedUnitId != undefined && selectedUnitId != 0){
+			  selectedTokenList = selectedUnit.tokenCopy;
+		  }else{
+			  selectedTokenList = [];
+		  }
+		
+		  var selectedTokens = selectedTokenList.map(function (token) {
+			  return token.text;
+		  }).join("_");
+		  
+		  var selectedUnit
+		  if(!!selectedTokens){
+			  var parentCategoryName = "";
+			  var sceneRole;
+			  
+			  if(!!selectedUnit){
+				  var parentCategory = getParentCategory(selectedUnit);
+				  parentCategoryName = !!parentCategory ? parentCategory.name : "";
+				  var unitCategories = selectedUnit.categories;
+				  
+		      	  for (var i=0; i<unitCategories.length; i++) {
+		      		  var cat = unitCategories[i];
+		      		  if(cat.name === category.name) {
+		      			  return -1;
+		      		  }
+		      		  if(!cat.fromParentLayer && !!cat.name && sceneRole == undefined) {
+		      			  sceneRole = cat;
+		      		  }
+		      	  }
+			  }      		
+			
+		  	  var reOrderings = vm.categoryReorderings[parentCategoryName][selectedTokens];
+		  	  if(!reOrderings){
+		  		  reOrderings = vm.categoryReorderings[parentCategoryName][""];
+		  	  }
+		  			
+		  	  if(!!sceneRole){
+		  		  var functionRoles = reOrderings[sceneRole.name];
+		  		  if(!!functionRoles){
+		  			  var index = functionRoles.indexOf(category.name);
+		  			  return index > -1 ? index : vm.categories.length;
+		  		  }
+		  	  }
+		  	  var index = reOrderings[""].indexOf(category.name);
+		  	  return index > -1 ? index : vm.categories.length;
+		  }
+		  return 1;
       }
       
       $scope.fromParentLayer = function(cat){
