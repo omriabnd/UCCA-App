@@ -63,85 +63,10 @@
       
       $scope.sortByPrototypes = function(category){
 
-          /*<<<<<<< HEAD
-//    	var selectedTokenList = [];
-//    	var selectedUnitId;
-//        var selectedUnit;
-//        
-//    	if (selectionHandlerService.getSelectedTokenList() != undefined){
-//	      	selectedTokenList = selectionHandlerService.getSelectedTokenList();
-//	      	if(selectedTokenList.length == 0){
-//	      		selectedUnitId = selectionHandlerService.getSelectedUnitId();
-//	      	    if(selectedUnitId != undefined && selectedUnitId != 0) {
-//	      			selectedUnit = DataService.getUnitById(selectedUnitId);
-//		      		if(selectedUnit != undefined){
-//		      			selectedTokenList = selectedUnit.tokenCopy;
-//		      		}
-//	      	    }
-//	      	}
-//        }
-//    	console.log(selectedTokenList)
-    	var selectedTokenList = [];
-    	var selectedUnitId = selectionHandlerService.getSelectedUnitId();
-    	var selectedUnit = DataService.getUnitById(selectedUnitId);
-    	
-      	if (selectionHandlerService.getSelectedTokenList() != undefined){
-  	      	selectedTokenList = selectionHandlerService.getSelectedTokenList();
-  	      	if(selectedTokenList.length == 0){
-  		      	if(selectedUnitId != undefined && selectedUnitId != 0){
-  		      		selectedTokenList = selectedUnit.tokenCopy;
-//  		      		console.log(selectedTokenList)
-  		      	}
-  	      	}
-  	    }
-    	
-    	if(selectedTokenList == undefined){
-    		selectedTokenList = [];
-    	}
-      	
-      	selectedTokenList = selectedTokenList.map(function (token) {
-      	    return token.text;
-      	});
+          if (Core.isEmptyObject(vm.categoryReorderings)) {
+              return;
+          }
 
-      	$scope.selectedTokens = selectedTokenList.join(" ");
-      	
-      	var sceneFunctionRoles = vm.sceneFunctionRoles[$scope.selectedTokens] || {};
-//      	var functionRoles = sceneFunctionRoles[category.name] || {};
-      	
-      	
-      	if(selectedUnit != undefined){
-      		var unitCategories = selectedUnit.categories;
-      		
-      		if (unitCategories != undefined && unitCategories.length > 1){
-      			
-      			var sceneRole;
-      			
-      			for (var i=0; i<unitCategories.length; i++) {
-      				var cat = unitCategories[i];
-      				if (cat.name === category.name) {
-      					return -Infinity;
-      				}
-      				if (!cat.fromParentLayer && sceneRole == undefined) {
-      					sceneRole = cat;
-      				}
-      			}
-      			
-      			if(!!sceneRole.name){
-      				var functionRoles = sceneFunctionRoles[sceneRole.name] || {};
-      				return -functionRoles[category.name] || 0;
-      			}
-      		}
-      	}
-      	var sceneRoles = sceneFunctionRoles[category.name] || {};
-      	return -sceneRoles["_total_"] || 0;
-      	
-//      	var ind = prototypes.indexOf(cat.name);
-//      	if (ind === -1) {
-//      		return vm.categories.length;
-//      	} else {
-//      		return ind;
-//      	}
-=======*/
 		  var selectedUnitId = selectionHandlerService.getSelectedUnitId();
 		  var selectedUnit = DataService.getUnitById(selectedUnitId);
 
@@ -178,7 +103,8 @@
 		      		  }
 		      	  }
 			  }      		
-			
+
+			  console.log(vm.categoryReorderings);
 		  	  var reOrderings = vm.categoryReorderings[parentCategoryName][selectedTokens];
 		  	  if(!reOrderings){
 		  		  reOrderings = vm.categoryReorderings[parentCategoryName][""];
