@@ -28,11 +28,7 @@
       vm.inRemoteMode = inRemoteMode;
       vm.addUserComment = addUserComment;
       vm.toggleParents = toggleParents;
-//      vm.showParents = $scope.showParents;
-      vm.sceneFunctionRoles = ENV_CONST.SCENE_FUNCTION_ROLES;
       vm.defaultCategoryHotkeys = ENV_CONST.DEFAULT_CATEGORY_HOTKEYS;
-//      $scope.toggleParents = DataService.toggleParents;
-//      toggleParents = DataService.toggleParents;
       
       try{
     	  vm.categoryReorderings = JSON.parse(DataService.currentTask.project.layer.category_reorderings);
@@ -61,6 +57,11 @@
       }
       
       $scope.sortByPrototypes = function(category){
+    	  
+    	  if (Core.isEmptyObject(vm.categoryReorderings)) {
+    		  return;
+		  }
+    	  
 		  var selectedUnitId = selectionHandlerService.getSelectedUnitId();
 		  var selectedUnit = DataService.getUnitById(selectedUnitId);
 
@@ -98,7 +99,11 @@
 		      	  }
 			  }      		
 			
+		  	  if (!vm.categoryReorderings[parentCategoryName]){
+		  		  return;
+		  	  }
 		  	  var reOrderings = vm.categoryReorderings[parentCategoryName][selectedTokens];
+		  	  
 		  	  if(!reOrderings){
 		  		  reOrderings = vm.categoryReorderings[parentCategoryName][""];
 		  	  }
