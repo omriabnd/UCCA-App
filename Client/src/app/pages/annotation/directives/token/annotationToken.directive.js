@@ -29,6 +29,9 @@
             $scope.vm = $scope.dirCtrl;
             $scope.vm.token['indexInParent'] = !$scope.vm.token['indexInParent'] ? $scope.$parent.$index : $scope.vm.token['indexInParent'];
             $scope.vm.tokenInSelectionList = tokenInSelectionList;
+            
+            $scope.vm.notRelevant = notRelevant;
+            $scope.vm.unitIsFinished = unitIsFinished;
 
             $scope.$on('tokenIsClicked', function(event, args) {
                 var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
@@ -45,6 +48,12 @@
                     }
                     // $scope.vm.tokenIsClicked = true;
                 }
+            });
+            
+            $scope.$on('ToggleParents', function(event, args) {
+//            	vm.showParents = !vm.showParents;
+                $scope.showParents = !$scope.showParents;
+                
             });
 
             /*
@@ -73,6 +82,9 @@
             vm.initToken = initToken;
             vm.mouseUpFromToken = mouseUpFromToken;
             vm.currntToken = null;
+            
+//            vm.notRelevant = notRelevant;
+//            vm.token['relevant'] = vm.relevant(vm);
         }
 
         function tokenDbClick(vm){
@@ -252,6 +264,21 @@
                 // });
             })
 
+        }
+        
+        function notRelevant(vm){
+        	var unit = DataService.getUnitById(vm.token.inUnit);
+        	if(!!unit && unit.categories !== undefined && unit.categories.length > 0){
+        		var cat0 = unit.categories[0];
+        		return cat0.fromParentLayer && !cat0.refinedCategory;
+        	}else{
+        		return false;
+        	}
+        }
+        
+        function unitIsFinished(vm){
+        	var unit = DataService.getUnitById(vm.token.inUnit);
+        	return !!unit && !notRelevant(vm) && !!unit.finished;
         }
 
 

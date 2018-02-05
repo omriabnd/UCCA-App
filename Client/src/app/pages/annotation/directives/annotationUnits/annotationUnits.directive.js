@@ -142,7 +142,6 @@
                 }
             });
 
-
             if($scope.vm.dataBlock.AnnotationUnits && $scope.vm.dataBlock.AnnotationUnits.length > 0){
             	paintTokens($scope.vm.tokens,$scope.vm.dataBlock);
             }else{
@@ -320,7 +319,6 @@
                             		}
                             	})
                             	if(!relevant){
-                            		unit.categories[0].backgroundColor = "gray";
                                 	unit.gui_status = "HIDDEN";
                             	}else{
 //                            		unit.gui_status = "OPEN";
@@ -677,10 +675,6 @@
             })
 
         }
-
-
-
-
     }
 
 })();

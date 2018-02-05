@@ -29,11 +29,7 @@
       vm.addUserComment = addUserComment;
       vm.viewUserManual = viewUserManual;
       vm.toggleParents = toggleParents;
-//      vm.showParents = $scope.showParents;
-      vm.sceneFunctionRoles = ENV_CONST.SCENE_FUNCTION_ROLES;
       vm.defaultCategoryHotkeys = ENV_CONST.DEFAULT_CATEGORY_HOTKEYS;
-//      $scope.toggleParents = DataService.toggleParents;
-//      toggleParents = DataService.toggleParents;
       
       try{
     	  vm.categoryReorderings = JSON.parse(DataService.currentTask.project.layer.category_reorderings);
@@ -67,8 +63,8 @@
               return;
           }
 
-		  var selectedUnitId = selectionHandlerService.getSelectedUnitId();
-		  var selectedUnit = DataService.getUnitById(selectedUnitId);
+          var selectedUnitId = selectionHandlerService.getSelectedUnitId();
+	  var selectedUnit = DataService.getUnitById(selectedUnitId);
 
 		  var selectedTokenList = selectionHandlerService.getSelectedTokenList();
 		  if(selectedTokenList != undefined && selectedTokenList.length > 0){
@@ -103,9 +99,17 @@
 		      		  }
 		      	  }
 			  }      		
+<<<<<<< HEAD
 
 			  console.log(vm.categoryReorderings);
+=======
+			
+		  	  if (!vm.categoryReorderings[parentCategoryName]){
+		  		  return;
+		  	  }
+>>>>>>> 41d55896d4e687c3b8495414d08c33d49a19c134
 		  	  var reOrderings = vm.categoryReorderings[parentCategoryName][selectedTokens];
+		  	  
 		  	  if(!reOrderings){
 		  		  reOrderings = vm.categoryReorderings[parentCategoryName][""];
 		  	  }
