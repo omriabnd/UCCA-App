@@ -1,4 +1,5 @@
 
+
 /* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
@@ -99,15 +100,10 @@
 		      		  }
 		      	  }
 			  }      		
-<<<<<<< HEAD
-
-			  console.log(vm.categoryReorderings);
-=======
 			
 		  	  if (!vm.categoryReorderings[parentCategoryName]){
-		  		  return;
+		  	      return;
 		  	  }
->>>>>>> 41d55896d4e687c3b8495414d08c33d49a19c134
 		  	  var reOrderings = vm.categoryReorderings[parentCategoryName][selectedTokens];
 		  	  
 		  	  if(!reOrderings){
