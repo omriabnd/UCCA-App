@@ -63,15 +63,12 @@
     }
     
     &.not-relevant {
-      border-top: none !important;
-      border-bottom: none !important;
-      border-left: none !important;
-      border-right: none !important;
+      border-color: transparent !important;
     }
     
     &.finished {
-      border-width: 2px !important;
-      border-style: dotted !important;
+      border-width: 1px !important;
+      border-style: dashed !important;
     }
   }
 

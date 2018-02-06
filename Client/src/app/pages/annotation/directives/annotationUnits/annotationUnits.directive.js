@@ -86,6 +86,7 @@
                 if(args.id.toString() === $scope.vm.dataBlock.annotation_unit_tree_id ){
                     var parentUnit = DataService.getUnitById(DataService.getParentUnitId($scope.vm.dataBlock.annotation_unit_tree_id ));
                     paintTokens(parentUnit.tokens,parentUnit);
+                    DataService.getUnitById(args.id).finished = false;
                 }
             });
 
@@ -232,7 +233,7 @@
         }
 
 
-        function paintTokens(tokens, dataBlock,afterDelete){
+        function paintTokens(tokens, dataBlock,afterDelete){        	
             dataBlock.AnnotationUnits.forEach(function(unit,index){
                 if(unit.unitType !== "REMOTE"){
                     if(afterDelete){
@@ -346,7 +347,7 @@
                     return "border : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-left : 3px solid "+categories[2].backgroundColor+"; margin-left: 3px;";
                 }
                 default:{
-                    return "border : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-left : 3px solid "+categories[2].backgroundColor+";border-right : 3px solid "+categories[3].backgroundColor+"; margin-left: 3px;";
+                    return "border : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-left : 3px solid "+categories[2].backgroundColor+"; border-right : 3px solid "+categories[3].backgroundColor+"; margin-left: 3px;";
                 }
             }
         }
@@ -360,13 +361,13 @@
                     return "border: none;"
                 }
                 case 1:{
-                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[0].backgroundColor+"; border-left : 3px solid "+actualCategories[0].backgroundColor+"; margin-left: 3px;";
+                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[0].backgroundColor+"; border-left : 3px solid "+actualCategories[0].backgroundColor+"; border-right : 0px solid transparent; margin-left: 3px;";
                 }
                 case 2:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-left : 3px solid "+actualCategories[0].backgroundColor+"; margin-left: 3px;";
+                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-left : 3px solid "+actualCategories[0].backgroundColor+"; border-right : 0px solid transparent; margin-left: 3px;";
                 }
                 default:{
-                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-left : 3px solid "+actualCategories[2].backgroundColor+"; margin-left: 3px;";
+                    return "border-top : 3px solid "+categories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-left : 3px solid "+actualCategories[2].backgroundColor+"; border-right : 0px solid transparent; margin-left: 3px;";
                 }
             }
 
@@ -381,10 +382,10 @@
                     return "border: none;"
                 }
                 case 1:{
-                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[0].backgroundColor+";";
+                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[0].backgroundColor+"; border-right : 0px solid transparent; border-left : 0px solid transparent;";
                 }
                 default:{
-                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+";";
+                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-right : 0px solid transparent; border-left : 0px solid transparent;";
                 }
             }
 
@@ -408,16 +409,16 @@
                     return "border: none;"
                 }
                 case 1:{
-                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[0].backgroundColor+"; border-right : 3px solid "+actualCategories[0].backgroundColor+"; margin-right: 3px;";
+                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[0].backgroundColor+"; border-right : 3px solid "+actualCategories[0].backgroundColor+"; border-left : 0px solid transparent; margin-right: 3px;";
                 }
                 case 2:{
-                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-right : 3px solid "+actualCategories[0].backgroundColor+"; margin-right: 3px;";
+                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-right : 3px solid "+actualCategories[0].backgroundColor+"; border-left : 0px solid transparent; margin-right: 3px;";
                 }
                 case 3:{
-                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-right : 3px solid "+actualCategories[2].backgroundColor+"; margin-right: 3px;";
+                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-right : 3px solid "+actualCategories[2].backgroundColor+"; border-left : 0px solid transparent; margin-right: 3px;";
                 }
                 default:{
-                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-right : 3px solid "+actualCategories[3].backgroundColor+"; margin-right: 3px;";
+                    return "border-top : 3px solid "+actualCategories[0].backgroundColor+"; border-bottom : 3px solid "+actualCategories[1].backgroundColor+"; border-right : 3px solid "+actualCategories[3].backgroundColor+"; border-left : 0px solid transparent; margin-right: 3px;";
                 }
             }
 
@@ -437,6 +438,7 @@
             var parentUnit = DataService.getUnitById(DataService.getParentUnitId(unitToValidate.annotation_unit_tree_id))
             var hashTables = DataService.hashTables;
             var isUnitValidated = restrictionsValidatorService.checkRestrictionsOnFinish(unitToValidate,parentUnit,hashTables);
+            unitToValidate.finished = isUnitValidated;
             if(isUnitValidated){
                 selectionHandlerService.updateSelectedUnit(parentUnit.annotation_unit_tree_id);
                 if(parentUnit.annotation_unit_tree_id === "0"){
