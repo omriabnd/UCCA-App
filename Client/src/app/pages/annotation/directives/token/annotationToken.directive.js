@@ -55,6 +55,23 @@
                 $scope.showParents = !$scope.showParents;
                 
             });
+            
+            $scope.vm.categoriesString = function(vm){
+            	var unit = DataService.getUnitById(vm.token.inUnit);
+            	if(!!unit && unit.categories !== undefined && unit.categories.length > 0){
+            		var result = "";
+            		for(var i=0; i<unit.categories.length; i++){
+            			var category = unit.categories[i];
+	            		if(!category.fromParentLayer || !!$scope.showParents){
+	            			result += i + ": " + category.name + "\n";
+	            		}
+            		}
+            		if(!!result){
+            			return result;
+            		}
+            	}
+            	return "";
+            }
 
             /*
             $scope.$on('highlightTokens', function(event, args) {
@@ -278,10 +295,9 @@
         
         function unitIsFinished(vm){
         	var unit = DataService.getUnitById(vm.token.inUnit);
-        	return !!unit && !notRelevant(vm) && !!unit.finished;
+        	return !!unit && !!unit.finished;
         }
-
-
+        
     }
 
 })();
