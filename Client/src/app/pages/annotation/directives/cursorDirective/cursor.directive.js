@@ -314,9 +314,9 @@
 	                            unit.tokens = unit.tokenCopy;
 	                        }
 	                        
-	                        if(!!oldUnit && (!oldUnit.parentUnitId || oldUnit.parentUnitId === "0")){
-	                        	oldUnit.gui_status = "HIDDEN";
-	                        }
+//	                        if(!!oldUnit && (!oldUnit.parentUnitId || oldUnit.parentUnitId === "0")){
+//	                        	oldUnit.gui_status = "HIDDEN";
+//	                        }
 	                        unit.gui_status = "OPEN";
 	                        
 	                        selectionHandlerService.clearTokenList();

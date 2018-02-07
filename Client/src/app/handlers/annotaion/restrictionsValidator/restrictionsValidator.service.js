@@ -398,7 +398,8 @@
             }else{
             	annotationUnit.gui_status = 'OPEN'
             }
-
+            annotationUnit.finished = !vaiolate;
+            
             return !vaiolate;
         }
 

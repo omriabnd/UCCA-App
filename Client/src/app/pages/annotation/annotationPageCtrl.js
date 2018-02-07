@@ -1,4 +1,5 @@
 
+
 /* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
   'use strict';
@@ -29,11 +30,7 @@
       vm.addUserComment = addUserComment;
       vm.viewUserManual = viewUserManual;
       vm.toggleParents = toggleParents;
-//      vm.showParents = $scope.showParents;
-      vm.sceneFunctionRoles = ENV_CONST.SCENE_FUNCTION_ROLES;
       vm.defaultCategoryHotkeys = ENV_CONST.DEFAULT_CATEGORY_HOTKEYS;
-//      $scope.toggleParents = DataService.toggleParents;
-//      toggleParents = DataService.toggleParents;
       
       try{
     	  vm.categoryReorderings = JSON.parse(DataService.currentTask.project.layer.category_reorderings);
@@ -67,8 +64,8 @@
               return;
           }
 
-		  var selectedUnitId = selectionHandlerService.getSelectedUnitId();
-		  var selectedUnit = DataService.getUnitById(selectedUnitId);
+          var selectedUnitId = selectionHandlerService.getSelectedUnitId();
+	  var selectedUnit = DataService.getUnitById(selectedUnitId);
 
 		  var selectedTokenList = selectionHandlerService.getSelectedTokenList();
 		  if(selectedTokenList != undefined && selectedTokenList.length > 0){
@@ -103,9 +100,12 @@
 		      		  }
 		      	  }
 			  }      		
-
-			  console.log(vm.categoryReorderings);
+			
+		  	  if (!vm.categoryReorderings[parentCategoryName]){
+		  	      return;
+		  	  }
 		  	  var reOrderings = vm.categoryReorderings[parentCategoryName][selectedTokens];
+		  	  
 		  	  if(!reOrderings){
 		  		  reOrderings = vm.categoryReorderings[parentCategoryName][""];
 		  	  }
