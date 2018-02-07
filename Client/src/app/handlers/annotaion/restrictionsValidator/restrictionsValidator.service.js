@@ -216,7 +216,11 @@
         }
 
         function checkIfUnitViolateForbidChildRestriction(parentAnnotationUnit,newAnnotationUnit,newCategory){
-            
+
+            if (Core.isEmptyObject(restrictionsTables['FORBID_CHILD'])) {
+                return false;
+            }
+
             if(newCategory){
                 newAnnotationUnit.categories.push(newCategory);
             }
@@ -269,6 +273,10 @@
         }
 
         function checkIfUnitViolateForbidSiblingRestriction(parentAnnotationUnit,newAnnotationUnit,newCategory){
+
+            if (Core.isEmptyObject(restrictionsTables['FORBID_SIBLING'])) {
+                return false;
+            }
             for(var i=0; i< parentAnnotationUnit.AnnotationUnits.length; i++){
 
                 if(parentAnnotationUnit.AnnotationUnits[i] == undefined){
@@ -507,6 +515,12 @@
         }
 
         function checkIfUnitViolateRequireSiblingRestriction(annotationUnit,parentUnit){
+
+            if (Core.isEmptyObject(restrictionsTables['REQUIRE_SIBLING'])) {
+                return false;
+            }
+
+
             var result = false;
             for(var i=0; i< annotationUnit.categories.length; i++){
                 // Go over all the unit categories,
@@ -566,7 +580,6 @@
                 return VIOLATED_CATEGORY;
             }
             VIOLATED_CATEGORY = checkIfUnitViolateRequireChildRestriction(annotationUnit);
-            console.log('VIOLATED_CATEGORY',VIOLATED_CATEGORY);
             return VIOLATED_CATEGORY
         }
         
@@ -628,6 +641,12 @@
         }
 
         function checkIfUnitViolateRequireChildRestriction(annotationUnit){
+
+            if (Core.isEmptyObject(restrictionsTables['REQUIRE_CHILD'])) {
+                return false;
+            }
+
+
             var result = false;
             for(var i=0; i< annotationUnit.categories.length; i++){
                 // Go over all the unit categories, and look if there is any category that exists in the restrictionsTables['REQUIRE_CHILD'];
