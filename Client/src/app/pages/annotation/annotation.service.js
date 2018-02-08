@@ -31,7 +31,9 @@
          * @returns {*}
          */
         function getAnnotationTask(task_id){
-            return apiService.annotation.getTaskData(task_id).then(function(response){return response.data});
+            return apiService.annotation.getTaskData(task_id).then(function(response) {
+                return response.data
+            });
         }
         
         function getProjectLayer(layer_id){

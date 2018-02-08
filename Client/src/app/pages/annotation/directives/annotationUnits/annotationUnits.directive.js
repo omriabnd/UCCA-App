@@ -13,7 +13,7 @@
             scope:{
                 unit:'=',
                 previewLine: '=',
-                annotationUnitTreeId: '=',
+                treeId: '=',
                 childDirective: '@',
                 categories: '=',
                 control: '=',
@@ -46,11 +46,11 @@
             vm.isUnitHidden = isUnitHidden;
             vm.toggleMouseUp = toggleMouseUp;
             vm.highlightTokensInUnit0 = highlightTokensInUnit0;
-            vm.dataBlock = DataService.getUnitById(vm.unit.annotation_unit_tree_id);
+            vm.dataBlock = DataService.getUnitById(vm.unit.tree_id);
 
             vm.dataBlock['cursorLocation'] = 0;
-            vm.dataBlock.parentUnitId = DataService.getParentUnitId(vm.dataBlock.annotation_unit_tree_id);
-            vm.dataBlock.annotation_unit_tree_id !== "0" ? updateStartEndIndexForTokens(vm.dataBlock.tokens) : '';
+            vm.dataBlock.parentUnitId = DataService.getParentUnitId(vm.dataBlock.tree_id);
+            vm.dataBlock.tree_id !== "0" ? updateStartEndIndexForTokens(vm.dataBlock.tokens) : '';
 
             vm.dataBlock.categoriesTooltip = categoriesTooltip(vm);
         }
@@ -61,7 +61,7 @@
             $scope.vm.dataBlock.tokenCopy = angular.copy($scope.vm.dataBlock.tokens);
 
             $scope.vm.dataBlock.tokens.forEach(function(token){
-                token.parentId = $scope.vm.dataBlock.annotation_unit_tree_id;
+                token.parentId = $scope.vm.dataBlock.tree_id;
             })
 
             if($scope.vm.dataBlock.children_tokens_hash === undefined){
@@ -80,22 +80,22 @@
             });
 
             $scope.$on('CreateRemoteUnit', function(event, args) {
-                if(args.unitId.toString() === $scope.vm.dataBlock.annotation_unit_tree_id ){
+                if(args.unitId.toString() === $scope.vm.dataBlock.tree_id ){
                     selectionHandlerService.setCategoryForRemote(args.category);
                     switchToRemoteMode($scope.vm)
                 }
             });
 
             $scope.$on('ToggleSuccess', function(event, args) {
-                if(args.id.toString() === $scope.vm.dataBlock.annotation_unit_tree_id ){
-                    var parentUnit = DataService.getUnitById(DataService.getParentUnitId($scope.vm.dataBlock.annotation_unit_tree_id ));
+                if(args.id.toString() === $scope.vm.dataBlock.tree_id ){
+                    var parentUnit = DataService.getUnitById(DataService.getParentUnitId($scope.vm.dataBlock.tree_id ));
                     paintTokens(parentUnit.tokens,parentUnit);
                 }
                 $scope.vm.dataBlock.categoriesTooltip = categoriesTooltip($scope.vm);
             });
 
             $scope.$on('checkRestrictionForCurrentUnit', function(event, args) {
-                if(args.unitId.toString() === $scope.vm.dataBlock.annotation_unit_tree_id ){
+                if(args.unitId.toString() === $scope.vm.dataBlock.tree_id ){
                     checkRestrictionForCurrentUnit(args.unitId);
                 }
                 if(event){
@@ -109,11 +109,11 @@
             //});
 
             $scope.$on('InsertSuccess', function(event, args) {
-                if(args.dataBlock.id.toString() === $scope.vm.dataBlock.annotation_unit_tree_id ){
+                if(args.dataBlock.id.toString() === $scope.vm.dataBlock.tree_id ){
                     if($scope.vm.dataBlock.AnnotationUnits.AnnotationUnits){
                         delete $scope.vm.dataBlock.AnnotationUnits.AnnotationUnits;
                     }
-                    selectionHandlerService.updateSelectedUnit($scope.vm.dataBlock.annotation_unit_tree_id,true);
+                    selectionHandlerService.updateSelectedUnit($scope.vm.dataBlock.tree_id,true);
                     paintTokens($scope.vm.tokens,$scope.vm.dataBlock);
                     
                 }
@@ -121,7 +121,7 @@
 
             $scope.$on('DeleteSuccess', function(event, args) {
                 if(args.reset){
-                    var parentUnit = DataService.getUnitById(DataService.getParentUnitId($scope.vm.dataBlock.annotation_unit_tree_id ));
+                    var parentUnit = DataService.getUnitById(DataService.getParentUnitId($scope.vm.dataBlock.tree_id ));
                     RemoveBorder(parentUnit.tokens,parentUnit);
                 }else{
                    $scope.vm.tokens.forEach(function(token,index,inInit){
@@ -131,13 +131,13 @@
                 }
 
                 $scope.vm.dataBlock.tokens.forEach(function(token){
-                        token.parentId = $scope.vm.dataBlock.annotation_unit_tree_id;
+                        token.parentId = $scope.vm.dataBlock.tree_id;
                 })
             });
 
             $scope.$on('RemoveBorder', function(event, args) {
-                if(args.id.toString() === $scope.vm.dataBlock.annotation_unit_tree_id ){
-                    var parentUnit = DataService.getUnitById(DataService.getParentUnitId($scope.vm.dataBlock.annotation_unit_tree_id ));
+                if(args.id.toString() === $scope.vm.dataBlock.tree_id ){
+                    var parentUnit = DataService.getUnitById(DataService.getParentUnitId($scope.vm.dataBlock.tree_id ));
                     RemoveBorder(parentUnit.tokens,parentUnit);
                 }
             });
@@ -179,10 +179,10 @@
         }
 
         function unitIsSelected(vm){
-            if(selectionHandlerService.getSelectedUnitId() === vm.dataBlock.annotation_unit_tree_id){
+            if(selectionHandlerService.getSelectedUnitId() === vm.dataBlock.tree_id){
                 $rootScope.currentVm = vm;
             }
-            var unitIsSelect = selectionHandlerService.getSelectedUnitId() === vm.dataBlock.annotation_unit_tree_id;
+            var unitIsSelect = selectionHandlerService.getSelectedUnitId() === vm.dataBlock.tree_id;
             if (selectionHandlerService.getSelectedUnitId() == 0) {
                 highlightTokensInUnit0([]);
             }
@@ -233,11 +233,11 @@
                     var remoteOriginalTreeId = remoteOriginalId;
                     $scope.deleteAllRemoteInstanceOfThisUnit = function(){
 
-                        for(var key in DataService.unitsUsedAsRemote[$scope.vm.dataBlock.annotation_unit_tree_id]){
+                        for(var key in DataService.unitsUsedAsRemote[$scope.vm.dataBlock.tree_id]){
                             DataService.deleteUnit(key);
-                            delete DataService.unitsUsedAsRemote[$scope.vm.dataBlock.annotation_unit_tree_id][key];
+                            delete DataService.unitsUsedAsRemote[$scope.vm.dataBlock.tree_id][key];
                         }
-                        DataService.deleteUnit($scope.vm.dataBlock.annotation_unit_tree_id);
+                        DataService.deleteUnit($scope.vm.dataBlock.tree_id);
                         // selCtrl.updateUI(DataService.getUnitById($("[unit-wrapper-id="+$rootScope.clickedUnit+"]").attr('child-unit-id')));
                     };
                 }
@@ -282,7 +282,7 @@
                           var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
                           token.indexInParent = elementPosInThisUnit;
                           if(DataService.getParentUnit(token.parentId)){
-                            token.parentId = DataService.getParentUnit(token.parentId).annotation_unit_tree_id;
+                            token.parentId = DataService.getParentUnit(token.parentId).tree_id;
                           }
                         })
 
@@ -475,12 +475,12 @@
                 var rowElem = $(event.toElement).parents(".directive-info-data-container").first()
             }
             var unitToValidate = DataService.getUnitById(unit_id);
-            var parentUnit = DataService.getUnitById(DataService.getParentUnitId(unitToValidate.annotation_unit_tree_id))
+            var parentUnit = DataService.getUnitById(DataService.getParentUnitId(unitToValidate.tree_id))
             var hashTables = DataService.hashTables;
             var isUnitValidated = restrictionsValidatorService.checkRestrictionsOnFinish(unitToValidate,parentUnit,hashTables);
             if(isUnitValidated){
-                selectionHandlerService.updateSelectedUnit(parentUnit.annotation_unit_tree_id);
-                if(parentUnit.annotation_unit_tree_id === "0"){
+                selectionHandlerService.updateSelectedUnit(parentUnit.tree_id);
+                if(parentUnit.tree_id === "0"){
                     unitToValidate.gui_status = 'HIDDEN';
                 }else{
                     unitToValidate.gui_status = 'COLLAPSE';
@@ -488,8 +488,8 @@
 
                 subTreeToCollapse(unitToValidate);
 
-                Core.scrollToUnit(parentUnit.annotation_unit_tree_id);
-//                Core.showNotification('success','Annotation unit ' + unitToValidate.annotation_unit_tree_id + ' has finished successfully' )
+                Core.scrollToUnit(parentUnit.tree_id);
+//                Core.showNotification('success','Annotation unit ' + unitToValidate.tree_id + ' has finished successfully' )
             }
 
             event ? event.stopPropagation() : '';
@@ -500,7 +500,7 @@
         function subTreeToCollapse(subtree_root_unit){
             return ;
             subtree_root_unit.AnnotationUnits.forEach(function(unit){
-               DataService.getUnitById(unit.annotation_unit_tree_id).gui_status = "COLLAPSE";
+               DataService.getUnitById(unit.tree_id).gui_status = "COLLAPSE";
 
                subTreeToCollapse(unit);
             })
@@ -540,7 +540,7 @@
         }
 
         function isUnitClicked(vm){
-            return selectionHandlerService.getSelectedUnitId() === vm.dataBlock.annotation_unit_tree_id;
+            return selectionHandlerService.getSelectedUnitId() === vm.dataBlock.tree_id;
         }
 
         function deleteUnit(unitId,vm){
@@ -559,12 +559,12 @@
                 if(currentUnit.unitType === "REMOTE"){
                     //UpdateUsedAsRemote
                     var remoteUnit = DataService.getUnitById(currentUnit.remote_original_id);
-                    var elementPos = DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.annotation_unit_tree_id]
+                    var elementPos = DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.tree_id]
                     if(elementPos){
-                        delete DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.annotation_unit_tree_id];
+                        delete DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.tree_id];
                     }
 
-                    delete DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.annotation_unit_tree_id];
+                    delete DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.tree_id];
                 }
                 var parentUnit = DataService.getParentUnitId(unitId);
                 DataService.deleteUnit(unitId).then(function(res){
@@ -602,7 +602,7 @@
 
         function unitClicked(vm,index, event){
             if(selectionHandlerService.getUnitToAddRemotes() !== "0" && selectionHandlerService.getUnitToAddRemotes() !== index){
-                var unitUsed = DataService.getUnitById(selectionHandlerService.getUnitToAddRemotes()).AnnotationUnits.map(function(x) {return x.remote_original_id; }).indexOf(vm.unit.annotation_unit_tree_id);
+                var unitUsed = DataService.getUnitById(selectionHandlerService.getUnitToAddRemotes()).AnnotationUnits.map(function(x) {return x.remote_original_id; }).indexOf(vm.unit.tree_id);
 
                 if(index == 0){
                   selectionHandlerService.setUnitToAddRemotes("0");
@@ -646,15 +646,15 @@
 
                 selectionHandlerService.clearCategoryForRemote();
 
-                objToPush["remote_original_id"] = vm.dataBlock.annotation_unit_tree_id;
+                objToPush["remote_original_id"] = vm.dataBlock.tree_id;
 
                 var newRowId = DataService.insertToTree(objToPush,selectionHandlerService.getUnitToAddRemotes()).then(function(res){
                     DataService.unitType = 'REGULAR';
 
-                    if(DataService.unitsUsedAsRemote[vm.dataBlock.annotation_unit_tree_id] === undefined){
-                        DataService.unitsUsedAsRemote[vm.dataBlock.annotation_unit_tree_id] = {};
+                    if(DataService.unitsUsedAsRemote[vm.dataBlock.tree_id] === undefined){
+                        DataService.unitsUsedAsRemote[vm.dataBlock.tree_id] = {};
                     }
-                    DataService.unitsUsedAsRemote[vm.dataBlock.annotation_unit_tree_id][res.id] = true;
+                    DataService.unitsUsedAsRemote[vm.dataBlock.tree_id][res.id] = true;
 
 
                     selectionHandlerService.setUnitToAddRemotes("0");
@@ -664,7 +664,7 @@
 
             }
             event ? event.stopPropagation() : '';
-            objToPush ? selectionHandlerService.updateSelectedUnit(objToPush.annotation_unit_tree_id) : selectionHandlerService.updateSelectedUnit(index);
+            objToPush ? selectionHandlerService.updateSelectedUnit(objToPush.tree_id) : selectionHandlerService.updateSelectedUnit(index);
         }
 
         function updateStartEndIndexForTokens(tokens){

@@ -20,7 +20,7 @@
              * A data structure that contains rows of selectable words.
              */
             tree: {
-                annotation_unit_tree_id : '0',
+                tree_id : '0',
                 text : '',
                 numOfAnnotationUnits: 0,
                 unitType:'REGULAR',
@@ -157,7 +157,7 @@
 
                 //if the category isn't assigned to that unit yet - add it
                 if(elementPos === -1) {
-                    if (!restrictionsValidatorService.checkRestrictionsBeforeInsert(getParentUnit(unit.annotation_unit_tree_id),unit,DataService.hashTables.tokensHashTable, category)){
+                    if (!restrictionsValidatorService.checkRestrictionsBeforeInsert(getParentUnit(unit.tree_id),unit,DataService.hashTables.tokensHashTable, category)){
                       return reject("Failed") ;
                     }
                     if( unit.AnnotationUnits && unit.AnnotationUnits.length > 0 && restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction([category])){
@@ -216,10 +216,10 @@
                         unit.categories = [];
                     }
                 }
-                DataService.getParentUnit(unit.annotation_unit_tree_id).gui_status = "OPEN";
-                DataService.getUnitById(unit.annotation_unit_tree_id).gui_status = "OPEN";
+                DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
+                DataService.getUnitById(unit.tree_id).gui_status = "OPEN";
 
-                $rootScope.$broadcast("ToggleSuccess",{categories: unit.categories, id: unit.annotation_unit_tree_id});
+                $rootScope.$broadcast("ToggleSuccess",{categories: unit.categories, id: unit.tree_id});
                 resolve('ToggleSuccess');
             })
 
@@ -236,7 +236,7 @@
                 }
                 var tokenPosition = selectedUnit.AnnotationUnits[i].tokens.map(function(x) {return x.id; }).indexOf(token.id);
                 if(tokenPosition > -1){
-                    tokenInUnit = selectedUnit.AnnotationUnits[i].annotation_unit_tree_id;
+                    tokenInUnit = selectedUnit.AnnotationUnits[i].tree_id;
                     break;
                 }
             }
@@ -250,116 +250,121 @@
                 //     debugger;
                 // }
 
-                if(!inInitStage && DataService.currentTask.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
+                if (!inInitStage && DataService.currentTask.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT) {
                     Core.showAlert("Cant create annotation units in refinement layer")
                     console.log('ALERT - insertToTree -  prevent insert to tree when refinement layer');
                     reject(selectedUnitId);
                 }
                 var parentUnit = getUnitById(level);
 
-                if(!parentUnit.AnnotationUnits){
+                if (!parentUnit.AnnotationUnits) {
                     parentUnit.AnnotationUnits = [];
                 }
-                if(!newObject.annotation_unit_tree_id){
-                  if(level.toString() === "0"){
-                      //Passage unit or it children units.
-                      newObject.annotation_unit_tree_id = parseInt(parentUnit.AnnotationUnits.length + 1).toString();
-                  }else{
-                      newObject.annotation_unit_tree_id = level + '-' +  parseInt(parentUnit.AnnotationUnits.length + 1);
-                  }
+                if (!newObject.tree_id) {
+                    if (level.toString() === "0") {
+                        //Passage unit or it children units.
+                        newObject.tree_id = parseInt(parentUnit.AnnotationUnits.length + 1).toString();
+                    } else {
+                        newObject.tree_id = level + '-' + parseInt(parentUnit.AnnotationUnits.length + 1);
+                    }
                 }
-
 
 
                 newObject.comment = newObject.comment || "";
                 newObject.cluster = newObject.cluster || "";
-                
+
 
                 var units = [];
 
-                if(newObject.unitType != "REMOTE"){
-                  newObject.tokens.forEach(function(token){
-                      if(token.inUnit !== null && token.inUnit !== undefined){
-                          var unitPos = units.map(function(x) {return x.id; }).indexOf(token.inUnit);
-                          if(unitPos === -1){
-                              units.push({
-                                  id:token.inUnit
-                              });
-                          };
-                          //Find token in parent
-                          if(token.parentId === undefined){
-                              token.parentId = "0";
-                          }
-                          var parentUnit = DataService.getUnitById(token.parentId);
-                          if(parentUnit.tokens === undefined){
-                              parentUnit['tokens'] = parentUnit.tokenCopy;
-                          }
-                          var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(token.id);
+                if (newObject.unitType != "REMOTE") {
+                    newObject.tokens.forEach(function (token) {
+                        if (token.inUnit !== null && token.inUnit !== undefined) {
+                            var unitPos = units.map(function (x) {
+                                return x.id;
+                            }).indexOf(token.inUnit);
+                            if (unitPos === -1) {
+                                units.push({
+                                    id: token.inUnit
+                                });
+                            };
+                            //Find token in parent
+                            if (token.parentId === undefined) {
+                                token.parentId = "0";
+                            }
+                            var parentUnit = DataService.getUnitById(token.parentId);
+                            if (parentUnit.tokens === undefined) {
+                                parentUnit['tokens'] = parentUnit.tokenCopy;
+                            }
+                            var elementPos = parentUnit.tokens.map(function (x) {
+                                return x.id;
+                            }).indexOf(token.id);
 
-                          if(elementPos > -1){
-                              parentUnit.tokens[elementPos].inUnit = newObject.annotation_unit_tree_id;
-                          }
-                      }
-                  });
+                            if (elementPos > -1) {
+                                parentUnit.tokens[elementPos].inUnit = newObject.tree_id;
+                            }
+                        }
+                    });
                 }
 
                 //Adding children to new unit
-                if(units.length > 1){
+                if (units.length > 1) {
 
-                    if(!inInitStage && restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction(newObject.categories)){
+                    if (!inInitStage && restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction(newObject.categories)) {
                         return level;
                     }
-                    
-                    units.forEach(function(unit){
+
+                    units.forEach(function (unit) {
                         var parentUnitId = getParentUnitId(unit.id);
                         var parentUnit = getUnitById(parentUnitId);
-                        var elementPos = parentUnit.AnnotationUnits.map(function(x) {return x.annotation_unit_tree_id; }).indexOf(unit.id);
-                        if(newObject.AnnotationUnits === undefined){
+                        var elementPos = parentUnit.AnnotationUnits.map(function (x) {
+                            return x.tree_id;
+                        }).indexOf(unit.id);
+                        if (newObject.AnnotationUnits === undefined) {
                             newObject.AnnotationUnits = [];
                         }
-                        if(elementPos > -1){                        
+                        if (elementPos > -1) {
                             newObject.AnnotationUnits.push(angular.copy(parentUnit.AnnotationUnits[elementPos]));
 //                            parentUnit.AnnotationUnits.splice(elementPos,1);
                         }
                     })
                 }
-                
-                
 
-                newObject.unitType =  newObject.unitType ? newObject.unitType : "REGULAR";
 
-                if(!inInitStage && newObject.unitType !== "IMPLICIT" && !restrictionsValidatorService.checkRestrictionsBeforeInsert(parentUnit,newObject,DataService.hashTables.tokensHashTable)){
+                newObject.unitType = newObject.unitType ? newObject.unitType : "REGULAR";
+
+                if (!inInitStage && newObject.unitType !== "IMPLICIT" && !restrictionsValidatorService.checkRestrictionsBeforeInsert(parentUnit, newObject, DataService.hashTables.tokensHashTable)) {
                     // if no unit has been added, return the parent unitRowId
                     return level;
                 }
-                
+
                 //Removing children unit from parent unit
-                if(units.length > 1){
-                    
-                    units.forEach(function(unit){
+                if (units.length > 1) {
+
+                    units.forEach(function (unit) {
                         var parentUnitId = getParentUnitId(unit.id);
                         var parentUnit = getUnitById(parentUnitId);
-                        var elementPos = parentUnit.AnnotationUnits.map(function(x) {return x.annotation_unit_tree_id; }).indexOf(unit.id);
-                        if(elementPos > -1){                        
+                        var elementPos = parentUnit.AnnotationUnits.map(function (x) {
+                            return x.tree_id;
+                        }).indexOf(unit.id);
+                        if (elementPos > -1) {
 //                            newObject.AnnotationUnits.push(angular.copy(parentUnit.AnnotationUnits[elementPos]));
-                            parentUnit.AnnotationUnits.splice(elementPos,1);
+                            parentUnit.AnnotationUnits.splice(elementPos, 1);
                         }
                     })
                 }
-                
-                
+
 
                 //Update IndexInParent attribute
-                newObject.tokens.forEach(function(token,index,inInit){
+                newObject.tokens.forEach(function (token, index, inInit) {
                     token.indexInParent = index;
                 });
 
                 /**
                  * This part computes index_int, which is the index where the unit will be inserted into the list
                  * of children for the current parent unit.
-                  */
-                var indexToInsert = newObject.annotation_unit_tree_id.split("-");
-                var index_int = parseInt(indexToInsert[indexToInsert.length-1]);
+                 */
+                var indexToInsert = newObject.tree_id.split("-");
+                var index_int = parseInt(indexToInsert[indexToInsert.length - 1]);
 
 
                 /**
@@ -384,7 +389,7 @@
                      * For remote units, the annotation_unit_tree_id is that of the unit it was cloned from. Therefore,
                      * we need to update it and this is done in the following line.
                      */
-                  newObject.annotation_unit_tree_id = newObject.parent_id + "-" + index_int.toString();
+                  newObject.tree_id = newObject.parent_id + "-" + index_int.toString(); // TODO: check it in ucca2 ver
                 }
 
                 /**
@@ -426,9 +431,9 @@
                 
                 updateInUnitIdsForTokens(DataService.tree);
 
-                newObject.unitType !== "REMOTE" ? $rootScope.$broadcast("InsertSuccess",{dataBlock: { id: level, AnnotationUnits: getUnitById(level).AnnotationUnits},newUnitId: newObject.annotation_unit_tree_id }) : '';
+                newObject.unitType !== "REMOTE" ? $rootScope.$broadcast("InsertSuccess",{dataBlock: { id: level, AnnotationUnits: getUnitById(level).AnnotationUnits},newUnitId: newObject.tree_id }) : '';
 
-                return resolve({status: 'InsertSuccess',id: newObject.annotation_unit_tree_id});
+                return resolve({status: 'InsertSuccess',id: newObject.tree_id});
             });
         }
         
@@ -472,9 +477,9 @@
             return $q(function(resolve, reject) {
                 var unit = getUnitById(unitId);
                 var parentUnit = getUnitById(getParentUnitId(unitId));
-                var splitUnitId = unit.annotation_unit_tree_id.split('-');
+                var splitUnitId = unit.tree_id.split('-');
                 var unitPositionInParentAnnotationUnits = parseInt(splitUnitId[splitUnitId.length-1])-1;
-                $rootScope.$broadcast("RemoveBorder",{id: unit.annotation_unit_tree_id});
+                $rootScope.$broadcast("RemoveBorder",{id: unit.tree_id});
                 if(!unit.AnnotationUnits || unit.AnnotationUnits.length === 0){
                     parentUnit.AnnotationUnits.splice(unitPositionInParentAnnotationUnits,1);
                 }else{
@@ -486,8 +491,8 @@
                     for(var i=0; i<parentUnit.AnnotationUnits.length; i++){
                         if(parentUnit.AnnotationUnits[i].unitType !== "REGULAR"){
                             if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id]){
-                                if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id][parentUnit.AnnotationUnits[i].annotation_unit_tree_id]){
-                                    delete DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id][parentUnit.AnnotationUnits[i].annotation_unit_tree_id];
+                                if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id][parentUnit.AnnotationUnits[i].tree_id]){
+                                    delete DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id][parentUnit.AnnotationUnits[i].tree_id];
                                     parentUnit.AnnotationUnits.splice(i,1);
                                     i--;
                                 }
@@ -506,13 +511,13 @@
 
                 updateTreeIds(DataService.tree);
 
-                updateInUnitIdsForTokens(DataService.getParentUnit(unit.annotation_unit_tree_id));
+                updateInUnitIdsForTokens(DataService.getParentUnit(unit.tree_id));
 
-                $rootScope.$broadcast("resetCursor_"+parentUnit.annotation_unit_tree_id,{categories: unit.categories, id: parentUnit.annotation_unit_tree_id});
+                $rootScope.$broadcast("resetCursor_"+parentUnit.tree_id,{categories: unit.categories, id: parentUnit.tree_id});
 
-                $rootScope.$broadcast("DeleteSuccess",{categories: unit.categories, id: unit.annotation_unit_tree_id});
+                $rootScope.$broadcast("DeleteSuccess",{categories: unit.categories, id: unit.tree_id});
 
-                DataService.getParentUnit(unit.annotation_unit_tree_id).gui_status = "OPEN";
+                DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
 
                 return resolve('DeleteSuccess');
             });
@@ -520,7 +525,7 @@
 
         function updateInUnitIdsForTokens(unit){
             unit.tokens.forEach(function(token){
-                token.parentId = unit.annotation_unit_tree_id;
+                token.parentId = unit.tree_id;
 
                     var isTokenInUnit = DataService.isTokenInUnit(unit,token);
 
@@ -557,14 +562,14 @@
         function updateTreeIds(unit,treeId){
             if(unit.AnnotationUnits && unit.AnnotationUnits.length > 0){
 
-                // remove all empty elements in the array
-                //for (var i = 0; i < unit.AnnotationUnits.length; i++) {
-                //    if (unit.AnnotationUnits[i] == undefined) {
-                //        unit.AnnotationUnits.splice(i,1);
-                //        i--;
-                //    }
-                //}
-                
+            //     // remove all empty elements in the array
+            //     //for (var i = 0; i < unit.AnnotationUnits.length; i++) {
+            //     //    if (unit.AnnotationUnits[i] == undefined) {
+            //     //        unit.AnnotationUnits.splice(i,1);
+            //     //        i--;
+            //     //    }
+            //     //}
+
                 for (var i = 0; i < unit.AnnotationUnits.length; i++) {
 
                     if(unit.AnnotationUnits[i] == undefined){
@@ -572,28 +577,28 @@
                     }
 
                     // the old tree id of the unit
-                    var oldId = angular.copy(unit.AnnotationUnits[i].annotation_unit_tree_id);
+                    var oldId = angular.copy(unit.AnnotationUnits[i].tree_id);
 
                     // updating the id of the unit according to its place in the array
-                    unit.AnnotationUnits[i].annotation_unit_tree_id = (unit.annotation_unit_tree_id === "0" ? (i+1).toString() : treeId+"-"+(i+1).toString());
+                    unit.AnnotationUnits[i].tree_id = (unit.tree_id === "0" ? (i+1).toString() : treeId+"-"+(i+1).toString());
 
                     // if the Id has changed, change the remote units references
-                    if(oldId !== unit.AnnotationUnits[i].annotation_unit_tree_id){
+                    if(oldId !== unit.AnnotationUnits[i].tree_id){
 
                         if(DataService.unitsUsedAsRemote[oldId]){
-                            DataService.unitsUsedAsRemote[unit.AnnotationUnits[i].annotation_unit_tree_id] = angular.copy(DataService.unitsUsedAsRemote[oldId]);
+                            DataService.unitsUsedAsRemote[unit.AnnotationUnits[i].tree_id] = angular.copy(DataService.unitsUsedAsRemote[oldId]);
                             delete DataService.unitsUsedAsRemote[oldId];
                         }else{
                             for(var key in DataService.unitsUsedAsRemote){
                                 if(DataService.unitsUsedAsRemote[key][oldId]){
-                                    DataService.unitsUsedAsRemote[key][unit.AnnotationUnits[i].annotation_unit_tree_id] = true;
+                                    DataService.unitsUsedAsRemote[key][unit.AnnotationUnits[i].tree_id] = true;
                                     delete DataService.unitsUsedAsRemote[key][oldId];
                                 }
                             }
                         }
-                        
+
                     }
-                    updateTreeIds(unit.AnnotationUnits[i],unit.AnnotationUnits[i].annotation_unit_tree_id);
+                    updateTreeIds(unit.AnnotationUnits[i],unit.AnnotationUnits[i].tree_id);
                 }
             }else{
                 unit.tokens.forEach(function(token){
@@ -605,8 +610,8 @@
         }
 
         function sortUnits(a,b){
-            var aParentUnit = getParentUnit(a.annotation_unit_tree_id);
-            var bParentUnit = getParentUnit(b.annotation_unit_tree_id);
+            var aParentUnit = getParentUnit(a.tree_id);
+            var bParentUnit = getParentUnit(b.tree_id);
 
             var aElementPos = aParentUnit.tokens.map(function(x) {return x.id; }).indexOf(a.tokens[0].id);
             var bElementPos = bParentUnit.tokens.map(function(x) {return x.id; }).indexOf(b.tokens[0].id);
@@ -659,16 +664,16 @@
 
         function traversInTree(treeNode){
             var unit = {
-                annotation_unit_tree_id : treeNode.unitType === 'REMOTE' ? treeNode.remote_original_id : treeNode.annotation_unit_tree_id.toString(),
+                tree_id : treeNode.unitType === 'REMOTE' ? treeNode.remote_original_id : treeNode.tree_id.toString(),
                 task_id: DataService.currentTask.id.toString(),
                 comment: treeNode.comment || '',
                 cluster: treeNode.cluster || '',
                 categories: filterCategoriesAtt(angular.copy(treeNode.categories)) || [],
-                parent_id: treeNode.unitType === 'REMOTE' ? DataService.getParentUnitId(treeNode.annotation_unit_tree_id) : DataService.getParentUnitId(treeNode.annotation_unit_tree_id),
+                parent_id: treeNode.unitType === 'REMOTE' ? DataService.getParentUnitId(treeNode.tree_id) : DataService.getParentUnitId(treeNode.tree_id),
                 gui_status : treeNode.gui_status || "OPEN",
                 type: angular.copy(treeNode.unitType.toUpperCase()),
                 is_remote_copy: treeNode.unitType.toUpperCase() === 'REMOTE',
-                children_tokens: treeNode.annotation_unit_tree_id === "0" ? filterTokensAtt(angular.copy(treeNode.tokens)) : filterTokensAttForUnit(angular.copy(treeNode.tokens))
+                children_tokens: treeNode.tree_id === "0" ? filterTokensAtt(angular.copy(treeNode.tokens)) : filterTokensAttForUnit(angular.copy(treeNode.tokens))
             };
             if($rootScope.isSlottedLayerProject){
                 
@@ -701,7 +706,7 @@
                 }
             }
             
-            if(unit.annotation_unit_tree_id === "0"){
+            if(unit.tree_id === "0"){
                 delete unit.children_tokens;
             }
             unit.type === 'REMOTE' ? unit.type = 'REGULAR' : '';
@@ -848,18 +853,18 @@
                       if(unit == undefined){
                         return false;
                       }
-                      return unit.annotation_unit_tree_id == unitIdToFind
+                      return unit.tree_id == unitIdToFind
                     });
                     tempUnit.AnnotationUnits.length > 0 && unitIndex > -1 ? tempUnit = tempUnit.AnnotationUnits[unitIndex] : '';
                 }
-                return !!tempUnit && tempUnit.annotation_unit_tree_id == unitID ? tempUnit : null;
+                return !!tempUnit && tempUnit.tree_id == unitID ? tempUnit : null;
             }
         }
 
         function getNextSibling(lastFocusedUnitId){
             if(lastFocusedUnitId == 0){
                 if(DataService.tree.AnnotationUnits.length > 0){
-                    return DataService.tree.AnnotationUnits[0].annotation_unit_tree_id;
+                    return DataService.tree.AnnotationUnits[0].tree_id;
                 }
             }else{
                 var parentAnnotationUnits = DataService.getUnitById(DataService.getParentUnitId(lastFocusedUnitId)).AnnotationUnits;
@@ -879,7 +884,7 @@
         function getMyIndexInParentTree(parentTree,myUnitId){
             var currentIndex = 0;
             parentTree.forEach(function(unit,index){
-                if(unit.annotation_unit_tree_id==myUnitId){
+                if(unit.tree_id==myUnitId){
                     currentIndex = index;
                 }
             });
@@ -894,7 +899,7 @@
         function getNextUnit(lastFocusedUnitId,index){
             if(lastFocusedUnitId == 0){
                 if(DataService.tree.AnnotationUnits.length > 0){
-                    return DataService.tree.AnnotationUnits[0].annotation_unit_tree_id;
+                    return DataService.tree.AnnotationUnits[0].tree_id;
                 }
             }else{
                 var currentUnit = DataService.getUnitById(lastFocusedUnitId);
@@ -903,14 +908,14 @@
                 }
 
                 if(currentUnit.AnnotationUnits.length > index){
-                    return currentUnit.AnnotationUnits[index].annotation_unit_tree_id;
+                    return currentUnit.AnnotationUnits[index].tree_id;
                 }else{
                     if(lastFocusedUnitId == DataService.tree.AnnotationUnits.length){
                         return -1;
                     }
                     var splittedUnitID = splitStringByDelimiter(lastFocusedUnitId,'-');
                     var parentID="";
-                    if(currentUnit.annotation_unit_tree_id.length >= 3){
+                    if(currentUnit.tree_id.length >= 3){
                         parentID = splittedUnitID.slice(0,splittedUnitID.length-1).join("-");
                     }
                     else{
@@ -919,7 +924,7 @@
                     if (parentID != 0){
                         return getNextUnit(parentID,splittedUnitID[splittedUnitID.length-1])
                     }else{
-                        return DataService.tree.AnnotationUnits[parseInt(lastFocusedUnitId)].annotation_unit_tree_id;
+                        return DataService.tree.AnnotationUnits[parseInt(lastFocusedUnitId)].tree_id;
                     }
 
                 }

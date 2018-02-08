@@ -64,8 +64,6 @@
                 return this.lastSelectedToken;
             },
             addTokenToList: function(token,selectedUnit,groupUnit){
-                //console.log('add token to list',token);
-                //console.log('selectedTokenList',this.selectedTokenList);
                 var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.id);
                 if(elementPos === -1){
                     !groupUnit ? _handler.removeTokenFromUnitTokens(token) : '';
@@ -119,7 +117,7 @@
                         }
                         var tokenInUnit = _handler.isTokenInUnit(selectedUnit,token);
 
-                        !tokenInUnit ? token['inUnit'] = selectedUnitId.toString() === "0" ? (selectedUnit.AnnotationUnits.length + 1).toString() : selectedUnit.annotation_unit_tree_id !== "0" ? selectedUnit.annotation_unit_tree_id + "-" +(selectedUnit.AnnotationUnits.length + 1).toString() : (selectedUnit.AnnotationUnits.length + 1).toString() : '';
+                        !tokenInUnit ? token['inUnit'] = selectedUnitId.toString() === "0" ? (selectedUnit.AnnotationUnits.length + 1).toString() : selectedUnit.tree_id !== "0" ? selectedUnit.tree_id + "-" +(selectedUnit.AnnotationUnits.length + 1).toString() : (selectedUnit.AnnotationUnits.length + 1).toString() : '';
                         token['inUnit']
                     }
                 }
@@ -220,11 +218,12 @@
                             var newRowId = DataService.insertToTree(objToPush,unit.parent_id,index != DataService.currentTask.annotation_units.length -1);
 
                             unit.categories.forEach(function(category,index){
-                                _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.annotation_unit_tree_id);
+                                _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id);
                                 _handler.clearTokenList();
                             });
 
                         }else if(unit.is_remote_copy){
+                            console.log("Init tree, unit is remote copy", unit);
 
                             DataService.unitType = 'REMOTE';
 
@@ -237,7 +236,7 @@
                             });
                             unit["children_tokens"] = unit["tokens"];
 
-                            unit["remote_original_id"] = angular.copy(unit.annotation_unit_tree_id);
+                            unit["remote_original_id"] = angular.copy(unit.tree_id);
 
                             var unitCategory = unit.categories[0] ? DataService.hashTables.categoriesHashTable[ unit.categories[0].id] : null;
 
@@ -259,7 +258,7 @@
 
                             DataService.unitType = 'REGULAR';
 
-                            var unitToAddTo = DataService.getUnitById(unit.annotation_unit_tree_id);
+                            var unitToAddTo = DataService.getUnitById(unit.tree_id);
 
                             if(unitToAddTo){
                                 if(unitToAddTo.usedAsRemote === undefined){
@@ -268,17 +267,17 @@
 
                                 var remotePosition = DataService.getUnitById(unit.remote_original_id).AnnotationUnits.map(function(x) {return x.id; }).indexOf(unit.id);
                                 if(remotePosition > -1){
-                                    unitToAddTo["usedAsRemote"].push(DataService.getUnitById(unit.parent_id).AnnotationUnits[remotePosition].annotation_unit_tree_id);
+                                    unitToAddTo["usedAsRemote"].push(DataService.getUnitById(unit.parent_id).AnnotationUnits[remotePosition].tree_id);
                                 }else{
                                     unitToAddTo["usedAsRemote"].push(unit.parent_id + "-" + DataService.getUnitById(unit.parent_id).AnnotationUnits.length);
                                 }
                             }
 
-                            if(DataService.unitsUsedAsRemote[unit.annotation_unit_tree_id] === undefined){
-                                DataService.unitsUsedAsRemote[unit.annotation_unit_tree_id] = {};
+                            if(DataService.unitsUsedAsRemote[unit.tree_id] === undefined){
+                                DataService.unitsUsedAsRemote[unit.tree_id] = {};
                             }
 
-                            var parentUnitUnits = DataService.getUnitById(unit.annotation_unit_tree_id);
+                            var parentUnitUnits = DataService.getUnitById(unit.tree_id);
                             var amountOfRemotes = 0;
                             parentUnitUnits.AnnotationUnits.forEach(function(unit){
                                 if(unit.unitType === "REMOTE"){
@@ -286,16 +285,16 @@
                                 }
                             });
 
-                            DataService.unitsUsedAsRemote[unit.annotation_unit_tree_id][unit.parent_id + "-" + parseInt(parseInt(amountOfRemotes+1))] = true;
+                            DataService.unitsUsedAsRemote[unit.tree_id][unit.parent_id + "-" + parseInt(parseInt(amountOfRemotes+1))] = true; // TODO
 
 
 
                             // selectionHandlerService.setUnitToAddRemotes("0");
                             $('.annotation-page-container').toggleClass('crosshair-cursor');
 
-                        }else if(unit.annotation_unit_tree_id !== "0"){
+                        }else if(unit.tree_id !== "0"){
                             unit.children_tokens.forEach(function(token){
-                                var parentId = unit.annotation_unit_tree_id.length === 1 ? "0" : unit.annotation_unit_tree_id.split("-").slice(0,unit.annotation_unit_tree_id.split("-").length-1).join("-");
+                                var parentId = unit.tree_id.length === 1 ? "0" : unit.tree_id.split("-").slice(0,unit.tree_id.split("-").length-1).join("-");
                                 _handler.addTokenToList(DataService.hashTables.tokensHashTable[token.id],parentId)
                             });
                             if(unit.categories.length === 0){
@@ -307,7 +306,7 @@
                                             if(index === 0){
                                                 // _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],false,false,unit.gui_status);
                                             }else{
-                                                _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.annotation_unit_tree_id,false);
+                                                _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id,false);
                                             }
                                             _handler.clearTokenList();
                                         });
@@ -350,7 +349,7 @@
                             gui_status:unit ? unit.gui_status : "OPEN",
                             comment: unit ? unit.comment : '',
                             cluster: unit ? unit.cluster : '',
-                            annotation_unit_tree_id: unit && unit.annotation_unit_tree_id ? unit.annotation_unit_tree_id : null
+                            tree_id: unit && unit.tree_id ? unit.tree_id : null
                         };
                         if(remote){
                             newUnit = angular.copy(remote);
@@ -432,8 +431,8 @@
         function newUnitContainAllParentTokensTwice(selectedTokenList){
             var currentUnit = DataService.getUnitById(selectedTokenList[0].parentId);
 
-            if(currentUnit.annotation_unit_tree_id !== "0"){
-                var parentUnit = DataService.getUnitById(DataService.getParentUnitId(currentUnit.annotation_unit_tree_id));
+            if(currentUnit.tree_id !== "0"){
+                var parentUnit = DataService.getUnitById(DataService.getParentUnitId(currentUnit.tree_id));
 
                 return compareUnitsTokens(selectedTokenList,currentUnit.tokens) && compareUnitsTokens(currentUnit.tokens,parentUnit.tokens);
             }
@@ -569,7 +568,7 @@
         
         function getTreeLastId(currentUnit){
             if(currentUnit.AnnotationUnits.length == 0){
-               return currentUnit.annotation_unit_tree_id;
+               return currentUnit.tree_id;
             }
             
             var lastChild =  currentUnit.AnnotationUnits[ currentUnit.AnnotationUnits.length - 1 ];

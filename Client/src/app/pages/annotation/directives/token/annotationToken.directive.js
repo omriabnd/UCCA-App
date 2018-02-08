@@ -217,8 +217,8 @@
             selectedTokenArray.forEach(function(token,index){
                 if(token.inUnit){
                     var tokenUnit = DataService.getUnitById(token.inUnit);
-                    if(tokenUnit && tokenUnit.annotation_unit_tree_id !== '0'){
-                        var parentID = DataService.getParentUnitId(tokenUnit.annotation_unit_tree_id);
+                    if(tokenUnit && tokenUnit.tree_id !== '0'){
+                        var parentID = DataService.getParentUnitId(tokenUnit.tree_id);
                         for(var i=0; i<tokenUnit.tokens.length; i++){
                             $rootScope.$broadcast('tokenIsClicked', {
                                 token: tokenUnit.tokens[i],

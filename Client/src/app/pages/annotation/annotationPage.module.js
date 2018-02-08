@@ -45,6 +45,10 @@
 
         function getAnnotationTask(AnnotationTextService,$stateParams,DataService,restrictionsValidatorService,selectionHandlerService,$rootScope,$timeout) {
             return AnnotationTextService.getAnnotationTask($stateParams.taskId).then(function(taskResponse){
+                // TODO: Move this into its own function
+
+                // --- Process Categorties and Layers ---
+                // TODO: Understand what all this does
                 var layer_id = taskResponse.project.layer.id;
 
                 var currentLayer = taskResponse.project.layer;
@@ -140,7 +144,7 @@
 //                    allCategories[parentIndex]['shouldRefine'] = true
 //                });
                 
-                
+                // --- Process Tokens ---
                 taskResponse.tokens = replaceEnterWithBr(taskResponse.tokens);
 
 
@@ -159,6 +163,7 @@
                 // first, sort tokens by start_index
                 DataService.currentTask.tokens.sort(function(t1,t2){return t1.start_index - t2.start_index;});
                 // second, define createdByTokenization
+                // TODO: Find what createdByTokenization is used for.
                 for (var index=1; index < DataService.currentTask.tokens.length; index++) {
                     DataService.currentTask.tokens[index].createdByTokenization = DataService.currentTask.tokens[index].require_annotation && (DataService.currentTask.tokens[index].start_index == DataService.currentTask.tokens[index-1].end_index+1);
                 }

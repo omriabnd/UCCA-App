@@ -379,11 +379,11 @@
                     var remoteOriginalTreeId = remoteOriginalId;
                     $scope.deleteAllRemoteInstanceOfThisUnit = function(){
 
-                        for(var key in DataService.unitsUsedAsRemote[$scope.vm.dataBlock.annotation_unit_tree_id]){
+                        for(var key in DataService.unitsUsedAsRemote[$scope.vm.dataBlock.tree_id]){
                             DataService.deleteUnit(key);
-                            delete DataService.unitsUsedAsRemote[$scope.vm.dataBlock.annotation_unit_tree_id][key];
+                            delete DataService.unitsUsedAsRemote[$scope.vm.dataBlock.tree_id][key];
                         }
-                        DataService.deleteUnit($scope.vm.dataBlock.annotation_unit_tree_id);
+                        DataService.deleteUnit($scope.vm.dataBlock.tree_id);
                         // selCtrl.updateUI(DataService.getUnitById($("[unit-wrapper-id="+$rootScope.clickedUnit+"]").attr('child-unit-id')));
                     };
                 }
@@ -500,9 +500,9 @@
                                     nextUnit = DataService.getNextUnit(nextUnit);
                                   }
 
-                                  if(nextSibling && nextSibling.gui_status !== "HIDDEN" && DataService.getParentUnit(nextSibling.annotation_unit_tree_id).gui_status === "OPEN"){
-                                      selectionHandlerService.updateSelectedUnit(nextSibling.annotation_unit_tree_id);
-                                      // DataService.getUnitById(nextSibling.annotation_unit_tree_id).gui_status = "OPEN";
+                                  if(nextSibling && nextSibling.gui_status !== "HIDDEN" && DataService.getParentUnit(nextSibling.tree_id).gui_status === "OPEN"){
+                                      selectionHandlerService.updateSelectedUnit(nextSibling.tree_id);
+                                      // DataService.getUnitById(nextSibling.tree_id).gui_status = "OPEN";
                                   }else{
                                       if(nextUnit && nextUnit !== -1){
                                           selectionHandlerService.updateSelectedUnit(nextUnit);
@@ -532,46 +532,46 @@
 
                                   var prevUnit = DataService.getPrevUnit(selectedUnitId);
 
-                                  // while(prevUnit.gui_status === "HIDDEN" || DataService.getParentUnit(prevUnit.annotation_unit_tree_id).gui_status === "COLLAPSE" || DataService.getParentUnit(prevUnit.annotation_unit_tree_id).gui_status === "HIDDEN"){
-                                  //   if(DataService.getPrevSibling(prevUnit.annotation_unit_tree_id) === null){
-                                  //     prevUnit = DataService.getPrevUnit(prevUnit.annotation_unit_tree_id);
+                                  // while(prevUnit.gui_status === "HIDDEN" || DataService.getParentUnit(prevUnit.tree_id).gui_status === "COLLAPSE" || DataService.getParentUnit(prevUnit.tree_id).gui_status === "HIDDEN"){
+                                  //   if(DataService.getPrevSibling(prevUnit.tree_id) === null){
+                                  //     prevUnit = DataService.getPrevUnit(prevUnit.tree_id);
                                   //   }else{
-                                  //     prevUnit = DataService.getPrevSibling(prevUnit.annotation_unit_tree_id);
+                                  //     prevUnit = DataService.getPrevSibling(prevUnit.tree_id);
                                   //   }
                                   // }
 
                                   var prevSibling = DataService.getPrevSibling(selectedUnitId);
 
                                   while(prevSibling.gui_status === "HIDDEN"){
-                                    if(prevSibling.annotation_unit_tree_id == "1"){
+                                    if(prevSibling.tree_id == "1"){
                                         prevSibling = DataService.getUnitById("0")
                                     }else{
-                                      prevSibling = DataService.getPrevSibling(prevSibling.annotation_unit_tree_id)
+                                      prevSibling = DataService.getPrevSibling(prevSibling.tree_id)
                                     }
                                   }
 
-                                  while(prevSibling.annotation_unit_tree_id != "0" && prevSibling.gui_status !== "COLLAPSE" && prevSibling.AnnotationUnits.length > 0){
+                                  while(prevSibling.tree_id != "0" && prevSibling.gui_status !== "COLLAPSE" && prevSibling.AnnotationUnits.length > 0){
                                     prevSibling = prevSibling.AnnotationUnits[prevSibling.AnnotationUnits.length - 1];
                                   }
 
 
 
                                   if (prevSibling === null) {
-                                      selectionHandlerService.updateSelectedUnit(prevUnit.annotation_unit_tree_id);
+                                      selectionHandlerService.updateSelectedUnit(prevUnit.tree_id);
                                       // prevUnit.gui_status = "OPEN";
                                       break;
                                   }
-                                  if (prevSibling.annotation_unit_tree_id.length > prevUnit.annotation_unit_tree_id.length) {
-                                      selectionHandlerService.updateSelectedUnit(prevSibling.annotation_unit_tree_id);
-                                      // DataService.getUnitById(prevSibling.annotation_unit_tree_id).gui_status = "OPEN";
+                                  if (prevSibling.tree_id.length > prevUnit.tree_id.length) {
+                                      selectionHandlerService.updateSelectedUnit(prevSibling.tree_id);
+                                      // DataService.getUnitById(prevSibling.tree_id).gui_status = "OPEN";
                                   } else {
                                       if (prevSibling) {
-                                          selectionHandlerService.updateSelectedUnit(prevSibling.annotation_unit_tree_id);
-                                          // DataService.getUnitById(prevSibling.annotation_unit_tree_id).gui_status = "OPEN";
+                                          selectionHandlerService.updateSelectedUnit(prevSibling.tree_id);
+                                          // DataService.getUnitById(prevSibling.tree_id).gui_status = "OPEN";
                                       } else {
-                                          if (prevUnit && prevUnit.annotation_unit_tree_id !== selectedUnitId) {
-                                              selectionHandlerService.updateSelectedUnit(prevUnit.annotation_unit_tree_id);
-                                              // DataService.getUnitById(prevUnit.annotation_unit_tree_id).gui_status = "OPEN";
+                                          if (prevUnit && prevUnit.tree_id !== selectedUnitId) {
+                                              selectionHandlerService.updateSelectedUnit(prevUnit.tree_id);
+                                              // DataService.getUnitById(prevUnit.tree_id).gui_status = "OPEN";
 
                                           }
                                       }
@@ -599,12 +599,12 @@
                                             if(currentUnit.unitType === "REMOTE"){
                                                 //UpdateUsedAsRemote
                                                 var remoteUnit = DataService.getUnitById(currentUnit.remote_original_id);
-                                                var elementPos = DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.annotation_unit_tree_id]
+                                                var elementPos = DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.tree_id]
                                                 if(elementPos){
-                                                    delete DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.annotation_unit_tree_id];
+                                                    delete DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.tree_id];
                                                 }
 
-                                                delete DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.annotation_unit_tree_id];
+                                                delete DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.tree_id];
                                             }
                                             var parentUnit = DataService.getParentUnitId(selectedUnitId);
                                             DataService.deleteUnit(selectedUnitId).then(function(res){

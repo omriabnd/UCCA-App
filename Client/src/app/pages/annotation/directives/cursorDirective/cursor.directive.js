@@ -129,7 +129,7 @@
                         //     }
 
                         // }
-                        if(token.inUnit === nextToken.inUnit && unit !== null && unit.annotation_unit_tree_id !== "0"){
+                        if(token.inUnit === nextToken.inUnit && unit !== null && unit.tree_id !== "0"){
                             if(unit.tokens === undefined){
                                 unit.tokens = unit.tokenCopy;
                             }
@@ -154,7 +154,7 @@
                                 elementPos = firstAndLastPosition;
                             }
 
-                            var parentUnit = DataService.getParentUnit(unit.annotation_unit_tree_id);
+                            var parentUnit = DataService.getParentUnit(unit.tree_id);
                             elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(sliceTokenArray[elementPos].id);
 
                             setCursorPosition($scope, elementPos+1);
@@ -209,7 +209,7 @@
                         if(prevToken === undefined) return;
 
                         var unit = DataService.getUnitById(prevToken.inUnit);
-                        if(token.inUnit === prevToken.inUnit && unit !== null && unit.annotation_unit_tree_id !== "0"){
+                        if(token.inUnit === prevToken.inUnit && unit !== null && unit.tree_id !== "0"){
                             if(unit.tokens === undefined){
                                 unit.tokens = unit.tokenCopy;
                             }
@@ -239,7 +239,7 @@
                                 elementPos = firstAndLastPosition;
                             }
 
-                            var parentUnit = DataService.getParentUnit(unit.annotation_unit_tree_id);
+                            var parentUnit = DataService.getParentUnit(unit.tree_id);
                             elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(sliceTokenArray[elementPos].id);
 
                             setCursorPosition($scope, elementPos);
@@ -275,7 +275,7 @@
                         	annotationUnits = annotationUnits.slice().reverse();
                         	tokens = tokens.slice().reverse();
                         }
-                        var oldUnitIndex = oldUnit != undefined ? annotationUnits.map(function(x) {return x.annotation_unit_tree_id; }).indexOf(oldUnit.annotation_unit_tree_id) : undefined;
+                        var oldUnitIndex = oldUnit != undefined ? annotationUnits.map(function(x) {return x.tree_id; }).indexOf(oldUnit.tree_id) : undefined;
                         if(annotationUnits.length > 0 && oldUnitIndex != undefined){
                             for(var i=oldUnitIndex+1; i<annotationUnits.length; i++){
                                 var currentUnit = annotationUnits[i];
@@ -309,7 +309,7 @@
                         
                         console.log(unit);
                         
-                        if(unit !== null && unit.annotation_unit_tree_id !== "0"){
+                        if(unit !== null && unit.tree_id !== "0"){
 	                        if(unit.tokens === undefined){
 	                            unit.tokens = unit.tokenCopy;
 	                        }
