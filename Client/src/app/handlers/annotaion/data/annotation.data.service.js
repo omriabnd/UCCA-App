@@ -614,6 +614,8 @@
             var aParentUnit = getParentUnit(a.tree_id);
             var bParentUnit = getParentUnit(b.tree_id);
 
+            console.log("______sort unis, a.tree id=", a.tree_id, " b.tree id=", b.tree_id)
+
             var aElementPos = aParentUnit.tokens.map(function(x) {return x.id; }).indexOf(a.tokens[0].id);
             var bElementPos = bParentUnit.tokens.map(function(x) {return x.id; }).indexOf(b.tokens[0].id);
 

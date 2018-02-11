@@ -64,6 +64,12 @@
                 return this.lastSelectedToken;
             },
             addTokenToList: function(token,selectedUnit,groupUnit){
+                /**
+                 * Adds the token "token" into the list of selected tokens (selectedTokenList).
+                 * If token is already selected, do nothing.
+                 * If groupUnit is false,
+                 * @type {Number}
+                 */
                 var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.id);
                 if(elementPos === -1){
                     !groupUnit ? _handler.removeTokenFromUnitTokens(token) : '';
@@ -94,34 +100,48 @@
                 return elementPos > -1;
             },
             removeTokenFromList: function(tokenId){
+                /**
+                 * Unselect a token.
+                 */
                 var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(tokenId);
-                var objectFound = this.selectedTokenList[elementPos];
+                //Omri: the next line is commented out as it doesn't do anything (Feb 11)
+                //var objectFound = this.selectedTokenList[elementPos];
                 // _handler.addTokenFromUnitTokens();
                 this.selectedTokenList.splice(elementPos,1);
             },
             removeTokenFromUnitTokens: function(token){
+                // debugger;
                 var unit = DataService.getUnitById(_handler.getSelectedUnitId());
-                if(unit){
-                    if(unit.tokenCopy === undefined){
+                if(unit) {
+                    if (unit.tokenCopy === undefined) {
                         unit.tokenCopy = [];
-                        for(var key in unit.children_tokens_hash){
+                        for (var key in unit.children_tokens_hash) {
                             unit.tokenCopy.push(unit.children_tokens_hash[key]);
                         }
                     }
+
                     var elementPos = unit.tokenCopy.map(function(x) {return x.id; }).indexOf(token.id);
                     if(elementPos > -1){
                         var selectedUnitId = _handler.getSelectedUnitId();
                         var selectedUnit = DataService.getUnitById(selectedUnitId);
-                        if(selectedUnit.AnnotationUnits === undefined){
-                            selectedUnit.AnnotationUnits = [];
-                        }
+                        // Remove this block, with Omri, Feb 11
+                        // if(selectedUnit.AnnotationUnits === undefined){
+                        //     selectedUnit.AnnotationUnits = [];
+                        // }
                         var tokenInUnit = _handler.isTokenInUnit(selectedUnit,token);
+                        //old code line: (re-written as the if block below Feb 11)
+                        // !tokenInUnit ? token['inUnit'] = selectedUnitId.toString() === "0" ? (selectedUnit.AnnotationUnits.length + 1).toString() : selectedUnit.tree_id !== "0" ? selectedUnit.tree_id + "-" +(selectedUnit.AnnotationUnits.length + 1).toString() : (selectedUnit.AnnotationUnits.length + 1).toString() : '';
+                        //with Omri, Feb 11
+                        if (!tokenInUnit) {
+                            var newInUnitField = (selectedUnit.AnnotationUnits.length + 1).toString();
+                            if (selectedUnitId.toString() != "0") {
+                                newInUnitField = selectedUnitId + "-" + newInUnitField;
+                            }
+                            token['inUnit'] = newInUnitField;
+                        }
 
-                        !tokenInUnit ? token['inUnit'] = selectedUnitId.toString() === "0" ? (selectedUnit.AnnotationUnits.length + 1).toString() : selectedUnit.tree_id !== "0" ? selectedUnit.tree_id + "-" +(selectedUnit.AnnotationUnits.length + 1).toString() : (selectedUnit.AnnotationUnits.length + 1).toString() : '';
-                        token['inUnit']
                     }
                 }
-
             },
             isTokenInUnit: function(selectedUnit,token){
                 var tokenInUnit = false;
@@ -160,6 +180,7 @@
                 this.selectedTokenList = [];
             },
             addTokenFromUnitTokens: function(token){
+                debugger
                 var unit = DataService.getUnitById(_handler.getSelectedUnitId());
                 var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.id);
                 if(elementPos === -1){
@@ -167,6 +188,11 @@
                 }
             },
             updateSelectedUnit: function(index,afterInsert){
+                /**
+                 * Updates the focus unit.
+                 * TODO: change the name selectedUnit to focusUnit
+                 * @type {string}
+                 */
                 this.selectedUnit = index.toString();
                 if(!_handler.isTokenClicked()){
                     _handler.clearTokenList(afterInsert);
@@ -183,9 +209,13 @@
                 return this.mouseDown;
             },
             initTree: function(data){
-                
+
                 return $q(function(resolve, reject) {
                         DataService.currentTask.annotation_units.forEach(function(unit,index){
+
+                        // Add this declaration with Omri Feb 11
+                        unit.AnnotationUnits = [];
+
                         var tokenStack = [];
                         if(unit.type === "IMPLICIT"){
                             var objToPush = {
@@ -323,8 +353,8 @@
 
                     });
                     DataService.unitType = 'REGULAR';
-                    //DataService.sortUndUpdate();
-
+                    DataService.sortUndUpdate();
+                    console.log("#######", DataService.getUnitById('0'))
                     _handler.updateSelectedUnit("0",false);
                     return resolve({status: 'InitTreeFinished'});
                 })
