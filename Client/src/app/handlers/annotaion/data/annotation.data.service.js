@@ -244,6 +244,7 @@
         }
 
         function insertToTree(newObject,level,inInitStage){
+            console.log("In insertToTree, newObject=", newObject);
             return $q(function(resolve, reject) {
 
                 // if (newObject.unitType == "IMPLICIT") {
@@ -389,7 +390,7 @@
                      * For remote units, the annotation_unit_tree_id is that of the unit it was cloned from. Therefore,
                      * we need to update it and this is done in the following line.
                      */
-                  newObject.tree_id = newObject.parent_id + "-" + index_int.toString(); // TODO: check it in ucca2 ver
+                  // newObject.tree_id = newObject.parent_tree_id + "-" + index_int.toString();
                 }
 
                 /**
@@ -669,7 +670,7 @@
                 comment: treeNode.comment || '',
                 cluster: treeNode.cluster || '',
                 categories: filterCategoriesAtt(angular.copy(treeNode.categories)) || [],
-                parent_id: treeNode.unitType === 'REMOTE' ? DataService.getParentUnitId(treeNode.tree_id) : DataService.getParentUnitId(treeNode.tree_id),
+                parent_tree_id: treeNode.unitType === 'REMOTE' ? DataService.getParentUnitId(treeNode.tree_id) : DataService.getParentUnitId(treeNode.tree_id),
                 gui_status : treeNode.gui_status || "OPEN",
                 type: angular.copy(treeNode.unitType.toUpperCase()),
                 is_remote_copy: treeNode.unitType.toUpperCase() === 'REMOTE',

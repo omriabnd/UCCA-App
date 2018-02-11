@@ -204,7 +204,7 @@
                                 containsAllParentUnits: false,
                                 tokens:[{
                                     "text":"IMPLICIT UNIT",
-                                    "parentId":unit.parent_id,
+                                    "parentId":unit.parent_tree_id,
                                     "inUnit":null
                                 }],
                                 AnnotationUnits : [
@@ -215,7 +215,7 @@
                             /**
                              * insertToTree for implicit units
                              */
-                            var newRowId = DataService.insertToTree(objToPush,unit.parent_id,index != DataService.currentTask.annotation_units.length -1);
+                            var newRowId = DataService.insertToTree(objToPush,unit.parent_tree_id,index != DataService.currentTask.annotation_units.length -1);
 
                             unit.categories.forEach(function(category,index){
                                 _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id);
@@ -236,7 +236,7 @@
                             });
                             unit["children_tokens"] = unit["tokens"];
 
-                            unit["remote_original_id"] = angular.copy(unit.tree_id);
+                            // unit["remote_original_id"] = angular.copy(unit.tree_id);
 
                             var unitCategory = unit.categories[0] ? DataService.hashTables.categoriesHashTable[ unit.categories[0].id] : null;
 
@@ -267,9 +267,9 @@
 
                                 var remotePosition = DataService.getUnitById(unit.remote_original_id).AnnotationUnits.map(function(x) {return x.id; }).indexOf(unit.id);
                                 if(remotePosition > -1){
-                                    unitToAddTo["usedAsRemote"].push(DataService.getUnitById(unit.parent_id).AnnotationUnits[remotePosition].tree_id);
+                                    unitToAddTo["usedAsRemote"].push(DataService.getUnitById(unit.parent_tree_id).AnnotationUnits[remotePosition].tree_id);
                                 }else{
-                                    unitToAddTo["usedAsRemote"].push(unit.parent_id + "-" + DataService.getUnitById(unit.parent_id).AnnotationUnits.length);
+                                    unitToAddTo["usedAsRemote"].push(unit.parent_tree_id + "-" + DataService.getUnitById(unit.parent_tree_id).AnnotationUnits.length);
                                 }
                             }
 
@@ -279,13 +279,16 @@
 
                             var parentUnitUnits = DataService.getUnitById(unit.tree_id);
                             var amountOfRemotes = 0;
-                            parentUnitUnits.AnnotationUnits.forEach(function(unit){
-                                if(unit.unitType === "REMOTE"){
-                                    amountOfRemotes++;
-                                }
-                            });
+                            if (parentUnitUnits) { // TODO: I added this condition
+                                parentUnitUnits.AnnotationUnits.forEach(function (unit) {
+                                    if (unit.unitType === "REMOTE") {
+                                        amountOfRemotes++;
+                                    }
+                                });
+                            }
 
-                            DataService.unitsUsedAsRemote[unit.tree_id][unit.parent_id + "-" + parseInt(parseInt(amountOfRemotes+1))] = true; // TODO
+                            DataService.unitsUsedAsRemote[unit.tree_id][unit.parent_tree_id + "-" + parseInt(parseInt(amountOfRemotes+1))] = true;
+                            console.log("In initTree, unitsUsedAsRemote=", DataService.unitsUsedAsRemote);
 
 
 
@@ -357,7 +360,7 @@
                             newUnit.categories = [];
                             tempCat !== undefined ? newUnit.categories.push(DataService.hashTables.categoriesHashTable[tempCat.id]) : '';
 
-                            _handler.selectedUnit = newUnit.parent_id;
+                            _handler.selectedUnit = newUnit.parent_tree_id;
 
                         }
 
