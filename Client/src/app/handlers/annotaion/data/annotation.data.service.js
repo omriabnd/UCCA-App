@@ -245,11 +245,8 @@
 
         function insertToTree(newObject,level,inInitStage){
             console.log("In insertToTree, newObject=", newObject);
-            return $q(function(resolve, reject) {
 
-                // if (newObject.unitType == "IMPLICIT") {
-                //     debugger;
-                // }
+            return $q(function(resolve, reject) {
 
                 if (!inInitStage && DataService.currentTask.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT) {
                     Core.showAlert("Cant create annotation units in refinement layer")
@@ -390,7 +387,7 @@
                      * For remote units, the annotation_unit_tree_id is that of the unit it was cloned from. Therefore,
                      * we need to update it and this is done in the following line.
                      */
-                  // newObject.tree_id = newObject.parent_tree_id + "-" + index_int.toString();
+                  newObject.tree_id = newObject.parent_tree_id + "-" + index_int.toString();
                 }
 
                 /**
@@ -427,7 +424,7 @@
 
                 if(!inInitStage){
                     // Removed code - The is sorUndUpdate in selectionHendler service in the end of initTree.
-                    sortUndUpdate(true)
+                    // sortUndUpdate(true)
                 }
                 
                 updateInUnitIdsForTokens(DataService.tree);
@@ -616,7 +613,7 @@
 
             console.log("______sort unis, a.tree id=", a.tree_id, " b.tree id=", b.tree_id)
 
-            var aElementPos = aParentUnit.tokens.map(function(x) {return x.id; }).indexOf(a.tokens[0].id);
+            var aElementPos = aParentUnit.tokens.map(function(x) {return x.id; }).indexOf(a.tokens[0].id); //TODO-- aParentUnit.tokens or tokenCopy
             var bElementPos = bParentUnit.tokens.map(function(x) {return x.id; }).indexOf(b.tokens[0].id);
 
             if(a.unitType !== "REGULAR" || b.unitType !== "REGULAR"){
@@ -642,9 +639,9 @@
                     }
                 }
             }
-            else if(aParentUnit.tokens[aElementPos].indexInParent > bParentUnit.tokens[bElementPos].indexInParent){
+            else if(aParentUnit.tokenCopy[aElementPos].indexInParent > bParentUnit.tokenCopy[bElementPos].indexInParent){ // TODO-- tokens or tokenCopy
                 return 1;
-            }else if(aParentUnit.tokens[aElementPos].indexInParent < bParentUnit.tokens[bElementPos].indexInParent){
+            }else if(aParentUnit.tokenCopy[aElementPos].indexInParent < bParentUnit.tokenCopy[bElementPos].indexInParent){
                 return -1;
             }else{
                 return 0;
@@ -667,7 +664,7 @@
 
         function traversInTree(treeNode){
             var unit = {
-                tree_id : treeNode.unitType === 'REMOTE' ? treeNode.remote_original_id : treeNode.tree_id.toString(),
+                tree_id : treeNode.tree_id.toString(),
                 task_id: DataService.currentTask.id.toString(),
                 comment: treeNode.comment || '',
                 cluster: treeNode.cluster || '',
@@ -676,7 +673,8 @@
                 gui_status : treeNode.gui_status || "OPEN",
                 type: angular.copy(treeNode.unitType.toUpperCase()),
                 is_remote_copy: treeNode.unitType.toUpperCase() === 'REMOTE',
-                children_tokens: treeNode.tree_id === "0" ? filterTokensAtt(angular.copy(treeNode.tokens)) : filterTokensAttForUnit(angular.copy(treeNode.tokens))
+                children_tokens: treeNode.tree_id === "0" ? filterTokensAtt(angular.copy(treeNode.tokens)) : filterTokensAttForUnit(angular.copy(treeNode.tokens)),
+                cloned_from_tree_id: treeNode.unitType === 'REMOTE' ? treeNode.remote_original_id : null
             };
             if($rootScope.isSlottedLayerProject){
                 
@@ -833,7 +831,7 @@
                 DataService.currentTask.annotation_units[i].tokens = DataService.currentTask.annotation_units[i].tokensCopy;
 
             }
-            console.log(DataService.currentTask);
+            console.log("current task before save", DataService.currentTask);
             return apiService.annotation.putTaskData(mode,DataService.currentTask).then(function(res){
                 $rootScope.$broadcast("ResetSuccess");
                 return res;

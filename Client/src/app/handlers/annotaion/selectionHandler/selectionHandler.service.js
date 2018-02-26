@@ -353,7 +353,7 @@
 
                     });
                     DataService.unitType = 'REGULAR';
-                    DataService.sortUndUpdate();
+                    // DataService.sortUndUpdate();
                     console.log("#######", DataService.getUnitById('0'))
                     _handler.updateSelectedUnit("0",false);
                     return resolve({status: 'InitTreeFinished'});
