@@ -4,7 +4,9 @@
     angular.module('zAdmin.annotation.data')
         .factory('DataService',DataService);
 
-    function DataService($q,$http,apiService,$rootScope,restrictionsValidatorService,ENV_CONST,Core,$timeout) {
+    function DataService($q,$http,apiService,$rootScope,restrictionsValidatorService,ENV_CONST,Core) {
+        trace("DataService is here");
+
         var lastInsertedUnitIndex = 0;
         var unitType = 'REGULAR';
         var annotation_units = [];
@@ -63,6 +65,7 @@
         return DataService;
 
         function initTree(){
+            trace("DataService - initTree");
             DataService.currentTask.annotation_units.forEach(function(unit,index){
                 var tokenStack = [];
                 unit.children_tokens.forEach(function(token){
@@ -73,7 +76,13 @@
             DataService.unitType = 'REGULAR';
         }
 
+        /**
+         * Build tokens hash object
+         * @param annotationTokensArray
+         * @returns hash tokens object{{}}
+         */
         function tokensArrayToHash(annotationTokensArray){
+            trace("DataService - tokensArrayToHash");
             var hash = {};
             annotationTokensArray.forEach(function(token){
                 hash[token.id] = DataService.hashTables.tokensHashTable[token.id]
@@ -81,11 +90,22 @@
             return hash;
         }
 
+        /**
+         * Save the hash tokens object in DataService.tree.children_tokens_hash
+         * @param annotationTokensArray
+         */
         function createTokensHashByTokensArrayForPassage(annotationTokensArray){
+            trace("DataService - createTokensHashByTokensArrayForPassage");
             DataService.tree.children_tokens_hash = tokensArrayToHash(annotationTokensArray);
         }
 
+        /**
+         * Create hash tables, and save them in DataService.hashTables:
+         * tokensHashTable- hash object of currentTask.tokens.
+         * categoriesHashTable- hash object of categories.
+         */
         function createHashTables(){
+            trace("DataService - createHashTables");
             DataService.currentTask.tokens.forEach(function(token){
                 DataService.hashTables.tokensHashTable[token.id] = token;
             });
@@ -99,6 +119,7 @@
          * Prints the data structure tree.
          */
         function printTree(){
+            trace("DataService - printTree");
             console.log(DataService.tree);
             console.log(JSON.stringify(DataService.tree));
         }
@@ -107,15 +128,26 @@
          * @param url - the url to fetch data from.
          * @returns {*} - The response from the WS in the given url.
          */
-        function getData(url){
-            return $http.get(url).then(successFunction,errorFunction);
+        function getData(url) {
+            trace("DataService - getData");
+            return $http.get(url).then(successFunction, errorFunction);
         }
 
+        /**
+         * Return parent unit by given son unitId
+         * @param unitId - the unitId to get his parent
+         * @returns {*}- the parent unit
+         */
         function getParentUnit(unitId){
+            trace("DataService - getParentUnit");
             return getUnitById(getParentUnitId(unitId));
         }
 
+        /**
+         * Reset tree, put reset about currentTask
+         */
         function resetTree(){
+            trace("DataService - resetTree");
             return apiService.annotation.putTaskData('reset',DataService.currentTask).then(function(res){
                 return res;
             });
@@ -142,6 +174,7 @@
         }
 
         function toggleCategoryForUnit(unitId,category){
+            trace("DataService - toggleCategoryForUnit");
             return $q(function(resolve, reject) {
                 
                 if(category.id == undefined){
@@ -225,7 +258,14 @@
 
         }
 
+        /**
+         * Check if specific token exist in specific unit
+         * @param selectedUnit
+         * @param token
+         * @returns {boolean} - Id token exist in selectedUnit
+         */
         function isTokenInUnit(selectedUnit,token){
+            trace("DataService - isTokenInUnit");
             var tokenInUnit = false;
             if(selectedUnit.AnnotationUnits === undefined){
                 selectedUnit.AnnotationUnits = [];
@@ -243,8 +283,16 @@
             return tokenInUnit;
         }
 
+        /**
+         * Insert to tree- insert new unit to tree
+         * @param newObject - object to insert to the tree
+         * @param level - the parent unit id
+         * @param inInitStage - boolean value, if the tree initializing now
+         * @returns {*} - resolve insert success
+         */
         function insertToTree(newObject,level,inInitStage){
-            console.log("In insertToTree, newObject=", newObject);
+            trace("DataService - insertToTree");
+            // console.log("In insertToTree, newObject=", newObject);
 
             return $q(function(resolve, reject) {
 
@@ -436,7 +484,7 @@
         }
         
         function updateUnitSlots(newObject){
-            
+            trace("DataService - updateUnitSlots");
             var firstSlotIndex = 0; //the first slot not occupied by the parent layer's categories
             for(var i=0; i<newObject.categories.length; i++){
                 var currentCategoy = newObject.categories[i];
@@ -459,19 +507,31 @@
             return newObject;
         }
 
+        /**
+         * Buggy function, as now, we commented her calls.
+         * But it needed for special annotations, for example- annotate two units together
+         * @param doSort
+         */
         function sortUndUpdate(doSort){
+            trace("DataService - sortUndUpdate");
 
-          if(DataService.tree.AnnotationUnits.length > 0){
-            updateTreeIds(DataService.tree);
+            if(DataService.tree.AnnotationUnits.length > 0){
+                updateTreeIds(DataService.tree);
 
-            doSort ? sortTree(DataService.tree.AnnotationUnits) : '';
+                doSort ? sortTree(DataService.tree.AnnotationUnits) : '';
 
-            updateTreeIds(DataService.tree);
-          }
-
+                updateTreeIds(DataService.tree);
+            }
         }
 
+        /**
+         * Delete unit from tree
+         * and update tje tree without this unit
+         * @param unitId
+         * @returns {*}
+         */
         function deleteUnit(unitId){
+            trace("DataService - deleteUnit");
             return $q(function(resolve, reject) {
                 var unit = getUnitById(unitId);
                 var parentUnit = getUnitById(getParentUnitId(unitId));
@@ -522,6 +582,7 @@
         }
 
         function updateInUnitIdsForTokens(unit){
+            trace("DataService - updateInUnitIdsForTokens");
             unit.tokens.forEach(function(token){
                 token.parentId = unit.tree_id;
 
@@ -539,7 +600,13 @@
             })
 
         }
+
+        /**
+         * Sort tree, by sort annotationsUnits
+         * @param annotationUnits
+         */
         function sortTree(annotationUnits) {
+            trace("DataService - sortTree");
             if (annotationUnits.length > 1) {
                 annotationUnits.sort(sortUnits);
 
@@ -558,6 +625,7 @@
          * TODO: BUGGY. CHECK AGAIN AFTER MODIFYING THE BACKEND.
          */
         function updateTreeIds(unit,treeId){
+            trace("DataService - updateTreeIds");
             if(unit.AnnotationUnits && unit.AnnotationUnits.length > 0){
 
             //     // remove all empty elements in the array
@@ -607,12 +675,20 @@
             }
         }
 
+        /**
+         * Sort units - get two uniyts, sort them
+         * @param a - first unit
+         * @param b - second unit
+         * @returns {number} - according the priority of a
+         * BUGGY - sortUndUpdate calls to sortTree, sortTree calls to this function,
+         * sometimes parentUnit.tokens contain the tokens list, and sometimes parentUnit.tokenCopy contain the tokens list.
+         */
         function sortUnits(a,b){
+            trace("DataService - sortUnits");
             var aParentUnit = getParentUnit(a.tree_id);
             var bParentUnit = getParentUnit(b.tree_id);
 
-            console.log("______sort unis, a.tree id=", a.tree_id, " b.tree id=", b.tree_id)
-
+            // console.log("______sort unis, a.tree id=", a.tree_id, " b.tree id=", b.tree_id)
             var aElementPos = aParentUnit.tokens.map(function(x) {return x.id; }).indexOf(a.tokens[0].id); //TODO-- aParentUnit.tokens or tokenCopy
             var bElementPos = bParentUnit.tokens.map(function(x) {return x.id; }).indexOf(b.tokens[0].id);
 
@@ -649,6 +725,7 @@
         }
 
         function tokenStartIndexInParent(token){
+            trace("DataService - tokenStartIndexInParent");
             var parentUnit = DataService.getUnitById(token.parentId);
             if(parentUnit !== null){
                 var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(token.id);
@@ -659,10 +736,19 @@
         }
 
         function submitTask(){
+            trace("DataService - submitTask");
             return saveTask(true/* submit the task */)
         }
 
+        /**
+         * Travers in tree
+         * saveTask calls to this function
+         * It updates annotation_units fields (tree_is, parent_tree_id, cloned_from_tree_id etc.)
+         * @param treeNode - node in the tree, which travers in
+         * @returns {boolean}
+         */
         function traversInTree(treeNode){
+            trace("DataService - traversInTree");
             var unit = {
                 tree_id : treeNode.tree_id.toString(),
                 task_id: DataService.currentTask.id.toString(),
@@ -730,6 +816,7 @@
         }
 
         function arrangeUnitTokens(unitId){
+            trace("DataService - arrangeUnitTokens");
             var currentUnit = getUnitById(unitId);
             currentUnit.AnnotationUnits = angular.copy(currentUnit.AnnotationUnits);
             arrangeUnitTokensObj(currentUnit);
@@ -745,6 +832,7 @@
         }
 
         function arrangeUnitTokensObj(currentUnit){
+            trace("DataService - arrangeUnitTokensObj");
             var returnArray = [];
             currentUnit.AnnotationUnits = angular.copy(currentUnit.AnnotationUnits);
             currentUnit.AnnotationUnits.forEach(function(unit){
@@ -758,6 +846,7 @@
         }
 
         function filterTokensAtt(tokens){
+            trace("DataService - filterTokensAtt");
             if(tokens !== undefined){
                 tokens.forEach(function(token){
                     delete token.inUnit;
@@ -775,6 +864,7 @@
         }
 
         function filterTokensAttForUnit(tokens){
+            trace("DataService - filterTokensAttForUnit");
             if(tokens !== undefined){
                 tokens.forEach(function(token){
                     delete token.inUnit;
@@ -797,6 +887,7 @@
         }
 
         function filterCategoriesAtt(categories){
+            trace("DataService - filterCategoriesAtt");
             if(categories !== undefined){
                 categories.forEach(function(category){
                     delete category.shortcut_key;
@@ -810,11 +901,17 @@
 
         }
 
+        /**
+         * Save task when save button clicked
+         * @param shouldSubmit
+         */
         function saveTask(shouldSubmit){
+            trace("DataService - saveTask");
             annotation_units = [];
             var tokensCopy = angular.copy(DataService.tree.tokens);
             tokensCopy = filterTokensAtt(tokensCopy);
             // arrangeUnitTokens("0");
+            // Update annotation_units
             var traversResult = traversInTree(DataService.tree);
             if (!traversResult) {
                 Core.showNotification('error','Cannot save if a unit has category in slot two but not in slot one.');
@@ -838,7 +935,13 @@
             });
         }
 
+        /**
+         * Get unit by id
+         * @param unitID - id of the unit we want to get
+         * @returns {*} - unit according to unit id
+         */
         function getUnitById(unitID){
+            trace("DataService - getUnitById");
             if(unitID == -1){
                 return null
             }else if(!unitID || unitID == 0){
@@ -863,6 +966,7 @@
         }
 
         function getNextSibling(lastFocusedUnitId){
+            trace("DataService - getNextSibling");
             if(lastFocusedUnitId == 0){
                 if(DataService.tree.AnnotationUnits.length > 0){
                     return DataService.tree.AnnotationUnits[0].tree_id;
@@ -876,13 +980,14 @@
         }
 
         function getPrevSibling(lastFocusedUnitId){
-
+            trace("DataService - getPrevSibling");
             var parentAnnotationUnits = DataService.getUnitById(DataService.getParentUnitId(lastFocusedUnitId)).AnnotationUnits;
             var currentIndex = getMyIndexInParentTree(parentAnnotationUnits,lastFocusedUnitId);
             return parentAnnotationUnits[currentIndex-1] ? parentAnnotationUnits[currentIndex-1] : null;
         }
 
         function getMyIndexInParentTree(parentTree,myUnitId){
+            trace("DataService - getMyIndexInParentTree");
             var currentIndex = 0;
             parentTree.forEach(function(unit,index){
                 if(unit.tree_id==myUnitId){
@@ -893,11 +998,13 @@
         }
 
         function getSibling(unitId){
+            trace("DataService - getSibling");
             var currentUnit = DataService.getUnitById(unitId);
             return currentUnit.AnnotationUnits[0];
         }
 
         function getNextUnit(lastFocusedUnitId,index){
+            trace("DataService - getNextUnit");
             if(lastFocusedUnitId == 0){
                 if(DataService.tree.AnnotationUnits.length > 0){
                     return DataService.tree.AnnotationUnits[0].tree_id;
@@ -934,6 +1041,7 @@
         }
 
         function getPrevUnit(lastFocusedUnitId,index){
+            trace("DataService - getPrevUnit");
             if(lastFocusedUnitId !== "0"){
                 var prevNode = DataService.getUnitById(DataService.getParentUnitId(lastFocusedUnitId)).AnnotationUnits[parseInt(lastFocusedUnitId) - 2];
                 if(prevNode){
@@ -953,6 +1061,7 @@
          * @returns {*} - the response data.
          */
         function successFunction(response){
+            trace("DataService - successFunction");
             return response.data;
         }
 
@@ -961,6 +1070,7 @@
          * @param err - the error.
          */
         function errorFunction(err){
+            trace("DataService - errorFunction");
             console.log(err);
         }
 
@@ -970,10 +1080,17 @@
          * @param del - split delimiter.
          */
         function splitStringByDelimiter(stringToSplit,del){
+            trace("DataService - splitStringByDelimiter");
             return stringToSplit.toString().split(del);
         }
 
+        /**
+         * Get parent unit id
+         * @param unitId - unit id, which we search his parent
+         * @returns {*} - parent unit id
+         */
         function getParentUnitId(unitId){
+            trace("DataService - getParentUnitId");
             if(unitId === null){
                 return null;
             }

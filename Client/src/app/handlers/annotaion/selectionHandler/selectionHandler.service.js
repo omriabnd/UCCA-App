@@ -8,6 +8,7 @@
 
     /** @ngInject */
     function selectionHandlerService(DataService, $rootScope,$q,Core) {
+        trace("selectionHandlerService is here");
         var selectedTokenList = [];
         var selectedUnit = "0";
         var selectedToken = null;
@@ -34,36 +35,47 @@
             updateLastTokenNotAdjacent:updateLastTokenNotAdjacent,
             getTreeLastId:getTreeLastId,
             getSelectedTokenList: function(){
+                trace("selectionHandlerService - getSelectedTokenList");
                 return this.selectedTokenList;
             },
             isTokenClicked: function(){
-              return this.tokenClicked;
+                trace("selectionHandlerService - isTokenClicked");
+                return this.tokenClicked;
             },
             setTokenClicked: function(){
+                trace("selectionHandlerService - setTokenClicked");
                 this.tokenClicked = true;
             },
             disableTokenClicked: function(){
+                trace("selectionHandlerService - disableTokenClicked");
                 this.tokenClicked = false;
             },
             setUnitToAddRemotes: function(id){
+                trace("selectionHandlerService - setUnitToAddRemotes");
                 this.unitToAddRemotes = id;
             },
             getUnitToAddRemotes: function(id){
+                trace("selectionHandlerService - getUnitToAddRemotes");
                 return this.unitToAddRemotes;
             },
             setSelectedToken: function(token){
+                trace("selectionHandlerService - setSelectedToken");
                 this.selectedToken = token;
             },
             getSelectedToken: function(){
+                trace("selectionHandlerService - getSelectedToken");
                 return this.selectedToken;
             },
             setLastInsertedToken: function(token){
+                trace("selectionHandlerService - setLastInsertedToken");
                 this.lastSelectedToken = token;
             },
             getLastInsertedToken: function(){
+                trace("selectionHandlerService - getLastInsertedToken");
                 return this.lastSelectedToken;
             },
             addTokenToList: function(token,selectedUnit,groupUnit){
+                trace("selectionHandlerService - addTokenToList");
                 /**
                  * Adds the token "token" into the list of selected tokens (selectedTokenList).
                  * If token is already selected, do nothing.
@@ -80,26 +92,33 @@
                 this.selectedUnit = selectedUnit;
             },
             setCategoryForRemote: function(category){
+                trace("selectionHandlerService - setCategoryForRemote");
                 this.categoryForRemote = [];
                 this.categoryForRemote.push(category);
             },
             getCategoryForRemote: function(){
+                trace("selectionHandlerService - getCategoryForRemote");
                 return this.categoryForRemote;
             },
-            clearCategoryForRemote: function(category){
+            c: function(category){
+                trace("selectionHandlerService - clearCategoryForRemote");
                 this.categoryForRemote = [];
             },
             setSelectionDirection: function(mode){
+                trace("selectionHandlerService - setSelectionDirection");
               this.selectionDirection = mode;
             },
             getSelectionDirection: function(mode){
+                trace("selectionHandlerService - getSelectionDirection");
                 return this.selectionDirection;
             },
             isTokenInList: function(token){
+                trace("selectionHandlerService - isTokenInList");
                 var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.id);
                 return elementPos > -1;
             },
             removeTokenFromList: function(tokenId){
+                trace("selectionHandlerService - removeTokenFromList");
                 /**
                  * Unselect a token.
                  */
@@ -110,7 +129,7 @@
                 this.selectedTokenList.splice(elementPos,1);
             },
             removeTokenFromUnitTokens: function(token){
-                // debugger;
+                trace("selectionHandlerService - removeTokenFromUnitTokens");
                 var unit = DataService.getUnitById(_handler.getSelectedUnitId());
                 if(unit) {
                     if (unit.tokenCopy === undefined) {
@@ -143,7 +162,14 @@
                     }
                 }
             },
+            /**
+             * Check if token exist in unit
+             * @param selectedUnit
+             * @param token
+             * @returns {boolean} - if the token exist in the unit
+             */
             isTokenInUnit: function(selectedUnit,token){
+                trace("selectionHandlerService - isTokenInUnit");
                 var tokenInUnit = false;
                 for(var i=0; i<selectedUnit.AnnotationUnits.length; i++){
                     var tokenPosition = selectedUnit.AnnotationUnits[i].tokens.map(function(x) {return x.id; }).indexOf(token.id);
@@ -155,8 +181,8 @@
                 return tokenInUnit;
             },
             clearTokenList: function(afterInsert){
-
-                console.log("Token list cleared");
+                trace("selectionHandlerService - clearTokenList");
+                // console.log("Token list cleared");
 
                 if(!afterInsert){
                     _handler.getSelectedTokenList().forEach(function(token){
@@ -180,6 +206,7 @@
                 this.selectedTokenList = [];
             },
             addTokenFromUnitTokens: function(token){
+                trace("selectionHandlerService - addTokenFromUnitTokens");
                 debugger
                 var unit = DataService.getUnitById(_handler.getSelectedUnitId());
                 var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.id);
@@ -188,6 +215,7 @@
                 }
             },
             updateSelectedUnit: function(index,afterInsert){
+                trace("selectionHandlerService - updateSelectedUnit");
                 /**
                  * Updates the focus unit.
                  * TODO: change the name selectedUnit to focusUnit
@@ -200,16 +228,24 @@
                 _handler.disableTokenClicked();
             },
             getSelectedUnitId: function(){
+                trace("selectionHandlerService - getSelectedUnitId");
                 return this.selectedUnit;
             },
             toggleMouseUpDown: function(){
+                trace("selectionHandlerService - toggleMouseUpDown");
               this.mouseDown = !this.mouseDown;
             },
             getMouseMode: function(){
+                trace("selectionHandlerService - getMouseMode");
                 return this.mouseDown;
             },
+            /**
+             * Init tree when the annotation page is finish loading
+             * @param data
+             * @returns {*}
+             */
             initTree: function(data){
-
+                trace("selectionHandlerService - initTree");
                 return $q(function(resolve, reject) {
                         DataService.currentTask.annotation_units.forEach(function(unit,index){
 
@@ -252,7 +288,8 @@
                                 _handler.clearTokenList();
                             });
 
-                        }else if(unit.is_remote_copy){
+                        }else if(unit.is_remote_copy){// insertToTree for remote units
+
                             console.log("Init tree, unit is remote copy", unit);
 
                             DataService.unitType = 'REMOTE';
@@ -309,7 +346,7 @@
 
                             var parentUnitUnits = DataService.getUnitById(unit.tree_id);
                             var amountOfRemotes = 0;
-                            if (parentUnitUnits) { // TODO: I added this condition
+                            if (parentUnitUnits) { // TODO: remove this line, added this condition because sometimes parentUnitUnits was undefined
                                 parentUnitUnits.AnnotationUnits.forEach(function (unit) {
                                     if (unit.unitType === "REMOTE") {
                                         amountOfRemotes++;
@@ -362,7 +399,7 @@
                 
             },
             toggleCategory: function(category,justToggle,remote,unit,inInitStage){
-
+                trace("selectionHandlerService - toggleCategory");
                 return $q(function(resolve, reject) {
                     if(_handler.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(_handler.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(_handler.selectedTokenList,inInitStage)){
                         return
@@ -429,13 +466,11 @@
 
                     $rootScope.$broadcast("ResetSuccess");
                 })
-
-
             }
-
         };
 
         function checkifThereIsPartsOFUnitTokensInsideList(selectedTokenList,inInitStage){
+            trace("selectionHandlerService - checkifThereIsPartsOFUnitTokensInsideList");
             if(inInitStage){
                 return false;
             }
@@ -462,6 +497,7 @@
         }
 
         function newUnitContainAllParentTokensTwice(selectedTokenList){
+            trace("selectionHandlerService - newUnitContainAllParentTokensTwice");
             var currentUnit = DataService.getUnitById(selectedTokenList[0].parentId);
 
             if(currentUnit.tree_id !== "0"){
@@ -473,6 +509,7 @@
         }
 
         function compareUnitsTokens(unitATokens,unitBTokens){
+            trace("selectionHandlerService - compareUnitsTokens");
             var result = true;
             if(unitATokens.length === unitBTokens.length){
                 unitATokens.forEach(function(token){
@@ -488,6 +525,7 @@
         }
 
         function aUnitIsSelected(selectedTokenList,inInitStage){
+            trace("selectionHandlerService - aUnitIsSelected");
             var result = true;
             var unitId = null;
 
@@ -515,6 +553,7 @@
         }
 
         function updateIndexInParentAttribute(selectedTokenList){
+            trace("selectionHandlerService - updateIndexInParentAttribute");
             selectedTokenList.forEach(function(token,index){
                 var parentUnitTokens;
                 if(token.parentId){
@@ -534,6 +573,7 @@
         }
 
         function updatePositionInUnitAttribute(selectedTokenList){
+            trace("selectionHandlerService - updatePositionInUnitAttribute");
             selectedTokenList.forEach(function(token,index){
                 if(selectedTokenList.length === 1){
                     token['positionInUnit'] = 'FirstAndLast';
@@ -548,6 +588,7 @@
         }
 
         function updateNextTokenNotAdjacent(selectedTokenList){
+            trace("selectionHandlerService - updateNextTokenNotAdjacent");
             selectedTokenList.forEach(function(token,index){
                 if(index === selectedTokenList.length-1 || token.indexInParent + 1 === selectedTokenList[index+1].indexInParent){
                     token['nextTokenNotAdjacent'] = false;
@@ -560,6 +601,7 @@
         }
         
         function updateLastTokenNotAdjacent(selectedTokenList){
+            trace("selectionHandlerService - updateLastTokenNotAdjacent");
             selectedTokenList.forEach(function(token,index){
                 if(index === 0 || token.indexInParent - 1 === selectedTokenList[index-1].indexInParent){
                     token['lastTokenNotAdjacent'] = false;
@@ -588,6 +630,7 @@
         }
 
         function sortSelectedTokenList(selectedTokenList){
+            trace("selectionHandlerService - sortSelectedTokenList");
             selectedTokenList.sort(function(a,b){
                 if(a.start_index > b.start_index){
                     return 1;
@@ -600,6 +643,7 @@
         }
         
         function getTreeLastId(currentUnit){
+            trace("selectionHandlerService - getTreeLastId");
             if(currentUnit.AnnotationUnits.length == 0){
                return currentUnit.tree_id;
             }
