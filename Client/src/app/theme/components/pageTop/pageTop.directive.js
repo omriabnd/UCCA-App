@@ -15,17 +15,40 @@
       controller:pageTopCtrl
     };
   }
+
+  /** A modal dialog that will let users turn the tracing and validations on and off*/
+  function DiagnosticsController($uibModalInstance) {
+      this.trace = getTrace();
+
+      this.save = function () {
+          console.log("In save, validtaions=", this.validations, " trace=", this.trace);
+          setTrace(this.trace);
+          // TODO- set validations
+          this.close();
+      };
+
+      this.close = function () {
+          $uibModalInstance.dismiss('cancel');
+      }
+  }
   
   /** @ngInject */
-  function pageTopCtrl(authService,$state) {
-    var vm = this;
-    this.logout = function(){
-      authService.logout().then(function(data){
-        $state.go('auth');
-      },function(data){
-        $state.go('auth');
-      })
-    } 
-  }
+  function pageTopCtrl(authService,$state, $uibModal) {
+      var vm = this;
+      this.logout = function () {
+          authService.logout().then(function (data) {
+              $state.go('auth');
+          }, function (data) {
+              $state.go('auth');
+          })
+      };
 
+      this.diagnostics = function () {
+          $uibModal.open({
+            templateUrl: 'app/theme/components/pageTop/diagnostics_modal.html',
+            controller: DiagnosticsController,
+            controllerAs: 'vm'
+        });
+      };
+  }
 })();
