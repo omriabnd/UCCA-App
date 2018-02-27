@@ -100,7 +100,7 @@
                 trace("selectionHandlerService - getCategoryForRemote");
                 return this.categoryForRemote;
             },
-            c: function(category){
+            clearCategoryForRemote: function(category){
                 trace("selectionHandlerService - clearCategoryForRemote");
                 this.categoryForRemote = [];
             },
