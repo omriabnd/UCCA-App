@@ -56,3 +56,4 @@ node_modules/
 /debug.log
 /LICENSE.txt
 /.travis.yml
+release/
