@@ -7,7 +7,7 @@
         .service('selectionHandlerService', selectionHandlerService);
 
     /** @ngInject */
-    function selectionHandlerService(DataService, $rootScope,$q,Core) {
+    function selectionHandlerService(DataService, $rootScope,$q,Core, AssertionService) {
         trace("selectionHandlerService is here");
         var selectedTokenList = [];
         var selectedUnit = "0";
@@ -391,8 +391,11 @@
                     });
                     DataService.unitType = 'REGULAR';
                     // DataService.sortUndUpdate();
-                    console.log("#######", DataService.getUnitById('0'))
+                    console.log("#######", DataService.getUnitById('0'));
                     _handler.updateSelectedUnit("0",false);
+
+                    // Check the tree id in assertion service
+                    AssertionService.checkTreeId(DataService.tree.tree_id);
                     return resolve({status: 'InitTreeFinished'});
                 })
 

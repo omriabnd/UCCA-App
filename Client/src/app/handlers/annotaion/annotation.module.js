@@ -5,6 +5,7 @@
     angular.module("zAdmin.annotation", [
         "cfp.hotkeys",
         "zAdmin.annotation.data",
+        "zAdmin.annotation.assertion",
         "zAdmin.annotation.definitions",
         "zAdmin.annotation.hotKeysManager",
         "zAdmin.annotation.selectionHandler"
