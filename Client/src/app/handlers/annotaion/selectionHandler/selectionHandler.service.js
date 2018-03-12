@@ -247,7 +247,8 @@
             initTree: function(data){
                 trace("selectionHandlerService - initTree");
                 return $q(function(resolve, reject) {
-                        DataService.currentTask.annotation_units.forEach(function(unit,index){
+                    DataService.currentTask.annotation_units.forEach(function(unit,index){
+                        console.log("unit=", unit)
 
                         // Add this declaration with Omri Feb 11
                         unit.AnnotationUnits = [];
@@ -395,7 +396,8 @@
                     _handler.updateSelectedUnit("0",false);
 
                     // Check the tree id in assertion service
-                    AssertionService.checkTreeId(DataService.tree.tree_id);
+                    console.log("data service. tree=", DataService.tree);
+                    AssertionService.checkTree(DataService.tree);
                     return resolve({status: 'InitTreeFinished'});
                 })
 
