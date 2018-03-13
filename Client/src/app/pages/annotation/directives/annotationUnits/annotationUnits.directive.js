@@ -64,10 +64,13 @@
                 token.parentId = $scope.vm.dataBlock.tree_id;
             })
 
-            if($scope.vm.dataBlock.children_tokens_hash === undefined){
-                $scope.vm.dataBlock.children_tokens_hash = {};
+            /**
+             * if dataBlock.children_token_map not exist, create this dictionary {tokenId: token, tokenId: token, ...}
+             */
+            if($scope.vm.dataBlock.children_tokens_map === undefined){
+                $scope.vm.dataBlock.children_tokens_map = {};
                 $scope.vm.dataBlock.tokens.forEach(function(token){
-                    $scope.vm.dataBlock.children_tokens_hash[token.id] = token;
+                    $scope.vm.dataBlock.children_tokens_map[token.id] = token;
                 })
             }
 

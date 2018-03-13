@@ -132,10 +132,13 @@
                 trace("selectionHandlerService - removeTokenFromUnitTokens");
                 var unit = DataService.getUnitById(_handler.getSelectedUnitId());
                 if(unit) {
+                    /**
+                     * If unit.tokenCopy not exist, create it according to unit.children_tokens_map
+                     */
                     if (unit.tokenCopy === undefined) {
                         unit.tokenCopy = [];
-                        for (var key in unit.children_tokens_hash) {
-                            unit.tokenCopy.push(unit.children_tokens_hash[key]);
+                        for (var key in unit.children_tokens_map) {
+                            unit.tokenCopy.push(unit.children_tokens_map[key]);
                         }
                     }
 

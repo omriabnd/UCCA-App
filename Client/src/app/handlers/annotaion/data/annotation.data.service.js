@@ -91,12 +91,12 @@
         }
 
         /**
-         * Save the hash tokens object in DataService.tree.children_tokens_hash
+         * Save the hash tokens object in DataService.tree.children_tokens_map
          * @param annotationTokensArray
          */
         function createTokensHashByTokensArrayForPassage(annotationTokensArray){
             trace("DataService - createTokensHashByTokensArrayForPassage");
-            DataService.tree.children_tokens_hash = tokensArrayToHash(annotationTokensArray);
+            DataService.tree.children_tokens_map = tokensArrayToHash(annotationTokensArray);
         }
 
         /**
