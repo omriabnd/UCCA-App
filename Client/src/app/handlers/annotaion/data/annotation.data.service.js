@@ -815,35 +815,41 @@
             return true;
         }
 
-        function arrangeUnitTokens(unitId){
-            trace("DataService - arrangeUnitTokens");
-            var currentUnit = getUnitById(unitId);
-            currentUnit.AnnotationUnits = angular.copy(currentUnit.AnnotationUnits);
-            arrangeUnitTokensObj(currentUnit);
-            currentUnit.AnnotationUnits.forEach(function(unit){
-                unit.tokens.forEach(function(token){
-                    var elementPos = currentUnit.tokens.map(function(x) {return x.id; }).indexOf(token.id);
-                    if(elementPos > -1){
-                        currentUnit.tokens.splice(elementPos,1);
-                    }
-                });
-            })
+        /*
+        * Omri: I think this is never called
+         */
+        // function arrangeUnitTokens(unitId){
+        //     trace("DataService - arrangeUnitTokens");
+        //     var currentUnit = getUnitById(unitId);
+        //     currentUnit.AnnotationUnits = angular.copy(currentUnit.AnnotationUnits);
+        //     arrangeUnitTokensObj(currentUnit);
+        //     currentUnit.AnnotationUnits.forEach(function(unit){
+        //         unit.tokens.forEach(function(token){
+        //             var elementPos = currentUnit.tokens.map(function(x) {return x.id; }).indexOf(token.id);
+        //             if(elementPos > -1){
+        //                 currentUnit.tokens.splice(elementPos,1);
+        //             }
+        //         });
+        //     })
+        //
+        // }
 
-        }
-
-        function arrangeUnitTokensObj(currentUnit){
-            trace("DataService - arrangeUnitTokensObj");
-            var returnArray = [];
-            currentUnit.AnnotationUnits = angular.copy(currentUnit.AnnotationUnits);
-            currentUnit.AnnotationUnits.forEach(function(unit){
-                unit.tokens.forEach(function(token){
-                    returnArray.push({id:token.id})
-                });
-                unit.tokensCopy = returnArray;
-
-            })
-
-        }
+        /*
+        * Omri: I think this is never called
+         */
+        // function arrangeUnitTokensObj(currentUnit){
+        //     trace("DataService - arrangeUnitTokensObj");
+        //     var returnArray = [];
+        //     currentUnit.AnnotationUnits = angular.copy(currentUnit.AnnotationUnits);
+        //     currentUnit.AnnotationUnits.forEach(function(unit){
+        //         unit.tokens.forEach(function(token){
+        //             returnArray.push({id:token.id})
+        //         });
+        //         unit.tokensCopy = returnArray;
+        //
+        //     })
+        //
+        // }
 
         function filterTokensAtt(tokens){
             trace("DataService - filterTokensAtt");

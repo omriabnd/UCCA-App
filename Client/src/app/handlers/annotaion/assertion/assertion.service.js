@@ -72,7 +72,7 @@
                 console.log("i=", annotationUnits[i]);
                 //tODO- check fields
                 this.checkTreeId(annotationUnits[i].tree_id);
-                this.checkParentTreeId(annotationUnits[i].parentUnitId, annotationUnits[i].tree_id); // parent_tree_id
+                this.checkParentTreeId(annotationUnits[i].parent_tree_id, annotationUnits[i].tree_id);
 
 
                 if (annotationUnits[i].AnnotationUnits.length) {

@@ -404,6 +404,9 @@
                 
             },
             toggleCategory: function(category,justToggle,remote,unit,inInitStage){
+                /**
+                 * toggleCategory is also responsible for creating new units which are assigned a category.
+                 */
                 trace("selectionHandlerService - toggleCategory");
                 return $q(function(resolve, reject) {
                     if(_handler.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(_handler.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(_handler.selectedTokenList,inInitStage)){
@@ -424,7 +427,8 @@
                             gui_status:unit ? unit.gui_status : "OPEN",
                             comment: unit ? unit.comment : '',
                             cluster: unit ? unit.cluster : '',
-                            tree_id: unit && unit.tree_id ? unit.tree_id : null
+                            tree_id: unit && unit.tree_id ? unit.tree_id : null,
+                            parent_tree_id: unit && unit.parent_tree_id ? unit.parent_tree_id : null
                         };
                         if(remote){
                             newUnit = angular.copy(remote);
