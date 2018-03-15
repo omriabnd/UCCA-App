@@ -4,7 +4,7 @@
     angular.module('zAdmin.annotation.data')
         .factory('DataService',DataService);
 
-    function DataService($q,$http,apiService,$rootScope,restrictionsValidatorService,ENV_CONST,Core) {
+    function DataService($q,$http,apiService,$rootScope,restrictionsValidatorService,ENV_CONST,Core, AssertionService) {
         trace("DataService is here");
 
         var lastInsertedUnitIndex = 0;
@@ -98,6 +98,8 @@
         function createTokensHashByTokensArrayForPassage(annotationTokensArray){
             trace("DataService - createTokensHashByTokensArrayForPassage");
             DataService.tree.children_tokens_map = tokensArrayToHash(annotationTokensArray);
+            // TODO: Need send children_tokens instead of annotationTokensArray ???
+            AssertionService.check_children_tokens_hash(DataService.tree.children_tokens_map, annotationTokensArray);
         }
 
         /**
@@ -704,6 +706,7 @@
             var aElementPos = aParentUnit.tokens.map(function(x) {return x.id; }).indexOf(a.tokens[0].id); //TODO-- aParentUnit.tokens or tokenCopy
             var bElementPos = bParentUnit.tokens.map(function(x) {return x.id; }).indexOf(b.tokens[0].id);
 
+            console.log("tokenCopy - take the values");
             if(a.unitType !== "REGULAR" || b.unitType !== "REGULAR"){
                 if(a.unitType === "REGULAR" && b.unitType !== "REGULAR"){
                     return 1;
@@ -726,8 +729,7 @@
                         return 0;
                     }
                 }
-            }
-            console.log("tokenCopy - take the values");
+            } // tokenCopy - take the values
             else if(aParentUnit.tokenCopy[aElementPos].indexInParent > bParentUnit.tokenCopy[bElementPos].indexInParent){ // TODO-- tokens or tokenCopy
                 return 1;
             }else if(aParentUnit.tokenCopy[aElementPos].indexInParent < bParentUnit.tokenCopy[bElementPos].indexInParent){
