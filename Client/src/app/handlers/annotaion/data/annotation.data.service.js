@@ -17,6 +17,7 @@
 
         var unitsUsedAsRemote = {};
 
+        console.log("tokens - create tree.tokens list");
         var DataService = {
             /**
              * A data structure that contains rows of selectable words.
@@ -106,6 +107,7 @@
          */
         function createHashTables(){
             trace("DataService - createHashTables");
+            console.log("tokens - iterate currentTask.tokens and create tokens hash table");
             DataService.currentTask.tokens.forEach(function(token){
                 DataService.hashTables.tokensHashTable[token.id] = token;
             });
@@ -274,6 +276,7 @@
                 if(selectedUnit.AnnotationUnits[i] == undefined){
                   continue
                 }
+                console.log("tokens - create an array with token id according to AnnotationUnits[i].tokens array");
                 var tokenPosition = selectedUnit.AnnotationUnits[i].tokens.map(function(x) {return x.id; }).indexOf(token.id);
                 if(tokenPosition > -1){
                     tokenInUnit = selectedUnit.AnnotationUnits[i].tree_id;
@@ -323,6 +326,7 @@
                 var units = [];
 
                 if (newObject.unitType != "REMOTE") {
+                    console.log("tokens - iterate newObject.tokens");
                     newObject.tokens.forEach(function (token) {
                         if (token.inUnit !== null && token.inUnit !== undefined) {
                             var unitPos = units.map(function (x) {
@@ -338,14 +342,19 @@
                                 token.parentId = "0";
                             }
                             var parentUnit = DataService.getUnitById(token.parentId);
+                            console.log("tokens - check if parentUnit.token exist");
                             if (parentUnit.tokens === undefined) {
+                                console.log("tokens - put values, parentUnit.tokens = parentUnit.tokenCopy");
+                                console.log("tokenCopy - take the values");
                                 parentUnit['tokens'] = parentUnit.tokenCopy;
                             }
+                            console.log("tokens - iterate, return parentUnit.tokens id");
                             var elementPos = parentUnit.tokens.map(function (x) {
                                 return x.id;
                             }).indexOf(token.id);
 
                             if (elementPos > -1) {
+                                console.log("tokens - set tokens[pos].inUnit to tree_id");
                                 parentUnit.tokens[elementPos].inUnit = newObject.tree_id;
                             }
                         }
@@ -401,6 +410,7 @@
 
 
                 //Update IndexInParent attribute
+                console.log("tokens - update indexInParent in newObject.tokens");
                 newObject.tokens.forEach(function (token, index, inInit) {
                     token.indexInParent = index;
                 });
@@ -441,6 +451,7 @@
                 /**
                  * Sort the tokens.
                  */
+                console.log("tokens - sort newObject.tokens");
                 newObject.tokens.sort(function(a,b){
                   if(a.start_index > b.start_index){
                       return 1
@@ -458,6 +469,7 @@
 
                 parentUnit.AnnotationUnits[index_int - 1] = newObject;
 
+                console.log("tokens - take parentUnit.tokens");
                 var parentUnitTokens = parentUnit.tokens;
                 
                 parentUnitTokens.forEach(function(token,index){
@@ -715,6 +727,7 @@
                     }
                 }
             }
+            console.log("tokenCopy - take the values");
             else if(aParentUnit.tokenCopy[aElementPos].indexInParent > bParentUnit.tokenCopy[bElementPos].indexInParent){ // TODO-- tokens or tokenCopy
                 return 1;
             }else if(aParentUnit.tokenCopy[aElementPos].indexInParent < bParentUnit.tokenCopy[bElementPos].indexInParent){

@@ -131,6 +131,7 @@
                         // }
                         if(token.inUnit === nextToken.inUnit && unit !== null && unit.tree_id !== "0"){
                             if(unit.tokens === undefined){
+                                console.log("tokenCopy - take the values");
                                 unit.tokens = unit.tokenCopy;
                             }
                             if(shiftPressed){
@@ -211,6 +212,7 @@
                         var unit = DataService.getUnitById(prevToken.inUnit);
                         if(token.inUnit === prevToken.inUnit && unit !== null && unit.tree_id !== "0"){
                             if(unit.tokens === undefined){
+                                console.log("tokenCopy - take the values");
                                 unit.tokens = unit.tokenCopy;
                             }
 
@@ -311,6 +313,7 @@
                         
                         if(unit !== null && unit.tree_id !== "0"){
 	                        if(unit.tokens === undefined){
+	                            console.log("tokenCopy - take the values");
 	                            unit.tokens = unit.tokenCopy;
 	                        }
 	                        

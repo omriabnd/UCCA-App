@@ -69,6 +69,7 @@
   	      	selectedTokenList = selectionHandlerService.getSelectedTokenList();
   	      	if(selectedTokenList.length == 0){
   		      	if(selectedUnitId != undefined && selectedUnitId != 0){
+  		      	    console.log("tokenCopy - take the values");
   		      		selectedTokenList = selectedUnit.tokenCopy;
 //  		      		console.log(selectedTokenList)
   		      	}

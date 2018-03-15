@@ -58,6 +58,7 @@
         function annotationUnitDirectiveLink($scope, elem, attrs,$rootScope) {
             $scope.vm = $scope.dirCtrl;
             $scope.vm.dataBlock.tokens = $scope.vm.tokens;
+            console.log("tokenCopy - --set-- put dataBlock.tokens in dataBlock.tokenCopy");
             $scope.vm.dataBlock.tokenCopy = angular.copy($scope.vm.dataBlock.tokens);
 
             $scope.vm.dataBlock.tokens.forEach(function(token){

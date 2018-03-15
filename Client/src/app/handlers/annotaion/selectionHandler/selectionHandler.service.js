@@ -136,12 +136,14 @@
                      * If unit.tokenCopy not exist, create it according to unit.children_tokens_map
                      */
                     if (unit.tokenCopy === undefined) {
+                        console.log("tokenCopy - --set-- set array from children_tokens_map");
                         unit.tokenCopy = [];
                         for (var key in unit.children_tokens_map) {
                             unit.tokenCopy.push(unit.children_tokens_map[key]);
                         }
                     }
 
+                    console.log("tokenCopy - take the values, create an array with token id according to tokenCopy array");
                     var elementPos = unit.tokenCopy.map(function(x) {return x.id; }).indexOf(token.id);
                     if(elementPos > -1){
                         var selectedUnitId = _handler.getSelectedUnitId();
@@ -214,6 +216,7 @@
                 var unit = DataService.getUnitById(_handler.getSelectedUnitId());
                 var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.id);
                 if(elementPos === -1){
+                    console.log("tokenCopy - --set-- push token to tokenCopy list");
                     unit.tokenCopy.push(token);
                 }
             },
