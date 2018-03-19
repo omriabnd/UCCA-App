@@ -12,18 +12,22 @@
      */
     function AssertionService() {
         var AssertionService = {
+            unitsIdsList: [],
             checkTree: checkTree,
             checkTreeId: checkTreeId,
             checkAnnotationUnits: checkAnnotationUnits,
             checkParentTreeId: checkParentTreeId,
             validPrefix: validPrefix,
-            check_children_tokens_hash: check_children_tokens_hash
+            check_children_tokens_hash: check_children_tokens_hash,
+            checkNoGaps: checkNoGaps,
+            checkUnitsIdsList:checkUnitsIdsList,
+            checkUniqueInTree:checkUniqueInTree,
         };
 
         return AssertionService;
 
         /**
-         * Check tree_id
+         * Check tree_id: existing and correct format
          * @param treeId
          */
         function checkTreeId(treeId) {
@@ -65,7 +69,7 @@
          * @param treeId
          */
         function checkParentTreeId(parentTreeId, treeId) {
-            debugger
+            // debugger
             // Exists or null if tree_id=0
             if (treeId == "0") {
                 debugger
@@ -113,17 +117,75 @@
             }
         }
 
+
+        /**
+         * Check no gaps, iterate all tree units, push their tree ids to unitsIdList list
+         */
+        function checkNoGaps(treeId, annotationUnits) {
+            for (let i = 0; i < annotationUnits.length; i++) {
+                if (annotationUnits[i].AnnotationUnits) {
+                    checkNoGaps(annotationUnits[i].tree_id, annotationUnits[i].AnnotationUnits);
+                }
+            }
+            AssertionService.unitsIdsList.push(treeId);
+        }
+
+        /**
+         * Check for each unit (id = i-j-k) if its parent unit is also in the tree (id = i-j-(k-1) )
+         */
+        function checkUnitsIdsList() {
+            this.checkUniqueInTree();
+            console.log("AssertionService.unitsIdsList", AssertionService.unitsIdsList);
+            for (let i = 0; i < AssertionService.unitsIdsList.length; i++) {
+                if (/^\d+$/.test(AssertionService.unitsIdsList[i])) {
+                    // If treeId is first sub unit of the tree root, parentTreeId should be '0', like '1', '2', their parent is '0'
+                    continue;
+                }
+
+                const index = AssertionService.unitsIdsList[i].lastIndexOf("-");
+                const lastDigit = AssertionService.unitsIdsList[i].slice(index+1);
+                let res = '';
+
+                if (lastDigit - 1) { // If lastDigit > 2, sub the last digit (i-j-k -> i-j-(k-1) )
+                    const prefix = AssertionService.unitsIdsList[i].slice(0, index+1)
+                    const digit = parseInt(lastDigit)
+                    res = prefix.concat(digit-1);
+                } else { // If lastDigit is '1', slice the last digit (i-j-1 -> i-j )
+                    res = AssertionService.unitsIdsList[i].slice(0, index);
+                }
+
+                if (!AssertionService.unitsIdsList.filter(item => item == res).length) {
+                    throw "There is a gap, unit " + res + " is not exist in the tree";
+                }
+            }
+        }
+
+        /**
+         * Check if every tree_id is unique in the tree
+         */
+        function checkUniqueInTree() {
+            for (let i = 0; i < AssertionService.unitsIdsList.length; i++) {
+                if (AssertionService.unitsIdsList.filter(item => item == AssertionService.unitsIdsList[i]).length !== 1) {
+                    throw "tree_id " + AssertionService.unitsIdsList[i] + " is not unique in the tree";
+                }
+            }
+        }
+
+
         /**
          * Main function, check tree- sends to check tree_id and annotationUnits
          * @param tree
          */
         function checkTree(tree) {
-            debugger
+            console.log("_______________check tree=", tree);
+            // debugger
             console.log("In check tree function", tree);
             // Check tree_id
             try {
                 this.checkTreeId(tree.tree_id);
                 this.checkAnnotationUnits(tree.AnnotationUnits);
+                this.checkNoGaps(tree.tree_id, tree.AnnotationUnits);
+                this.checkUnitsIdsList();
             } catch(e) {
                 console.error(e);
             }
