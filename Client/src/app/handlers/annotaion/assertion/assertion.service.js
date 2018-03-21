@@ -14,17 +14,35 @@
         var AssertionService = {
             unitsIdsList: [],
             checkTree: checkTree,
+            correctFormat: correctFormat,
             checkTreeId: checkTreeId,
             checkAnnotationUnits: checkAnnotationUnits,
             checkParentTreeId: checkParentTreeId,
             validPrefix: validPrefix,
             check_children_tokens_hash: check_children_tokens_hash,
-            checkNoGaps: checkNoGaps,
+            buildUnitsIdList: buildUnitsIdList,
             checkUnitsIdsList:checkUnitsIdsList,
             checkUniqueInTree:checkUniqueInTree,
+            checkClonedId: checkClonedId,
+            checkChildrenTokens:checkChildrenTokens,
+            checkChildrenTokensSubSet: checkChildrenTokensSubSet,
         };
 
         return AssertionService;
+
+        /**
+         * check if id is in the correct format ('i-j-k')
+         * @param id
+         * @param idType
+         */
+        function correctFormat(id, idType) {
+            const splitId = id.split('-');
+            for (let i = 0; i < splitId.length; i++) {
+                if (!parseInt(splitId[i]) && splitId[i] !== "0") {
+                    throw idType + " is not in the correct format";
+                }
+            }
+        }
 
         /**
          * Check tree_id: existing and correct format
@@ -37,12 +55,7 @@
             }
 
             // correct format
-            var splitTreeId = treeId.split('-');
-            for (var i = 0; i < splitTreeId.length; i++) {
-                if (!parseInt(splitTreeId[i]) && splitTreeId[i] !== "0") {
-                    throw "Tree id is not in the correct format";
-                }
-            }
+            this.correctFormat(treeId, 'Tree id');
         }
 
         /**
@@ -69,32 +82,47 @@
          * @param treeId
          */
         function checkParentTreeId(parentTreeId, treeId) {
-            // debugger
             // Exists or null if tree_id=0
+            // null if tree_id=0:
+            // The tree has not parent_tree_id, right now it has not checked
             if (treeId == "0") {
                 debugger
             }
-
-            console.log("parentTreeId", parentTreeId, "treeId", treeId)
             if (treeId && !parentTreeId) {
-                debugger;
                 throw "Parent tree id is not existing";
             }
 
             // correct format
-            if (parentTreeId) {
-                var splitTreeId = parentTreeId.split('-');
-                for (var i = 0; i < splitTreeId.length; i++) {
-                    if (!parseInt(splitTreeId[i]) && splitTreeId[i] !== "0") {
-                        throw "Parent tree id is not in the correct format";
-                    }
-                }
-            }
+            this.correctFormat(parentTreeId, 'Parent tree id');
 
             if (!this.validPrefix(parentTreeId, treeId)) {
                 throw "Parent tree id is not a prefix of tree id";
             }
 
+        }
+
+        /**
+         * Check cloned_from_tree_id:
+         * exist only if is_remote_copy is true, correct format and points at an existing unit in the tree
+         * @param unit
+         */
+        function checkClonedId(unit) {
+            if (unit.is_remote_copy && !unit.cloned_from_tree_id) {
+                throw "Annotation unit " + unit.tree_id + " is remote copy, it doesn't have cloned_from_tree_id";
+            }
+            if (!unit.is_remote_copy && unit.cloned_from_tree_id) {
+                throw "Annotation unit " + unit.tree_id + " isn't remote copy, but it has cloned_from_tree_id";
+            }
+
+            //correct format
+            if (unit.cloned_from_tree_id) {
+                this.correctFormat(unit.cloned_from_tree_id, 'Cloned from tree id');
+            }
+
+            // Points at an existing unit in the tree
+            if (unit.cloned_from_tree_id && !this.unitsIdsList.includes(unit.cloned_from_tree_id)) {
+                throw "Cloned from tree id " + unit.cloned_from_tree_id + " is not points at an existing unit in the tree";
+            }
         }
 
         /**
@@ -104,14 +132,13 @@
         function checkAnnotationUnits(annotationUnits) {
             console.log("------zannotationUnits=", annotationUnits);
             for (var i = 0; i < annotationUnits.length; i++) {
-                console.log("annotationUnits[i].parentUnitId=", annotationUnits[i].parentUnitId)
                 console.log("i=", annotationUnits[i]);
-                //tODO- check fields
+                //Check fields: tree_id, parent_tree_id, cloned_from_tree_id
                 this.checkTreeId(annotationUnits[i].tree_id);
                 this.checkParentTreeId(annotationUnits[i].parent_tree_id, annotationUnits[i].tree_id);
+                this.checkClonedId(annotationUnits[i]);
 
-
-                if (annotationUnits[i].AnnotationUnits.length) {
+                if (annotationUnits[i].AnnotationUnits) {
                     this.checkAnnotationUnits(annotationUnits[i].AnnotationUnits);
                 }
             }
@@ -119,12 +146,12 @@
 
 
         /**
-         * Check no gaps, iterate all tree units, push their tree ids to unitsIdList list
+         * Build units id list, iterate all tree units, push their tree ids to unitsIdList list
          */
-        function checkNoGaps(treeId, annotationUnits) {
+        function buildUnitsIdList(treeId, annotationUnits) {
             for (let i = 0; i < annotationUnits.length; i++) {
                 if (annotationUnits[i].AnnotationUnits) {
-                    checkNoGaps(annotationUnits[i].tree_id, annotationUnits[i].AnnotationUnits);
+                    buildUnitsIdList(annotationUnits[i].tree_id, annotationUnits[i].AnnotationUnits);
                 }
             }
             AssertionService.unitsIdsList.push(treeId);
@@ -135,7 +162,6 @@
          */
         function checkUnitsIdsList() {
             this.checkUniqueInTree();
-            console.log("AssertionService.unitsIdsList", AssertionService.unitsIdsList);
             for (let i = 0; i < AssertionService.unitsIdsList.length; i++) {
                 if (/^\d+$/.test(AssertionService.unitsIdsList[i])) {
                     // If treeId is first sub unit of the tree root, parentTreeId should be '0', like '1', '2', their parent is '0'
@@ -171,26 +197,6 @@
             }
         }
 
-
-        /**
-         * Main function, check tree- sends to check tree_id and annotationUnits
-         * @param tree
-         */
-        function checkTree(tree) {
-            console.log("_______________check tree=", tree);
-            // debugger
-            console.log("In check tree function", tree);
-            // Check tree_id
-            try {
-                this.checkTreeId(tree.tree_id);
-                this.checkAnnotationUnits(tree.AnnotationUnits);
-                this.checkNoGaps(tree.tree_id, tree.AnnotationUnits);
-                this.checkUnitsIdsList();
-            } catch(e) {
-                console.error(e);
-            }
-        }
-
         /**
          * Check if children_tokens_hash contain same tokens like children_tokens
          * @param children_tokens_hash
@@ -209,6 +215,98 @@
                         throw "The ids at place " + i + " are different between children_tokens_hash and children_tokens";
                     }
                 }
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        /**
+         *
+         * @param annotationUnits - list
+         * @param tokenId - the token to check if it exists in parent children_tokens
+         * @param parentId - the parent id, to check if the token exist in his children_tokens
+         * @returns {boolean} - If the token exist in children_tokens of the parent
+         */
+        function checkTokenInParentUnit(annotationUnits, tokenId, parentId) {
+            for (let i = 0; i < annotationUnits.length; i++) {
+                if (annotationUnits[i].parent_tree_id === parentId) {
+                    for (let j = 0; j < annotationUnits[i].children_tokens.length; j++) {
+                       if (annotationUnits[i].children_tokens[j].id === tokenId) {
+                           return true;
+                       }
+                    }
+                }
+            }
+            return false;
+        }
+
+        /**
+         * Check if children tokens are sub set the children_tokens of the parent
+         * @param currentTask
+         */
+        function checkChildrenTokensSubSet(currentTask) {
+            for (let i = 0; i < currentTask.annotation_units.length; i++) {
+                for (let j = 0; j < currentTask.annotation_units[i].children_tokens.length; j++) {
+                    // Check if the token id exist in children_tokens of their parent
+                    if (!checkTokenInParentUnit(currentTask.annotation_units, currentTask.annotation_units[i].children_tokens[j].id, currentTask.annotation_units[i].parent_tree_id)) {
+                        throw "token " + currentTask.annotation_units[i].children_tokens[j].id + " is not exist in children tokens of the parent unit";
+                    }
+                }
+            }
+        }
+
+        /**
+         * Check children_tokens:
+         * exists and in the tokens of the task (this is the “tokens” member of the task),
+         * no duplicates (with same start_index) within each unit
+         * a sub-set of the children_tokens of the parent
+         * @param currentTask
+         */
+        function checkChildrenTokens(currentTask) {
+            // Build list of all tree tokens ids
+            const treeTokensIdsList = [];
+            for (var i = 0; i < currentTask.tokens.length; i++) {
+                treeTokensIdsList.push(currentTask.tokens[i].id);
+            }
+            console.log("currentTask=", currentTask);
+            for (let i = 1; i < currentTask.annotation_units.length; i++) { // Beginning from 1, because unit 0 doesn't have children_tokens
+                // Check if children_tokens exist
+                if (!currentTask.annotation_units[i].children_tokens.length) {
+                    throw "Annotation unit "+ i + " doesn't have children tokens";
+                }
+                // Check if children token in the tokens of tha task
+                for (let j = 0; j < currentTask.annotation_units[i].children_tokens.length; j++) {
+                    if (!treeTokensIdsList.includes(currentTask.annotation_units[i].children_tokens[j].id)) {
+                        throw "Token " +  currentTask.annotation_units[i].children_tokens[j].id + " doesn't exist in the tokens of the task";
+                    }
+                }
+            }
+            // TODO-- No duplicates (with same start_index) within each unit
+            // TODO But start_index exist only in currentTask.tokens
+
+            // A sub-set of the children_tokens of the parent
+            this.checkChildrenTokensSubSet(currentTask);
+        }
+
+
+        /**
+         * Main function, checkTree- sends to check tree ids, annotations units and children tokens
+         * @param tree (DataService.tree)- to check the ids and annotations units
+         * @param currentTask (DataService.currentTask) - to check children tokens
+         */
+        function checkTree(tree, currentTask) {
+            console.log("_______________check tree=", tree);
+            try {
+                // Check tree ids
+                this.checkTreeId(tree.tree_id);
+                this.buildUnitsIdList(tree.tree_id, tree.AnnotationUnits);
+                this.checkUnitsIdsList();
+
+                // Check annotations units
+                this.checkAnnotationUnits(tree.AnnotationUnits);
+
+                // Check children tokens
+                this.checkChildrenTokens(currentTask);
             } catch(e) {
                 console.error(e);
             }

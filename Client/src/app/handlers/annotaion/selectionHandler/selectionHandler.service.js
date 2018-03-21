@@ -402,7 +402,7 @@
 
                     // Check the tree id in assertion service
                     console.log("data service. tree=", DataService.tree);
-                    AssertionService.checkTree(DataService.tree);
+                    AssertionService.checkTree(DataService.tree, DataService.currentTask);
                     return resolve({status: 'InitTreeFinished'});
                 })
 
@@ -433,7 +433,9 @@
                             comment: unit ? unit.comment : '',
                             cluster: unit ? unit.cluster : '',
                             tree_id: unit && unit.tree_id ? unit.tree_id : null,
-                            parent_tree_id: unit && unit.parent_tree_id ? unit.parent_tree_id : null
+                            parent_tree_id: unit && unit.parent_tree_id ? unit.parent_tree_id : null,
+                            is_remote_copy: unit && unit.is_remote_copy ? unit.is_remote_copy : false,
+                            cloned_from_tree_id: unit && unit.cloned_from_tree_id ? unit.cloned_from_tree_id : null
                         };
                         if(remote){
                             newUnit = angular.copy(remote);
