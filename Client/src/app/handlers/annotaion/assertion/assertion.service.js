@@ -51,7 +51,7 @@
         function checkTreeId(treeId) {
             // existing
             if (!treeId) {
-                throw "Tree id is not existing";
+                throw "Tree id " + treeId + " is not existing";
             }
 
             // correct format
@@ -89,7 +89,7 @@
                 debugger
             }
             if (treeId && !parentTreeId) {
-                throw "Parent tree id is not existing";
+                throw "Parent tree id " + parentTreeId + " is not existing";
             }
 
             // correct format
@@ -203,6 +203,10 @@
          * @param children_tokens
          */
         function check_children_tokens_hash(children_tokens_hash, children_tokens) {
+            // Check only if localStorage.validate is true
+            if (!getValidate()) {
+                return
+            }
             try {
                 // children_tokens_hash - tokens object: {id: token, id: token, ...}
                 // children_tokens - tokens array
@@ -245,6 +249,7 @@
          * @param currentTask
          */
         function checkChildrenTokensSubSet(currentTask) {
+            // TODO- after saveTask current task doesn't contain children_tokens attribute.  Remove check after save task? Add children_tokens in dataService.saveTask?
             for (let i = 0; i < currentTask.annotation_units.length; i++) {
                 for (let j = 0; j < currentTask.annotation_units[i].children_tokens.length; j++) {
                     // Check if the token id exist in children_tokens of their parent
@@ -295,10 +300,15 @@
          * @param currentTask (DataService.currentTask) - to check children tokens
          */
         function checkTree(tree, currentTask) {
+            // Check only if localStorage.validate is true
+            if (!getValidate()) {
+                return
+            }
             console.log("_______________check tree=", tree);
             try {
                 // Check tree ids
                 this.checkTreeId(tree.tree_id);
+                this.unitsIdsList = [];
                 this.buildUnitsIdList(tree.tree_id, tree.AnnotationUnits);
                 this.checkUnitsIdsList();
 

@@ -591,6 +591,9 @@
 
                 DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
 
+                // Check the tree after deleting
+                AssertionService.checkTree(DataService.tree, DataService.currentTask);
+
                 return resolve('DeleteSuccess');
             });
         }
@@ -951,6 +954,8 @@
             }
             console.log("current task before save", DataService.currentTask);
             return apiService.annotation.putTaskData(mode,DataService.currentTask).then(function(res){
+                // Check the tree- AssertionService
+                // AssertionService.checkTree(DataService.tree, DataService.currentTask);
                 $rootScope.$broadcast("ResetSuccess");
                 return res;
             });

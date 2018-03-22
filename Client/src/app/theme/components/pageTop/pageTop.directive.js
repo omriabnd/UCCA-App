@@ -19,11 +19,12 @@
   /** A modal dialog that will let users turn the tracing and validations on and off*/
   function DiagnosticsController($uibModalInstance) {
       this.trace = getTrace();
+      this.validate = getValidate();
 
       this.save = function () {
-          console.log("In save, validtaions=", this.validations, " trace=", this.trace);
           setTrace(this.trace);
-          // TODO- set validations
+          setValidate(this.validate);
+
           this.close();
       };
 
