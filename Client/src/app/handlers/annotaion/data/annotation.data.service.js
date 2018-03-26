@@ -98,7 +98,7 @@
         function createTokensHashByTokensArrayForPassage(annotationTokensArray){
             trace("DataService - createTokensHashByTokensArrayForPassage");
             DataService.tree.children_tokens_map = tokensArrayToHash(annotationTokensArray);
-            // TODO: Need send children_tokens instead of annotationTokensArray ???
+            // TODO: Need send children_tokens instead of tokens ?
             AssertionService.check_children_tokens_hash(DataService.tree.children_tokens_map, annotationTokensArray);
         }
 
@@ -778,7 +778,7 @@
                 type: angular.copy(treeNode.unitType.toUpperCase()),
                 is_remote_copy: treeNode.unitType.toUpperCase() === 'REMOTE',
                 children_tokens: treeNode.tree_id === "0" ? filterTokensAtt(angular.copy(treeNode.tokens)) : filterTokensAttForUnit(angular.copy(treeNode.tokens)),
-                cloned_from_tree_id: treeNode.unitType === 'REMOTE' ? treeNode.remote_original_id : null
+                cloned_from_tree_id: treeNode.is_remote_copy ? treeNode.remote_original_id : null
             };
             if($rootScope.isSlottedLayerProject){
                 
@@ -799,8 +799,8 @@
                 }
                 
                 for(var i=0; i<unit.categories.length; i++){
-                    var currnetCategory = unit.categories[i];
-                    if(currnetCategory.id == undefined){
+                    var currentCategory = unit.categories[i];
+                    if(currentCategory.id == undefined){
                         unit.categories.splice(i,1);
                         i--;
                     }
@@ -930,6 +930,7 @@
          * @param shouldSubmit
          */
         function saveTask(shouldSubmit){
+            debugger
             trace("DataService - saveTask");
             annotation_units = [];
             var tokensCopy = angular.copy(DataService.tree.tokens);
@@ -947,7 +948,9 @@
             DataService.currentTask.tokens= tokensCopy;
 
             for(var i=0; i<DataService.currentTask.annotation_units.length; i++){
-                
+                if (DataService.currentTask.annotation_units[i].is_remote_copy) {
+                    debugger
+                }
                 DataService.currentTask.annotation_units[i].tokens = [];
                 DataService.currentTask.annotation_units[i].tokens = DataService.currentTask.annotation_units[i].tokensCopy;
 

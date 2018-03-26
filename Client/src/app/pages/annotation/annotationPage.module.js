@@ -43,7 +43,7 @@
             return this; // for testing purposes
         };
 
-        function getAnnotationTask(AnnotationTextService,$stateParams,DataService,restrictionsValidatorService,selectionHandlerService,$rootScope,$timeout) {
+        function getAnnotationTask(AnnotationTextService,$stateParams,DataService,restrictionsValidatorService,selectionHandlerService,$rootScope,$timeout, AssertionService) {
             return AnnotationTextService.getAnnotationTask($stateParams.taskId).then(function(taskResponse){
                 // TODO: Move this into its own function
 
@@ -172,7 +172,8 @@
                     DataService.categories = allCategories;
                     DataService.createHashTables();
                     DataService.createTokensHashByTokensArrayForPassage(taskResponse.tokens);
-                    
+
+                    AssertionService.check_children_tokens_hash(taskResponse)
                     if($rootScope.isSlottedLayerProject){
                        for(var i =0; i < DataService.currentTask.annotation_units.length; i++){
                            var currentUnit = DataService.currentTask.annotation_units[i];

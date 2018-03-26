@@ -281,7 +281,8 @@
                                 }],
                                 AnnotationUnits : [
 
-                                ]
+                                ],
+                                parent_tree_id: unit.parent_tree_id
                             };
 
                             /**
@@ -296,6 +297,7 @@
 
                         }else if(unit.is_remote_copy){// insertToTree for remote units
 
+                            debugger;
                             console.log("Init tree, unit is remote copy", unit);
 
                             DataService.unitType = 'REMOTE';
