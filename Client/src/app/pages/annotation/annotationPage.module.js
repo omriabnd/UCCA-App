@@ -173,7 +173,7 @@
                     DataService.createHashTables();
                     DataService.createTokensHashByTokensArrayForPassage(taskResponse.tokens);
 
-                    AssertionService.check_children_tokens_hash(taskResponse)
+                    AssertionService.check_children_tokens_hash(DataService.children_tokens_map, taskResponse.tokens);
                     if($rootScope.isSlottedLayerProject){
                        for(var i =0; i < DataService.currentTask.annotation_units.length; i++){
                            var currentUnit = DataService.currentTask.annotation_units[i];

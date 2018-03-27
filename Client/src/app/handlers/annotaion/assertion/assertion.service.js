@@ -106,7 +106,7 @@
             }
 
             // Points at an existing unit in the tree
-            if (unit.cloned_from_tree_id && !this.unitsIdsList.includes(unit.cloned_from_tree_id)) {
+            if (unit.cloned_from_tree_id && !AssertionService.unitsIdsList.includes(unit.cloned_from_tree_id)) {
                 throw "Cloned from tree id " + unit.cloned_from_tree_id + " is not points at an existing unit in the tree";
             }
         }
@@ -205,6 +205,7 @@
          * @param children_tokens
          */
         function check_children_tokens_hash(children_tokens_hash, children_tokens) {
+            // TODO- send list names as parameters
             // Check only if localStorage.validate is true
             if (!getValidate()) {
                 return
@@ -379,7 +380,7 @@
             try {
                 // Check tree ids
                 checkTreeId(tree.tree_id);
-                this.unitsIdsList = [];
+                AssertionService.unitsIdsList = [];
                 buildUnitsIdList(tree.tree_id, tree.AnnotationUnits);
                 checkUnitsIdsList();
 

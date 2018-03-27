@@ -778,7 +778,8 @@
                 type: angular.copy(treeNode.unitType.toUpperCase()),
                 is_remote_copy: treeNode.unitType.toUpperCase() === 'REMOTE',
                 children_tokens: treeNode.tree_id === "0" ? filterTokensAtt(angular.copy(treeNode.tokens)) : filterTokensAttForUnit(angular.copy(treeNode.tokens)),
-                cloned_from_tree_id: treeNode.is_remote_copy ? treeNode.remote_original_id : null
+                cloned_from_tree_id: treeNode.unitType.toUpperCase() === 'REMOTE' ? treeNode.remote_original_id ? treeNode.remote_original_id: treeNode.cloned_from_tree_id : null
+                // remote_original_id - if the tree updated in frontend tree data, cloned_from_tree_id - if the tree updated from server data
             };
             if($rootScope.isSlottedLayerProject){
                 
@@ -829,7 +830,10 @@
                     return false;
                 }
             }
-            
+
+            // AssertionService.check_children_tokens_hash(DataService.tree.children_tokens, DataService.tree.tokens);
+            // AssertionService.check_children_tokens_hash(DataService.tree.children_tokens, DataService.tree.tokenCopy);
+
             return true;
         }
 
