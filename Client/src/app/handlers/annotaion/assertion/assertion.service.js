@@ -15,7 +15,7 @@
             unitsIdsList: [],
             firstTokenInPreUnit: 0,
             checkTree: checkTree,
-            check_children_tokens_hash: check_children_tokens_hash,
+            check_children_tokens_map: check_children_tokens_map,
         };
 
         return AssertionService;
@@ -116,12 +116,12 @@
          * @param unit- annotationUnit (contain children_tokens_map, tokens and tokenCopy)
          */
         function checkTokens(unit) {
-            // console.log("checkTokens, unit=", unit);
-            // TODO- unit.tokens exist, unit.tokenCopy and unit.children_tokens_map are undefined
+            // debugger
+            // // TODO- unit.tokens exist, unit.tokenCopy and unit.children_tokens_map are undefined
             // for (let i = 0; i < unit.tokens.length; i++) {
-                // if (unit.tokens[i].id !== unit.tokenCopy[i].id) {
-                //     throw "tokens and tokenCopy are not contain the same tokens (" + unit.tokens[i] + " and " + unit.tokenCopy[i];
-                // }
+            //     if (unit.tokens[i].id !== unit.tokenCopy[i].id) {
+            //         throw "tokens and tokenCopy are not contain the same tokens (" + unit.tokens[i] + " and " + unit.tokenCopy[i];
+            //     }
             // }
         }
 
@@ -130,7 +130,6 @@
          * @param annotationUnits
          */
         function checkAnnotationUnits(annotationUnits) {
-            console.log("------zannotationUnits=", annotationUnits);
             for (var i = 0; i < annotationUnits.length; i++) {
                 //Check fields: tree_id, parent_tree_id, cloned_from_tree_id
                 checkTreeId(annotationUnits[i].tree_id);
@@ -200,26 +199,25 @@
         }
 
         /**
-         * Check if children_tokens_hash contain same tokens like children_tokens
-         * @param children_tokens_hash
+         * Check if children_tokens_map contain same tokens like children_tokens
+         * @param children_tokens_map
          * @param children_tokens
          */
-        function check_children_tokens_hash(children_tokens_hash, children_tokens) {
-            // TODO- send list names as parameters
+        function check_children_tokens_map(children_tokens_map, children_tokens, tokensType) {
             // Check only if localStorage.validate is true
             if (!getValidate()) {
                 return
             }
             try {
-                // children_tokens_hash - tokens object: {id: token, id: token, ...}
+                // children_tokens_map - tokens object: {id: token, id: token, ...}
                 // children_tokens - tokens array
-                const children_tokens_hash_ids = Object.keys(children_tokens_hash);
-                if (children_tokens_hash_ids.length !== children_tokens.length) {
-                    throw "The lengths of children_tokens and children_tokens_hash are not equals";
+                const children_tokens_map_ids = Object.keys(children_tokens_map);
+                if (children_tokens_map_ids.length !== children_tokens.length) {
+                    throw "The lengths of " + tokensType + " and children_tokens_map are not equals";
                 }
-                for (let i = 0; i < children_tokens_hash_ids.length; i++) {
-                    if (parseInt(children_tokens_hash_ids[i]) !== children_tokens[i].id) {
-                        throw "The ids at place " + i + " are different between children_tokens_hash and children_tokens";
+                for (let i = 0; i < children_tokens_map_ids.length; i++) {
+                    if (parseInt(children_tokens_map_ids[i]) !== children_tokens[i].id) {
+                        throw "The ids at place " + i + " are different between children_tokens_map and " + tokensType;
                     }
                 }
             } catch(e) {
@@ -310,7 +308,7 @@
                     childrenTokensIdsList.push(currentTask.annotation_units[i].children_tokens[j].id);
                 }
                 // Check no duplicates in childrenTokensIdsList
-                for (let  k = childrenTokensIdsList.length-1; k >= 0; k--) {
+                for (let  k = childrenTokensIdsList.length-1; k <= 0; k--) {
                     if (k && childrenTokensIdsList[k] >= childrenTokensIdsList[k-1]) {
                         throw "Tokens " + childrenTokensIdsList[k] + ", " + childrenTokensIdsList[k-1] + " are duplicated or not sorted";
                     }
@@ -333,8 +331,12 @@
             if (!unit.tokens.length) { // if id==='0'
                 unit.tokens = unit.tokenCopy
             }
-            console.log("treeId, ", unit.tree_id, " units.tokens=", unit.tokens, "---annotations", unit.AnnotationUnits, "unit===", unit);
-
+            // Check implicit unit in the beginning
+            if (unit.unitType === 'IMPLICIT') {
+                if (!(unit.tree_id.endsWith('-1') || unit.tree_id === '1')) {
+                    throw "Implicit unit is no in the beginning, " + unit.tree_id;
+                }
+            }
             if (unit.tree_id !== "0") {
                 checkCorrectlyOrdered(AssertionService.firstTokenInPreUnit, unit.tokens[0].id, unit.tree_id.endsWith('-1') || unit.tree_id === '1');// if id ='...-1' or '1', this is the first child of the unit
             }
@@ -376,7 +378,7 @@
             if (!getValidate()) {
                 return
             }
-            console.log("_______________check tree=", tree);
+            console.log("-------------------------check tree-------------------------", tree);
             try {
                 // Check tree ids
                 checkTreeId(tree.tree_id);
@@ -385,7 +387,7 @@
                 checkUnitsIdsList();
 
                 // Check if children_tokens_map and tokenCopy contain the same tokens
-                check_children_tokens_hash(tree.children_tokens_map, tree.tokenCopy);
+                check_children_tokens_map(tree.children_tokens_map, tree.tokenCopy, 'tokenCopy');
 
                 // Check annotations units
                 checkAnnotationUnits(tree.AnnotationUnits);
@@ -393,6 +395,7 @@
                 // Check children tokens
                 checkChildrenTokens(currentTask);
 
+                // Correctly ordered (by first token, implicit units come first)
                 AssertionService.firstTokenInPreUnit = tree.tokenCopy[0].id;
                 checkTokensOrder(tree);
             } catch(e) {

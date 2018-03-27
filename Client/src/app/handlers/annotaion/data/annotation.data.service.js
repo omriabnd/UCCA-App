@@ -99,7 +99,7 @@
             trace("DataService - createTokensHashByTokensArrayForPassage");
             DataService.tree.children_tokens_map = tokensArrayToHash(annotationTokensArray);
             // TODO: Need send children_tokens instead of tokens ?
-            AssertionService.check_children_tokens_hash(DataService.tree.children_tokens_map, annotationTokensArray);
+            AssertionService.check_children_tokens_map(DataService.tree.children_tokens_map, annotationTokensArray, 'tokens');
         }
 
         /**
@@ -493,6 +493,8 @@
 
                 newObject.unitType !== "REMOTE" ? $rootScope.$broadcast("InsertSuccess",{dataBlock: { id: level, AnnotationUnits: getUnitById(level).AnnotationUnits},newUnitId: newObject.tree_id }) : '';
 
+                // Check tree in AssertionService after add unit
+                AssertionService.checkTree(DataService.tree, DataService.currentTask);
                 return resolve({status: 'InsertSuccess',id: newObject.tree_id});
             });
         }
@@ -591,7 +593,7 @@
 
                 DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
 
-                // Check the tree after deleting
+                // Check tree in AssertionService after delete unit
                 AssertionService.checkTree(DataService.tree, DataService.currentTask);
 
                 return resolve('DeleteSuccess');
@@ -831,8 +833,8 @@
                 }
             }
 
-            // AssertionService.check_children_tokens_hash(DataService.tree.children_tokens, DataService.tree.tokens);
-            // AssertionService.check_children_tokens_hash(DataService.tree.children_tokens, DataService.tree.tokenCopy);
+            AssertionService.check_children_tokens_map(DataService.tree.children_tokens_map, DataService.tree.tokens, 'tokens');
+            AssertionService.check_children_tokens_map(DataService.tree.children_tokens_map, DataService.tree.tokenCopy, 'tokenCopy');
 
             return true;
         }
@@ -934,7 +936,6 @@
          * @param shouldSubmit
          */
         function saveTask(shouldSubmit){
-            debugger
             trace("DataService - saveTask");
             annotation_units = [];
             var tokensCopy = angular.copy(DataService.tree.tokens);
@@ -961,8 +962,8 @@
             }
             console.log("current task before save", DataService.currentTask);
             return apiService.annotation.putTaskData(mode,DataService.currentTask).then(function(res){
-                // Check the tree- AssertionService
-                // AssertionService.checkTree(DataService.tree, DataService.currentTask);
+                // Check tree in AssertionService when saving the task
+                AssertionService.checkTree(DataService.tree, DataService.currentTask);
                 $rootScope.$broadcast("ResetSuccess");
                 return res;
             });

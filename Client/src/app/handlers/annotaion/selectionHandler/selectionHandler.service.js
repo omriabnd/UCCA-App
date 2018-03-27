@@ -297,7 +297,6 @@
 
                         }else if(unit.is_remote_copy){// insertToTree for remote units
 
-                            debugger;
                             console.log("Init tree, unit is remote copy", unit);
 
                             DataService.unitType = 'REMOTE';
@@ -399,11 +398,9 @@
                     });
                     DataService.unitType = 'REGULAR';
                     // DataService.sortUndUpdate();
-                    console.log("#######", DataService.getUnitById('0'));
                     _handler.updateSelectedUnit("0",false);
 
-                    // Check the tree id in assertion service
-                    console.log("data service. tree=", DataService.tree);
+                    // Check tree in AssertionService att the end of init tree
                     AssertionService.checkTree(DataService.tree, DataService.currentTask);
                     return resolve({status: 'InitTreeFinished'});
                 })
@@ -481,6 +478,8 @@
                             })
                         }
                     }
+                    // Check tree in AssertionService after toggle category
+                    AssertionService.checkTree(DataService.tree, DataService.currentTask);
 
                     $rootScope.$broadcast("ResetSuccess");
                 })
