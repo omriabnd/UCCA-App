@@ -247,22 +247,22 @@
 
         /**
          * Check if children tokens are sub set the children_tokens of the parent
-         * @param currentTask
+         * @param serverData
          */
-        function checkChildrenTokensSubSet(currentTask) {
+        function checkChildrenTokensSubSet(serverData) {
             // TODO- after saveTask current task doesn't contain children_tokens attribute.  Remove check after save task? Add children_tokens in dataService.saveTask?
-            for (let i = 0; i < currentTask.annotation_units.length; i++) {
-                for (let j = 0; j < currentTask.annotation_units[i].children_tokens.length; j++) {
+            for (let i = 0; i < serverData.annotation_units.length; i++) {
+                for (let j = 0; j < serverData.annotation_units[i].children_tokens.length; j++) {
                     // Check if the token id exist in children_tokens of their parent
-                    if (!checkTokenInParentUnit(currentTask.annotation_units, currentTask.annotation_units[i].children_tokens[j].id, currentTask.annotation_units[i].parent_tree_id)) {
-                        throw "token " + currentTask.annotation_units[i].children_tokens[j].id + " is not exist in children tokens of the parent unit";
+                    if (!checkTokenInParentUnit(serverData.annotation_units, serverData.annotation_units[i].children_tokens[j].id, serverData.annotation_units[i].parent_tree_id)) {
+                        throw "token " + serverData.annotation_units[i].children_tokens[j].id + " is not exist in children tokens of the parent unit";
                     }
                 }
             }
         }
 
         /**
-         * Check currentTask.tokens- start_index sorted
+         * Check serverData.tokens- start_index sorted
          * @param tokens
          */
         function checkCurrentTaskTokens(tokens) {
@@ -280,32 +280,32 @@
          * exists and in the tokens of the task (this is the “tokens” member of the task),
          * no duplicates (with same start_index) within each unit
          * a sub-set of the children_tokens of the parent
-         * @param currentTask
+         * @param serverData
          */
-        function checkChildrenTokens(currentTask) {
+        function checkChildrenTokens(serverData) {
             // Build list of all tree tokens ids
             const treeTokensIdsList = [];
-            for (var i = 0; i < currentTask.tokens.length; i++) {
-                treeTokensIdsList.push(currentTask.tokens[i].id);
+            for (var i = 0; i < serverData.tokens.length; i++) {
+                treeTokensIdsList.push(serverData.tokens[i].id);
             }
-            for (let i = 1; i < currentTask.annotation_units.length; i++) { // Beginning from 1, because unit 0 doesn't have children_tokens
+            for (let i = 1; i < serverData.annotation_units.length; i++) { // Beginning from 1, because unit 0 doesn't have children_tokens
                 // If it's a implicit unit don't check it because implicit unit doesn't have children_tokens
-                if (currentTask.annotation_units[i].type === 'IMPLICIT') {
+                if (serverData.annotation_units[i].type === 'IMPLICIT') {
                     return;
                 }
                 // Check if children_tokens exist
-                if (!currentTask.annotation_units[i].children_tokens.length) {
+                if (!serverData.annotation_units[i].children_tokens.length) {
                     throw "Annotation unit "+ i + " doesn't have children tokens";
                 }
                 let childrenTokensIdsList = [];
                 // Check if children token in the tokens of tha task
-                for (let j = 0; j < currentTask.annotation_units[i].children_tokens.length; j++) {
-                    if (!treeTokensIdsList.includes(currentTask.annotation_units[i].children_tokens[j].id)) {
-                        throw "Token " +  currentTask.annotation_units[i].children_tokens[j].id + " doesn't exist in the tokens of the task";
+                for (let j = 0; j < serverData.annotation_units[i].children_tokens.length; j++) {
+                    if (!treeTokensIdsList.includes(serverData.annotation_units[i].children_tokens[j].id)) {
+                        throw "Token " +  serverData.annotation_units[i].children_tokens[j].id + " doesn't exist in the tokens of the task";
                     }
 
                     // build children_tokens ids list
-                    childrenTokensIdsList.push(currentTask.annotation_units[i].children_tokens[j].id);
+                    childrenTokensIdsList.push(serverData.annotation_units[i].children_tokens[j].id);
                 }
                 // Check no duplicates in childrenTokensIdsList
                 for (let  k = childrenTokensIdsList.length-1; k <= 0; k--) {
@@ -314,11 +314,11 @@
                     }
                 }
             }
-            // Check start_index in currentTask.tokens
-            checkCurrentTaskTokens(currentTask.tokens);
+            // Check start_index in serverData.tokens
+            checkCurrentTaskTokens(serverData.tokens);
 
             // A sub-set of the children_tokens of the parent
-            checkChildrenTokensSubSet(currentTask);
+            checkChildrenTokensSubSet(serverData);
         }
 
 
@@ -371,13 +371,14 @@
         /**
          * Main function, checkTree- sends to check tree ids, annotations units and children tokens
          * @param tree (DataService.tree)- to check the ids and annotations units
-         * @param currentTask (DataService.currentTask) - to check children tokens
+         * @param serverData (DataService.serverData) - to check children tokens
          */
-        function checkTree(tree, currentTask) {
+        function checkTree(tree, serverData) {
             // Check only if localStorage.validate is true
             if (!getValidate()) {
                 return
             }
+            debugger
             console.log("-------------------------check tree-------------------------", tree);
             try {
                 // Check tree ids
@@ -393,7 +394,7 @@
                 checkAnnotationUnits(tree.AnnotationUnits);
 
                 // Check children tokens
-                checkChildrenTokens(currentTask);
+                checkChildrenTokens(serverData);
 
                 // Correctly ordered (by first token, implicit units come first)
                 AssertionService.firstTokenInPreUnit = tree.tokenCopy[0].id;

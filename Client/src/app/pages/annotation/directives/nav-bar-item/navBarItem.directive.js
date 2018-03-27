@@ -43,7 +43,7 @@
         }
 
         function checkIfTaskHasComment(){
-            return DataService.currentTask && DataService.currentTask.user_comment !== "";
+            return DataService.serverData && DataService.serverData.user_comment !== "";
         }
         function itemClicked(functionName){
             console.log(functionName);

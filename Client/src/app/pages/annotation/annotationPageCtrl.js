@@ -221,7 +221,7 @@
             }else{              
               var selectionList = selectionHandlerService.getSelectedTokenList();
               if(isUnitSelected(selectionList)){
-                  if(DataService.currentTask.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
+                  if(DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
                     Core.showAlert("Cant delete annotation units from refinement layer")
                     console.log('ALERT - deleteFromTree -  prevent delete from tree when refinement layer');
                     return false;
@@ -230,7 +230,7 @@
                   selectionHandlerService.clearTokenList();
               }
               else if(selectionList.length){
-                  if(DataService.currentTask.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
+                  if(DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
                     Core.showAlert("Cant create annotation units int refinement layer")
                     console.log('ALERT - spacePressed -  prevent insert to tree when refinement layer');
                     return false;
@@ -367,14 +367,14 @@
                 size: size,
                 controller: function($scope){
                     $scope.vm = viewModal;
-                    if(DataService.currentTask){
-                        $scope.comment = DataService.currentTask.user_comment;
+                    if(DataService.serverData){
+                        $scope.comment = DataService.serverData.user_comment;
                     }
 
                     $scope.message = message;
 
                     $scope.saveComment = function(){
-                        DataService.currentTask.user_comment = $scope.comment;
+                        DataService.serverData.user_comment = $scope.comment;
                     }
 
                     var remoteOriginalTreeId = remoteOriginalId;
@@ -585,7 +585,7 @@
                               case 'deleteFromTree':{
                                   var selectedUnitId = selectionHandlerService.getSelectedUnitId();
                                   var currentUnit = DataService.getUnitById(selectedUnitId);
-                                  if(DataService.currentTask.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
+                                  if(DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
                                     Core.showAlert("Cant delete annotation units from refinement layer")
                                     console.log('ALERT - deleteFromTree -  prevent delete from tree when refinement layer');
                                     return selectedUnitId;

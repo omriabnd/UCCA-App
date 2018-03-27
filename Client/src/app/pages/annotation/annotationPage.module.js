@@ -148,7 +148,7 @@
                 taskResponse.tokens = replaceEnterWithBr(taskResponse.tokens);
 
 
-                DataService.currentTask = taskResponse;
+                DataService.serverData = taskResponse;
 
                 restrictionsValidatorService.initRestrictionsTables(taskResponse.project.layer.restrictions,selectionHandlerService);
 
@@ -156,27 +156,27 @@
                 setCategoriesAbbreviation(AnnotationTextService,allCategories);
                 setCategoriesName(AnnotationTextService,allCategories);
                 
-                $rootScope.isSlottedLayerProject = DataService.currentTask.project.layer.slotted;
-                $rootScope.isRefinementLayerProject = DataService.currentTask.project.layer.type === "REFINEMENT";
+                $rootScope.isSlottedLayerProject = DataService.serverData.project.layer.slotted;
+                $rootScope.isRefinementLayerProject = DataService.serverData.project.layer.type === "REFINEMENT";
 
                 // we here add the createdByTokenization field for each token
                 // first, sort tokens by start_index
-                DataService.currentTask.tokens.sort(function(t1,t2){return t1.start_index - t2.start_index;});
+                DataService.serverData.tokens.sort(function(t1,t2){return t1.start_index - t2.start_index;});
                 // second, define createdByTokenization
                 // TODO: Find what createdByTokenization is used for.
-                for (var index=1; index < DataService.currentTask.tokens.length; index++) {
-                    DataService.currentTask.tokens[index].createdByTokenization = DataService.currentTask.tokens[index].require_annotation && (DataService.currentTask.tokens[index].start_index == DataService.currentTask.tokens[index-1].end_index+1);
+                for (var index=1; index < DataService.serverData.tokens.length; index++) {
+                    DataService.serverData.tokens[index].createdByTokenization = DataService.serverData.tokens[index].require_annotation && (DataService.serverData.tokens[index].start_index == DataService.serverData.tokens[index-1].end_index+1);
                 }
                 
-                if(!!DataService.currentTask.annotation_units){
+                if(!!DataService.serverData.annotation_units){
                     DataService.categories = allCategories;
                     DataService.createHashTables();
                     DataService.createTokensHashByTokensArrayForPassage(taskResponse.tokens);
 
                     AssertionService.check_children_tokens_map(DataService.tree.children_tokens_map, taskResponse.tokens, 'tokens');
                     if($rootScope.isSlottedLayerProject){
-                       for(var i =0; i < DataService.currentTask.annotation_units.length; i++){
-                           var currentUnit = DataService.currentTask.annotation_units[i];
+                       for(var i =0; i < DataService.serverData.annotation_units.length; i++){
+                           var currentUnit = DataService.serverData.annotation_units[i];
                            
 //                           currentUnit.gui_status = "OPEN";
 //                           restrictionsValidatorService.checkRestrictionsOnFinish(currentUnit,DataService.getUnitById(currentUnit.parent),DataService.hashTables);

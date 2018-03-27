@@ -34,7 +34,8 @@
             },
             lastInsertedUnitIndex: lastInsertedUnitIndex,
             unitType:unitType,
-            currentTask:null,
+            serverData:null,
+            tokens: null, // Hold the tokens from server (serverData.children_tokens)
             hashTables: hashTables,
             categories: [],
             unitsUsedAsRemote:unitsUsedAsRemote,
@@ -67,7 +68,7 @@
 
         function initTree(){
             trace("DataService - initTree");
-            DataService.currentTask.annotation_units.forEach(function(unit,index){
+            DataService.serverData.annotation_units.forEach(function(unit,index){
                 var tokenStack = [];
                 unit.children_tokens.forEach(function(token){
                     tokenStack.push(hashTables.tokensHashTable[token.id]);
@@ -104,13 +105,13 @@
 
         /**
          * Create hash tables, and save them in DataService.hashTables:
-         * tokensHashTable- hash object of currentTask.tokens.
+         * tokensHashTable- hash object of serverData.tokens.
          * categoriesHashTable- hash object of categories.
          */
         function createHashTables(){
             trace("DataService - createHashTables");
-            console.log("tokens - iterate currentTask.tokens and create tokens hash table");
-            DataService.currentTask.tokens.forEach(function(token){
+            console.log("tokens - iterate serverData.tokens and create tokens hash table");
+            DataService.serverData.tokens.forEach(function(token){
                 DataService.hashTables.tokensHashTable[token.id] = token;
             });
                         
@@ -148,11 +149,11 @@
         }
 
         /**
-         * Reset tree, put reset about currentTask
+         * Reset tree, put reset about serverData
          */
         function resetTree(){
             trace("DataService - resetTree");
-            return apiService.annotation.putTaskData('reset',DataService.currentTask).then(function(res){
+            return apiService.annotation.putTaskData('reset',DataService.serverData).then(function(res){
                 return res;
             });
 
@@ -301,7 +302,7 @@
 
             return $q(function(resolve, reject) {
 
-                if (!inInitStage && DataService.currentTask.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT) {
+                if (!inInitStage && DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT) {
                     Core.showAlert("Cant create annotation units in refinement layer")
                     console.log('ALERT - insertToTree -  prevent insert to tree when refinement layer');
                     reject(selectedUnitId);
@@ -494,7 +495,7 @@
                 newObject.unitType !== "REMOTE" ? $rootScope.$broadcast("InsertSuccess",{dataBlock: { id: level, AnnotationUnits: getUnitById(level).AnnotationUnits},newUnitId: newObject.tree_id }) : '';
 
                 // Check tree in AssertionService after add unit
-                AssertionService.checkTree(DataService.tree, DataService.currentTask);
+                AssertionService.checkTree(DataService.tree, DataService.serverData);
                 return resolve({status: 'InsertSuccess',id: newObject.tree_id});
             });
         }
@@ -594,7 +595,7 @@
                 DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
 
                 // Check tree in AssertionService after delete unit
-                AssertionService.checkTree(DataService.tree, DataService.currentTask);
+                AssertionService.checkTree(DataService.tree, DataService.serverData);
 
                 return resolve('DeleteSuccess');
             });
@@ -771,7 +772,7 @@
             trace("DataService - traversInTree");
             var unit = {
                 tree_id : treeNode.tree_id.toString(),
-                task_id: DataService.currentTask.id.toString(),
+                task_id: DataService.serverData.id.toString(),
                 comment: treeNode.comment || '',
                 cluster: treeNode.cluster || '',
                 categories: filterCategoriesAtt(angular.copy(treeNode.categories)) || [],
@@ -948,22 +949,22 @@
                 return $q.reject();
             }
             var mode = shouldSubmit ? 'submit' : 'draft';
-            DataService.currentTask['annotation_units'] = annotation_units;
-            DataService.currentTask.tokens = [];
-            DataService.currentTask.tokens= tokensCopy;
+            DataService.serverData['annotation_units'] = annotation_units;
+            DataService.serverData.tokens = [];
+            DataService.serverData.tokens= tokensCopy;
 
-            for(var i=0; i<DataService.currentTask.annotation_units.length; i++){
-                if (DataService.currentTask.annotation_units[i].is_remote_copy) {
+            for(var i=0; i<DataService.serverData.annotation_units.length; i++){
+                if (DataService.serverData.annotation_units[i].is_remote_copy) {
                     debugger
                 }
-                DataService.currentTask.annotation_units[i].tokens = [];
-                DataService.currentTask.annotation_units[i].tokens = DataService.currentTask.annotation_units[i].tokensCopy;
+                DataService.serverData.annotation_units[i].tokens = [];
+                DataService.serverData.annotation_units[i].tokens = DataService.serverData.annotation_units[i].tokensCopy;
 
             }
-            console.log("current task before save", DataService.currentTask);
-            return apiService.annotation.putTaskData(mode,DataService.currentTask).then(function(res){
+            console.log("current task before save", DataService.serverData);
+            return apiService.annotation.putTaskData(mode,DataService.serverData).then(function(res){
                 // Check tree in AssertionService when saving the task
-                AssertionService.checkTree(DataService.tree, DataService.currentTask);
+                AssertionService.checkTree(DataService.tree, DataService.serverData);
                 $rootScope.$broadcast("ResetSuccess");
                 return res;
             });

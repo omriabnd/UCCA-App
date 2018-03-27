@@ -252,7 +252,7 @@
             initTree: function(data){
                 trace("selectionHandlerService - initTree");
                 return $q(function(resolve, reject) {
-                    DataService.currentTask.annotation_units.forEach(function(unit,index){
+                    DataService.serverData.annotation_units.forEach(function(unit,index){
                         console.log("unit=", unit)
 
                         // Add this declaration with Omri Feb 11
@@ -288,7 +288,7 @@
                             /**
                              * insertToTree for implicit units
                              */
-                            var newRowId = DataService.insertToTree(objToPush,unit.parent_tree_id,index != DataService.currentTask.annotation_units.length -1);
+                            var newRowId = DataService.insertToTree(objToPush,unit.parent_tree_id,index != DataService.serverData.annotation_units.length -1);
 
                             unit.categories.forEach(function(category,index){
                                 _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id);
@@ -314,7 +314,7 @@
 
                             var unitCategory = unit.categories[0] ? DataService.hashTables.categoriesHashTable[ unit.categories[0].id] : null;
 
-                            _handler.toggleCategory(unitCategory,null,unit,unit,index != DataService.currentTask.annotation_units.length -1).then(function(res){
+                            _handler.toggleCategory(unitCategory,null,unit,unit,index != DataService.serverData.annotation_units.length -1).then(function(res){
                                 unit.categories.forEach(function(category,index){
                                     if(index === 0){
 
@@ -401,7 +401,7 @@
                     _handler.updateSelectedUnit("0",false);
 
                     // Check tree in AssertionService att the end of init tree
-                    AssertionService.checkTree(DataService.tree, DataService.currentTask);
+                    AssertionService.checkTree(DataService.tree, DataService.serverData);
                     return resolve({status: 'InitTreeFinished'});
                 })
 
@@ -479,7 +479,7 @@
                         }
                     }
                     // Check tree in AssertionService after toggle category
-                    AssertionService.checkTree(DataService.tree, DataService.currentTask);
+                    AssertionService.checkTree(DataService.tree, DataService.serverData);
 
                     $rootScope.$broadcast("ResetSuccess");
                 })
