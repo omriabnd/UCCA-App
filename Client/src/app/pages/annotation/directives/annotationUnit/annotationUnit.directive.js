@@ -2,14 +2,14 @@
     'use strict';
 
     angular.module('zAdmin.annotation.directives')
-        .directive('annotationUnits',annotationUnitDirective);
+        .directive('annotationUnit',annotationUnitDirective);
 
     /** @ngInject */
     function annotationUnitDirective($rootScope,DataService,selectionHandlerService,HotKeysManager,hotkeys,DefinitionsService, $timeout, $compile, $uibModal,restrictionsValidatorService, ENV_CONST, Core,$document) {
 
         var directive = {
             restrict:'E',
-            templateUrl:'app/pages/annotation/directives/annotationUnits/annotationUnits.html',
+            templateUrl:'app/pages/annotation/directives/annotationUnit/annotationUnit.html',
             scope:{
                 unit:'=',
                 previewLine: '=',

@@ -247,7 +247,7 @@
 
         /**
          * Check if children tokens are sub set the children_tokens of the parent
-         * @param serverData
+         * @param currentTask
          */
         function checkChildrenTokensSubSet(serverData) {
             // TODO- after saveTask current task doesn't contain children_tokens attribute.  Remove check after save task? Add children_tokens in dataService.saveTask?

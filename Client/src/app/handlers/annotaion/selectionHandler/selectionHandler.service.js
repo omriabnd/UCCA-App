@@ -231,6 +231,8 @@
                     _handler.clearTokenList(afterInsert);
                 }
                 _handler.disableTokenClicked();
+                // // Check tree in AssertionService when update focus unit
+                // AssertionService.checkTree(DataService.tree, DataService.serverData);
             },
             getSelectedUnitId: function(){
                 trace("selectionHandlerService - getSelectedUnitId");
@@ -400,7 +402,7 @@
                     // DataService.sortUndUpdate();
                     _handler.updateSelectedUnit("0",false);
 
-                    // Check tree in AssertionService att the end of init tree
+                    // Check tree in AssertionService at the end of init tree
                     AssertionService.checkTree(DataService.tree, DataService.serverData);
                     return resolve({status: 'InitTreeFinished'});
                 })
