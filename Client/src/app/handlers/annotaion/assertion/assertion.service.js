@@ -378,7 +378,7 @@
             if (!getValidate()) {
                 return
             }
-            debugger
+            // debugger
             console.log("-------------------------check tree-------------------------", tree);
             try {
                 // Check tree ids
@@ -393,8 +393,9 @@
                 // Check annotations units
                 checkAnnotationUnits(tree.AnnotationUnits);
 
+                // TODO- delete DataService.currentTask, change tokens in DataService.tree to children_tokens, and then check tree.children_tokens (email, March 27)
                 // Check children tokens
-                checkChildrenTokens(serverData);
+                // checkChildrenTokens(serverData);
 
                 // Correctly ordered (by first token, implicit units come first)
                 AssertionService.firstTokenInPreUnit = tree.tokenCopy[0].id;

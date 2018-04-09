@@ -58,7 +58,7 @@
             createHashTables:createHashTables,
             isTokenInUnit:isTokenInUnit,
             resetTree:resetTree,
-            sortUndUpdate:sortUndUpdate,
+            sortAndUpdate:sortAndUpdate,
             REMOTE_TEMPS_OBJ_FOR_UPDATE_AFTER_DELETE_UNIT_FOR_UPDATE_AFTER_DELETE_UNIT:{},
             USED_AS_REMOTE_TEMPS_OBJ_FOR_UPDATE_AFTER_DELETE_UNIT_FOR_UPDATE_AFTER_DELETE_UNIT:{},
             createTokensHashByTokensArrayForPassage:createTokensHashByTokensArrayForPassage
@@ -488,9 +488,9 @@
 
 //                parentUnit.gui_status = "OPEN";
 
-                if(!inInitStage){
+                if(!inInitStage){ // After add unit- send to sortAndUpdate. (add unit, no in tree initializing)
                     // Removed code - The is sorUndUpdate in selectionHendler service in the end of initTree.
-                    // sortUndUpdate(true)
+                    sortAndUpdate(true)
                 }
                 
                 updateInUnitIdsForTokens(DataService.tree);
@@ -532,8 +532,8 @@
          * But it needed for special annotations, for example- annotate two units together
          * @param doSort
          */
-        function sortUndUpdate(doSort){
-            trace("DataService - sortUndUpdate");
+        function sortAndUpdate(doSort){
+            trace("DataService - sortAndUpdate");
 
             if(DataService.tree.AnnotationUnits.length > 0){
                 updateTreeIds(DataService.tree);
@@ -703,7 +703,7 @@
          * @param a - first unit
          * @param b - second unit
          * @returns {number} - according the priority of a
-         * BUGGY - sortUndUpdate calls to sortTree, sortTree calls to this function,
+         * BUGGY - sortAndUpdate calls to sortTree, sortTree calls to this function,
          * sometimes parentUnit.tokens contain the tokens list, and sometimes parentUnit.tokenCopy contain the tokens list.
          */
         function sortUnits(a,b){
@@ -738,10 +738,10 @@
                         return 0;
                     }
                 }
-            } // tokenCopy - take the values
-            else if(aParentUnit.tokenCopy[aElementPos].indexInParent > bParentUnit.tokenCopy[bElementPos].indexInParent){ // TODO-- tokens or tokenCopy
+            } // tokens - take the values
+            else if(aParentUnit.tokens[aElementPos].indexInParent > bParentUnit.tokens[bElementPos].indexInParent){ // tokens or tokenCopy? tokenCopy is not contain indexInParent attribute
                 return 1;
-            }else if(aParentUnit.tokenCopy[aElementPos].indexInParent < bParentUnit.tokenCopy[bElementPos].indexInParent){
+            }else if(aParentUnit.tokens[aElementPos].indexInParent < bParentUnit.tokens[bElementPos].indexInParent){
                 return -1;
             }else{
                 return 0;

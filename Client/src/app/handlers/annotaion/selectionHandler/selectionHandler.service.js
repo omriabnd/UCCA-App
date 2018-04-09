@@ -399,7 +399,8 @@
 
                     });
                     DataService.unitType = 'REGULAR';
-                    // DataService.sortUndUpdate();
+                    // after init the tree, is it needed?
+                    // DataService.sortAndUpdate();
                     _handler.updateSelectedUnit("0",false);
 
                     // Check tree in AssertionService at the end of init tree
