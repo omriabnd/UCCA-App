@@ -247,7 +247,7 @@
 
         /**
          * Check if children tokens are sub set the children_tokens of the parent
-         * @param currentTask
+         * @param serverData
          */
         function checkChildrenTokensSubSet(serverData) {
             // TODO- after saveTask current task doesn't contain children_tokens attribute.  Remove check after save task? Add children_tokens in dataService.saveTask?
@@ -393,7 +393,7 @@
                 // Check annotations units
                 checkAnnotationUnits(tree.AnnotationUnits);
 
-                // TODO- delete DataService.currentTask, change tokens in DataService.tree to children_tokens, and then check tree.children_tokens (email, March 27)
+                // TODO- delete DataService.serverData, change tokens in DataService.tree to children_tokens, and then check tree.children_tokens (email, March 27)
                 // Check children tokens
                 // checkChildrenTokens(serverData);
 

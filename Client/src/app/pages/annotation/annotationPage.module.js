@@ -147,7 +147,9 @@
                 // --- Process Tokens ---
                 taskResponse.tokens = replaceEnterWithBr(taskResponse.tokens);
 
-
+                // TODO --  stop using currentTask, anything we need from it (e.g., tokens);
+                /** we should copy to the DataService other fields we need for either sending
+                // it back to the Server or for working in the client.**/
                 DataService.serverData = taskResponse;
 
                 restrictionsValidatorService.initRestrictionsTables(taskResponse.project.layer.restrictions,selectionHandlerService);

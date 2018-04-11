@@ -35,7 +35,6 @@
             lastInsertedUnitIndex: lastInsertedUnitIndex,
             unitType:unitType,
             serverData:null,
-            tokens: null, // Hold the tokens from server (serverData.children_tokens)
             hashTables: hashTables,
             categories: [],
             unitsUsedAsRemote:unitsUsedAsRemote,
@@ -206,8 +205,8 @@
                     
                         var firstSlotIndex = 0;
                         for(var i=0; i<unit.categories.length; i++){
-                            var currentCategoy = unit.categories[i];
-                            if(currentCategoy.fromParentLayer){
+                            var currentCategory = unit.categories[i];
+                            if(currentCategory.fromParentLayer){
                                firstSlotIndex++;
                             }
                         }
