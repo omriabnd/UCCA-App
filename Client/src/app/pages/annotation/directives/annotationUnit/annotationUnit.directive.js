@@ -6,6 +6,7 @@
 
     /** @ngInject */
     function annotationUnitDirective($rootScope,DataService,selectionHandlerService,HotKeysManager,hotkeys,DefinitionsService, $timeout, $compile, $uibModal,restrictionsValidatorService, ENV_CONST, Core,$document) {
+        trace("annotationUnitDirective is here");
 
         var directive = {
             restrict:'E',
@@ -30,6 +31,7 @@
         return directive;
 
         function AnnotationUnitController(DataService) {
+            trace("annotationUnitDirective - AnnotationUnitController");
             var vm = this;
             vm.unitClicked = unitClicked;
             $rootScope.unitClicked = vm.unitClicked;
@@ -42,7 +44,7 @@
             vm.unitIsSelected = unitIsSelected;
             vm.switchToRemoteMode = switchToRemoteMode;
             vm.toggleAnnotationUnitView = toggleAnnotationUnitView;
-            vm.isUnitCollaped = isUnitCollaped;
+            vm.isUnitCollapsed = isUnitCollapsed;
             vm.isUnitHidden = isUnitHidden;
             vm.toggleMouseUp = toggleMouseUp;
             vm.highlightTokensInUnit0 = highlightTokensInUnit0;
@@ -56,6 +58,7 @@
         }
 
         function annotationUnitDirectiveLink($scope, elem, attrs,$rootScope) {
+            trace("annotationUnitDirective - annotationUnitDirectiveLink");
             $scope.vm = $scope.dirCtrl;
             $scope.vm.dataBlock.tokens = $scope.vm.tokens;
             console.log("tokenCopy - --set-- put dataBlock.tokens in dataBlock.tokenCopy");
@@ -157,10 +160,12 @@
         
 
         function isUnitHidden(vm){
+            trace("annotationUnitDirective - isUnitHidden");
             return vm.gui_status === "HIDDEN";
         }
 
         function categoriesTooltip(vm){
+            trace("annotationUnitDirective - categoriesTooltip");
             var output = '';
             for (var index in vm.dataBlock.categories) {
                 output = output + ' ' + vm.dataBlock.categories[index].name;
@@ -169,6 +174,7 @@
         }
 
         function toggleAnnotationUnitView(vm){
+            trace("annotationUnitDirective - toggleAnnotationUnitView");
             if(vm.dataBlock.gui_status === "OPEN"){
                 vm.dataBlock.gui_status = "COLLAPSE";
 
@@ -178,11 +184,13 @@
             }
         }
 
-        function isUnitCollaped(vm){
+        function isUnitCollapsed(vm){
+            trace("annotationUnitDirective - isUnitCollapsed");
             return vm.dataBlock.gui_status === "COLLAPSE";
         }
 
         function unitIsSelected(vm){
+            trace("annotationUnitDirective - unitIsSelected");
             if(selectionHandlerService.getSelectedUnitId() === vm.dataBlock.tree_id){
                 $rootScope.currentVm = vm;
             }
@@ -197,18 +205,24 @@
         }
 
         function highlightTokensInUnit0(tokens) {
+            trace("annotationUnitDirective - highlightTokensInUnit0");
             $rootScope.$broadcast('highlightTokens',{tokens: tokens});
         }
 
         function addCommentToUnit(unitId,vm){
+            trace("annotationUnitDirective - addCommentToUnit");
             selectionHandlerService.updateSelectedUnit(unitId);
             open('app/pages/annotation/templates/commentOnUnitModal.html','sm','',vm)
         }
+
         function addClusterToUnit(unitId,vm){
+            trace("annotationUnitDirective - addClusterToUnit");
             selectionHandlerService.updateSelectedUnit(unitId);
             open('app/pages/annotation/templates/clusterOnUnitModal.html','sm','',vm)
         }
-        function open(page, size,message,vm) {
+
+        function open(page, size, message, vm) {
+            trace("annotationUnitDirective - open");
             var remoteOriginalId = $rootScope.clckedLine;
             var viewModal = vm;
             $uibModal.open({
@@ -252,9 +266,8 @@
             });
         };
 
-
-
         function andBorderColor(tokens){
+            trace("annotationUnitDirective - andBorderColor");
             tokens.forEach(function(token){
                 if(token.categories.length === 2){
                     token.borderStyle = "border-top : 3px solid "+token.categories[1].backgroundColor+"; border-bottom : 3px solid "+token.categories[0].backgroundColor+"; border-left : 3px solid "+token.categories[0].backgroundColor+";"
@@ -263,6 +276,8 @@
         }
 
         function RemoveBorder(tokens, dataBlock){
+            debugger
+            trace("annotationUnitDirective - RemoveBorder");
             dataBlock.AnnotationUnits.forEach(function(unit,index){
                 unit.tokens.forEach(function(token){
                     var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
@@ -275,8 +290,8 @@
             });
         }
 
-
-        function paintTokens(tokens, dataBlock,afterDelete){
+        function paintTokens(tokens, dataBlock, afterDelete){
+            trace("annotationUnitDirective - paintTokens");
             dataBlock.AnnotationUnits.forEach(function(unit,index){
                 if(unit.unitType !== "REMOTE"){
                     if(afterDelete){
@@ -374,6 +389,7 @@
         }
 
         function borderForFirstAndLastToken(categories){
+            trace("annotationUnitDirective - borderForFirstAndLastToken");
             var actualCategories = categories.filter(function(category){
                 return category.id !== undefined;
             })
@@ -397,6 +413,7 @@
         }
 
         function borderForFirstToken(token,categories){
+            trace("annotationUnitDirective - borderForFirstToken");
             var actualCategories = categories.filter(function(category){
                 return category.id !== undefined;
             })
@@ -417,7 +434,9 @@
 
 
         }
+
         function borderForMiddleToken(token,categories){
+            trace("annotationUnitDirective - borderForMiddleToken");
             var actualCategories = categories.filter(function(category){
                 return category.id !== undefined;
             })
@@ -445,6 +464,7 @@
         }
 
         function borderForLastToken(token,categories){
+            trace("annotationUnitDirective - borderForLastToken");
             var actualCategories = categories.filter(function(category){
                 return category.id !== undefined;
             })
@@ -469,6 +489,7 @@
         }
 
         function checkRestrictionForCurrentUnit(unit_id,event){
+            trace("annotationUnitDirective - checkRestrictionForCurrentUnit");
             if(!unit_id){
                 // in case of coe here from hot key
                 unit_id = $rootScope.clckedLine
@@ -502,6 +523,8 @@
         }
 
         function subTreeToCollapse(subtree_root_unit){
+            debugger
+            trace("annotationUnitDirective - subTreeToCollapse");
             return ;
             subtree_root_unit.AnnotationUnits.forEach(function(unit){
                DataService.getUnitById(unit.tree_id).gui_status = "COLLAPSE";
@@ -511,6 +534,7 @@
         }
 
         function toggleMouseUpDown(event){
+            trace("annotationUnitDirective - toggleMouseUpDown");
             HotKeysManager.updatePressedHotKeys({combo:'shift'},!shiftPressed);
             var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed("shift");
             var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed("ctrl");
@@ -522,6 +546,8 @@
         }
 
         function toggleMouseUp(event) {
+            debugger
+            trace("annotationUnitDirective - toggleMouseUp");
             HotKeysManager.updatePressedHotKeys({combo: 'shift'}, false);
             HotKeysManager.updatePressedHotKeys({combo: 'ctrl'}, false);
 
@@ -544,10 +570,12 @@
         }
 
         function isUnitClicked(vm){
+            trace("annotationUnitDirective - isUnitClicked");
             return selectionHandlerService.getSelectedUnitId() === vm.dataBlock.tree_id;
         }
 
         function deleteUnit(unitId,vm){
+            trace("annotationUnitDirective - deleteUnit");
             if(DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
                 Core.showAlert("Cant delete annotation units from refinement layer")
                 console.log('ALERT - deleteFromTree -  prevent delete from tree when refinement layer');
@@ -579,10 +607,12 @@
         }
 
         function switchToRemoteMode(vm,event){
+            trace("annotationUnitDirective - switchToRemoteMode");
             addAsRemoteUnit(vm);
         }
 
         function addAsRemoteUnit(vm,category,event){
+            trace("annotationUnitDirective - addAsRemoteUnit");
             var clickedUnit = selectionHandlerService.getSelectedUnitId();
             if(DataService.getUnitById(clickedUnit).unitType === "REMOTE" || DataService.getUnitById(clickedUnit).unitType === "IMPLICIT"){
                 // cant add remote unit to remote unit
@@ -605,6 +635,7 @@
         }
 
         function unitClicked(vm,index, event){
+            trace("annotationUnitDirective - unitClicked");
             if(selectionHandlerService.getUnitToAddRemotes() !== "0" && selectionHandlerService.getUnitToAddRemotes() !== index){
                 var unitUsed = DataService.getUnitById(selectionHandlerService.getUnitToAddRemotes()).AnnotationUnits.map(function(x) {return x.remote_original_id; }).indexOf(vm.unit.tree_id);
 
@@ -672,6 +703,7 @@
         }
 
         function updateStartEndIndexForTokens(tokens){
+            trace("annotationUnitDirective - updateStartEndIndexForTokens");
             var currentIndex = 0;
             tokens.forEach(function(token){
                 token.start_index = currentIndex;
@@ -679,12 +711,7 @@
                 token.end_index += token.text.length;
                 currentIndex = token.end_index + 2;
             })
-
         }
 
-
-
-
     }
-
 })();

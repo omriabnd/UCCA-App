@@ -177,7 +177,13 @@
             */
         }
 
-        function toggleCategoryForUnit(unitId,category){
+        /***
+         * Add Category to unit
+         * @param unitId - which unit to add the category
+         * @param category - the category to add to the unit
+         * @returns {*}
+         */
+        function toggleCategoryForUnit(unitId, category){
             trace("DataService - toggleCategoryForUnit");
             return $q(function(resolve, reject) {
                 
@@ -271,7 +277,7 @@
          * @param token
          * @returns {boolean} - Id token exist in selectedUnit
          */
-        function isTokenInUnit(selectedUnit,token){
+        function isTokenInUnit(selectedUnit, token){
             trace("DataService - isTokenInUnit");
             var tokenInUnit = false;
             if(selectedUnit.AnnotationUnits === undefined){
@@ -295,10 +301,10 @@
          * Insert to tree- insert new unit to tree
          * @param newObject - object to insert to the tree
          * @param level - the parent unit id
-         * @param inInitStage - boolean value, if the tree initializing now
+         * @param inInitStage - boolean value, if the tree is initializing now
          * @returns {*} - resolve insert success
          */
-        function insertToTree(newObject,level,inInitStage){
+        function insertToTree(newObject, level, inInitStage){
             trace("DataService - insertToTree");
             // console.log("In insertToTree, newObject=", newObject);
 
@@ -314,6 +320,8 @@
                 if (!parentUnit.AnnotationUnits) {
                     parentUnit.AnnotationUnits = [];
                 }
+                newObject.parent_tree_id = parentUnit.tree_id;
+
                 if (!newObject.tree_id) {
                     if (level.toString() === "0") {
                         //Passage unit or it children units.
@@ -489,7 +497,7 @@
 
                 if(!inInitStage){ // After add unit- send to sortAndUpdate. (add unit, no in tree initializing)
                     // Removed code - The is sorUndUpdate in selectionHendler service in the end of initTree.
-                    sortAndUpdate(true)
+                    // sortAndUpdate(true); // This is needed when adding a unit whose location is before existing units
                 }
                 
                 updateInUnitIdsForTokens(DataService.tree);
@@ -506,8 +514,8 @@
             trace("DataService - updateUnitSlots");
             var firstSlotIndex = 0; //the first slot not occupied by the parent layer's categories
             for(var i=0; i<newObject.categories.length; i++){
-                var currentCategoy = newObject.categories[i];
-                if(currentCategoy !== undefined && currentCategoy.fromParentLayer){
+                var currentCategory = newObject.categories[i];
+                if(currentCategory !== undefined && currentCategory.fromParentLayer){
                    firstSlotIndex++;
                 }
             }
@@ -527,6 +535,7 @@
         }
 
         /**
+         * Calls to updateTreeIds function, and to sortTree function if the parameter doSort = true
          * Buggy function, as now, we commented her calls.
          * But it needed for special annotations, for example- annotate two units together
          * @param doSort
@@ -545,7 +554,7 @@
 
         /**
          * Delete unit from tree
-         * and update tje tree without this unit
+         * and update the tree without this unit
          * @param unitId
          * @returns {*}
          */
@@ -643,10 +652,10 @@
 
         /**
          * This function updates the tree IDs so that the index of the unit in the AnnotationUnits 
-         * array of its parent is consistent with the annotation_unit_tree_id data member.
+         * array of its parent is consistent with the tree_id data member.
          * TODO: BUGGY. CHECK AGAIN AFTER MODIFYING THE BACKEND.
          */
-        function updateTreeIds(unit,treeId){
+        function updateTreeIds(unit, treeId){
             trace("DataService - updateTreeIds");
             if(unit.AnnotationUnits && unit.AnnotationUnits.length > 0){
 
@@ -698,7 +707,7 @@
         }
 
         /**
-         * Sort units - get two uniyts, sort them
+         * Sort units - get two units, sort them according to indexInParent value
          * @param a - first unit
          * @param b - second unit
          * @returns {number} - according the priority of a
@@ -738,7 +747,9 @@
                     }
                 }
             } // tokens - take the values
-            else if(aParentUnit.tokens[aElementPos].indexInParent > bParentUnit.tokens[bElementPos].indexInParent){ // tokens or tokenCopy? tokenCopy is not contain indexInParent attribute
+            // TODO-- tokens or tokenCopy?
+            // tokenCopy is not contain indexInParent attribute, with remote units- tokens=[]---error: Cannot read property 'indexInParent' of undefined
+            else if(aParentUnit.tokens[aElementPos].indexInParent > bParentUnit.tokens[bElementPos].indexInParent){
                 return 1;
             }else if(aParentUnit.tokens[aElementPos].indexInParent < bParentUnit.tokens[bElementPos].indexInParent){
                 return -1;
@@ -766,7 +777,7 @@
         /**
          * Travers in tree
          * saveTask calls to this function
-         * It updates annotation_units fields (tree_is, parent_tree_id, cloned_from_tree_id etc.)
+         * It updates annotation_units fields (tree_id, parent_tree_id, cloned_from_tree_id etc.)
          * @param treeNode - node in the tree, which travers in
          * @returns {boolean}
          */
@@ -878,6 +889,11 @@
         //
         // }
 
+        /**
+         * Delete some attributes from tokens for the tree root
+         * @param tokens
+         * @returns {*} filtered tokens
+         */
         function filterTokensAtt(tokens){
             trace("DataService - filterTokensAtt");
             if(tokens !== undefined){
@@ -896,6 +912,11 @@
 
         }
 
+        /**
+         * Delete some attributes from tokens for unit
+         * @param tokens
+         * @returns {*} filtered tokens
+         */
         function filterTokensAttForUnit(tokens){
             trace("DataService - filterTokensAttForUnit");
             if(tokens !== undefined){
@@ -919,6 +940,11 @@
 
         }
 
+        /**
+         * Delete some attributes from categories
+         * @param categories
+         * @returns {*}- filtered categories
+         */
         function filterCategoriesAtt(categories){
             trace("DataService - filterCategoriesAtt");
             if(categories !== undefined){
@@ -936,7 +962,7 @@
 
         /**
          * Save task when save button clicked
-         * @param shouldSubmit
+         * @param shouldSubmit - shouldSubmit(submit or draft)
          */
         function saveTask(shouldSubmit){
             trace("DataService - saveTask");
@@ -1002,6 +1028,11 @@
             }
         }
 
+        /**
+         * Get next sibling unit when hotkey moves down
+         * @param lastFocusedUnitId -  the current focused unit
+         * @returns {*} - the next sibling
+         */
         function getNextSibling(lastFocusedUnitId){
             trace("DataService - getNextSibling");
             if(lastFocusedUnitId == 0){
@@ -1016,6 +1047,11 @@
             }
         }
 
+        /**
+         * Get prev sibling unit when hotkey moves up
+         * @param lastFocusedUnitId - the current focused unit
+         * @returns {null} - the prev sibling
+         */
         function getPrevSibling(lastFocusedUnitId){
             trace("DataService - getPrevSibling");
             var parentAnnotationUnits = DataService.getUnitById(DataService.getParentUnitId(lastFocusedUnitId)).AnnotationUnits;
@@ -1023,7 +1059,13 @@
             return parentAnnotationUnits[currentIndex-1] ? parentAnnotationUnits[currentIndex-1] : null;
         }
 
-        function getMyIndexInParentTree(parentTree,myUnitId){
+        /**
+         * Get index in parent tree
+         * @param parentTree
+         * @param myUnitId
+         * @returns {number}
+         */
+        function getMyIndexInParentTree(parentTree, myUnitId){
             trace("DataService - getMyIndexInParentTree");
             var currentIndex = 0;
             parentTree.forEach(function(unit,index){
@@ -1034,13 +1076,24 @@
             return currentIndex;
         }
 
+        /**
+         * Get the first sibling of unit
+         * @param unitId
+         * @returns {*}- the first sibling
+         */
         function getSibling(unitId){
             trace("DataService - getSibling");
             var currentUnit = DataService.getUnitById(unitId);
             return currentUnit.AnnotationUnits[0];
         }
 
-        function getNextUnit(lastFocusedUnitId,index){
+        /**
+         * // Get next unit when hotkey moves down and there is no more siblings
+         * @param lastFocusedUnitId
+         * @param index - lastFocusedUnitId splitted by ‘-’
+         * @returns {*}
+         */
+        function getNextUnit(lastFocusedUnitId, index){
             trace("DataService - getNextUnit");
             if(lastFocusedUnitId == 0){
                 if(DataService.tree.AnnotationUnits.length > 0){
@@ -1077,7 +1130,13 @@
 
         }
 
-        function getPrevUnit(lastFocusedUnitId,index){
+        /**
+         * Get prev unit when hotkey moves up and there is no more siblings
+         * @param lastFocusedUnitId
+         * @param index - no useful
+         * @returns {*}
+         */
+        function getPrevUnit(lastFocusedUnitId, index){
             trace("DataService - getPrevUnit");
             if(lastFocusedUnitId !== "0"){
                 var prevNode = DataService.getUnitById(DataService.getParentUnitId(lastFocusedUnitId)).AnnotationUnits[parseInt(lastFocusedUnitId) - 2];
@@ -1139,7 +1198,7 @@
                 return "0";
             }
             var parentUnitId = unitId.split('-');
-            parentUnitId = parentUnitId.slice(0,length-1).join('-')
+            parentUnitId = parentUnitId.slice(0,length-1).join('-');
             return parentUnitId.toString()
         }
     }

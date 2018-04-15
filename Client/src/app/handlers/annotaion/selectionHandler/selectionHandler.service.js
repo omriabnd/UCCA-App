@@ -74,12 +74,12 @@
                 trace("selectionHandlerService - getLastInsertedToken");
                 return this.lastSelectedToken;
             },
-            addTokenToList: function(token,selectedUnit,groupUnit){
+            addTokenToList: function(token, selectedUnit, groupUnit){
                 trace("selectionHandlerService - addTokenToList");
                 /**
                  * Adds the token "token" into the list of selected tokens (selectedTokenList).
                  * If token is already selected, do nothing.
-                 * If groupUnit is false,
+                 * If groupUnit is false, remove the token from unit tokens
                  * @type {Number}
                  */
                 var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.id);
@@ -173,7 +173,7 @@
              * @param token
              * @returns {boolean} - if the token exist in the unit
              */
-            isTokenInUnit: function(selectedUnit,token){
+            isTokenInUnit: function(selectedUnit, token){
                 trace("selectionHandlerService - isTokenInUnit");
                 var tokenInUnit = false;
                 for(var i=0; i<selectedUnit.AnnotationUnits.length; i++){
@@ -185,6 +185,7 @@
                 }
                 return tokenInUnit;
             },
+
             clearTokenList: function(afterInsert){
                 trace("selectionHandlerService - clearTokenList");
                 // console.log("Token list cleared");
@@ -210,6 +211,7 @@
 
                 this.selectedTokenList = [];
             },
+
             addTokenFromUnitTokens: function(token){
                 trace("selectionHandlerService - addTokenFromUnitTokens");
                 var unit = DataService.getUnitById(_handler.getSelectedUnitId());
@@ -219,6 +221,7 @@
                     unit.tokenCopy.push(token);
                 }
             },
+
             updateSelectedUnit: function(index,afterInsert){
                 trace("selectionHandlerService - updateSelectedUnit");
                 /**
@@ -234,18 +237,22 @@
                 // // Check tree in AssertionService when update focus unit
                 // AssertionService.checkTree(DataService.tree, DataService.serverData);
             },
+
             getSelectedUnitId: function(){
                 trace("selectionHandlerService - getSelectedUnitId");
                 return this.selectedUnit;
             },
+
             toggleMouseUpDown: function(){
                 trace("selectionHandlerService - toggleMouseUpDown");
-              this.mouseDown = !this.mouseDown;
+                this.mouseDown = !this.mouseDown;
             },
+
             getMouseMode: function(){
                 trace("selectionHandlerService - getMouseMode");
                 return this.mouseDown;
             },
+
             /**
              * Init tree when the annotation page is finish loading
              * @param data
@@ -255,7 +262,7 @@
                 trace("selectionHandlerService - initTree");
                 return $q(function(resolve, reject) {
                     DataService.serverData.annotation_units.forEach(function(unit,index){
-                        console.log("unit=", unit)
+                        console.log("-----index=", index, "unit=", unit)
 
                         // Add this declaration with Omri Feb 11
                         unit.AnnotationUnits = [];
@@ -410,6 +417,7 @@
 
                 
             },
+
             toggleCategory: function(category,justToggle,remote,unit,inInitStage){
                 /**
                  * toggleCategory is also responsible for creating new units which are assigned a category.

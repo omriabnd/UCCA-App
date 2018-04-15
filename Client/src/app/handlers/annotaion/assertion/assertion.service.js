@@ -378,7 +378,6 @@
             if (!getValidate()) {
                 return
             }
-            // debugger
             console.log("-------------------------check tree-------------------------", tree);
             try {
                 // Check tree ids
@@ -388,8 +387,9 @@
                 checkUnitsIdsList();
 
                 // Check if children_tokens_map and tokenCopy contain the same tokens
-                check_children_tokens_map(tree.children_tokens_map, tree.tokenCopy, 'tokenCopy');
-
+                if (tree.tokenCopy) {
+                    check_children_tokens_map(tree.children_tokens_map, tree.tokenCopy, 'tokenCopy');
+                }
                 // Check annotations units
                 checkAnnotationUnits(tree.AnnotationUnits);
 
