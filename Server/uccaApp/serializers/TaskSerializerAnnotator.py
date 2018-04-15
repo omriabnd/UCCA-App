@@ -1,6 +1,7 @@
 from rest_framework.generics import get_object_or_404
+from rest_framework import serializers
 
-from uccaApp.util.exceptions import SaveTaskTypeDeniedException, CantChangeSubmittedTaskExeption, GetForInactiveTaskException, TreeIdInvalid
+from uccaApp.util.exceptions import SaveTaskTypeDeniedException, CantChangeSubmittedTaskExeption, GetForInactiveTaskException, TreeIdInvalid, TokensInvalid
 from uccaApp.util.functions import get_value_or_none, active_obj_or_raise_exeption
 from uccaApp.util.tokenizer import isPunct
 from uccaApp.models import Annotation_Remote_Units_Annotation_Units
@@ -9,7 +10,7 @@ from uccaApp.models import Categories
 from uccaApp.models import Tokens, Annotation_Units
 from uccaApp.models.Annotation_Units_Categories import Annotation_Units_Categories
 from uccaApp.models.Tasks import *
-from rest_framework import serializers
+from uccaApp.util.aux_functions import *
 
 from uccaApp.serializers.AnnotationUnitsSerializer import Annotation_UnitsSerializer
 from uccaApp.serializers.TaskSerializer import TaskInChartSerializer
@@ -17,7 +18,7 @@ from uccaApp.serializers.PassageSerializer import PassageSerializer
 from uccaApp.serializers.ProjectSerializerForAnnotator import ProjectSerializerForAnnotator
 from uccaApp.serializers.TokenSerializer import TokensSerializer
 from uccaApp.serializers.UsersSerializer import DjangoUserSerializer_Simplify
-import operator, re
+import operator, pdb
 
 class TaskSerializerAnnotator(serializers.ModelSerializer):
     created_by = DjangoUserSerializer_Simplify(many=False, read_only=True)
@@ -54,7 +55,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
 
     def get_tokens(self, obj):
         if (obj.type == Constants.TASK_TYPES_JSON['TOKENIZATION']):
-            tokens = Tokens.objects.all().filter(task_id=obj.id)
+            tokens = Tokens.objects.all().filter(task_id=obj.id).order_by('start_index')
         else:
             # get the tokens array from the root tokenization task
             root_tokeniztion_task_id = self.get_root_task(obj)
@@ -72,15 +73,16 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         #           AS ARRAY
         # **********************************
         orig_obj = None
-        annotation_units = Annotation_Units.objects.all().filter(task_id=obj.id).order_by('id')
+        annotation_units = Annotation_Units.objects.all().filter(task_id=obj.id)
 
         # handle new refinement or extention layer taks - get the parent annotation units - start
         if( len(annotation_units) == 0  and obj.parent_task is not None): # TODO: check if coarsening task is ok with that
             # get the parent task annotation units
             orig_obj = obj
             obj = obj.parent_task
-            annotation_units = Annotation_Units.objects.all().filter(task_id=obj.id).order_by('id')
+            annotation_units = Annotation_Units.objects.all().filter(task_id=obj.id)
         # handle new refinement or extention layer taks - get the parent annotation units - end
+
 
         annotation_units_json = []
         remote_annotation_unit_array = []
@@ -113,7 +115,10 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             annotation_units_json.append(au_data)
             
         # return all array sorted with all the remote units in the end
-        return sorted(annotation_units_json, key=operator.itemgetter('is_remote_copy'), reverse=False)
+
+        return sorted(annotation_units_json, key=lambda x: tuple(x['tree_id'].split('-')))
+
+        #return sorted(annotation_units_json, key=operator.itemgetter('is_remote_copy'), reverse=False)
 
         # **********************************
         #           AS ROOT OBJECT
@@ -225,7 +230,30 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         remote_units_array = []
         instance.user_comment = self.initial_data['user_comment']
 
+        # validating tokens
+        tokens = self.initial_data['tokens']
+        if not strictly_increasing([x['start_index'] for x in tokens]):
+            raise TokensInvalid("tokens should be ordered by their start_index")
+        tokens_id_to_startindex = dict([(x['id'], x['start_index']) for x in tokens])
+        children_tokens_list_for_validation = []
+        for au in self.initial_data['annotation_units']:
+            cur_children_tokens = au.get('children_tokens')
+            try:
+                if cur_children_tokens:
+                    cur_children_tokens_start_indices = [tokens_id_to_startindex[x['id']] for x in cur_children_tokens]
+                else:
+                    if au['type'] == 'IMPLICIT' or au['tree_id'] == '0':
+                        cur_children_tokens_start_indices = None
+                    else:
+                        raise TokensInvalid("Only implicit units may not have a children_tokens field")
+            except KeyError:
+                raise TokensInvalid("children_tokens contains a token which is not in the task's tokens list.")
+            children_tokens_list_for_validation.append((au['tree_id'],(au['parent_tree_id'],au['is_remote_copy'],cur_children_tokens_start_indices)))
+        if not check_children_tokens(dict(children_tokens_list_for_validation)):
+            raise TokensInvalid("Inconsistency in children_tokens detected.")
+
         all_tree_ids = [] # a list of all tree_ids by their order in the input
+
         for au in self.initial_data['annotation_units']:
             annotation_unit = Annotation_Units()
             if is_correct_format_tree_id(au['tree_id']):
@@ -238,7 +266,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             annotation_unit.type = au['type']
             annotation_unit.comment = au['comment']
             annotation_unit.cluster = au['cluster']
-            
+
             annotation_unit.is_remote_copy = au['is_remote_copy']
 
             parent_id = None
@@ -264,16 +292,14 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
                         raise TreeIdInvalid("cloned_from_tree_id is in an incorrect format; fix unit " + str(
                             annotation_unit.tree_id))
                     annotation_unit.cloned_from_tree_id = au['cloned_from_tree_id']
-                    # verifies that clone_from_tree_id corresponds to an existing unit
-                    get_object_or_404(Annotation_Units, tree_id=au['cloned_from_tree_id'], task_id=instance.id)
                 else:
                     raise TreeIdInvalid("cloned_from_tree_id should be defined for all remote units")
                 remote_units_array.append(annotation_unit)
-            else:
+            else: # not a remote unit
                 if au['cloned_from_tree_id']:
                     raise TreeIdInvalid("cloned_from_tree_id should not be defined for non-remote units")
                 instance.annotation_units_set.add(annotation_unit,bulk=False)
-                self.save_children_tokens(annotation_unit, get_value_or_none('children_tokens', au))
+                self.save_children_tokens(annotation_unit, get_value_or_none('children_tokens', au),tokens_id_to_startindex)
                 self.save_annotation_categories(annotation_unit, get_value_or_none('categories', au))
 
         if not is_tree_ids_uniq_and_consecutive(all_tree_ids):
@@ -330,7 +356,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         remote_unit.save()
         return remote_unit
 
-    def save_children_tokens(self,annotation_unit,tokens):
+    def save_children_tokens(self,annotation_unit,tokens,id_to_start_index):
         if tokens != None:
             print('save_children_tokens - start')
             for t in tokens:
@@ -378,44 +404,3 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             raise SaveTaskTypeDeniedException
 
 
-
-def is_correct_format_tree_id(tree_id):
-    """
-    Verifies the correct format of the tree_id index
-    """
-    return bool(re.match("^[0-9]+(-[0-9]+)*$", tree_id))
-
-
-def is_correct_format_tree_id_child(parent_tree_id, child_tree_id):
-    """
-    Verifies that the child tree_id and the parent's tree_id match.
-    """
-    if '-' not in child_tree_id:
-        return (parent_tree_id == '0')
-    else:
-        parent_ids = parent_tree_id.split('-')
-        child_ids = child_tree_id.split('-')
-        return len(child_ids) == len(parent_ids)+1 and all([p==c for p,c in zip(parent_ids,child_ids)])
-
-def is_tree_ids_uniq_and_consecutive(tree_ids_list):
-    """
-    Receives a list of tree_ids and returns True if they are consecutive, in the right order, and unique
-    """
-    return True
-
-    """
-    splitter = lambda x: [int(y) for y in x.split('-')]
-    if tree_ids_list[0] != "0":
-        return False
-    if len(tree_ids_list) > 1:
-        if tree_ids_list[1] != "1":
-            return False
-        for ind,tree_id in enumerate(tree_ids_list[2:]):
-            cur_index = splitter(tree_ids_list[ind+2])
-            prev_index = splitter(tree_ids_list[ind+1])
-            if cur_index[-1] != 1:
-                prev_index[-1] = prev_index[-1] + 1
-                if cur_index != prev_index
-                    return False
-    return True
-    """
