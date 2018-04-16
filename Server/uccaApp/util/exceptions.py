@@ -7,6 +7,11 @@ class DependencyFailedException(APIException):
     default_detail = ('You need to fix asset\'s dependencies')
     default_code = 'error'
 
+class TreeIdInvalid(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = ('All annotation units but unit 0 must have a valid, non-null tree_id')
+    default_code = 'error'
+
 class CreateDerivedLayerException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = ('This Layer must have a parent layer, please provide parnet id')
