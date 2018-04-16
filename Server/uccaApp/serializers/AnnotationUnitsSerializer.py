@@ -59,7 +59,7 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
         return categories_json
 
     def get_children_tokens(self, obj):
-        tokens = Annotation_Units_Tokens.objects.all().filter(unit_id=obj.id)   # Omri TODO: return only tokens that are direct children of unit
+        tokens = Annotation_Units_Tokens.objects.all().filter(unit_id=obj.id).order_by('token_id__start_index')
         tokens_json = []
         for t in tokens:
             tokens_json.append(TokensSerializer_Simplify(t.token_id).data)   
