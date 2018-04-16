@@ -212,15 +212,6 @@
                 this.selectedTokenList = [];
             },
 
-            addTokenFromUnitTokens: function(token){
-                trace("selectionHandlerService - addTokenFromUnitTokens");
-                var unit = DataService.getUnitById(_handler.getSelectedUnitId());
-                var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.id);
-                if(elementPos === -1){
-                    console.log("tokenCopy - --local set-- push token to tokenCopy list");
-                    unit.tokenCopy.push(token);
-                }
-            },
 
             updateSelectedUnit: function(index,afterInsert){
                 trace("selectionHandlerService - updateSelectedUnit");

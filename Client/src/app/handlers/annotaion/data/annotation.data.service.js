@@ -497,7 +497,7 @@
 
                 if(!inInitStage){ // After add unit- send to sortAndUpdate. (add unit, no in tree initializing)
                     // Removed code - The is sorUndUpdate in selectionHendler service in the end of initTree.
-                    // sortAndUpdate(true); // This is needed when adding a unit whose location is before existing units
+                    sortAndUpdate(true); // This is needed when adding a unit whose location is before existing units
                 }
                 
                 updateInUnitIdsForTokens(DataService.tree);
@@ -677,11 +677,13 @@
                     var oldId = angular.copy(unit.AnnotationUnits[i].tree_id);
 
                     // updating the id of the unit according to its place in the array
+                    // change to getChildTreeId
                     unit.AnnotationUnits[i].tree_id = (unit.tree_id === "0" ? (i+1).toString() : treeId+"-"+(i+1).toString());
 
                     // if the Id has changed, change the remote units references
                     if(oldId !== unit.AnnotationUnits[i].tree_id){
 
+                        // TODO: Update clonedFromId ?
                         if(DataService.unitsUsedAsRemote[oldId]){
                             DataService.unitsUsedAsRemote[unit.AnnotationUnits[i].tree_id] = angular.copy(DataService.unitsUsedAsRemote[oldId]);
                             delete DataService.unitsUsedAsRemote[oldId];
@@ -714,47 +716,49 @@
          * BUGGY - sortAndUpdate calls to sortTree, sortTree calls to this function,
          * sometimes parentUnit.tokens contain the tokens list, and sometimes parentUnit.tokenCopy contain the tokens list.
          */
-        function sortUnits(a,b){
+        function sortUnits(a,b){  // TODO: Rename to unitComparator
             trace("DataService - sortUnits");
             var aParentUnit = getParentUnit(a.tree_id);
             var bParentUnit = getParentUnit(b.tree_id);
 
-            // console.log("______sort unis, a.tree id=", a.tree_id, " b.tree id=", b.tree_id)
-            var aElementPos = aParentUnit.tokens.map(function(x) {return x.id; }).indexOf(a.tokens[0].id); //TODO-- aParentUnit.tokens or tokenCopy
+            var aElementPos = aParentUnit.tokens.map(function(x) {return x.id; }).indexOf(a.tokens[0].id);
             var bElementPos = bParentUnit.tokens.map(function(x) {return x.id; }).indexOf(b.tokens[0].id);
 
             console.log("tokenCopy - take the values");
-            if(a.unitType !== "REGULAR" || b.unitType !== "REGULAR"){
+            if(a.unitType !== "REGULAR" || b.unitType !== "REGULAR"){ // Not REGULAR is first
                 if(a.unitType === "REGULAR" && b.unitType !== "REGULAR"){
                     return 1;
                 }else if(b.unitType === "REGULAR" && a.unitType !== "REGULAR"){
                     return -1;
-                }else{
-                    if(a.unitType === "REMOTE" && b.unitType === "IMPLICIT"){
+                }else{  // Both not regular
+                    if(a.unitType === "REMOTE" && b.unitType === "IMPLICIT"){ // Remote before implicit
                         return -1;
                     }else if(a.unitType === "IMPLICIT" && b.unitType === "REMOTE"){
                         return 1;
-                    }else{
-                        if(a.unitType === "REMOTE" && b.unitType === "REMOTE"){
-                            if(a.remote_original_id > b.remote_original_id){
+                    }else{ // Both remote or both implicit
+                        if(a.unitType === "REMOTE" && b.unitType === "REMOTE"){ // Both remote
+                            if(a.remote_original_id > b.remote_original_id){ //TODO: What is this? cloned_from_id?
                                 return 1;
                             }
                             else if(a.remote_original_id < b.remote_original_id){
                                 return -1;
-                            }else{ return 0;}
+                            }else{
+                                return 0;  // TODO: Add to assertion service - fail if two remote units have the same parent and clone_from_id
+                            }
                         }
-                        return 0;
+                        return 0; // TODO: compare based on an ID, so the sort is stable  - both IMPLICIT
                     }
                 }
-            } // tokens - take the values
-            // TODO-- tokens or tokenCopy?
+            }
             // tokenCopy is not contain indexInParent attribute, with remote units- tokens=[]---error: Cannot read property 'indexInParent' of undefined
-            else if(aParentUnit.tokens[aElementPos].indexInParent > bParentUnit.tokens[bElementPos].indexInParent){
-                return 1;
-            }else if(aParentUnit.tokens[aElementPos].indexInParent < bParentUnit.tokens[bElementPos].indexInParent){
-                return -1;
-            }else{
-                return 0;
+            else {  // Both are regular units
+                if(aParentUnit.tokens[aElementPos].indexInParent > bParentUnit.tokens[bElementPos].indexInParent){
+                    return 1;
+                }else if(aParentUnit.tokens[aElementPos].indexInParent < bParentUnit.tokens[bElementPos].indexInParent){
+                    return -1;
+                }else{
+                    return 0;
+                }
             }
         }
 
@@ -989,6 +993,7 @@
                 DataService.serverData.annotation_units[i].tokens = DataService.serverData.annotation_units[i].tokensCopy;
 
             }
+
             console.log("current task before save", DataService.serverData);
             return apiService.annotation.putTaskData(mode,DataService.serverData).then(function(res){
                 // Check tree in AssertionService when saving the task
