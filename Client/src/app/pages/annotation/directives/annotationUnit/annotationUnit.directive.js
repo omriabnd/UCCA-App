@@ -61,8 +61,6 @@
             trace("annotationUnitDirective - annotationUnitDirectiveLink");
             $scope.vm = $scope.dirCtrl;
             $scope.vm.dataBlock.tokens = $scope.vm.tokens;
-            console.log("tokenCopy - --set-- put dataBlock.tokens in dataBlock.tokenCopy");
-            $scope.vm.dataBlock.tokenCopy = angular.copy($scope.vm.dataBlock.tokens);
 
             $scope.vm.dataBlock.tokens.forEach(function(token){
                 token.parentId = $scope.vm.dataBlock.tree_id;
@@ -276,7 +274,6 @@
         }
 
         function RemoveBorder(tokens, dataBlock){
-            debugger
             trace("annotationUnitDirective - RemoveBorder");
             dataBlock.AnnotationUnits.forEach(function(unit,index){
                 unit.tokens.forEach(function(token){
@@ -546,7 +543,6 @@
         }
 
         function toggleMouseUp(event) {
-            debugger
             trace("annotationUnitDirective - toggleMouseUp");
             HotKeysManager.updatePressedHotKeys({combo: 'shift'}, false);
             HotKeysManager.updatePressedHotKeys({combo: 'ctrl'}, false);

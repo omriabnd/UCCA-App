@@ -136,7 +136,7 @@
                 checkParentTreeId(annotationUnits[i].parent_tree_id, annotationUnits[i].tree_id);
                 checkClonedId(annotationUnits[i]);
 
-                // Check children_tokens_map, tokenCopy and tokens
+                // Check children_tokens_map and tokens
                 checkTokens(annotationUnits[i]);
 
                 if (annotationUnits[i].AnnotationUnits) {
@@ -328,9 +328,6 @@
          * @param unit
          */
         function checkTokensOrder(unit) {
-            if (!unit.tokens.length) { // if id==='0'
-                unit.tokens = unit.tokenCopy
-            }
             // Check implicit unit in the beginning
             if (unit.unitType === 'IMPLICIT') {
                 if (!(unit.tree_id.endsWith('-1') || unit.tree_id === '1')) {
@@ -386,10 +383,6 @@
                 buildUnitsIdList(tree.tree_id, tree.AnnotationUnits);
                 checkUnitsIdsList();
 
-                // Check if children_tokens_map and tokenCopy contain the same tokens
-                if (tree.tokenCopy) {
-                    check_children_tokens_map(tree.children_tokens_map, tree.tokenCopy, 'tokenCopy');
-                }
                 // Check annotations units
                 checkAnnotationUnits(tree.AnnotationUnits);
 
@@ -398,7 +391,7 @@
                 // checkChildrenTokens(serverData);
 
                 // Correctly ordered (by first token, implicit units come first)
-                AssertionService.firstTokenInPreUnit = tree.tokenCopy[0].id;
+                AssertionService.firstTokenInPreUnit = tree.tokens[0].id;
                 checkTokensOrder(tree);
             } catch(e) {
                 console.error(e);
