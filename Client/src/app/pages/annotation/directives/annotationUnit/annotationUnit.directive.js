@@ -276,7 +276,7 @@
         }
 
         function RemoveBorder(tokens, dataBlock){
-            debugger
+            //debugger
             trace("annotationUnitDirective - RemoveBorder");
             dataBlock.AnnotationUnits.forEach(function(unit,index){
                 unit.tokens.forEach(function(token){
@@ -523,7 +523,6 @@
         }
 
         function subTreeToCollapse(subtree_root_unit){
-            debugger
             trace("annotationUnitDirective - subTreeToCollapse");
             return ;
             subtree_root_unit.AnnotationUnits.forEach(function(unit){
@@ -546,7 +545,7 @@
         }
 
         function toggleMouseUp(event) {
-            debugger
+            //debugger
             trace("annotationUnitDirective - toggleMouseUp");
             HotKeysManager.updatePressedHotKeys({combo: 'shift'}, false);
             HotKeysManager.updatePressedHotKeys({combo: 'ctrl'}, false);

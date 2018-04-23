@@ -29,7 +29,7 @@
             });
         },
         checkForUserPermission: function(){
-          debugger
+          //debugger
         }
     }
     return service;

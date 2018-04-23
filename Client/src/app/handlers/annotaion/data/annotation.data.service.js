@@ -987,7 +987,7 @@
 
             for(var i=0; i<DataService.serverData.annotation_units.length; i++){
                 if (DataService.serverData.annotation_units[i].is_remote_copy) {
-                    debugger
+                    //debugger
                 }
                 DataService.serverData.annotation_units[i].tokens = [];
                 DataService.serverData.annotation_units[i].tokens = DataService.serverData.annotation_units[i].tokensCopy;
