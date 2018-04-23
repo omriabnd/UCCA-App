@@ -354,14 +354,8 @@
                             if (token.parentId === undefined) {
                                 token.parentId = "0";
                             }
+
                             var parentUnit = DataService.getUnitById(token.parentId);
-                            console.log("tokens - check if parentUnit.token exist");
-                            if (parentUnit.tokens === undefined) {
-                                console.log("tokens - put values, parentUnit.tokens = parentUnit.tokenCopy");
-                                console.log("tokenCopy - take the values");
-                                parentUnit['tokens'] = parentUnit.tokenCopy;
-                            }
-                            console.log("tokens - iterate, return parentUnit.tokens id");
                             var elementPos = parentUnit.tokens.map(function (x) {
                                 return x.id;
                             }).indexOf(token.id);
@@ -445,67 +439,76 @@
                  * TODO: after modifying the backend to return tree_ids of remote units as their actual display
                  *       tree_ids, remove this part of the code and check if the tree is built correctly.
                  */
-                if(newObject.is_remote_copy){
-                  index_int = (parentUnit.AnnotationUnits.length + 1).toString();
-                  for(var i=0; i<parentUnit.AnnotationUnits.length; i++){
-                    if(parentUnit.AnnotationUnits[i] == undefined){
-                      index_int = i + 1;
-                      break;
+                if (newObject.is_remote_copy) {
+                    index_int = (parentUnit.AnnotationUnits.length + 1).toString();
+                    for (var i = 0; i < parentUnit.AnnotationUnits.length; i++) {
+                        if (parentUnit.AnnotationUnits[i] == undefined) {
+                            index_int = i + 1;
+                            break;
+                        }
                     }
-                  }
 
                     /**
                      * For remote units, the annotation_unit_tree_id is that of the unit it was cloned from. Therefore,
                      * we need to update it and this is done in the following line.
                      */
-                  newObject.tree_id = newObject.parent_tree_id + "-" + index_int.toString();
+                    newObject.tree_id = newObject.parent_tree_id + "-" + index_int.toString();
                 }
 
                 /**
                  * Sort the tokens.
                  */
                 console.log("tokens - sort newObject.tokens");
-                newObject.tokens.sort(function(a,b){
-                  if(a.start_index > b.start_index){
-                      return 1
-                  }else if(a.start_index < b.start_index){
-                      return -1
-                  }else return 0
+                newObject.tokens.sort(function (a, b) {
+                    if (a.start_index > b.start_index) {
+                        return 1
+                    } else if (a.start_index < b.start_index) {
+                        return -1
+                    } else return 0
                 })
 
-                index_int - 1 > parentUnit.AnnotationUnits.length ? index_int =  parentUnit.AnnotationUnits.length + 1 : '';
-                
+                index_int - 1 > parentUnit.AnnotationUnits.length ? index_int = parentUnit.AnnotationUnits.length + 1 : '';
+
                 //Update slots information
                 newObject = updateUnitSlots(newObject);
-                
+
                 !inInitStage ? Core.openAllUnits(newObject) : "";
 
                 parentUnit.AnnotationUnits[index_int - 1] = newObject;
 
                 console.log("tokens - take parentUnit.tokens");
                 var parentUnitTokens = parentUnit.tokens;
-                
-                parentUnitTokens.forEach(function(token,index){
-                    var elementPos = newObject.tokens.map(function(x) {return x.id; }).indexOf(token.id);
-                    if(elementPos === -1){
+
+                parentUnitTokens.forEach(function (token, index) {
+                    var elementPos = newObject.tokens.map(function (x) {
+                        return x.id;
+                    }).indexOf(token.id);
+                    if (elementPos === -1) {
                         token['inUnit'] = null;
                     }
                 });
-                
+
 
 //                parentUnit.gui_status = "OPEN";
 
-                if(!inInitStage){ // After add unit- send to sortAndUpdate. (add unit, no in tree initializing)
+                if (!inInitStage) { // After add unit- send to sortAndUpdate. (add unit, no in tree initializing)
                     // Removed code - The is sorUndUpdate in selectionHendler service in the end of initTree.
                     sortAndUpdate(true); // This is needed when adding a unit whose location is before existing units
                 }
-                
+
                 updateInUnitIdsForTokens(DataService.tree);
 
-                newObject.unitType !== "REMOTE" ? $rootScope.$broadcast("InsertSuccess",{dataBlock: { id: level, AnnotationUnits: getUnitById(level).AnnotationUnits},newUnitId: newObject.tree_id }) : '';
+                newObject.unitType !== "REMOTE" ? $rootScope.$broadcast("InsertSuccess", {
+                    dataBlock: {
+                        id: level,
+                        AnnotationUnits: getUnitById(level).AnnotationUnits
+                    }, newUnitId: newObject.tree_id
+                }) : '';
 
                 // Check tree in AssertionService after add unit
-                AssertionService.checkTree(DataService.tree, DataService.serverData);
+                if (!inInitStage) {
+                    AssertionService.checkTree(DataService.tree, DataService.serverData);
+                }
                 return resolve({status: 'InsertSuccess',id: newObject.tree_id});
             });
         }
@@ -639,7 +642,7 @@
         function sortTree(annotationUnits) {
             trace("DataService - sortTree");
             if (annotationUnits.length > 1) {
-                annotationUnits.sort(sortUnits);
+                annotationUnits.sort(unitComparator);
 
             }
             for (var i = 0; i < annotationUnits.length; i++) {
@@ -716,15 +719,14 @@
          * BUGGY - sortAndUpdate calls to sortTree, sortTree calls to this function,
          * sometimes parentUnit.tokens contain the tokens list, and sometimes parentUnit.tokenCopy contain the tokens list.
          */
-        function sortUnits(a,b){  // TODO: Rename to unitComparator
-            trace("DataService - sortUnits");
+        function unitComparator(a, b){
+            trace("DataService - unitComparator");
             var aParentUnit = getParentUnit(a.tree_id);
             var bParentUnit = getParentUnit(b.tree_id);
 
             var aElementPos = aParentUnit.tokens.map(function(x) {return x.id; }).indexOf(a.tokens[0].id);
             var bElementPos = bParentUnit.tokens.map(function(x) {return x.id; }).indexOf(b.tokens[0].id);
 
-            console.log("tokenCopy - take the values");
             if(a.unitType !== "REGULAR" || b.unitType !== "REGULAR"){ // Not REGULAR is first
                 if(a.unitType === "REGULAR" && b.unitType !== "REGULAR"){
                     return 1;
@@ -852,8 +854,7 @@
             }
 
             AssertionService.check_children_tokens_map(DataService.tree.children_tokens_map, DataService.tree.tokens, 'tokens');
-            AssertionService.check_children_tokens_map(DataService.tree.children_tokens_map, DataService.tree.tokenCopy, 'tokenCopy');
-
+            
             return true;
         }
 
@@ -984,15 +985,6 @@
             DataService.serverData['annotation_units'] = annotation_units;
             DataService.serverData.tokens = [];
             DataService.serverData.tokens= tokensCopy;
-
-            for(var i=0; i<DataService.serverData.annotation_units.length; i++){
-                if (DataService.serverData.annotation_units[i].is_remote_copy) {
-                    //debugger
-                }
-                DataService.serverData.annotation_units[i].tokens = [];
-                DataService.serverData.annotation_units[i].tokens = DataService.serverData.annotation_units[i].tokensCopy;
-
-            }
 
             console.log("current task before save", DataService.serverData);
             return apiService.annotation.putTaskData(mode,DataService.serverData).then(function(res){

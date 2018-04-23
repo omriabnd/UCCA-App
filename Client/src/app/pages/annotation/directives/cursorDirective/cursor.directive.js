@@ -130,10 +130,6 @@
 
                         // }
                         if(token.inUnit === nextToken.inUnit && unit !== null && unit.tree_id !== "0"){
-                            if(unit.tokens === undefined){
-                                console.log("tokenCopy - take the values");
-                                unit.tokens = unit.tokenCopy;
-                            }
                             if(shiftPressed){
                                 unit.tokens.forEach(function(curr_token){
                                     $rootScope.$broadcast('tokenIsClicked',{token: curr_token, parentId: $scope.vm.unitId, moveLeft: false,doNotRemoveExistingToken: true});
@@ -211,11 +207,6 @@
 
                         var unit = DataService.getUnitById(prevToken.inUnit);
                         if(token.inUnit === prevToken.inUnit && unit !== null && unit.tree_id !== "0"){
-                            if(unit.tokens === undefined){
-                                console.log("tokenCopy - take the values");
-                                unit.tokens = unit.tokenCopy;
-                            }
-
                             if(shiftPressed){
                                 unit.tokens.forEach(function(curr_token,index){
                                     $rootScope.$broadcast('tokenIsClicked',{token: curr_token, parentId: $scope.vm.unitId, moveLeft: false,doNotRemoveExistingToken: false});
@@ -312,11 +303,6 @@
                         console.log(unit);
                         
                         if(unit !== null && unit.tree_id !== "0"){
-	                        if(unit.tokens === undefined){
-	                            console.log("tokenCopy - take the values");
-	                            unit.tokens = unit.tokenCopy;
-	                        }
-	                        
 	                        if(!!oldUnit && (!oldUnit.parentUnitId || oldUnit.parentUnitId === "0")){
 	                        	oldUnit.gui_status = "HIDDEN";
 	                        }

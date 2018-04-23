@@ -133,18 +133,15 @@
                 var unit = DataService.getUnitById(_handler.getSelectedUnitId());
                 if(unit) {
                     /**
-                     * If unit.tokenCopy not exist, create it according to unit.children_tokens_map
+                     * If unit.tokens not exist, create it according to unit.children_tokens_map // tokens not exist in the beginning of initTree when tree_id='0'
                      */
-                    if (unit.tokenCopy === undefined) {
-                        console.log("tokenCopy - --local set-- set array from children_tokens_map");
-                        unit.tokenCopy = [];
+                    if (!unit.tokens.length) {
+                        unit.tokens = [];
                         for (var key in unit.children_tokens_map) {
-                            unit.tokenCopy.push(unit.children_tokens_map[key]);
+                            unit.tokens.push(unit.children_tokens_map[key]);
                         }
                     }
-
-                    console.log("tokenCopy - take the values, create an array with token id according to tokenCopy array");
-                    var elementPos = unit.tokenCopy.map(function(x) {return x.id; }).indexOf(token.id);
+                    var elementPos = unit.tokens.map(function(x) {return x.id; }).indexOf(token.id);
                     if(elementPos > -1){
                         var selectedUnitId = _handler.getSelectedUnitId();
                         var selectedUnit = DataService.getUnitById(selectedUnitId);
@@ -388,12 +385,10 @@
                                             _handler.clearTokenList();
                                         });
                                     });
-
-
                             }
+
                             _handler.clearTokenList();
                         }
-
 
                     });
                     DataService.unitType = 'REGULAR';
@@ -405,8 +400,6 @@
                     AssertionService.checkTree(DataService.tree, DataService.serverData);
                     return resolve({status: 'InitTreeFinished'});
                 })
-
-                
             },
 
             toggleCategory: function(category,justToggle,remote,unit,inInitStage){
@@ -582,7 +575,7 @@
                         return;
                     }
                 }else{
-                    parentUnitTokens = DataService.getUnitById("0").tokenCopy;
+                    parentUnitTokens = DataService.getUnitById("0").tokens;
                 }
                 var elementPos = parentUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
                 if(elementPos > -1){

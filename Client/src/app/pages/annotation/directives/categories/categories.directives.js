@@ -70,8 +70,7 @@
             	var currentUnitId = $rootScope.selectedUnit;
                 var currentUnit = DataService.getUnitById(currentUnitId);
                 if(currentUnit.categories[0].refinedCategory==false){
-                    console.log("not refined",currentUnit.tokenCopy, currentUnit.categories[0].name);
-                    Core.showAlert("{{currentUnit.tokenCopy}}: The category {{currentUnit.categories[0].name}} is not being refined in this layer");
+                    Core.showAlert("{{currentUnit.tokens}}: The category {{currentUnit.categories[0].name}} is not being refined in this layer");
                     isNotRefined = true;
                 }
             }
