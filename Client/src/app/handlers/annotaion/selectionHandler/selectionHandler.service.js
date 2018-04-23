@@ -133,12 +133,12 @@
                 var unit = DataService.getUnitById(_handler.getSelectedUnitId());
                 if(unit) {
                     /**
-                     * If unit.tokens not exist, create it according to unit.children_tokens_map // tokens not exist in the beginning of initTree when tree_id='0'
+                     * If unit.tokens not exist, create it according to unit.tokenMap // tokens not exist in the beginning of initTree when tree_id='0'
                      */
                     if (!unit.tokens.length) {
                         unit.tokens = [];
-                        for (var key in unit.children_tokens_map) {
-                            unit.tokens.push(unit.children_tokens_map[key]);
+                        for (var key in unit.tokenMap) {
+                            unit.tokens.push(unit.tokenMap[key]);
                         }
                     }
                     var elementPos = unit.tokens.map(function(x) {return x.id; }).indexOf(token.id);

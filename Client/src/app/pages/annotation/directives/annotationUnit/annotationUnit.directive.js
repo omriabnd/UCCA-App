@@ -69,10 +69,10 @@
             /**
              * if dataBlock.children_token_map not exist, create this dictionary {tokenId: token, tokenId: token, ...}
              */
-            if($scope.vm.dataBlock.children_tokens_map === undefined){
-                $scope.vm.dataBlock.children_tokens_map = {};
+            if($scope.vm.dataBlock.tokenMap === undefined){
+                $scope.vm.dataBlock.tokenMap = {};
                 $scope.vm.dataBlock.tokens.forEach(function(token){
-                    $scope.vm.dataBlock.children_tokens_map[token.id] = token;
+                    $scope.vm.dataBlock.tokenMap[token.id] = token;
                 })
             }
 

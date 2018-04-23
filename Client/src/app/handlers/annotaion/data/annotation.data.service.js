@@ -92,14 +92,14 @@
         }
 
         /**
-         * Save the hash tokens object in DataService.tree.children_tokens_map
+         * Save the hash tokens object in DataService.tree.tokenMap
          * @param annotationTokensArray
          */
         function createTokensHashByTokensArrayForPassage(annotationTokensArray){
             trace("DataService - createTokensHashByTokensArrayForPassage");
-            DataService.tree.children_tokens_map = tokensArrayToHash(annotationTokensArray);
+            DataService.tree.tokenMap = tokensArrayToHash(annotationTokensArray);
             // TODO: Need send children_tokens instead of tokens ?
-            AssertionService.check_children_tokens_map(DataService.tree.children_tokens_map, annotationTokensArray, 'tokens');
+            AssertionService.checkTokenMap(DataService.tree.tokenMap, annotationTokensArray);
         }
 
         /**
@@ -853,8 +853,8 @@
                 }
             }
 
-            AssertionService.check_children_tokens_map(DataService.tree.children_tokens_map, DataService.tree.tokens, 'tokens');
-            
+            AssertionService.checkTokenMap(DataService.tree.tokenMap, DataService.tree.tokens);
+
             return true;
         }
 

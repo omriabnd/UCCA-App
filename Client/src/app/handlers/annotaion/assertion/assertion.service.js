@@ -15,7 +15,7 @@
             unitsIdsList: [],
             firstTokenInPreUnit: 0,
             checkTree: checkTree,
-            check_children_tokens_map: check_children_tokens_map,
+            checkTokenMap: checkTokenMap,
         };
 
         return AssertionService;
@@ -112,17 +112,14 @@
         }
 
         /**
-         * Check if children_tokens_map, tokens and tokenCopy are contain the same tokens
-         * @param unit- annotationUnit (contain children_tokens_map, tokens and tokenCopy)
+         * Check if tokens exist
+         * need to check here if tokenMap and tokens are contain the same tokens?
+         * @param unit- annotationUnit
          */
         function checkTokens(unit) {
-            // debugger
-            // // TODO- unit.tokens exist, unit.tokenCopy and unit.children_tokens_map are undefined
-            // for (let i = 0; i < unit.tokens.length; i++) {
-            //     if (unit.tokens[i].id !== unit.tokenCopy[i].id) {
-            //         throw "tokens and tokenCopy are not contain the same tokens (" + unit.tokens[i] + " and " + unit.tokenCopy[i];
-            //     }
-            // }
+            if (!unit.tokens.length) {
+                throw "Annotation unit " + unit.tree_id + " has not tokens list";
+            }
         }
 
         /**
@@ -130,13 +127,14 @@
          * @param annotationUnits
          */
         function checkAnnotationUnits(annotationUnits) {
+            debugger
             for (var i = 0; i < annotationUnits.length; i++) {
                 //Check fields: tree_id, parent_tree_id, cloned_from_tree_id
                 checkTreeId(annotationUnits[i].tree_id);
                 checkParentTreeId(annotationUnits[i].parent_tree_id, annotationUnits[i].tree_id);
                 checkClonedId(annotationUnits[i]);
 
-                // Check children_tokens_map and tokens
+                // Check tokenMap and tokens
                 checkTokens(annotationUnits[i]);
 
                 if (annotationUnits[i].AnnotationUnits) {
@@ -193,31 +191,35 @@
         function checkUniqueInTree() {
             for (let i = 0; i < AssertionService.unitsIdsList.length; i++) {
                 if (AssertionService.unitsIdsList.filter(item => item == AssertionService.unitsIdsList[i]).length !== 1) {
-                    throw "tree_id " + AssertionService.unitsIdsList[i] + " is not unique in the tree";
+                    throw "Tree id " + AssertionService.unitsIdsList[i] + " is not unique in the tree";
                 }
             }
         }
 
         /**
-         * Check if children_tokens_map contain same tokens like children_tokens
-         * @param children_tokens_map
+         * Check if tokenMap contain same tokens like children_tokens
+         * @param tokenMap
          * @param children_tokens
          */
-        function check_children_tokens_map(children_tokens_map, children_tokens, tokensType) {
+        function checkTokenMap(tokenMap, children_tokens) {
+            debugger
+            // TODO: Check that all the IDs on the children's list also exist on the tokens list
+            // todo- Check that the MAP of a specific ID points to the token with that specific ID in map list
+
             // Check only if localStorage.validate is true
             if (!getValidate()) {
                 return
             }
             try {
-                // children_tokens_map - tokens object: {id: token, id: token, ...}
+                // tokenMap - tokens object: {id: token, id: token, ...}
                 // children_tokens - tokens array
-                const children_tokens_map_ids = Object.keys(children_tokens_map);
-                if (children_tokens_map_ids.length !== children_tokens.length) {
-                    throw "The lengths of " + tokensType + " and children_tokens_map are not equals";
+                const tokenMap_ids = Object.keys(tokenMap);
+                if (tokenMap_ids.length !== children_tokens.length) {
+                    throw "The lengths of tokens and tokenMap are not equals";
                 }
-                for (let i = 0; i < children_tokens_map_ids.length; i++) {
-                    if (parseInt(children_tokens_map_ids[i]) !== children_tokens[i].id) {
-                        throw "The ids at place " + i + " are different between children_tokens_map and " + tokensType;
+                for (let i = 0; i < tokenMap_ids.length; i++) {
+                    if (parseInt(tokenMap_ids[i]) !== children_tokens[i].id) {
+                        throw "The ids at place " + i + " are different between token map and tokens";
                     }
                 }
             } catch(e) {
@@ -289,8 +291,11 @@
                 treeTokensIdsList.push(serverData.tokens[i].id);
             }
             for (let i = 1; i < serverData.annotation_units.length; i++) { // Beginning from 1, because unit 0 doesn't have children_tokens
-                // If it's a implicit unit don't check it because implicit unit doesn't have children_tokens
+                // If it's an implicit unit don't check it because implicit unit doesn't have children_tokens
                 if (serverData.annotation_units[i].type === 'IMPLICIT') {
+                    if (serverData.annotation_units[i].children_tokens.length) {
+                       throw "Annotation unit "+ i + " is an implicit unit, it should not have children tokens";
+                    }
                     return;
                 }
                 // Check if children_tokens exist
@@ -298,7 +303,7 @@
                     throw "Annotation unit "+ i + " doesn't have children tokens";
                 }
                 let childrenTokensIdsList = [];
-                // Check if children token in the tokens of tha task
+                // Check if children token in the tokens of the task
                 for (let j = 0; j < serverData.annotation_units[i].children_tokens.length; j++) {
                     if (!treeTokensIdsList.includes(serverData.annotation_units[i].children_tokens[j].id)) {
                         throw "Token " +  serverData.annotation_units[i].children_tokens[j].id + " doesn't exist in the tokens of the task";
@@ -388,7 +393,7 @@
 
                 // TODO- delete DataService.serverData, change tokens in DataService.tree to children_tokens, and then check tree.children_tokens (email, March 27)
                 // Check children tokens
-                // checkChildrenTokens(serverData);
+                checkChildrenTokens(serverData);
 
                 // Correctly ordered (by first token, implicit units come first)
                 AssertionService.firstTokenInPreUnit = tree.tokens[0].id;

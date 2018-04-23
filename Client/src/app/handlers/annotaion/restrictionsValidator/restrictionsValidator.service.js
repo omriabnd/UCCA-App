@@ -753,17 +753,17 @@
             }
             /**
              * The some() method tests whether at least one element in the array passes the test implemented by the provided function.
-             * Check if at least one token from rootUnit.children_tokens_map has no inUnit attribute.
+             * Check if at least one token from rootUnit.tokenMap has no inUnit attribute.
              */
-            Object.keys(rootUnit.children_tokens_map).some(function(tokenId){
+            Object.keys(rootUnit.tokenMap).some(function(tokenId){
                 var token = hash_tokens[tokenId];
                 console.log("checkIfAllTokenThatRequireAnnotationIsInUnit",token,rootUnit);
 
                 // if there is only one token and it requires annotation
                 if(rootUnit.tree_id == "0"){
-                    rootUnit.children_tokens = rootUnit.children_tokens_map;
+                    rootUnit.children_tokens = rootUnit.tokenMap;
                 }
-                if(token.require_annotation && Object.keys(rootUnit.children_tokens_map).length > 1){
+                if(token.require_annotation && Object.keys(rootUnit.tokenMap).length > 1){
                     if(token.inUnit === null){
                         checkIfOk = false;
                         NOT_ALL_TOKENS_IN_UNIT_ERROR = true;
