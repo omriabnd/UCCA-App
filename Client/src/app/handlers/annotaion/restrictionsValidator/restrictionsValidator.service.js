@@ -444,13 +444,13 @@
                     for (var i = 0; i < annotationUnit.tokens.length; i++) {
                         var unitToken = annotationUnit.tokens[i];
                         if(unitToken.require_annotation){
-                            var tokenInUnit = unitToken.inUnit;
-                            if(tokenInUnit === null){
+                            var tokenInChildUnit = unitToken.inChildUnit;
+                            if(tokenInChildUnit === null){
                                 // isViolated = true;
                                 showErrorModal(errorMasseges['NOT_COMPLETE'], unitToken);
                                 return true;
                             }else{
-                                var elementPos = annotationUnit.AnnotationUnits.map(function(x) {return x.tree_id; }).indexOf(tokenInUnit);
+                                var elementPos = annotationUnit.AnnotationUnits.map(function(x) {return x.tree_id; }).indexOf(tokenInChildUnit);
                                 if(elementPos > -1){
                                     var result = checkIfVoilateEachTokenInUnit(annotationUnit.AnnotationUnits[elementPos]);
                                     if(result){
@@ -753,7 +753,7 @@
             }
             /**
              * The some() method tests whether at least one element in the array passes the test implemented by the provided function.
-             * Check if at least one token from rootUnit.tokenMap has no inUnit attribute.
+             * Check if at least one token from rootUnit.tokenMap has no inChildUnit attribute.
              */
             Object.keys(rootUnit.tokenMap).some(function(tokenId){
                 var token = hash_tokens[tokenId];
@@ -764,7 +764,7 @@
                     rootUnit.children_tokens = rootUnit.tokenMap;
                 }
                 if(token.require_annotation && Object.keys(rootUnit.tokenMap).length > 1){
-                    if(token.inUnit === null){
+                    if(token.inChildUnit === null){
                         checkIfOk = false;
                         NOT_ALL_TOKENS_IN_UNIT_ERROR = true;
                         console.log("REQUIRE_ANNOTATION",token);

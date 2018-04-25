@@ -70,7 +70,7 @@
                     tokens:[{
                         "text":"IMPLICIT UNIT",
                         "parentId":selectionHandlerService.getSelectedUnitId(),
-                        "inUnit":null
+                        "inChildUnit":null
                     }],
                     AnnotationUnits : [
 

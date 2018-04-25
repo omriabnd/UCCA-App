@@ -27,7 +27,7 @@
 
         function annotationTokenDirectiveLink($scope, elem, attrs) {
             $scope.vm = $scope.dirCtrl;
-            $scope.vm.token['indexInParent'] = !$scope.vm.token['indexInParent'] ? $scope.$parent.$index : $scope.vm.token['indexInParent'];
+            $scope.vm.token['indexInUnit'] = !$scope.vm.token['indexInUnit'] ? $scope.$parent.$index : $scope.vm.token['indexInUnit'];
             $scope.vm.tokenInSelectionList = tokenInSelectionList;
 
             $scope.$on('tokenIsClicked', function(event, args) {
@@ -63,7 +63,7 @@
 
         function AnnotationTokenController() {
             var vm = this;
-            vm.token['inUnit'] === undefined ? vm.token['inUnit'] = null : '';
+            vm.token['inChildUnit'] === undefined ? vm.token['inChildUnit'] = null : '';
             vm.tokenIsClicked = directive.tokenClicked;
             vm.tokenClicked = tokenClicked;
             vm.isUnitClicked = isUnitClicked;
@@ -77,16 +77,16 @@
 
         function tokenDbClick(vm){
             selectionHandlerService.clearTokenList();
-            if(vm.token.inUnit !== null && vm.token.inUnit !== undefined){
-                var unit = DataService.getUnitById(vm.token.inUnit);
+            if(vm.token.inChildUnit !== null && vm.token.inChildUnit !== undefined){
+                var unit = DataService.getUnitById(vm.token.inChildUnit);
                 if(!unit){
                   return;
                 }
                 unit.gui_status = "OPEN";
-                DataService.getUnitById(DataService.getParentUnitId(vm.token.inUnit)).gui_status = "OPEN";
-                selectionHandlerService.updateSelectedUnit(vm.token.inUnit);
+                DataService.getUnitById(DataService.getParentUnitId(vm.token.inChildUnit)).gui_status = "OPEN";
+                selectionHandlerService.updateSelectedUnit(vm.token.inChildUnit);
 
-                Core.scrollToUnit(vm.token.inUnit);
+                Core.scrollToUnit(vm.token.inChildUnit);
             }
 
         }
@@ -118,13 +118,13 @@
 
                 if(startToken){
                     var tokenArray = [];
-                    if(startToken.indexInParent <= vm.token.indexInParent){
+                    if(startToken.indexInUnit <= vm.token.indexInUnit){
                         selectionHandlerService.clearTokenList();
 
                         var selectedUnitId = selectionHandlerService.getSelectedUnitId();
                         var selectedUnit = DataService.getUnitById(selectedUnitId);
 
-                        for(var i=startToken.indexInParent; i<=vm.token.indexInParent; i++){
+                        for(var i=startToken.indexInUnit; i<=vm.token.indexInUnit; i++){
                             if(selectedUnit.tokens[i] === undefined){
                                 break;
                             }
@@ -140,7 +140,7 @@
                         var selectedUnitId = selectionHandlerService.getSelectedUnitId();
                         var selectedUnit = DataService.getUnitById(selectedUnitId);
 
-                        for(var i=vm.token.indexInParent; i<=startToken.indexInParent; i++){
+                        for(var i=vm.token.indexInUnit; i<=startToken.indexInUnit; i++){
                             if(selectedUnit.tokens[i] === undefined){
                                 break;
                             }
@@ -178,12 +178,12 @@
 
             !doNotUpdateSelectedToken ? selectionHandlerService.setSelectedToken(vm.token) : '';
 
-            var tokenInUnit = DataService.getUnitById(vm.token.inUnit);
-            if(vm.token.inUnit !== null && tokenInUnit){
+            var tokenInUnit = DataService.getUnitById(vm.token.inChildUnit);
+            if(vm.token.inChildUnit !== null && tokenInUnit){
                 var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 !ctrlPressed ? selectionHandlerService.clearTokenList() : '';
                 var parentUnit = DataService.getUnitById(vm.token.parentId);
-                var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inUnit === vm.token.inUnit; });
+                var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inChildUnit === vm.token.inChildUnit; });
 
                 tokenGroup.forEach(function(token){
                     $rootScope.$broadcast('tokenIsClicked',{token: token, parentId: token.parentId,selectAllTokenInUnit: true});
@@ -215,8 +215,8 @@
             var tokenListLength = angular.copy(selectedTokenArray.length);
 
             selectedTokenArray.forEach(function(token,index){
-                if(token.inUnit){
-                    var tokenUnit = DataService.getUnitById(token.inUnit);
+                if(token.inChildUnit){
+                    var tokenUnit = DataService.getUnitById(token.inChildUnit);
                     if(tokenUnit && tokenUnit.tree_id !== '0'){
                         var parentID = DataService.getParentUnitId(tokenUnit.tree_id);
                         for(var i=0; i<tokenUnit.tokens.length; i++){

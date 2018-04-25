@@ -130,7 +130,7 @@
                     RemoveBorder(parentUnit.tokens,parentUnit);
                 }else{
                    $scope.vm.tokens.forEach(function(token,index,inInit){
-                       token.indexInParent = index;
+                       token.indexInUnit = index;
                    });
                     paintTokens($scope.vm.tokens,$scope.vm.dataBlock,true);
                 }
@@ -296,14 +296,14 @@
                           var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
                           var elementPos = childUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
                           var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
-                          token.indexInParent = elementPosInThisUnit;
+                          token.indexInUnit = elementPosInThisUnit;
                           if(DataService.getParentUnit(token.parentId)){
                             token.parentId = DataService.getParentUnit(token.parentId).tree_id;
                           }
                         })
 
                         // selectionHandlerService.updateIndexInParentAttribute(unit.tokens); // Is it needed?
-                        selectionHandlerService.updatePositionInUnitAttribute(unit.tokens);
+                        selectionHandlerService.updatePositionInChildUnitAttribute(unit.tokens);
                         selectionHandlerService.updateNextTokenNotAdjacent(unit.tokens);
                         selectionHandlerService.updateLastTokenNotAdjacent(unit.tokens);
                     }
@@ -315,7 +315,7 @@
                         var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
 
 
-                        // token.indexInParent = elementPosInThisUnit;
+                        // token.indexInUnit = elementPosInThisUnit;
 
                         if(elementPos !== -1 && elementPosInThisUnit !== -1){
                             if(unit.categories.length === 1 && unit.categories[0] === undefined || unit.categories.length === 0){
@@ -359,7 +359,7 @@
                             }
                             
 
-                            switch(token.positionInUnit){
+                            switch(token.positionInChildUnit){
                                 case 'First': {
                                     tokens[elementPosInThisUnit].borderStyle = borderForFirstToken(childUnitTokens[elementPos],unit.categories);
                                     break;
@@ -550,10 +550,10 @@
             var selectedTokensList = selectionHandlerService.getSelectedTokenList();
 
             selectedTokensList.forEach(function(token){
-                if(token.inUnit && DataService.getUnitById(token.inUnit)){
+                if(token.inChildUnit && DataService.getUnitById(token.inChildUnit)){
 
                     var parentUnit = DataService.getUnitById(token.parentId);
-                    var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inUnit === token.inUnit; });
+                    var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inChildUnit === token.inChildUnit; });
 
                     tokenGroup.forEach(function(tokenInGroup){
                         var elementPos = selectedTokensList.map(function(x) {return x.id; }).indexOf(tokenInGroup.id);
