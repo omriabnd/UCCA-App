@@ -69,8 +69,8 @@
                     containsAllParentUnits: false,
                     tokens:[{
                         "text":"IMPLICIT UNIT",
-                        "parentId":selectionHandlerService.getSelectedUnitId(),
-                        "inUnit":null
+                        "unitTreeId":selectionHandlerService.getSelectedUnitId(),
+                        "inChildUnit":null
                     }],
                     AnnotationUnits : [
 

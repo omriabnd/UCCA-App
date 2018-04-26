@@ -225,7 +225,7 @@
                     console.log('ALERT - deleteFromTree -  prevent delete from tree when refinement layer');
                     return false;
                   }
-                  DataService.deleteUnit(selectionList[0].inUnit);
+                  DataService.deleteUnit(selectionList[0].inChildUnit);
                   selectionHandlerService.clearTokenList();
               }
               else if(selectionList.length){
@@ -245,9 +245,9 @@
 
           if(selectionList.length === 0) return false;
 
-          var tokenIntUnit = selectionList[0].inUnit;
+          var tokenIntUnit = selectionList[0].inChildUnit;
           selectionList.forEach(function(token){
-              if(tokenIntUnit !== token.inUnit){
+              if(tokenIntUnit !== token.inChildUnit){
                   result = false;
               }
           });

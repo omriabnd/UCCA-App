@@ -63,16 +63,16 @@
             $scope.vm.dataBlock.tokens = $scope.vm.tokens;
 
             $scope.vm.dataBlock.tokens.forEach(function(token){
-                token.parentId = $scope.vm.dataBlock.tree_id;
+                token.unitTreeId = $scope.vm.dataBlock.tree_id;
             })
 
             /**
              * if dataBlock.children_token_map not exist, create this dictionary {tokenId: token, tokenId: token, ...}
              */
-            if($scope.vm.dataBlock.children_tokens_map === undefined){
-                $scope.vm.dataBlock.children_tokens_map = {};
+            if($scope.vm.dataBlock.tokenMap === undefined){
+                $scope.vm.dataBlock.tokenMap = {};
                 $scope.vm.dataBlock.tokens.forEach(function(token){
-                    $scope.vm.dataBlock.children_tokens_map[token.id] = token;
+                    $scope.vm.dataBlock.tokenMap[token.id] = token;
                 })
             }
 
@@ -130,13 +130,13 @@
                     RemoveBorder(parentUnit.tokens,parentUnit);
                 }else{
                    $scope.vm.tokens.forEach(function(token,index,inInit){
-                       token.indexInParent = index;
+                       token.indexInUnit = index;
                    });
                     paintTokens($scope.vm.tokens,$scope.vm.dataBlock,true);
                 }
 
                 $scope.vm.dataBlock.tokens.forEach(function(token){
-                        token.parentId = $scope.vm.dataBlock.tree_id;
+                        token.unitTreeId = $scope.vm.dataBlock.tree_id;
                 })
             });
 
@@ -296,14 +296,14 @@
                           var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
                           var elementPos = childUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
                           var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
-                          token.indexInParent = elementPosInThisUnit;
-                          if(DataService.getParentUnit(token.parentId)){
-                            token.parentId = DataService.getParentUnit(token.parentId).tree_id;
+                          token.indexInUnit = elementPosInThisUnit;
+                          if(DataService.getParentUnit(token.unitTreeId)){
+                            token.unitTreeId = DataService.getParentUnit(token.unitTreeId).tree_id;
                           }
                         })
 
                         // selectionHandlerService.updateIndexInParentAttribute(unit.tokens); // Is it needed?
-                        selectionHandlerService.updatePositionInUnitAttribute(unit.tokens);
+                        selectionHandlerService.updatePositionInChildUnitAttribute(unit.tokens);
                         selectionHandlerService.updateNextTokenNotAdjacent(unit.tokens);
                         selectionHandlerService.updateLastTokenNotAdjacent(unit.tokens);
                     }
@@ -315,7 +315,7 @@
                         var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
 
 
-                        // token.indexInParent = elementPosInThisUnit;
+                        // token.indexInUnit = elementPosInThisUnit;
 
                         if(elementPos !== -1 && elementPosInThisUnit !== -1){
                             if(unit.categories.length === 1 && unit.categories[0] === undefined || unit.categories.length === 0){
@@ -359,7 +359,7 @@
                             }
                             
 
-                            switch(token.positionInUnit){
+                            switch(token.positionInChildUnit){
                                 case 'First': {
                                     tokens[elementPosInThisUnit].borderStyle = borderForFirstToken(childUnitTokens[elementPos],unit.categories);
                                     break;
@@ -520,7 +520,6 @@
         }
 
         function subTreeToCollapse(subtree_root_unit){
-            debugger
             trace("annotationUnitDirective - subTreeToCollapse");
             return ;
             subtree_root_unit.AnnotationUnits.forEach(function(unit){
@@ -550,15 +549,15 @@
             var selectedTokensList = selectionHandlerService.getSelectedTokenList();
 
             selectedTokensList.forEach(function(token){
-                if(token.inUnit && DataService.getUnitById(token.inUnit)){
+                if(token.inChildUnit && DataService.getUnitById(token.inChildUnit)){
 
-                    var parentUnit = DataService.getUnitById(token.parentId);
-                    var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inUnit === token.inUnit; });
+                    var parentUnit = DataService.getUnitById(token.unitTreeId);
+                    var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inChildUnit === token.inChildUnit; });
 
                     tokenGroup.forEach(function(tokenInGroup){
                         var elementPos = selectedTokensList.map(function(x) {return x.id; }).indexOf(tokenInGroup.id);
                         if(elementPos === -1){
-                            $rootScope.$broadcast('tokenIsClicked',{token: tokenInGroup, parentId: tokenInGroup.parentId,selectAllTokenInUnit: true});
+                            $rootScope.$broadcast('tokenIsClicked',{token: tokenInGroup, unitTreeId: tokenInGroup.unitTreeId, selectAllTokenInUnit: true});
                         }
                     })
                 }

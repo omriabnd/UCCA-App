@@ -21,7 +21,7 @@
 
             // scope.$watch('scope.dirCtrl.token.backgroundColor',function(newVal,oldVal){
             //     console.log(scope.dirCtrl.token.backgroundColor);
-            //     var parentUnit  = DataService.getUnitById(DataService.getParentUnitId(scope.dirCtrl.parentId));
+            //     var parentUnit  = DataService.getUnitById(DataService.getParentUnitId(scope.dirCtrl.unitTreeId));
             // });
         }
 

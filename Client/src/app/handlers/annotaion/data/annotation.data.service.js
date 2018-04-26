@@ -92,14 +92,14 @@
         }
 
         /**
-         * Save the hash tokens object in DataService.tree.children_tokens_map
+         * Save the hash tokens object in DataService.tree.tokenMap
          * @param annotationTokensArray
          */
         function createTokensHashByTokensArrayForPassage(annotationTokensArray){
             trace("DataService - createTokensHashByTokensArrayForPassage");
-            DataService.tree.children_tokens_map = tokensArrayToHash(annotationTokensArray);
+            DataService.tree.tokenMap = tokensArrayToHash(annotationTokensArray);
             // TODO: Need send children_tokens instead of tokens ?
-            AssertionService.check_children_tokens_map(DataService.tree.children_tokens_map, annotationTokensArray, 'tokens');
+            AssertionService.checkTokenMap(DataService.tree.tokenMap, annotationTokensArray);
         }
 
         /**
@@ -341,28 +341,29 @@
                 if (newObject.unitType != "REMOTE") {
                     console.log("tokens - iterate newObject.tokens");
                     newObject.tokens.forEach(function (token) {
-                        if (token.inUnit !== null && token.inUnit !== undefined) {
+                        if (token.
+                            inChildUnit !== null && token.inChildUnit !== undefined) {
                             var unitPos = units.map(function (x) {
                                 return x.id;
-                            }).indexOf(token.inUnit);
+                            }).indexOf(token.inChildUnit);
                             if (unitPos === -1) {
                                 units.push({
-                                    id: token.inUnit
+                                    id: token.inChildUnit
                                 });
                             };
                             //Find token in parent
-                            if (token.parentId === undefined) {
-                                token.parentId = "0";
+                            if (token.unitTreeId === undefined) {
+                                token.unitTreeId = "0";
                             }
 
-                            var parentUnit = DataService.getUnitById(token.parentId);
+                            var parentUnit = DataService.getUnitById(token.unitTreeId);
                             var elementPos = parentUnit.tokens.map(function (x) {
                                 return x.id;
                             }).indexOf(token.id);
 
                             if (elementPos > -1) {
-                                console.log("tokens - set tokens[pos].inUnit to tree_id");
-                                parentUnit.tokens[elementPos].inUnit = newObject.tree_id;
+                                console.log("tokens - set tokens[pos].inChildUnit to tree_id");
+                                parentUnit.tokens[elementPos].inChildUnit = newObject.tree_id;
                             }
                         }
                     });
@@ -416,10 +417,10 @@
                 }
 
 
-                //Update IndexInParent attribute
-                console.log("tokens - update indexInParent in newObject.tokens");
+                //Update indexInUnit attribute
+                console.log("tokens - update indexInUnit in newObject.tokens");
                 newObject.tokens.forEach(function (token, index, inInit) {
-                    token.indexInParent = index;
+                    token.indexInUnit = index;
                 });
 
                 /**
@@ -484,7 +485,7 @@
                         return x.id;
                     }).indexOf(token.id);
                     if (elementPos === -1) {
-                        token['inUnit'] = null;
+                        token['inChildUnit'] = null;
                     }
                 });
 
@@ -618,14 +619,14 @@
         function updateInUnitIdsForTokens(unit){
             trace("DataService - updateInUnitIdsForTokens");
             unit.tokens.forEach(function(token){
-                token.parentId = unit.tree_id;
+                token.unitTreeId = unit.tree_id;
 
                     var isTokenInUnit = DataService.isTokenInUnit(unit,token);
 
                     if(isTokenInUnit){
-                        token.inUnit = isTokenInUnit;
+                        token.inChildUnit = isTokenInUnit;
                     }else{
-                        token.inUnit = null;
+                        token.inChildUnit = null;
                     }
             })
 
@@ -704,15 +705,15 @@
                 }
             }else{
                 unit.tokens.forEach(function(token){
-                    token.parentId = treeId;
-                    token.inUnit = null;
+                    token.unitTreeId = treeId;
+                    token.inChildUnit = null;
                 });
 
             }
         }
 
         /**
-         * Sort units - get two units, sort them according to indexInParent value
+         * Sort units - get two units, sort them according to indexInUnit value
          * @param a - first unit
          * @param b - second unit
          * @returns {number} - according the priority of a
@@ -752,11 +753,11 @@
                     }
                 }
             }
-            // tokenCopy is not contain indexInParent attribute, with remote units- tokens=[]---error: Cannot read property 'indexInParent' of undefined
+            // tokenCopy is not contain indexInUnit attribute, with remote units- tokens=[]---error: Cannot read property 'indexInUnit' of undefined
             else {  // Both are regular units
-                if(aParentUnit.tokens[aElementPos].indexInParent > bParentUnit.tokens[bElementPos].indexInParent){
+                if(aParentUnit.tokens[aElementPos].indexInUnit > bParentUnit.tokens[bElementPos].indexInUnit){
                     return 1;
-                }else if(aParentUnit.tokens[aElementPos].indexInParent < bParentUnit.tokens[bElementPos].indexInParent){
+                }else if(aParentUnit.tokens[aElementPos].indexInUnit < bParentUnit.tokens[bElementPos].indexInUnit){
                     return -1;
                 }else{
                     return 0;
@@ -766,7 +767,7 @@
 
         function tokenStartIndexInParent(token){
             trace("DataService - tokenStartIndexInParent");
-            var parentUnit = DataService.getUnitById(token.parentId);
+            var parentUnit = DataService.getUnitById(token.unitTreeId);
             if(parentUnit !== null){
                 var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(token.id);
                 if(elementPos > -1){
@@ -853,8 +854,8 @@
                 }
             }
 
-            AssertionService.check_children_tokens_map(DataService.tree.children_tokens_map, DataService.tree.tokens, 'tokens');
-            
+            AssertionService.checkTokenMap(DataService.tree.tokenMap, DataService.tree.tokens);
+
             return true;
         }
 
@@ -903,13 +904,13 @@
             trace("DataService - filterTokensAtt");
             if(tokens !== undefined){
                 tokens.forEach(function(token){
-                    delete token.inUnit;
-                    delete token.parentId;
-                    delete token.indexInParent;
+                    delete token.inChildUnit;
+                    delete token.unitTreeId;
+                    delete token.indexInUnit;
                     delete token.borderStyle;
                     delete token.lastTokenNotAdjacent;
                     delete token.nextTokenNotAdjacent;
-                    delete token.positionInUnit;
+                    delete token.positionInChildUnit;
                     delete token.backgroundColor;
                 })
             }
@@ -926,13 +927,13 @@
             trace("DataService - filterTokensAttForUnit");
             if(tokens !== undefined){
                 tokens.forEach(function(token){
-                    delete token.inUnit;
-                    delete token.parentId;
-                    delete token.indexInParent;
+                    delete token.inChildUnit;
+                    delete token.unitTreeId;
+                    delete token.indexInUnit;
                     delete token.borderStyle;
                     delete token.lastTokenNotAdjacent;
                     delete token.nextTokenNotAdjacent;
-                    delete token.positionInUnit;
+                    delete token.positionInChildUnit;
                     delete token.backgroundColor;
                     delete token.start_index;
                     delete token.end_index;
