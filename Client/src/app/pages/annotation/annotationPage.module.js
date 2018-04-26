@@ -167,7 +167,9 @@
                 // second, define createdByTokenization
                 // TODO: Find what createdByTokenization is used for.
                 for (var index=1; index < DataService.serverData.tokens.length; index++) {
-                    DataService.serverData.tokens[index].createdByTokenization = DataService.serverData.tokens[index].require_annotation && (DataService.serverData.tokens[index].start_index == DataService.serverData.tokens[index-1].end_index+1);
+                    //createdByTokenization is True for tokens which don't start at the beginning of an original word
+                    //in the passage text. For example, if "don't" is split to "do" and "n't" then "n't" has createdByTokenization=true
+                    DataService.serverData.tokens[index].splitByTokenization = DataService.serverData.tokens[index].require_annotation && (DataService.serverData.tokens[index].start_index == DataService.serverData.tokens[index-1].end_index+1);
                 }
                 
                 if(!!DataService.serverData.annotation_units){
