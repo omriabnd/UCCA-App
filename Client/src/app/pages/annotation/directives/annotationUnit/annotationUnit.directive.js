@@ -63,7 +63,7 @@
             $scope.vm.dataBlock.tokens = $scope.vm.tokens;
 
             $scope.vm.dataBlock.tokens.forEach(function(token){
-                token.parentId = $scope.vm.dataBlock.tree_id;
+                token.unitTreeId = $scope.vm.dataBlock.tree_id;
             })
 
             /**
@@ -136,7 +136,7 @@
                 }
 
                 $scope.vm.dataBlock.tokens.forEach(function(token){
-                        token.parentId = $scope.vm.dataBlock.tree_id;
+                        token.unitTreeId = $scope.vm.dataBlock.tree_id;
                 })
             });
 
@@ -297,8 +297,8 @@
                           var elementPos = childUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
                           var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
                           token.indexInUnit = elementPosInThisUnit;
-                          if(DataService.getParentUnit(token.parentId)){
-                            token.parentId = DataService.getParentUnit(token.parentId).tree_id;
+                          if(DataService.getParentUnit(token.unitTreeId)){
+                            token.unitTreeId = DataService.getParentUnit(token.unitTreeId).tree_id;
                           }
                         })
 
@@ -520,7 +520,6 @@
         }
 
         function subTreeToCollapse(subtree_root_unit){
-            debugger
             trace("annotationUnitDirective - subTreeToCollapse");
             return ;
             subtree_root_unit.AnnotationUnits.forEach(function(unit){
@@ -552,13 +551,13 @@
             selectedTokensList.forEach(function(token){
                 if(token.inChildUnit && DataService.getUnitById(token.inChildUnit)){
 
-                    var parentUnit = DataService.getUnitById(token.parentId);
+                    var parentUnit = DataService.getUnitById(token.unitTreeId);
                     var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inChildUnit === token.inChildUnit; });
 
                     tokenGroup.forEach(function(tokenInGroup){
                         var elementPos = selectedTokensList.map(function(x) {return x.id; }).indexOf(tokenInGroup.id);
                         if(elementPos === -1){
-                            $rootScope.$broadcast('tokenIsClicked',{token: tokenInGroup, parentId: tokenInGroup.parentId,selectAllTokenInUnit: true});
+                            $rootScope.$broadcast('tokenIsClicked',{token: tokenInGroup, unitTreeId: tokenInGroup.unitTreeId, selectAllTokenInUnit: true});
                         }
                     })
                 }

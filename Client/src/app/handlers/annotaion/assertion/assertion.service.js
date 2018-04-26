@@ -127,7 +127,7 @@
          * @param annotationUnits
          */
         function checkAnnotationUnits(annotationUnits) {
-            debugger
+            // debugger
             for (var i = 0; i < annotationUnits.length; i++) {
                 //Check fields: tree_id, parent_tree_id, cloned_from_tree_id
                 checkTreeId(annotationUnits[i].tree_id);
@@ -202,7 +202,7 @@
          * @param children_tokens
          */
         function checkTokenMap(tokenMap, children_tokens) {
-            debugger
+            // debugger
             // TODO: Check that all the IDs on the children's list also exist on the tokens list
             // todo- Check that the MAP of a specific ID points to the token with that specific ID in map list
 

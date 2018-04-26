@@ -352,11 +352,11 @@
                                 });
                             };
                             //Find token in parent
-                            if (token.parentId === undefined) {
-                                token.parentId = "0";
+                            if (token.unitTreeId === undefined) {
+                                token.unitTreeId = "0";
                             }
 
-                            var parentUnit = DataService.getUnitById(token.parentId);
+                            var parentUnit = DataService.getUnitById(token.unitTreeId);
                             var elementPos = parentUnit.tokens.map(function (x) {
                                 return x.id;
                             }).indexOf(token.id);
@@ -619,7 +619,7 @@
         function updateInUnitIdsForTokens(unit){
             trace("DataService - updateInUnitIdsForTokens");
             unit.tokens.forEach(function(token){
-                token.parentId = unit.tree_id;
+                token.unitTreeId = unit.tree_id;
 
                     var isTokenInUnit = DataService.isTokenInUnit(unit,token);
 
@@ -705,7 +705,7 @@
                 }
             }else{
                 unit.tokens.forEach(function(token){
-                    token.parentId = treeId;
+                    token.unitTreeId = treeId;
                     token.inChildUnit = null;
                 });
 
@@ -767,7 +767,7 @@
 
         function tokenStartIndexInParent(token){
             trace("DataService - tokenStartIndexInParent");
-            var parentUnit = DataService.getUnitById(token.parentId);
+            var parentUnit = DataService.getUnitById(token.unitTreeId);
             if(parentUnit !== null){
                 var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(token.id);
                 if(elementPos > -1){
@@ -905,7 +905,7 @@
             if(tokens !== undefined){
                 tokens.forEach(function(token){
                     delete token.inChildUnit;
-                    delete token.parentId;
+                    delete token.unitTreeId;
                     delete token.indexInUnit;
                     delete token.borderStyle;
                     delete token.lastTokenNotAdjacent;
@@ -928,7 +928,7 @@
             if(tokens !== undefined){
                 tokens.forEach(function(token){
                     delete token.inChildUnit;
-                    delete token.parentId;
+                    delete token.unitTreeId;
                     delete token.indexInUnit;
                     delete token.borderStyle;
                     delete token.lastTokenNotAdjacent;

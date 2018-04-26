@@ -12,7 +12,7 @@
             templateUrl:'app/pages/annotation/directives/token/token.html',
             scope:{
                 token:"=",
-                parentId:"@"
+                unitTreeId:"@"
             },
             link: annotationTokenDirectiveLink,
             controller: AnnotationTokenController,
@@ -36,12 +36,12 @@
 
                 if(args.token && args.token.id !== $scope.vm.token.id ){
                     !ctrlPressed ? $scope.vm.tokenIsClicked = false : '';
-                }else if(args.parentId !== undefined && (args.parentId.toString() ===  $scope.vm.parentId )){
+                }else if(args.unitTreeId !== undefined && (args.unitTreeId.toString() ===  $scope.vm.unitTreeId )){
                     !ctrlPressed && !shiftPressed && !args.selectAllTokenInUnit ? selectionHandlerService.clearTokenList() : '';
                     if(selectionHandlerService.isTokenInList($scope.vm.token) && !args.doNotRemoveExistingToken){
                         selectionHandlerService.removeTokenFromList($scope.vm.token.id);
                     }else{
-                        selectionHandlerService.addTokenToList($scope.vm.token,$scope.vm.parentId,args.selectAllTokenInUnit);
+                        selectionHandlerService.addTokenToList($scope.vm.token,$scope.vm.unitTreeId,args.selectAllTokenInUnit);
                     }
                     // $scope.vm.tokenIsClicked = true;
                 }
@@ -92,12 +92,12 @@
         }
 
         function isUnitClicked(vm,index){
-            vm.token.parentId === undefined ?  vm.token.parentId = "0": '';
-            return selectionHandlerService.getSelectedUnitId() === vm.token.parentId && getUnitCursorLocation(vm.token) === index.toString();
+            vm.token.unitTreeId === undefined ?  vm.token.unitTreeId = "0": '';
+            return selectionHandlerService.getSelectedUnitId() === vm.token.unitTreeId && getUnitCursorLocation(vm.token) === index.toString();
         }
 
         function getUnitCursorLocation(token){
-            var parentUnit = DataService.getUnitById(token.parentId);
+            var parentUnit = DataService.getUnitById(token.unitTreeId);
             return parentUnit.cursorLocation.toString();
         }
 
@@ -130,7 +130,7 @@
                             }
                             $rootScope.$broadcast('tokenIsClicked', {
                                 token: selectedUnit.tokens[i],
-                                parentId: selectedUnit.tokens[i].parentId || "0",
+                                unitTreeId: selectedUnit.tokens[i].unitTreeId  || "0",
                                 selectAllTokenInUnit: false
                             });
                         }
@@ -146,7 +146,7 @@
                             }
                             $rootScope.$broadcast('tokenIsClicked', {
                                 token: selectedUnit.tokens[i],
-                                parentId: selectedUnit.tokens[i].parentId || "0",
+                                unitTreeId: selectedUnit.tokens[i].unitTreeId || "0",
                                 selectAllTokenInUnit: false
                             });
                         }
@@ -182,22 +182,23 @@
             if(vm.token.inChildUnit !== null && tokenInUnit){
                 var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 !ctrlPressed ? selectionHandlerService.clearTokenList() : '';
-                var parentUnit = DataService.getUnitById(vm.token.parentId);
+                var parentUnit = DataService.getUnitById(vm.token.unitTreeId);
                 var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inChildUnit === vm.token.inChildUnit; });
 
                 tokenGroup.forEach(function(token){
-                    $rootScope.$broadcast('tokenIsClicked',{token: token, parentId: token.parentId,selectAllTokenInUnit: true});
+                    $rootScope.$broadcast('tokenIsClicked',{token: token, unitTreeId: token.unitTreeId,selectAllTokenInUnit: true});
                 })
             }else{
-                $rootScope.$broadcast('tokenIsClicked',{token: vm.token, parentId: vm.parentId, selectAllTokenInUnit: false});
+                debugger
+                $rootScope.$broadcast('tokenIsClicked',{token: vm.token, unitTreeId: vm.unitTreeId, selectAllTokenInUnit: false});
             }
         }
 
         function tokenUnitIsSelected(vm){
-            if(!vm.token.parentId){
-                vm.token.parentId = "0";
+            if(!vm.token.unitTreeId){
+                vm.token.unitTreeId = "0";
             }
-            return selectionHandlerService.getSelectedUnitId() === vm.token.parentId;
+            return selectionHandlerService.getSelectedUnitId() === vm.token.unitTreeId;
         }
 
         function tokenInSelectionList(vm){
@@ -222,33 +223,33 @@
                         for(var i=0; i<tokenUnit.tokens.length; i++){
                             $rootScope.$broadcast('tokenIsClicked', {
                                 token: tokenUnit.tokens[i],
-                                parentId: parentID || "0",
+                                unitTreeId: parentID || "0",
                                 selectAllTokenInUnit: true,
                                 doNotRemoveExistingToken: true
                             });
                         }
-                        var parentUnit = DataService.getParentUnit(tokenUnit.tokens[0].parentId);
+                        var parentUnit = DataService.getParentUnit(tokenUnit.tokens[0].unitTreeId);
                         var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(tokenUnit.tokens[0].id);
                         if(parentUnit.tokens[elementPos].start_index < vm.token.start_index && direction === "DOWN"){
                             $rootScope.$broadcast('moveCursor', {
                                 token: parentUnit.tokens[elementPos],
-                                parentId: DataService.getParentUnitId(tokenUnit.tokens[0].parentId) || "0"
+                                unitTreeId: DataService.getParentUnitId(tokenUnit.tokens[0].unitTreeId) || "0"
                             });
                         }
                     }
                 }
                 if(index === tokenListLength - 1){
-                    var parentUnit = selectedTokenArray[selectedTokenArray.length - 1].parentId ? DataService.getUnitById(selectedTokenArray[selectedTokenArray.length - 1].parentId) :  DataService.getParentUnit("0");
+                    var parentUnit = selectedTokenArray[selectedTokenArray.length - 1].unitTreeId ? DataService.getUnitById(selectedTokenArray[selectedTokenArray.length - 1].unitTreeId) :  DataService.getParentUnit("0");
                     var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(selectedTokenArray[selectedTokenArray.length - 1].id);
                     $rootScope.$broadcast('moveCursor', {
                         token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : null,
                         // token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : parentUnit.tokens[elementPos] //old code
-                        parentId: selectionHandlerService.getSelectedUnitId() || "0"
+                        unitTreeId: selectionHandlerService.getSelectedUnitId() || "0"
                     });
                 }
                 // $rootScope.$broadcast('moveCursor', {
                 //     token: vm.token,
-                //     parentId: vm.token.parentId || "0"
+                //     unitTreeId: vm.token.unitTreeId || "0"
                 // });
             })
 

@@ -189,10 +189,10 @@
 
                 if(!afterInsert){
                     _handler.getSelectedTokenList().forEach(function(token){
-                        if(token.parentId === undefined){
-                            token.parentId = "0";
+                        if(token.unitTreeId === undefined){
+                            token.unitTreeId = "0";
                         }
-                        var parentUnit = DataService.getUnitById(DataService.getParentUnitId(token.parentId));
+                        var parentUnit = DataService.getUnitById(DataService.getParentUnitId(token.unitTreeId));
                         var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(token.id);
                         var tokenInUnit = false;
                         for(var i=0; i<parentUnit.AnnotationUnits.length; i++){
@@ -273,7 +273,7 @@
                                 containsAllParentUnits: false,
                                 tokens:[{
                                     "text":"IMPLICIT UNIT",
-                                    "parentId":unit.parent_tree_id,
+                                    "unitTreeId":unit.parent_tree_id,
                                     "inChildUnit":null
                                 }],
                                 AnnotationUnits : [
@@ -368,6 +368,7 @@
 
                         }else if(unit.tree_id !== "0"){
                             unit.children_tokens.forEach(function(token){
+                                debugger
                                 var parentId = unit.tree_id.length === 1 ? "0" : unit.tree_id.split("-").slice(0,unit.tree_id.split("-").length-1).join("-");
                                 _handler.addTokenToList(DataService.hashTables.tokensHashTable[token.id],parentId)
                             });
@@ -510,7 +511,7 @@
 
         function newUnitContainAllParentTokensTwice(selectedTokenList){
             trace("selectionHandlerService - newUnitContainAllParentTokensTwice");
-            var currentUnit = DataService.getUnitById(selectedTokenList[0].parentId);
+            var currentUnit = DataService.getUnitById(selectedTokenList[0].unitTreeId);
 
             if(currentUnit.tree_id !== "0"){
                 var parentUnit = DataService.getUnitById(DataService.getParentUnitId(currentUnit.tree_id));
@@ -568,9 +569,9 @@
             trace("selectionHandlerService - updateIndexInParentAttribute");
             selectedTokenList.forEach(function(token,index){
                 var parentUnitTokens;
-                if(token.parentId){
-                    if(DataService.getUnitById(token.parentId) && DataService.getUnitById(token.parentId).tokens){
-                        parentUnitTokens = DataService.getUnitById(token.parentId).tokens;
+                if(token.unitTreeId){
+                    if(DataService.getUnitById(token.unitTreeId) && DataService.getUnitById(token.unitTreeId).tokens){
+                        parentUnitTokens = DataService.getUnitById(token.unitTreeId).tokens;
                     }else{
                         return;
                     }
