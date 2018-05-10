@@ -35,6 +35,7 @@
             lastInsertedUnitIndex: lastInsertedUnitIndex,
             unitType:unitType,
             serverData:null,
+            baseTokenData: ['id', 'start_index', 'end_index', 'require_annotation', 'text', 'tokenization_task_id', 'splitByTokenization'],
             hashTables: hashTables,
             categories: [],
             unitsUsedAsRemote:unitsUsedAsRemote,
@@ -86,7 +87,7 @@
             trace("DataService - tokensArrayToHash");
             var hash = {};
             annotationTokensArray.forEach(function(token){
-                hash[token.id] = DataService.hashTables.tokensHashTable[token.id]
+                hash[token.static.id] = DataService.hashTables.tokensHashTable[token.static.id]
             });
             return hash;
         }
@@ -111,7 +112,7 @@
             trace("DataService - createHashTables");
             console.log("tokens - iterate serverData.tokens and create tokens hash table");
             DataService.serverData.tokens.forEach(function(token){
-                DataService.hashTables.tokensHashTable[token.id] = token;
+                DataService.hashTables.tokensHashTable[token.static.id] = token;
             });
                         
             DataService.categories.forEach(function(category){
@@ -262,6 +263,7 @@
                 DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
                 DataService.getUnitById(unit.tree_id).gui_status = "OPEN";
 
+                debugger
                 // Check tree in AssertionService after toggle category
                 AssertionService.checkTree(DataService.tree, DataService.serverData);
 
@@ -272,7 +274,8 @@
         }
 
         /**
-         * Check if specific token exist in specific unit
+         * Check if specific token exist in specific unit-
+         * return true if the token exist in sons units (like inChildUnitTreeId field)
          * @param selectedUnit
          * @param token
          * @returns {boolean} - Id token exist in selectedUnit
@@ -342,13 +345,13 @@
                     console.log("tokens - iterate newObject.tokens");
                     newObject.tokens.forEach(function (token) {
                         if (token.
-                            inChildUnit !== null && token.inChildUnit !== undefined) {
+                            inChildUnitTreeId !== null && token.inChildUnitTreeId !== undefined) {
                             var unitPos = units.map(function (x) {
                                 return x.id;
-                            }).indexOf(token.inChildUnit);
+                            }).indexOf(token.inChildUnitTreeId);
                             if (unitPos === -1) {
                                 units.push({
-                                    id: token.inChildUnit
+                                    id: token.inChildUnitTreeId
                                 });
                             };
                             //Find token in parent
@@ -362,8 +365,8 @@
                             }).indexOf(token.id);
 
                             if (elementPos > -1) {
-                                console.log("tokens - set tokens[pos].inChildUnit to tree_id");
-                                parentUnit.tokens[elementPos].inChildUnit = newObject.tree_id;
+                                console.log("tokens - set tokens[pos].inChildUnitTreeId to tree_id");
+                                parentUnit.tokens[elementPos].inChildUnitTreeId = newObject.tree_id;
                             }
                         }
                     });
@@ -461,9 +464,9 @@
                  */
                 console.log("tokens - sort newObject.tokens");
                 newObject.tokens.sort(function (a, b) {
-                    if (a.start_index > b.start_index) {
+                    if (a.static.start_index > b.static.start_index) {
                         return 1
-                    } else if (a.start_index < b.start_index) {
+                    } else if (a.static.start_index < b.static.start_index) {
                         return -1
                     } else return 0
                 })
@@ -485,7 +488,7 @@
                         return x.id;
                     }).indexOf(token.id);
                     if (elementPos === -1) {
-                        token['inChildUnit'] = null;
+                        token['inChildUnitTreeId'] = null;
                     }
                 });
 
@@ -508,6 +511,7 @@
 
                 // Check tree in AssertionService after add unit
                 if (!inInitStage) {
+                    debugger
                     AssertionService.checkTree(DataService.tree, DataService.serverData);
                 }
                 return resolve({status: 'InsertSuccess',id: newObject.tree_id});
@@ -610,6 +614,7 @@
                 DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
 
                 // Check tree in AssertionService after delete unit
+                debugger
                 AssertionService.checkTree(DataService.tree, DataService.serverData);
 
                 return resolve('DeleteSuccess');
@@ -624,9 +629,9 @@
                     var isTokenInUnit = DataService.isTokenInUnit(unit,token);
 
                     if(isTokenInUnit){
-                        token.inChildUnit = isTokenInUnit;
+                        token.inChildUnitTreeId = isTokenInUnit;
                     }else{
-                        token.inChildUnit = null;
+                        token.inChildUnitTreeId = null;
                     }
             })
 
@@ -706,7 +711,7 @@
             }else{
                 unit.tokens.forEach(function(token){
                     token.unitTreeId = treeId;
-                    token.inChildUnit = null;
+                    token.inChildUnitTreeId = null;
                 });
 
             }
@@ -771,7 +776,7 @@
             if(parentUnit !== null){
                 var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(token.id);
                 if(elementPos > -1){
-                    return parseInt(parentUnit.tokens[elementPos].start_index);
+                    return parseInt(parentUnit.tokens[elementPos].static.start_index);
                 }
             }
         }
@@ -854,6 +859,7 @@
                 }
             }
 
+            debugger
             AssertionService.checkTokenMap(DataService.tree.tokenMap, DataService.tree.tokens);
 
             return true;
@@ -904,7 +910,7 @@
             trace("DataService - filterTokensAtt");
             if(tokens !== undefined){
                 tokens.forEach(function(token){
-                    delete token.inChildUnit;
+                    delete token.inChildUnitTreeId;
                     delete token.unitTreeId;
                     delete token.indexInUnit;
                     delete token.borderStyle;
@@ -927,7 +933,7 @@
             trace("DataService - filterTokensAttForUnit");
             if(tokens !== undefined){
                 tokens.forEach(function(token){
-                    delete token.inChildUnit;
+                    delete token.inChildUnitTreeId;
                     delete token.unitTreeId;
                     delete token.indexInUnit;
                     delete token.borderStyle;
@@ -935,11 +941,12 @@
                     delete token.nextTokenNotAdjacent;
                     delete token.positionInChildUnit;
                     delete token.backgroundColor;
-                    delete token.start_index;
-                    delete token.end_index;
-                    delete token.require_annotation;
-                    delete token.tokenization_task_id;
-                    delete token.text;
+
+                    delete token.static.start_index;
+                    delete token.static.end_index;
+                    delete token.static.require_annotation;
+                    delete token.static.tokenization_task_id;
+                    delete token.static.text;
                 })
             }
             return tokens;

@@ -145,7 +145,8 @@
 //                });
                 
                 // --- Process Tokens ---
-                taskResponse.tokens = replaceEnterWithBr(taskResponse.tokens);
+                // TODO- buggy: Change tokens order
+                taskResponse.tokens = replaceEnterWithBr(tokensInStaticFormat(taskResponse.tokens));
 
                 // TODO --  stop using currentTask, anything we need from it (e.g., tokens);
                 /** we should copy to the DataService other fields we need for either sending
@@ -176,6 +177,7 @@
                     DataService.categories = allCategories;
                     DataService.createHashTables();
                     DataService.createTokensHashByTokensArrayForPassage(taskResponse.tokens);
+
 
                     AssertionService.checkTokenMap(DataService.tree.tokenMap, taskResponse.tokens);
                     if($rootScope.isSlottedLayerProject){
@@ -249,10 +251,19 @@
                 
                 
             });
+            function tokensInStaticFormat(tokens) {
+                const staticTokens = [];
+                for (let i = 0; i < tokens.length; i++) {
+                      // Build token array includes static fields
+                    staticTokens.push(selectionHandlerService.copyTokenToStaticFormat(tokens[i]));
+                }
+                return staticTokens;
+            }
         }
+
         function replaceEnterWithBr(tokensArray){
-          tokensArray.forEach(function(token){
-              token.text = token.text.replace(/\n/g,'<br>').replace(/\u21b5/g,'<br>');
+            tokensArray.forEach(function(token){
+              token.text = token.static.text.replace(/\n/g,'<br>').replace(/\u21b5/g,'<br>');
           });
           return tokensArray;
         }

@@ -83,7 +83,7 @@
                 // check if the selected token is punctuation
                 var currentTokenId = $($rootScope.selectedTokensArray[0]).attr('token-id');
                 var currentToken = DataService.hashTables.tokensHashTable[currentTokenId]
-                if(currentToken.require_annotation==false){
+                if(currentToken.static.require_annotation==false){
                     console.log("Punctuation",currentToken);
                     Core.showAlert("The token is not for annotate");
                     isPunc = true;

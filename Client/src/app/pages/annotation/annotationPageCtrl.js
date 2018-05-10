@@ -7,10 +7,10 @@
       .controller('AnnotationPageCtrl', AnnotationPageCtrl);
 
   /** @ngInject */
-  function AnnotationPageCtrl(DefaultHotKeys,TaskMetaData,AnnotationTextService,DataService,$rootScope,$scope,hotkeys,HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService,$timeout,$state, selectionHandlerService,$uibModal) {
+  function AnnotationPageCtrl(DefaultHotKeys,TaskMetaData,AnnotationTextService,DataService, $rootScope,$scope,hotkeys,HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService,$timeout,$state, selectionHandlerService,$uibModal) {
       var vm = this;
       vm.tokenizationTask = TaskMetaData.Task;
-      vm.annotationTokens = vm.tokenizationTask.tokens;
+      vm.annotationTokens = tokensInStaticFormat(); // vm.tokenizationTask.tokens; // TODO- change tokens structure
       vm.categories = TaskMetaData.Categories;
       vm.defaultHotKeys = DefaultHotKeys;
       vm.categorizedWords = [];
@@ -80,7 +80,7 @@
     	}
       	
       	selectedTokenList = selectedTokenList.map(function (token) {
-      	    return token.text;
+      	    return token.static.text;
       	});
 
       	$scope.selectedTokens = selectedTokenList.join(" ");
@@ -129,6 +129,15 @@
       
       $scope.notFromParentLayer = function(cat){
     	  return !cat.fromParentLayer;
+      }
+
+      function tokensInStaticFormat() {
+          const tokens = [];
+          for (let i = 0; i < vm.tokenizationTask.tokens.length; i++) {
+              // Build token array includes static fields
+              tokens.push(selectionHandlerService.copyTokenToStaticFormat(vm.tokenizationTask.tokens[i]));
+          }
+          return tokens;
       }
       
       function toggleParents(){
@@ -225,7 +234,7 @@
                     console.log('ALERT - deleteFromTree -  prevent delete from tree when refinement layer');
                     return false;
                   }
-                  DataService.deleteUnit(selectionList[0].inChildUnit);
+                  DataService.deleteUnit(selectionList[0].inChildUnitTreeId );
                   selectionHandlerService.clearTokenList();
               }
               else if(selectionList.length){
@@ -245,9 +254,9 @@
 
           if(selectionList.length === 0) return false;
 
-          var tokenIntUnit = selectionList[0].inChildUnit;
+          var tokenIntUnit = selectionList[0].inChildUnitTreeId ;
           selectionList.forEach(function(token){
-              if(tokenIntUnit !== token.inChildUnit){
+              if(tokenIntUnit !== token.inChildUnitTreeId ){
                   result = false;
               }
           });

@@ -549,10 +549,10 @@
             var selectedTokensList = selectionHandlerService.getSelectedTokenList();
 
             selectedTokensList.forEach(function(token){
-                if(token.inChildUnit && DataService.getUnitById(token.inChildUnit)){
+                if(token.inChildUnitTreeId && DataService.getUnitById(token.inChildUnitTreeId)){
 
                     var parentUnit = DataService.getUnitById(token.unitTreeId);
-                    var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inChildUnit === token.inChildUnit; });
+                    var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inChildUnitTreeId === token.inChildUnitTreeId; });
 
                     tokenGroup.forEach(function(tokenInGroup){
                         var elementPos = selectedTokensList.map(function(x) {return x.id; }).indexOf(tokenInGroup.id);
@@ -701,10 +701,10 @@
             trace("annotationUnitDirective - updateStartEndIndexForTokens");
             var currentIndex = 0;
             tokens.forEach(function(token){
-                token.start_index = currentIndex;
-                token.end_index = token.start_index;
-                token.end_index += token.text.length;
-                currentIndex = token.end_index + 2;
+                token.static.start_index = currentIndex;
+                token.static.end_index = token.static.start_index;
+                token.static.end_index += token.static.text.length;
+                currentIndex = token.static.end_index + 2;
             })
         }
 

@@ -70,7 +70,7 @@
         var tokensArr = tokensArray;
         var output = '';
         tokensArray.forEach(function(token,index){
-          output += (token.text) + (index == tokensArr.length-1 ? '' : ' ');
+          output += (token.static.text) + (index == tokensArr.length-1 ? '' : ' ');
         })
         return output;
       }

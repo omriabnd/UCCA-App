@@ -193,7 +193,7 @@
         function doesUnitContainsOnlyPunctuation(newAnnotationUnit,tokensHashTable){
             var isOnlyPunc = true;
             newAnnotationUnit.children_tokens.forEach(function(token){
-                var currentToken = tokensHashTable[token.id];
+                var currentToken = tokensHashTable[token.static.id];
                 if(currentToken.require_annotation == true){
                     isOnlyPunc = false;
                 }
@@ -430,7 +430,7 @@
             
             var isViolated = false;
             var sumOfNonPuctuationTokens = annotationUnit.tokens.filter(function(token) {
-                return token.require_annotation === false ;
+                return token.static.require_annotation === false ;
             });
 
             if(annotationUnit.tokens.length - sumOfNonPuctuationTokens.length === 1){
@@ -443,8 +443,8 @@
                 }else{
                     for (var i = 0; i < annotationUnit.tokens.length; i++) {
                         var unitToken = annotationUnit.tokens[i];
-                        if(unitToken.require_annotation){
-                            var tokenInChildUnit = unitToken.inChildUnit;
+                        if(unitToken.static.require_annotation){
+                            var tokenInChildUnit = unitToken.inChildUnitTreeId;
                             if(tokenInChildUnit === null){
                                 // isViolated = true;
                                 showErrorModal(errorMasseges['NOT_COMPLETE'], unitToken);
@@ -753,7 +753,7 @@
             }
             /**
              * The some() method tests whether at least one element in the array passes the test implemented by the provided function.
-             * Check if at least one token from rootUnit.tokenMap has no inChildUnit attribute.
+             * Check if at least one token from rootUnit.tokenMap has no inChildUnitTreeId attribute.
              */
             Object.keys(rootUnit.tokenMap).some(function(tokenId){
                 var token = hash_tokens[tokenId];
@@ -764,7 +764,7 @@
                     rootUnit.children_tokens = rootUnit.tokenMap;
                 }
                 if(token.require_annotation && Object.keys(rootUnit.tokenMap).length > 1){
-                    if(token.inChildUnit === null){
+                    if(token.inChildUnitTreeId === null){
                         checkIfOk = false;
                         NOT_ALL_TOKENS_IN_UNIT_ERROR = true;
                         console.log("REQUIRE_ANNOTATION",token);

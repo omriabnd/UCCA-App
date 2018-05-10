@@ -74,6 +74,21 @@
                 trace("selectionHandlerService - getLastInsertedToken");
                 return this.lastSelectedToken;
             },
+
+            copyTokenToStaticFormat: function(token) {
+                trace("selectionHandlerService - copyTokenToStaticFormat");
+                var newFormatToken = {static: {}};
+                Object.keys(token).forEach(function(key) {
+                    if (DataService.baseTokenData.indexOf(key) > -1) {// Check if key exist in baseTokenData fields
+                        newFormatToken.static[key] = token[key];
+                        // delete token[key];
+                    } else {
+                        newFormatToken[key] = token[key];
+                    }
+                });
+                return newFormatToken;
+            },
+
             addTokenToList: function(token, selectedUnit, groupUnit){
                 trace("selectionHandlerService - addTokenToList");
                 /**
@@ -82,11 +97,12 @@
                  * If groupUnit is false, remove the token from unit tokens
                  * @type {Number}
                  */
-                var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.id);
+                var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.static.id);
                 if(elementPos === -1){
-                    !groupUnit ? _handler.removeTokenFromUnitTokens(token) : '';
-                    var copiedToken = angular.copy(token);
-                    this.selectedTokenList.push(copiedToken);
+                    !groupUnit ? _handler.removeTokenFromUnitTokens(token) : ''; // this token is already in static format
+                    // var copiedToken = angular.copy(token);
+                    // var newFormatToken = _handler.copyTokenToStaticFormat(token);
+                    this.selectedTokenList.push(token);
                     sortSelectedTokenList(this.selectedTokenList);
                 }
                 this.selectedUnit = selectedUnit;
@@ -138,10 +154,11 @@
                     if (!unit.tokens.length) {
                         unit.tokens = [];
                         for (var key in unit.tokenMap) {
-                            unit.tokens.push(unit.tokenMap[key]);
+                            // Push token to tokens list in static format
+                            unit.tokens.push(_handler.copyTokenToStaticFormat(unit.tokenMap[key]));
                         }
                     }
-                    var elementPos = unit.tokens.map(function(x) {return x.id; }).indexOf(token.id);
+                    var elementPos = unit.tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                     if(elementPos > -1){
                         var selectedUnitId = _handler.getSelectedUnitId();
                         var selectedUnit = DataService.getUnitById(selectedUnitId);
@@ -151,14 +168,14 @@
                         // }
                         var tokenInUnit = _handler.isTokenInUnit(selectedUnit,token);
                         //old code line: (re-written as the if block below Feb 11)
-                        // !tokenInUnit ? token['inChildUnit'] = selectedUnitId.toString() === "0" ? (selectedUnit.AnnotationUnits.length + 1).toString() : selectedUnit.tree_id !== "0" ? selectedUnit.tree_id + "-" +(selectedUnit.AnnotationUnits.length + 1).toString() : (selectedUnit.AnnotationUnits.length + 1).toString() : '';
+                        // !tokenInUnit ? token['inChildUnitTreeId'] = selectedUnitId.toString() === "0" ? (selectedUnit.AnnotationUnits.length + 1).toString() : selectedUnit.tree_id !== "0" ? selectedUnit.tree_id + "-" +(selectedUnit.AnnotationUnits.length + 1).toString() : (selectedUnit.AnnotationUnits.length + 1).toString() : '';
                         //with Omri, Feb 11
                         if (!tokenInUnit) {
                             var newInUnitField = (selectedUnit.AnnotationUnits.length + 1).toString();
                             if (selectedUnitId.toString() != "0") {
                                 newInUnitField = selectedUnitId + "-" + newInUnitField;
                             }
-                            token['inChildUnit'] = newInUnitField;
+                            token['inChildUnitTreeId'] = newInUnitField;
                         }
 
                     }
@@ -174,12 +191,13 @@
                 trace("selectionHandlerService - isTokenInUnit");
                 var tokenInUnit = false;
                 for(var i=0; i<selectedUnit.AnnotationUnits.length; i++){
-                    var tokenPosition = selectedUnit.AnnotationUnits[i].tokens.map(function(x) {return x.id; }).indexOf(token.id);
+                    var tokenPosition = selectedUnit.AnnotationUnits[i].tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                     if(tokenPosition > -1){
                         tokenInUnit = true;
                         break;
                     }
                 }
+                console.log("_________TokenInUnit=", tokenInUnit)
                 return tokenInUnit;
             },
 
@@ -193,16 +211,16 @@
                             token.unitTreeId = "0";
                         }
                         var parentUnit = DataService.getUnitById(DataService.getParentUnitId(token.unitTreeId));
-                        var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(token.id);
+                        var elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                         var tokenInUnit = false;
                         for(var i=0; i<parentUnit.AnnotationUnits.length; i++){
-                            var tokenPosition = parentUnit.AnnotationUnits[i].tokens.map(function(x) {return x.id; }).indexOf(token.id);
+                            var tokenPosition = parentUnit.AnnotationUnits[i].tokens.map(function(x) {return x.id; }).indexOf(token.static.id);
                             if(tokenPosition > -1){
                                 tokenInUnit = true;
                                 break;
                             }
                         }
-                        !tokenInUnit ? parentUnit.tokens[elementPos]['inChildUnit'] = null : '';
+                        !tokenInUnit ? parentUnit.tokens[elementPos]['inChildUnitTreeId'] = null : '';
                     });
                 }
 
@@ -249,6 +267,7 @@
             initTree: function(data){
                 trace("selectionHandlerService - initTree");
                 return $q(function(resolve, reject) {
+                    // debugger
                     DataService.serverData.annotation_units.forEach(function(unit,index){
                         console.log("-----index=", index, "unit=", unit)
 
@@ -272,9 +291,11 @@
                                 children_tokens:[],
                                 containsAllParentUnits: false,
                                 tokens:[{
-                                    "text":"IMPLICIT UNIT",
+                                    static: {
+                                        "text": "IMPLICIT UNIT",
+                                    },
                                     "unitTreeId":unit.parent_tree_id,
-                                    "inChildUnit":null
+                                    "inChildUnitTreeId":null
                                 }],
                                 AnnotationUnits : [
 
@@ -303,8 +324,10 @@
                             unit.unitType = "REMOTE";
 
                             unit.children_tokens.forEach(function(token){
-                                unit["tokens"].push(DataService.hashTables.tokensHashTable[token.id]);
+                                unit["tokens"].push(_handler.copyTokenToStaticFormat(DataService.hashTables.tokensHashTable[token.id]));
                             });
+
+                            // debugger
                             unit["children_tokens"] = unit["tokens"];
 
                             // unit["remote_original_id"] = angular.copy(unit.tree_id);
@@ -368,9 +391,9 @@
 
                         }else if(unit.tree_id !== "0"){
                             unit.children_tokens.forEach(function(token){
-                                debugger
+                                // debugger
                                 var parentId = unit.tree_id.length === 1 ? "0" : unit.tree_id.split("-").slice(0,unit.tree_id.split("-").length-1).join("-");
-                                _handler.addTokenToList(DataService.hashTables.tokensHashTable[token.id],parentId)
+                                _handler.addTokenToList(_handler.copyTokenToStaticFormat(DataService.hashTables.tokensHashTable[token.id]), parentId)
                             });
                             if(unit.categories.length === 0){
                                 _handler.toggleCategory(null,false,unit.is_remote_copy,unit,true);
@@ -398,6 +421,7 @@
                     _handler.updateSelectedUnit("0",false);
 
                     // Check tree in AssertionService at the end of init tree
+                    // debugger
                     AssertionService.checkTree(DataService.tree, DataService.serverData);
                     return resolve({status: 'InitTreeFinished'});
                 })
@@ -493,10 +517,10 @@
 
             selectedTokenList.forEach(function(token){
 
-                if(token.inChildUnit !== null && DataService.getUnitById(token.inChildUnit) !== null){
-                    var existingUnit = DataService.getUnitById(token.inChildUnit);
+                if(token.inChildUnitTreeId !== null && DataService.getUnitById(token.inChildUnitTreeId) !== null){
+                    var existingUnit = DataService.getUnitById(token.inChildUnitTreeId);
                     var sumOfTokenInList = selectedTokenList.filter(function(tokenInList) {
-                        return tokenInList.inChildUnit === token.inChildUnit ;
+                        return tokenInList.inChildUnitTreeId === token.inChildUnitTreeId ;
                     });
 
                     if(sumOfTokenInList.length !== existingUnit.tokens.length){
@@ -545,13 +569,13 @@
             if(selectedTokenList.length === 0){
                 return false;
             }
-            unitId = selectedTokenList[0].inChildUnit;
+            unitId = selectedTokenList[0].inChildUnitTreeId;
 
             if(unitId === null){
                 return false;
             }
             selectedTokenList.forEach(function(token){
-                if(unitId !== token.inChildUnit){
+                if(unitId !== token.inChildUnitTreeId){
                     result = false;
                 }
             });
@@ -560,7 +584,7 @@
                 return false
             }
 
-            var tokenInUnit = selectedTokenList[0].inChildUnit;
+            var tokenInUnit = selectedTokenList[0].inChildUnitTreeId;
             tokenInUnit && DataService.getUnitById(tokenInUnit) && !inInitStage ? _handler.updateSelectedUnit(tokenInUnit) : '';
             return DataService.getUnitById(tokenInUnit);
         }
@@ -645,9 +669,9 @@
         function sortSelectedTokenList(selectedTokenList){
             trace("selectionHandlerService - sortSelectedTokenList");
             selectedTokenList.sort(function(a,b){
-                if(a.start_index > b.start_index){
+                if(a.static.start_index > b.static.start_index){
                     return 1;
-                }else if(a.start_index < b.start_index){
+                }else if(a.static.start_index < b.static.start_index){
                     return -1;
                 }else{
                     return 0;

@@ -39,7 +39,6 @@
             $scope.vm.cursorUpdated = false;
 
             $scope.$on('moveCursor', function(event, args) {
-                debugger
                 if(args.unitTreeId.toString() === $scope.vm.unitId.toString() ){
 
                     var unitTokens = getUnitTokens($scope);
@@ -66,7 +65,6 @@
             $scope.$on('tokenIsClicked', function(event, args) {
                 // var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 // var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
-                debugger
 
                 if(args.token && args.unitTreeId.toString() === $scope.vm.unitId.toString() ){
                     var unitTokens = getUnitTokens($scope);
@@ -101,11 +99,11 @@
                         }
                         var unitToCheckIn = DataService.getUnitById(args.unitId);
 
-                        //console.log(DataService.getUnitById(token.inChildUnit))
+                        //console.log(DataService.getUnitById(token.inChildUnitTreeId))
 
 
                         var sameParentTokens = unitToCheckIn.tokens.filter(function(element,index,array){
-                            return element.inChildUnit == token.inChildUnit;
+                            return element.inChildUnitTreeId == token.inChildUnitTreeId;
                         });
 
                         var nextToken = undefined;
@@ -122,8 +120,8 @@
                         //This is the last token
                         if(nextToken === undefined) return;
 
-                        var unit = DataService.getUnitById(nextToken.inChildUnit);
-                        // unitTokens = DataService.getUnitById(token.inChildUnit).tokens;
+                        var unit = DataService.getUnitById(nextToken.inChildUnitTreeId);
+                        // unitTokens = DataService.getUnitById(token.inChildUnitTreeId).tokens;
                         // if(unitTokens.length > 1){
                         //     var tokenPosition = unitTokens.map(function(x) {return x.id; }).indexOf(token.id);
                         //     if(tokenPosition !== unitTokens.length - 1){
@@ -131,7 +129,7 @@
                         //     }
 
                         // }
-                        if(token.inChildUnit === nextToken.inChildUnit && unit !== null && unit.tree_id !== "0"){
+                        if(token.inChildUnitTreeId === nextToken.inChildUnitTreeId && unit !== null && unit.tree_id !== "0"){
                             if(shiftPressed){
                                 unit.tokens.forEach(function(curr_token){
                                     $rootScope.$broadcast('tokenIsClicked',{token: curr_token, unitTreeId: $scope.vm.unitId, moveLeft: false,doNotRemoveExistingToken: true});
@@ -190,7 +188,7 @@
                         var unitToCheckIn = DataService.getUnitById(args.unitId);
 
                         var sameParentTokens = unitToCheckIn.tokens.filter(function(element,index,array){
-                            return element.inChildUnit == token.inChildUnit;
+                            return element.inChildUnitTreeId == token.inChildUnitTreeId;
                         })
 
                         var prevToken = undefined;
@@ -207,8 +205,8 @@
                         //This is the last token
                         if(prevToken === undefined) return;
 
-                        var unit = DataService.getUnitById(prevToken.inChildUnit);
-                        if(token.inChildUnit === prevToken.inChildUnit && unit !== null && unit.tree_id !== "0"){
+                        var unit = DataService.getUnitById(prevToken.inChildUnitTreeId);
+                        if(token.inChildUnitTreeId === prevToken.inChildUnitTreeId && unit !== null && unit.tree_id !== "0"){
                             if(shiftPressed){
                                 unit.tokens.forEach(function(curr_token,index){
                                     $rootScope.$broadcast('tokenIsClicked',{token: curr_token, unitTreeId: $scope.vm.unitId, moveLeft: false,doNotRemoveExistingToken: false});
@@ -260,7 +258,7 @@
                         }
                         var token = tokenUnit.tokens[$scope.vm.cursorLocation - 1];
                         
-                        var oldUnit = token != undefined ? DataService.getUnitById(token.inChildUnit) : undefined;
+                        var oldUnit = token != undefined ? DataService.getUnitById(token.inChildUnitTreeId) : undefined;
                         var unitToCheckIn = tokenUnit;
 
                         var nextUnit = undefined;
@@ -286,7 +284,7 @@
                         	if(tokens.length > 0){
                                 for(var i=0; i< tokens.length; i++){
                                 	var currentToken = tokens[i];
-                                    var currentUnit = DataService.getUnitById(currentToken.inChildUnit);
+                                    var currentUnit = DataService.getUnitById(currentToken.inChildUnitTreeId);
                                     if(!!currentUnit && !!currentUnit.categories && (!$rootScope.isRefinementLayerProject || currentUnit.categories[0].refinedCategory)){
                                     	nextToken = currentToken;
                                     	nextUnit = currentUnit;

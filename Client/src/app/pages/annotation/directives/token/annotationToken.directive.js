@@ -63,7 +63,7 @@
 
         function AnnotationTokenController() {
             var vm = this;
-            vm.token['inChildUnit'] === undefined ? vm.token['inChildUnit'] = null : '';
+            vm.token['inChildUnitTreeId'] === undefined ? vm.token['inChildUnitTreeId'] = null : '';
             vm.tokenIsClicked = directive.tokenClicked;
             vm.tokenClicked = tokenClicked;
             vm.isUnitClicked = isUnitClicked;
@@ -77,16 +77,16 @@
 
         function tokenDbClick(vm){
             selectionHandlerService.clearTokenList();
-            if(vm.token.inChildUnit !== null && vm.token.inChildUnit !== undefined){
-                var unit = DataService.getUnitById(vm.token.inChildUnit);
+            if(vm.token.inChildUnitTreeId !== null && vm.token.inChildUnitTreeId !== undefined){
+                var unit = DataService.getUnitById(vm.token.inChildUnitTreeId);
                 if(!unit){
                   return;
                 }
                 unit.gui_status = "OPEN";
-                DataService.getUnitById(DataService.getParentUnitId(vm.token.inChildUnit)).gui_status = "OPEN";
-                selectionHandlerService.updateSelectedUnit(vm.token.inChildUnit);
+                DataService.getUnitById(DataService.getParentUnitId(vm.token.inChildUnitTreeId)).gui_status = "OPEN";
+                selectionHandlerService.updateSelectedUnit(vm.token.inChildUnitTreeId);
 
-                Core.scrollToUnit(vm.token.inChildUnit);
+                Core.scrollToUnit(vm.token.inChildUnitTreeId);
             }
 
         }
@@ -178,18 +178,17 @@
 
             !doNotUpdateSelectedToken ? selectionHandlerService.setSelectedToken(vm.token) : '';
 
-            var tokenInUnit = DataService.getUnitById(vm.token.inChildUnit);
-            if(vm.token.inChildUnit !== null && tokenInUnit){
+            var tokenInUnit = DataService.getUnitById(vm.token.inChildUnitTreeId);
+            if(vm.token.inChildUnitTreeId !== null && tokenInUnit){
                 var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 !ctrlPressed ? selectionHandlerService.clearTokenList() : '';
                 var parentUnit = DataService.getUnitById(vm.token.unitTreeId);
-                var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inChildUnit === vm.token.inChildUnit; });
+                var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inChildUnitTreeId === vm.token.inChildUnitTreeId; });
 
                 tokenGroup.forEach(function(token){
                     $rootScope.$broadcast('tokenIsClicked',{token: token, unitTreeId: token.unitTreeId,selectAllTokenInUnit: true});
                 })
             }else{
-                debugger
                 $rootScope.$broadcast('tokenIsClicked',{token: vm.token, unitTreeId: vm.unitTreeId, selectAllTokenInUnit: false});
             }
         }
@@ -210,14 +209,14 @@
         function mouseUpFromToken(vm){
             var selectedTokenArray = selectionHandlerService.getSelectedTokenList();
             var direction = "UP"
-            if(selectionHandlerService.getLastInsertedToken() !== null && selectionHandlerService.getLastInsertedToken().start_index > vm.token.start_index){
+            if(selectionHandlerService.getLastInsertedToken() !== null && selectionHandlerService.getLastInsertedToken().static.start_index > vm.token.static.start_index){
                 direction = "DOWN"
             }
             var tokenListLength = angular.copy(selectedTokenArray.length);
 
             selectedTokenArray.forEach(function(token,index){
-                if(token.inChildUnit){
-                    var tokenUnit = DataService.getUnitById(token.inChildUnit);
+                if(token.inChildUnitTreeId){
+                    var tokenUnit = DataService.getUnitById(token.inChildUnitTreeId);
                     if(tokenUnit && tokenUnit.tree_id !== '0'){
                         var parentID = DataService.getParentUnitId(tokenUnit.tree_id);
                         for(var i=0; i<tokenUnit.tokens.length; i++){
@@ -230,7 +229,7 @@
                         }
                         var parentUnit = DataService.getParentUnit(tokenUnit.tokens[0].unitTreeId);
                         var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(tokenUnit.tokens[0].id);
-                        if(parentUnit.tokens[elementPos].start_index < vm.token.start_index && direction === "DOWN"){
+                        if(parentUnit.tokens[elementPos].static.start_index < vm.token.static.start_index && direction === "DOWN"){
                             $rootScope.$broadcast('moveCursor', {
                                 token: parentUnit.tokens[elementPos],
                                 unitTreeId: DataService.getParentUnitId(tokenUnit.tokens[0].unitTreeId) || "0"

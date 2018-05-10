@@ -35,4 +35,5 @@
     </div>
     <annotation-token  unit-tree-id="{{dirCtrl.treeId}}" token=token ng-repeat="token in dirCtrl.tokens track by $index"></annotation-token>
 </div>
+<!--<pre style="background-color: lightgoldenrodyellow">Information to dataTreeRow: {{ vm.dataBlock| json }}</pre>-->
 <div ng-include="'app/pages/annotation/directives/annotationUnit/dataTreeRow.html'" ng-if="vm.dataBlock.AnnotationUnits.length > 0"></div>

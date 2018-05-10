@@ -202,7 +202,7 @@
          * @param children_tokens
          */
         function checkTokenMap(tokenMap, children_tokens) {
-            // debugger
+            debugger
             // TODO: Check that all the IDs on the children's list also exist on the tokens list
             // todo- Check that the MAP of a specific ID points to the token with that specific ID in map list
 
@@ -218,7 +218,7 @@
                     throw "The lengths of tokens and tokenMap are not equals";
                 }
                 for (let i = 0; i < tokenMap_ids.length; i++) {
-                    if (parseInt(tokenMap_ids[i]) !== children_tokens[i].id) {
+                    if (parseInt(tokenMap_ids[i]) !== children_tokens[i].static.id) {
                         throw "The ids at place " + i + " are different between token map and tokens";
                     }
                 }
@@ -277,6 +277,62 @@
             }
         }
 
+        function checkTokens(unit) {
+            debugger
+
+            const tokens = unit.tokens;
+            console.log("*/*/*/*/*/**/*unit=", unit)
+
+            for (let t = 0; t < tokens.length; t++) {
+                console.log("token=-", tokens[t])
+
+                // check inChildUnitTreeId
+                const inChildUnitTreeId = tokens[t].inChildUnitTreeId;
+                // If not null: should be a tree_id of a child of unitTreeId and should be a token of that child.
+                if (inChildUnitTreeId) {
+
+                }
+
+                // If null: cannot be a token of any of the children of the unit unitTreeId
+                if (!inChildUnitTreeId) {
+
+                }
+
+                // Check indexInUnit
+                // should be the same as the index of the token inside the unit.tokens (maybe +1: we should check)
+                const indexInUnit = tokens[t].indexInUnit;
+
+
+                // Check unitTreeId
+                // unitTreeId: the same as the tree_id of the unit the token is in
+                const unitTreeId = tokens[t].unitTreeId;
+                if (unitTreeId !== unit.tree_id) {
+                    throw "unitTreeId should be the same as the tree_id of the unit the token is in";
+                }
+
+                // Check positionInChildUnit
+                // positionInChildUnit: if inChildUnitTreeId is null, positionInChildUnit should not exist (or null or empty);
+                const positionInChildUnit = tokens[t].positionInChildUnit;
+                if (!inChildUnitTreeId && positionInChildUnit) {
+                    throw "inChildUnitTreeId is null, positionInChildUnit should not exist (" + positionInChildUnit + " ).";
+                }
+
+                // if not null: verify that the value is correct.
+                if (positionInChildUnit) {
+                    if (!(positionInChildUnit === 'Last' || positionInChildUnit === 'First' || positionInChildUnit === 'Middle' || positionInChildUnit === 'FirstAndLast')) {
+                        throw "positionInChildUnit value is not correct (" + positionInChildUnit + ").";
+                    }
+                }
+            }
+
+            for (let i = 0; i < unit.AnnotationUnits.length; i++) {
+                if (unit.AnnotationUnits[i].AnnotationUnits) {
+                    checkTokens(unit.AnnotationUnits[i]);
+                }
+            }
+
+        }
+
         /**
          * Check children_tokens:
          * exists and in the tokens of the task (this is the “tokens” member of the task),
@@ -288,7 +344,7 @@
             // Build list of all tree tokens ids
             const treeTokensIdsList = [];
             for (var i = 0; i < serverData.tokens.length; i++) {
-                treeTokensIdsList.push(serverData.tokens[i].id);
+                treeTokensIdsList.push(serverData.tokens[i].static.id);
             }
             for (let i = 1; i < serverData.annotation_units.length; i++) { // Beginning from 1, because unit 0 doesn't have children_tokens
                 // If it's an implicit unit don't check it because implicit unit doesn't have children_tokens
@@ -313,8 +369,8 @@
                     childrenTokensIdsList.push(serverData.annotation_units[i].children_tokens[j].id);
                 }
                 // Check no duplicates in childrenTokensIdsList
-                for (let  k = childrenTokensIdsList.length-1; k <= 0; k--) {
-                    if (k && childrenTokensIdsList[k] >= childrenTokensIdsList[k-1]) {
+                for (let  k = childrenTokensIdsList.length-1; k < 0; k--) {
+                    if (k && childrenTokensIdsList[k] <= childrenTokensIdsList[k-1]) {
                         throw "Tokens " + childrenTokensIdsList[k] + ", " + childrenTokensIdsList[k-1] + " are duplicated or not sorted";
                     }
                 }
@@ -391,12 +447,17 @@
                 // Check annotations units
                 checkAnnotationUnits(tree.AnnotationUnits);
 
+                //Check tokens field (with static)
+                checkTokens(tree);
+
                 // TODO- delete DataService.serverData, change tokens in DataService.tree to children_tokens, and then check tree.children_tokens (email, March 27)
                 // Check children tokens
                 checkChildrenTokens(serverData);
 
                 // Correctly ordered (by first token, implicit units come first)
-                AssertionService.firstTokenInPreUnit = tree.tokens[0].id;
+                debugger
+                debugger
+                AssertionService.firstTokenInPreUnit = tree.tokens[0].static.id;
                 checkTokensOrder(tree);
             } catch(e) {
                 console.error(e);
