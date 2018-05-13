@@ -422,6 +422,7 @@
 
                 //Update indexInUnit attribute
                 console.log("tokens - update indexInUnit in newObject.tokens");
+                debugger;
                 newObject.tokens.forEach(function (token, index, inInit) {
                     token.indexInUnit = index;
                 });

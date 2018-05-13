@@ -14,6 +14,7 @@
         var AssertionService = {
             unitsIdsList: [],
             firstTokenInPreUnit: 0,
+            flagToInChildUnitTreeId: false,
             checkTree: checkTree,
             checkTokenMap: checkTokenMap,
         };
@@ -116,7 +117,7 @@
          * need to check here if tokenMap and tokens are contain the same tokens?
          * @param unit- annotationUnit
          */
-        function checkTokens(unit) {
+        function checkIfTokensExist(unit) {
             if (!unit.tokens.length) {
                 throw "Annotation unit " + unit.tree_id + " has not tokens list";
             }
@@ -135,7 +136,7 @@
                 checkClonedId(annotationUnits[i]);
 
                 // Check tokenMap and tokens
-                checkTokens(annotationUnits[i]);
+                checkIfTokensExist(annotationUnits[i]);
 
                 if (annotationUnits[i].AnnotationUnits) {
                     checkAnnotationUnits(annotationUnits[i].AnnotationUnits);
@@ -277,43 +278,75 @@
             }
         }
 
-        function checkTokens(unit) {
-            debugger
+        // check if there is a unit that contains this token
+        function _checkIfThereIsUnitWithThisToken(unit, token, flag) {// flag- inChildUnitTreeId value
+            for (let index = 0 ; index < unit.AnnotationUnits.length; index++) {
+                for (let tokenIndex = 0; tokenIndex < unit.AnnotationUnits[index].tokens.length; tokenIndex++) {
+                    if (unit.AnnotationUnits[index].tokens[tokenIndex].static.id === token.static.id) {
 
+                        if (!flag) { // If inChildUnitTreeId is null
+                            // debugger
+                            throw "inChildUnitTreeId is null, it cannot be a token of any of the children of the unit unitTreeId";
+                        }
+                        // else- if inChildUnitTreeId exists
+                        AssertionService.flagToInChildUnitTreeId = true;
+                        // break;
+                        return
+                    }
+                }
+            }
+            for (let i = 0; i < unit.AnnotationUnits.length; i++) {
+                if (unit.AnnotationUnits[i].AnnotationUnits) {
+                    _checkIfThereIsUnitWithThisToken(unit.AnnotationUnits[i], token, flag);
+                }
+            }
+        }
+
+        function checkInChildUnitTreeId(unit, token) {
+            const inChildUnitTreeId = token.inChildUnitTreeId;
+
+            // If not null: should be a tree_id of a child of unitTreeId and should be a token of that child.
+            if (inChildUnitTreeId) {
+                // check if there is a unit that contains this token
+                _checkIfThereIsUnitWithThisToken(unit, token, inChildUnitTreeId);
+
+                if (!AssertionService.flagToInChildUnitTreeId) {
+                    throw "inChildUnitTreeId is not null: should be a tree_id of a child of unitTreeId and should be a token of that child.";
+                }
+            }
+
+            // If null: cannot be a token of any of the children of the unit unitTreeId
+            if (!inChildUnitTreeId) {
+                _checkIfThereIsUnitWithThisToken(unit, token, inChildUnitTreeId);
+            }
+        }
+
+        function checkTokens(unit) {
             const tokens = unit.tokens;
-            console.log("*/*/*/*/*/**/*unit=", unit)
 
             for (let t = 0; t < tokens.length; t++) {
-                console.log("token=-", tokens[t])
 
-                // check inChildUnitTreeId
-                const inChildUnitTreeId = tokens[t].inChildUnitTreeId;
-                // If not null: should be a tree_id of a child of unitTreeId and should be a token of that child.
-                if (inChildUnitTreeId) {
+                /*** Check inChildUnitTreeId ***/
+                checkInChildUnitTreeId(unit, tokens[t]);
 
-                }
 
-                // If null: cannot be a token of any of the children of the unit unitTreeId
-                if (!inChildUnitTreeId) {
-
-                }
-
-                // Check indexInUnit
+                /*** Check indexInUnit ***/
                 // should be the same as the index of the token inside the unit.tokens (maybe +1: we should check)
                 const indexInUnit = tokens[t].indexInUnit;
+                // TODO- indexInUnit attribute is not exist
 
 
-                // Check unitTreeId
+                /*** Check unitTreeId ***/
                 // unitTreeId: the same as the tree_id of the unit the token is in
                 const unitTreeId = tokens[t].unitTreeId;
                 if (unitTreeId !== unit.tree_id) {
                     throw "unitTreeId should be the same as the tree_id of the unit the token is in";
                 }
 
-                // Check positionInChildUnit
+                /*** Check positionInChildUnit ***/
                 // positionInChildUnit: if inChildUnitTreeId is null, positionInChildUnit should not exist (or null or empty);
                 const positionInChildUnit = tokens[t].positionInChildUnit;
-                if (!inChildUnitTreeId && positionInChildUnit) {
+                if (!tokens[t].inChildUnitTreeId && positionInChildUnit) {
                     throw "inChildUnitTreeId is null, positionInChildUnit should not exist (" + positionInChildUnit + " ).";
                 }
 
@@ -455,8 +488,6 @@
                 checkChildrenTokens(serverData);
 
                 // Correctly ordered (by first token, implicit units come first)
-                debugger
-                debugger
                 AssertionService.firstTokenInPreUnit = tree.tokens[0].static.id;
                 checkTokensOrder(tree);
             } catch(e) {

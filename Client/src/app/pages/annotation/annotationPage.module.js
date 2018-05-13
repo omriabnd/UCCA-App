@@ -263,7 +263,7 @@
 
         function replaceEnterWithBr(tokensArray){
             tokensArray.forEach(function(token){
-              token.text = token.static.text.replace(/\n/g,'<br>').replace(/\u21b5/g,'<br>');
+              token.static.text = token.static.text.replace(/\n/g,'<br>').replace(/\u21b5/g,'<br>');
           });
           return tokensArray;
         }
