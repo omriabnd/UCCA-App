@@ -625,9 +625,6 @@
         }
 
         function updateNextTokenNotAdjacent(selectedTokenList){
-            console.log("selectedTokenList=", selectedTokenList);
-            // TODO- buggy- indexInUnit = 0 in all tokens in tokenList
-            debugger;
             trace("selectionHandlerService - updateNextTokenNotAdjacent");
             selectedTokenList.forEach(function(token,index){
                 if(index === selectedTokenList.length-1 || token.indexInUnit + 1 === selectedTokenList[index+1].indexInUnit){
@@ -635,9 +632,7 @@
                 }else if(token.indexInUnit + 1 !== selectedTokenList[index+1].indexInUnit){
                     token['nextTokenNotAdjacent'] = true;
                 }
-
             })
-
         }
         
         function updateLastTokenNotAdjacent(selectedTokenList){

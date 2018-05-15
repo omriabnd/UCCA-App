@@ -180,9 +180,10 @@
                     res = AssertionService.unitsIdsList[i].slice(0, index);
                 }
 
-                if (!AssertionService.unitsIdsList.filter(item => item == res).length) {
-                    throw "There is a gap, unit " + res + " is not exist in the tree";
-                }
+                // TODO- change => to function caller
+                // if (!AssertionService.unitsIdsList.filter(item => item == res).length) {
+                //     throw "There is a gap, unit " + res + " is not exist in the tree";
+                // }
             }
         }
 
@@ -191,9 +192,10 @@
          */
         function checkUniqueInTree() {
             for (var i = 0; i < AssertionService.unitsIdsList.length; i++) {
-                if (AssertionService.unitsIdsList.filter(item => item == AssertionService.unitsIdsList[i]).length !== 1) {
-                    throw "Tree id " + AssertionService.unitsIdsList[i] + " is not unique in the tree";
-                }
+                // TODO- change => to function caller
+                // if (AssertionService.unitsIdsList.filter(item => item == AssertionService.unitsIdsList[i]).length !== 1) {
+                //     throw "Tree id " + AssertionService.unitsIdsList[i] + " is not unique in the tree";
+                // }
             }
         }
 
