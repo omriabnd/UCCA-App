@@ -253,7 +253,7 @@
                 
             });
             function tokensInStaticFormat(tokens) {
-                const staticTokens = [];
+                var staticTokens = [];
                 for (let i = 0; i < tokens.length; i++) {
                       // Build token array includes static fields
                     staticTokens.push(selectionHandlerService.copyTokenToStaticFormat(tokens[i]));

@@ -27,7 +27,7 @@
          * @param idType
          */
         function correctFormat(id, idType) {
-            const splitId = id.split('-');
+            var splitId = id.split('-');
             for (let i = 0; i < splitId.length; i++) {
                 if (!parseInt(splitId[i]) && splitId[i] !== "0") {
                     throw idType + " is not in the correct format";
@@ -57,13 +57,13 @@
          * @returns {boolean}
          */
         function validPrefix(parentTreeId, treeId) {
-            const isNum = /^\d+$/.test(treeId);
+            var isNum = /^\d+$/.test(treeId);
             if (isNum) {
                 // If treeId is first sub unit of the tree root, parentTreeId should be '0', like '1', '2', their parent is '0'
                 return parentTreeId === "0"
             }
-            const index = treeId.lastIndexOf("-");
-            const prefix = treeId.slice(0, index);
+            var index = treeId.lastIndexOf("-");
+            var prefix = treeId.slice(0, index);
             return prefix === parentTreeId;
         }
 
@@ -168,13 +168,13 @@
                     continue;
                 }
 
-                const index = AssertionService.unitsIdsList[i].lastIndexOf("-");
-                const lastDigit = AssertionService.unitsIdsList[i].slice(index+1);
+                var index = AssertionService.unitsIdsList[i].lastIndexOf("-");
+                var lastDigit = AssertionService.unitsIdsList[i].slice(index+1);
                 let res = '';
 
                 if (lastDigit - 1) { // If lastDigit > 2, sub the last digit (i-j-k -> i-j-(k-1) )
-                    const prefix = AssertionService.unitsIdsList[i].slice(0, index+1);
-                    const digit = parseInt(lastDigit);
+                    var prefix = AssertionService.unitsIdsList[i].slice(0, index+1);
+                    var digit = parseInt(lastDigit);
                     res = prefix.concat(digit-1);
                 } else { // If lastDigit is '1', slice the last digit (i-j-1 -> i-j )
                     res = AssertionService.unitsIdsList[i].slice(0, index);
@@ -213,7 +213,7 @@
             try {
                 // tokenMap - tokens object: {id: token, id: token, ...}
                 // children_tokens - tokens array
-                const tokenMap_ids = Object.keys(tokenMap);
+                var tokenMap_ids = Object.keys(tokenMap);
                 if (tokenMap_ids.length !== children_tokens.length) {
                     throw "The lengths of tokens and tokenMap are not equals";
                 }
@@ -306,7 +306,7 @@
         }
 
         function checkInChildUnitTreeId(unit, token) {
-            const inChildUnitTreeId = token.inChildUnitTreeId;
+            var inChildUnitTreeId = token.inChildUnitTreeId;
 
             // If not null: should be a tree_id of a child of unitTreeId and should be a token of that child.
             if (inChildUnitTreeId) {
@@ -327,7 +327,7 @@
         // Checking the tokens against the tokenMap
         function checkTokensAndTokenMap(unit) {
             // tokenMap - tokens object: {id: token, id: token, ...}
-            const tokenMap_ids = Object.keys(unit.tokenMap);
+            var tokenMap_ids = Object.keys(unit.tokenMap);
             if (tokenMap_ids.length !== unit.tokens.length) {
                 throw "The lengths of tokens and tokenMap are not equals";
             }
@@ -347,7 +347,7 @@
             // checkTokensAndTokenMap(unit); // tODO- comment it out
 
 
-            const tokens = unit.tokens;
+            var tokens = unit.tokens;
             for (let t = 0; t < tokens.length; t++) {
 
                 /*** Check inChildUnitTreeId ***/
@@ -357,24 +357,24 @@
                 /*** Check indexInUnit ***/
                 // should be the same as the index of the token inside the unit.tokens (maybe +1: we should check)
                     if (unit.tree_id!=="0") {
-                        const indexInUnit = tokens[t].indexInUnit;
+                        var indexInUnit = tokens[t].indexInUnit;
                         // TODO- indexInUnit attribute is not exist
                         debugger
-                        // console.log("//////////////////////indexInUnit=", indexInUnit);
+                        console.log("//////////////////////indexInUnit=", indexInUnit);
                     }
 
                 /*** Check unitTreeId ***/
                 // unitTreeId: the same as the tree_id of the unit the token is in
-                const unitTreeId = tokens[t].unitTreeId;
+                var unitTreeId = tokens[t].unitTreeId;
                 if (unitTreeId !== unit.tree_id) {
                     throw "unitTreeId should be the same as the tree_id of the unit the token is in";
                 }
 
                 /*** Check positionInChildUnit ***/
                 // positionInChildUnit: if inChildUnitTreeId is null, positionInChildUnit should not exist (or null or empty);
-                const positionInChildUnit = tokens[t].positionInChildUnit;
+                var positionInChildUnit = tokens[t].positionInChildUnit;
                 if (!tokens[t].inChildUnitTreeId && positionInChildUnit) {// TODO- understand why it should not exist?
-                    throw "inChildUnitTreeId is null, positionInChildUnit should not exist (" + positionInChildUnit + ").";
+                    // throw "inChildUnitTreeId is null, positionInChildUnit should not exist (" + positionInChildUnit + ").";
                 }
 
                 // if not null: verify that the value is correct.
@@ -402,9 +402,9 @@
          */
         function checkChildrenTokens(serverData) {
             // Build list of all tree tokens ids
-            const treeTokensIdsList = [];
+            var treeTokensIdsList = [];
             for (var i = 0; i < serverData.tokens.length; i++) {
-                treeTokensIdsList.push(serverData.tokens[i].static.id);
+                treeTokensIdsList.push(serverData.tokens[i].id);
             }
             for (let i = 1; i < serverData.annotation_units.length; i++) { // Beginning from 1, because unit 0 doesn't have children_tokens
                 // If it's an implicit unit don't check it because implicit unit doesn't have children_tokens

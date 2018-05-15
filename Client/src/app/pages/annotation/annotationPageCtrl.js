@@ -132,7 +132,7 @@
       }
 
       function tokensInStaticFormat() {
-          const tokens = [];
+          var tokens = [];
           for (let i = 0; i < vm.tokenizationTask.tokens.length; i++) {
               // Build token array includes static fields
               tokens.push(selectionHandlerService.copyTokenToStaticFormat(vm.tokenizationTask.tokens[i]));

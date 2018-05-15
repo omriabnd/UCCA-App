@@ -97,6 +97,7 @@
                  * If groupUnit is false, remove the token from unit tokens
                  * @type {Number}
                  */
+                debugger
                 var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.static.id);
                 if(elementPos === -1){
                     !groupUnit ? _handler.removeTokenFromUnitTokens(token) : ''; // this token is already in static format
@@ -601,7 +602,7 @@
                 }else{
                     parentUnitTokens = DataService.getUnitById("0").tokens;
                 }
-                var elementPos = parentUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
+                var elementPos = parentUnitTokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                 if(elementPos > -1){
                     token['indexInUnit'] = elementPos;
                 }
@@ -624,7 +625,9 @@
         }
 
         function updateNextTokenNotAdjacent(selectedTokenList){
-            // debugger
+            console.log("selectedTokenList=", selectedTokenList);
+            // TODO- buggy- indexInUnit = 0 in all tokens in tokenList
+            debugger;
             trace("selectionHandlerService - updateNextTokenNotAdjacent");
             selectedTokenList.forEach(function(token,index){
                 if(index === selectedTokenList.length-1 || token.indexInUnit + 1 === selectedTokenList[index+1].indexInUnit){

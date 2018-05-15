@@ -416,7 +416,7 @@
 
 
                 //Update indexInUnit attribute
-                // debugger;
+                debugger;
                 // console.log("new object!!!, first token='''''''''''''", newObject.tokens[0].static.text, "''''''''''''', tokens length=" , newObject.tokens.length);
                 newObject.tokens.forEach(function (token, index, inInit) {
                     console.log("------------------------ update indexInUnit to ", index, " token=", token);
@@ -897,7 +897,7 @@
 
         // Remove static from tokens, because the server need get the fields without static member
         function filterStaticTokens(tokens) {
-            const newTokens = [];
+            var newTokens = [];
             if(tokens !== undefined){
                 tokens.forEach(function(token){
                     newTokens.push(token.static);
