@@ -31,17 +31,18 @@
             $scope.vm.tokenInSelectionList = tokenInSelectionList;
 
             $scope.$on('tokenIsClicked', function(event, args) {
+                // debugger
                 var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
 
-                if(args.token && args.token.id !== $scope.vm.token.id ){
+                if(args.token && args.token.static.id !== $scope.vm.token.static.id ){
                     !ctrlPressed ? $scope.vm.tokenIsClicked = false : '';
                 }else if(args.unitTreeId !== undefined && (args.unitTreeId.toString() ===  $scope.vm.unitTreeId )){
                     !ctrlPressed && !shiftPressed && !args.selectAllTokenInUnit ? selectionHandlerService.clearTokenList() : '';
                     if(selectionHandlerService.isTokenInList($scope.vm.token) && !args.doNotRemoveExistingToken){
-                        selectionHandlerService.removeTokenFromList($scope.vm.token.id);
+                        selectionHandlerService.removeTokenFromList($scope.vm.token.static.id);
                     }else{
-                        selectionHandlerService.addTokenToList($scope.vm.token,$scope.vm.unitTreeId,args.selectAllTokenInUnit);
+                        selectionHandlerService.addTokenToList($scope.vm.token, $scope.vm.unitTreeId, args.selectAllTokenInUnit);
                     }
                     // $scope.vm.tokenIsClicked = true;
                 }
@@ -202,7 +203,7 @@
 
         function tokenInSelectionList(vm){
             var selectionList = selectionHandlerService.selectedTokenList;
-            var elementPos = selectionList.map(function(x) {return x.id; }).indexOf(vm.token.id);
+            var elementPos = selectionList.map(function(x) {return x.static.id; }).indexOf(vm.token.static.id);
             return elementPos > -1;
         }
 
@@ -228,7 +229,7 @@
                             });
                         }
                         var parentUnit = DataService.getParentUnit(tokenUnit.tokens[0].unitTreeId);
-                        var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(tokenUnit.tokens[0].id);
+                        var elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(tokenUnit.tokens[0].static.id);
                         if(parentUnit.tokens[elementPos].static.start_index < vm.token.static.start_index && direction === "DOWN"){
                             $rootScope.$broadcast('moveCursor', {
                                 token: parentUnit.tokens[elementPos],
@@ -239,7 +240,7 @@
                 }
                 if(index === tokenListLength - 1){
                     var parentUnit = selectedTokenArray[selectedTokenArray.length - 1].unitTreeId ? DataService.getUnitById(selectedTokenArray[selectedTokenArray.length - 1].unitTreeId) :  DataService.getParentUnit("0");
-                    var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(selectedTokenArray[selectedTokenArray.length - 1].id);
+                    var elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(selectedTokenArray[selectedTokenArray.length - 1].static.id);
                     $rootScope.$broadcast('moveCursor', {
                         token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : null,
                         // token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : parentUnit.tokens[elementPos] //old code

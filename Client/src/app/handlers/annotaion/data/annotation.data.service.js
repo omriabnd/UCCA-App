@@ -261,7 +261,6 @@
                 DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
                 DataService.getUnitById(unit.tree_id).gui_status = "OPEN";
 
-                debugger
                 // Check tree in AssertionService after toggle category
                 AssertionService.checkTree(DataService.tree, DataService.serverData);
 
@@ -288,7 +287,7 @@
                 if(selectedUnit.AnnotationUnits[i] == undefined){
                   continue
                 }
-                var tokenPosition = selectedUnit.AnnotationUnits[i].tokens.map(function(x) {return x.id; }).indexOf(token.id);
+                var tokenPosition = selectedUnit.AnnotationUnits[i].tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                 if(tokenPosition > -1){
                     tokenInUnit = selectedUnit.AnnotationUnits[i].tree_id;
                     break;
@@ -357,8 +356,8 @@
 
                             var parentUnit = DataService.getUnitById(token.unitTreeId);
                             var elementPos = parentUnit.tokens.map(function (x) {
-                                return x.id;
-                            }).indexOf(token.id);
+                                return x.static.id;
+                            }).indexOf(token.static.id);
 
                             if (elementPos > -1) {
                                 parentUnit.tokens[elementPos].inChildUnitTreeId = newObject.tree_id;
@@ -375,6 +374,7 @@
                     }
 
                     units.forEach(function (unit) {
+                        debugger
                         var parentUnitId = getParentUnitId(unit.id);
                         var parentUnit = getUnitById(parentUnitId);
                         var elementPos = parentUnit.AnnotationUnits.map(function (x) {
@@ -401,6 +401,7 @@
                 //Removing children unit from parent unit
                 if (units.length > 1) {
 
+                    debugger
                     units.forEach(function (unit) {
                         var parentUnitId = getParentUnitId(unit.id);
                         var parentUnit = getUnitById(parentUnitId);
@@ -416,10 +417,8 @@
 
 
                 //Update indexInUnit attribute
-                debugger;
-                // console.log("new object!!!, first token='''''''''''''", newObject.tokens[0].static.text, "''''''''''''', tokens length=" , newObject.tokens.length);
+                // debugger;
                 newObject.tokens.forEach(function (token, index, inInit) {
-                    console.log("------------------------ update indexInUnit to ", index, " token=", token);
                     token.indexInUnit = index;
                 });
 
@@ -480,8 +479,8 @@
 
                 parentUnitTokens.forEach(function (token, index) {
                     var elementPos = newObject.tokens.map(function (x) {
-                        return x.id;
-                    }).indexOf(token.id);
+                        return x.static.id;
+                    }).indexOf(token.static.id);
                     if (elementPos === -1) {
                         token['inChildUnitTreeId'] = null;
                     }
@@ -506,7 +505,6 @@
 
                 // Check tree in AssertionService after add unit
                 if (!inInitStage) {
-                    debugger
                     AssertionService.checkTree(DataService.tree, DataService.serverData);
                 }
                 return resolve({status: 'InsertSuccess',id: newObject.tree_id});
@@ -725,8 +723,8 @@
             var aParentUnit = getParentUnit(a.tree_id);
             var bParentUnit = getParentUnit(b.tree_id);
 
-            var aElementPos = aParentUnit.tokens.map(function(x) {return x.id; }).indexOf(a.tokens[0].id);
-            var bElementPos = bParentUnit.tokens.map(function(x) {return x.id; }).indexOf(b.tokens[0].id);
+            var aElementPos = aParentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(a.tokens[0].static.id);
+            var bElementPos = bParentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(b.tokens[0].static.id);
 
             if(a.unitType !== "REGULAR" || b.unitType !== "REGULAR"){ // Not REGULAR is first
                 if(a.unitType === "REGULAR" && b.unitType !== "REGULAR"){
@@ -769,7 +767,7 @@
             trace("DataService - tokenStartIndexInParent");
             var parentUnit = DataService.getUnitById(token.unitTreeId);
             if(parentUnit !== null){
-                var elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(token.id);
+                var elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                 if(elementPos > -1){
                     return parseInt(parentUnit.tokens[elementPos].static.start_index);
                 }

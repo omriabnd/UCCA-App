@@ -145,9 +145,7 @@
 //                });
                 
                 // --- Process Tokens ---
-                // TODO- buggy: Change tokens order
                 taskResponse.tokens = replaceEnterWithBr(taskResponse.tokens);
-                // taskResponse.tokens = replaceEnterWithBr(tokensInStaticFormat(taskResponse.tokens));
 
                 // TODO --  stop using currentTask, anything we need from it (e.g., tokens);
                 /** we should copy to the DataService other fields we need for either sending

@@ -72,7 +72,7 @@
             if($scope.vm.dataBlock.tokenMap === undefined){
                 $scope.vm.dataBlock.tokenMap = {};
                 $scope.vm.dataBlock.tokens.forEach(function(token){
-                    $scope.vm.dataBlock.tokenMap[token.id] = token;
+                    $scope.vm.dataBlock.tokenMap[token.static.id] = token;
                 })
             }
 
@@ -278,8 +278,8 @@
             dataBlock.AnnotationUnits.forEach(function(unit,index){
                 unit.tokens.forEach(function(token){
                     var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
-                    var elementPos = childUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
-                    var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
+                    var elementPos = childUnitTokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
+                    var elementPosInThisUnit = tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                     if(elementPos !== -1 && elementPosInThisUnit !== -1){
                         tokens[elementPosInThisUnit].borderStyle = "border : none;";
                     }
@@ -294,8 +294,8 @@
                     if(afterDelete){
                         unit.tokens.forEach(function(token){
                           var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
-                          var elementPos = childUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
-                          var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
+                          var elementPos = childUnitTokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
+                          var elementPosInThisUnit = tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                           token.indexInUnit = elementPosInThisUnit;
                           if(DataService.getParentUnit(token.unitTreeId)){
                             token.unitTreeId = DataService.getParentUnit(token.unitTreeId).tree_id;
@@ -311,8 +311,8 @@
 
                     unit.tokens.forEach(function(token){
                       	var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
-                        var elementPos = childUnitTokens.map(function(x) {return x.id; }).indexOf(token.id);
-                        var elementPosInThisUnit = tokens.map(function(x) {return x.id; }).indexOf(token.id);
+                        var elementPos = childUnitTokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
+                        var elementPosInThisUnit = tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
 
 
                         // token.indexInUnit = elementPosInThisUnit;
@@ -555,7 +555,7 @@
                     var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inChildUnitTreeId === token.inChildUnitTreeId; });
 
                     tokenGroup.forEach(function(tokenInGroup){
-                        var elementPos = selectedTokensList.map(function(x) {return x.id; }).indexOf(tokenInGroup.id);
+                        var elementPos = selectedTokensList.map(function(x) {return x.static.id; }).indexOf(tokenInGroup.static.id);
                         if(elementPos === -1){
                             $rootScope.$broadcast('tokenIsClicked',{token: tokenInGroup, unitTreeId: tokenInGroup.unitTreeId, selectAllTokenInUnit: true});
                         }
@@ -629,7 +629,8 @@
             }
         }
 
-        function unitClicked(vm,index, event){
+        function unitClicked(vm, index, event){
+            // debugger
             trace("annotationUnitDirective - unitClicked");
             if(selectionHandlerService.getUnitToAddRemotes() !== "0" && selectionHandlerService.getUnitToAddRemotes() !== index){
                 var unitUsed = DataService.getUnitById(selectionHandlerService.getUnitToAddRemotes()).AnnotationUnits.map(function(x) {return x.remote_original_id; }).indexOf(vm.unit.tree_id);

@@ -97,7 +97,7 @@
                  * If groupUnit is false, remove the token from unit tokens
                  * @type {Number}
                  */
-                debugger
+                // debugger
                 var elementPos = this.selectedTokenList.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                 if(elementPos === -1){
                     !groupUnit ? _handler.removeTokenFromUnitTokens(token) : ''; // this token is already in static format
@@ -131,7 +131,7 @@
             },
             isTokenInList: function(token){
                 trace("selectionHandlerService - isTokenInList");
-                var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.id);
+                var elementPos = this.selectedTokenList.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                 return elementPos > -1;
             },
             removeTokenFromList: function(tokenId){
@@ -139,7 +139,7 @@
                 /**
                  * Unselect a token.
                  */
-                var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(tokenId);
+                var elementPos = this.selectedTokenList.map(function(x) {return x.static.id; }).indexOf(tokenId);
                 //Omri: the next line is commented out as it doesn't do anything (Feb 11)
                 //var objectFound = this.selectedTokenList[elementPos];
                 // _handler.addTokenFromUnitTokens();
@@ -215,7 +215,7 @@
                         var elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                         var tokenInUnit = false;
                         for(var i=0; i<parentUnit.AnnotationUnits.length; i++){
-                            var tokenPosition = parentUnit.AnnotationUnits[i].tokens.map(function(x) {return x.id; }).indexOf(token.static.id);
+                            var tokenPosition = parentUnit.AnnotationUnits[i].tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                             if(tokenPosition > -1){
                                 tokenInUnit = true;
                                 break;
@@ -359,6 +359,7 @@
                                     unitToAddTo["usedAsRemote"] = [];
                                 }
 
+                                debugger
                                 var remotePosition = DataService.getUnitById(unit.remote_original_id).AnnotationUnits.map(function(x) {return x.id; }).indexOf(unit.id);
                                 if(remotePosition > -1){
                                     unitToAddTo["usedAsRemote"].push(DataService.getUnitById(unit.parent_tree_id).AnnotationUnits[remotePosition].tree_id);
@@ -550,7 +551,7 @@
             var result = true;
             if(unitATokens.length === unitBTokens.length){
                 unitATokens.forEach(function(token){
-                    var elementPos = unitBTokens.map(function(x) {return x.id; }).indexOf(token.id);
+                    var elementPos = unitBTokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                     if(elementPos === -1){
                         result = false;
                     }

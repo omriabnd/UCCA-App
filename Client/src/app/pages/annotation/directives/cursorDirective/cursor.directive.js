@@ -65,12 +65,13 @@
             $scope.$on('tokenIsClicked', function(event, args) {
                 // var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 // var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
+                // debugger
 
                 if(args.token && args.unitTreeId.toString() === $scope.vm.unitId.toString() ){
                     var unitTokens = getUnitTokens($scope);
 
                     var unitNode = DataService.getUnitById(args.unitTreeId);
-                    var elementPos = unitNode.tokens.map(function(x) {return x.id; }).indexOf(args.token.id);
+                    var elementPos = unitNode.tokens.map(function(x) {return x.static.id; }).indexOf(args.token.static.id);
                     if(elementPos > -1){
                         !args.moveLeft ? $(elem).insertAfter( unitTokens[elementPos] ) : $(elem).insertBefore( unitTokens[elementPos] );
                         !args.moveLeft ? setCursorPosition($scope, elementPos + 1) : setCursorPosition($scope, elementPos);
@@ -80,6 +81,7 @@
             });
 
             $scope.$on('moveRight', function(event, args) {
+                debugger
                 var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
                 if(args.unitId === $scope.vm.unitId.toString()  && !$scope.vm.cursorUpdated){
@@ -135,7 +137,7 @@
                                     $rootScope.$broadcast('tokenIsClicked',{token: curr_token, unitTreeId: $scope.vm.unitId, moveLeft: false,doNotRemoveExistingToken: true});
                                 })
                             }
-                            var tokenPosition = unit.tokens.map(function(x) {return x.id; }).indexOf(token.id);
+                            var tokenPosition = unit.tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                             var sliceTokenArray = angular.copy(unit.tokens);
                             sliceTokenArray = sliceTokenArray.splice(tokenPosition,sliceTokenArray.length);
                             var elementPos = sliceTokenArray.map(function(x) {return x.positionInChildUnit; }).indexOf("Last");
@@ -152,7 +154,7 @@
                             }
 
                             var parentUnit = DataService.getParentUnit(unit.tree_id);
-                            elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(sliceTokenArray[elementPos].id);
+                            elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(sliceTokenArray[elementPos].static.id);
 
                             setCursorPosition($scope, elementPos+1);
                             $scope.vm.cursorLocation === unitTokens.length ? $(elem).insertAfter( unitTokens[unitTokens.length - 1] ) : $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
@@ -214,7 +216,7 @@
                                 $rootScope.$broadcast('tokenIsClicked',{token: token, unitTreeId: $scope.vm.unitId, moveLeft: false,doNotRemoveExistingToken: false});
                             }
 
-                            var tokenPosition = unit.tokens.map(function(x) {return x.id; }).indexOf(token.id);
+                            var tokenPosition = unit.tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                             var sliceTokenArray = angular.copy(unit.tokens);
                             sliceTokenArray = sliceTokenArray.splice(0,tokenPosition);
                             sliceTokenArray = sliceTokenArray.reverse();
@@ -233,7 +235,7 @@
                             }
 
                             var parentUnit = DataService.getParentUnit(unit.tree_id);
-                            elementPos = parentUnit.tokens.map(function(x) {return x.id; }).indexOf(sliceTokenArray[elementPos].id);
+                            elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(sliceTokenArray[elementPos].static.id);
 
                             setCursorPosition($scope, elementPos);
                             $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
@@ -313,7 +315,7 @@
 	                            $rootScope.$broadcast('tokenIsClicked',{token: curr_token, unitTreeId: $scope.vm.unitId, moveLeft: false, selectAllTokenInUnit: true});
 	                        });
 	
-	                        $scope.vm.cursorLocation = unitToCheckIn.tokens.map(function(x) {return x.id; }).indexOf(unit.tokens[unit.tokens.length-1].id) + 1;
+	                        $scope.vm.cursorLocation = unitToCheckIn.tokens.map(function(x) {return x.static.id; }).indexOf(unit.tokens[unit.tokens.length-1].static.id) + 1;
 	                        $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
 	                    }
 

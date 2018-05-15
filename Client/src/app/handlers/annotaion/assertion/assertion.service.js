@@ -181,6 +181,10 @@
                 }
 
                 // TODO- change => to function caller
+                // debugger
+                if (!AssertionService.unitsIdsList.filter(function(item) { return (item == res).length})) {
+                    throw "There is a gap, unit " + res + " is not exist in the tree";
+                }
                 // if (!AssertionService.unitsIdsList.filter(item => item == res).length) {
                 //     throw "There is a gap, unit " + res + " is not exist in the tree";
                 // }
@@ -193,6 +197,11 @@
         function checkUniqueInTree() {
             for (var i = 0; i < AssertionService.unitsIdsList.length; i++) {
                 // TODO- change => to function caller
+                // debugger
+
+                // if (AssertionService.unitsIdsList.filter(function(item) { return (item == AssertionService.unitsIdsList[i].length) !== 1})) {
+                //     throw "Tree id " + AssertionService.unitsIdsList[i] + " is not unique in the tree";
+                // }
                 // if (AssertionService.unitsIdsList.filter(item => item == AssertionService.unitsIdsList[i]).length !== 1) {
                 //     throw "Tree id " + AssertionService.unitsIdsList[i] + " is not unique in the tree";
                 // }
@@ -258,7 +267,7 @@
          */
         function checkChildrenTokensSubSet(serverData) {
             // TODO- after saveTask current task doesn't contain children_tokens attribute.  Remove check after save task? Add children_tokens in dataService.saveTask?
-            for (var i = 0; i < serverData.annotation_units.length; i++) {
+            for (var i = 1; i < serverData.annotation_units.length; i++) {// i beginning from 1, because unit 0 sometimes not contain children_tokens
                 for (var j = 0; j < serverData.annotation_units[i].children_tokens.length; j++) {
                     // Check if the token id exist in children_tokens of their parent
                     if (!checkTokenInParentUnit(serverData.annotation_units, serverData.annotation_units[i].children_tokens[j].id, serverData.annotation_units[i].parent_tree_id)) {
@@ -344,26 +353,35 @@
         }
 
 
-        function checkTokens(unit) {
+        // find token in tree.tokens according to token id
+        function _findToken(treeTokens, id) {
+            for (var i = 0; i < treeTokens.length; i++) {
+                if (treeTokens[i].static.id === id) {
+                    return treeTokens[i];
+                }
+            }
+        }
+
+        function checkTokens(unit, treeTokens) {
             // Check tokens against tokenMap
             // checkTokensAndTokenMap(unit); // tODO- comment it out
 
-
             var tokens = unit.tokens;
             for (var t = 0; t < tokens.length; t++) {
-
                 /*** Check inChildUnitTreeId ***/
                 // checkInChildUnitTreeId(unit, tokens[t]); // TODO- comment it out
 
 
                 /*** Check indexInUnit ***/
                 // should be the same as the index of the token inside the unit.tokens (maybe +1: we should check)
-                    if (unit.tree_id!=="0") {
-                        var indexInUnit = tokens[t].indexInUnit;
-                        // TODO- indexInUnit attribute is not exist
-                        debugger
-                        console.log("//////////////////////indexInUnit=", indexInUnit);
+
+                if (unit.tree_id!=="0") {
+                    var indexInUnit = tokens[t].indexInUnit;
+                    // TODO- indexInUnit attribute is not exist in tree.tokens
+                    if (indexInUnit !== _findToken(treeTokens, tokens[t].static.id).indexInUnit) {
+                        throw "indexInUnit should be the same as the index of the token inside the unit.tokens";
                     }
+                }
 
                 /*** Check unitTreeId ***/
                 // unitTreeId: the same as the tree_id of the unit the token is in
@@ -376,7 +394,7 @@
                 // positionInChildUnit: if inChildUnitTreeId is null, positionInChildUnit should not exist (or null or empty);
                 var positionInChildUnit = tokens[t].positionInChildUnit;
                 if (!tokens[t].inChildUnitTreeId && positionInChildUnit) {// TODO- understand why it should not exist?
-                    // throw "inChildUnitTreeId is null, positionInChildUnit should not exist (" + positionInChildUnit + ").";
+                    throw "inChildUnitTreeId is null, positionInChildUnit should not exist (" + positionInChildUnit + ").";
                 }
 
                 // if not null: verify that the value is correct.
@@ -389,7 +407,7 @@
 
             for (var i = 0; i < unit.AnnotationUnits.length; i++) {
                 if (unit.AnnotationUnits[i].AnnotationUnits) {
-                    checkTokens(unit.AnnotationUnits[i]);
+                    checkTokens(unit.AnnotationUnits[i], treeTokens);
                 }
             }
 
@@ -510,7 +528,7 @@
                 checkAnnotationUnits(tree.AnnotationUnits);
 
                 //Check tokens field (with static)
-                checkTokens(tree);
+                // checkTokens(tree, tree.tokens); // TODO- comment it out
 
                 // TODO- delete DataService.serverData, change tokens in DataService.tree to children_tokens, and then check tree.children_tokens (email, March 27)
                 // Check children tokens
