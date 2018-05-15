@@ -68,7 +68,9 @@
                     children_tokens:[],
                     containsAllParentUnits: false,
                     tokens:[{
-                        "text":"IMPLICIT UNIT",
+                        static: {
+                            "text": "IMPLICIT UNIT",
+                        },
                         "unitTreeId":selectionHandlerService.getSelectedUnitId(),
                         "inChildUnitTreeId":null
                     }],
