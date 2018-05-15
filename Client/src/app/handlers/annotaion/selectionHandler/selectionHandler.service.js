@@ -98,7 +98,7 @@
                  * @type {Number}
                  */
                 debugger
-                var elementPos = this.selectedTokenList.map(function(x) {return x.id; }).indexOf(token.static.id);
+                var elementPos = this.selectedTokenList.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                 if(elementPos === -1){
                     !groupUnit ? _handler.removeTokenFromUnitTokens(token) : ''; // this token is already in static format
                     // var copiedToken = angular.copy(token);

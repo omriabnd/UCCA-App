@@ -133,7 +133,7 @@
 
       function tokensInStaticFormat() {
           var tokens = [];
-          for (let i = 0; i < vm.tokenizationTask.tokens.length; i++) {
+          for (var i = 0; i < vm.tokenizationTask.tokens.length; i++) {
               // Build token array includes static fields
               tokens.push(selectionHandlerService.copyTokenToStaticFormat(vm.tokenizationTask.tokens[i]));
           }

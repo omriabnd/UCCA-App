@@ -28,7 +28,7 @@
          */
         function correctFormat(id, idType) {
             var splitId = id.split('-');
-            for (let i = 0; i < splitId.length; i++) {
+            for (var i = 0; i < splitId.length; i++) {
                 if (!parseInt(splitId[i]) && splitId[i] !== "0") {
                     throw idType + " is not in the correct format";
                 }
@@ -150,7 +150,7 @@
          */
         function buildUnitsIdList(treeId, annotationUnits) {
             AssertionService.unitsIdsList.push(treeId);
-            for (let i = 0; i < annotationUnits.length; i++) {
+            for (var i = 0; i < annotationUnits.length; i++) {
                 if (annotationUnits[i].AnnotationUnits) {
                     buildUnitsIdList(annotationUnits[i].tree_id, annotationUnits[i].AnnotationUnits);
                 }
@@ -162,7 +162,7 @@
          */
         function checkUnitsIdsList() {
             checkUniqueInTree();
-            for (let i = 0; i < AssertionService.unitsIdsList.length; i++) {
+            for (var i = 0; i < AssertionService.unitsIdsList.length; i++) {
                 if (/^\d+$/.test(AssertionService.unitsIdsList[i])) {
                     // If treeId is first sub unit of the tree root, parentTreeId should be '0', like '1', '2', their parent is '0'
                     continue;
@@ -170,7 +170,7 @@
 
                 var index = AssertionService.unitsIdsList[i].lastIndexOf("-");
                 var lastDigit = AssertionService.unitsIdsList[i].slice(index+1);
-                let res = '';
+                var res = '';
 
                 if (lastDigit - 1) { // If lastDigit > 2, sub the last digit (i-j-k -> i-j-(k-1) )
                     var prefix = AssertionService.unitsIdsList[i].slice(0, index+1);
@@ -190,7 +190,7 @@
          * Check if every tree_id is unique in the tree
          */
         function checkUniqueInTree() {
-            for (let i = 0; i < AssertionService.unitsIdsList.length; i++) {
+            for (var i = 0; i < AssertionService.unitsIdsList.length; i++) {
                 if (AssertionService.unitsIdsList.filter(item => item == AssertionService.unitsIdsList[i]).length !== 1) {
                     throw "Tree id " + AssertionService.unitsIdsList[i] + " is not unique in the tree";
                 }
@@ -217,7 +217,7 @@
                 if (tokenMap_ids.length !== children_tokens.length) {
                     throw "The lengths of tokens and tokenMap are not equals";
                 }
-                for (let i = 0; i < tokenMap_ids.length; i++) {
+                for (var i = 0; i < tokenMap_ids.length; i++) {
                     if (parseInt(tokenMap_ids[i]) !== children_tokens[i].id) {
                         throw "The ids at place " + i + " are different between token map and tokens";
                     }
@@ -238,9 +238,9 @@
          * @returns {boolean} - If the token exist in children_tokens of the parent
          */
         function checkTokenInParentUnit(annotationUnits, tokenId, parentId) {
-            for (let i = 0; i < annotationUnits.length; i++) {
+            for (var i = 0; i < annotationUnits.length; i++) {
                 if (annotationUnits[i].parent_tree_id === parentId) {
-                    for (let j = 0; j < annotationUnits[i].children_tokens.length; j++) {
+                    for (var j = 0; j < annotationUnits[i].children_tokens.length; j++) {
                        if (annotationUnits[i].children_tokens[j].id === tokenId) {
                            return true;
                        }
@@ -256,8 +256,8 @@
          */
         function checkChildrenTokensSubSet(serverData) {
             // TODO- after saveTask current task doesn't contain children_tokens attribute.  Remove check after save task? Add children_tokens in dataService.saveTask?
-            for (let i = 0; i < serverData.annotation_units.length; i++) {
-                for (let j = 0; j < serverData.annotation_units[i].children_tokens.length; j++) {
+            for (var i = 0; i < serverData.annotation_units.length; i++) {
+                for (var j = 0; j < serverData.annotation_units[i].children_tokens.length; j++) {
                     // Check if the token id exist in children_tokens of their parent
                     if (!checkTokenInParentUnit(serverData.annotation_units, serverData.annotation_units[i].children_tokens[j].id, serverData.annotation_units[i].parent_tree_id)) {
                         throw "token " + serverData.annotation_units[i].children_tokens[j].id + " is not exist in children tokens of the parent unit";
@@ -271,8 +271,8 @@
          * @param tokens
          */
         function checkCurrentTaskTokens(tokens) {
-            let index = -1;
-            for (let i = 0; i < tokens.length; i++) {
+            var index = -1;
+            for (var i = 0; i < tokens.length; i++) {
                 if (tokens[i].start_index <= index) {
                     throw "The indexes of the tokens " + tokens[i].id + " and " + tokens[i].id + " are not sorted";
                 }
@@ -282,8 +282,8 @@
 
         // check if there is a unit that contains this token
         function _checkIfThereIsUnitWithThisToken(unit, token, flag) {// flag- inChildUnitTreeId value
-            for (let index = 0 ; index < unit.AnnotationUnits.length; index++) {
-                for (let tokenIndex = 0; tokenIndex < unit.AnnotationUnits[index].tokens.length; tokenIndex++) {
+            for (var index = 0 ; index < unit.AnnotationUnits.length; index++) {
+                for (var tokenIndex = 0; tokenIndex < unit.AnnotationUnits[index].tokens.length; tokenIndex++) {
                     if (unit.AnnotationUnits[index].tokens[tokenIndex].static.id === token.static.id) {
 
                         if (!flag) { // If inChildUnitTreeId is null
@@ -298,7 +298,7 @@
                     }
                 }
             }
-            for (let i = 0; i < unit.AnnotationUnits.length; i++) {
+            for (var i = 0; i < unit.AnnotationUnits.length; i++) {
                 if (unit.AnnotationUnits[i].AnnotationUnits) {
                     _checkIfThereIsUnitWithThisToken(unit.AnnotationUnits[i], token, flag);
                 }
@@ -331,7 +331,7 @@
             if (tokenMap_ids.length !== unit.tokens.length) {
                 throw "The lengths of tokens and tokenMap are not equals";
             }
-            for (let i = 0; i < tokenMap_ids.length; i++) {
+            for (var i = 0; i < tokenMap_ids.length; i++) {
                 if (parseInt(tokenMap_ids[i]) !== unit.tokens[i].static.id) {
                     throw "The ids at place " + i + " are different between token map and tokens";
                 }
@@ -348,7 +348,7 @@
 
 
             var tokens = unit.tokens;
-            for (let t = 0; t < tokens.length; t++) {
+            for (var t = 0; t < tokens.length; t++) {
 
                 /*** Check inChildUnitTreeId ***/
                 // checkInChildUnitTreeId(unit, tokens[t]); // TODO- comment it out
@@ -385,7 +385,7 @@
                 }
             }
 
-            for (let i = 0; i < unit.AnnotationUnits.length; i++) {
+            for (var i = 0; i < unit.AnnotationUnits.length; i++) {
                 if (unit.AnnotationUnits[i].AnnotationUnits) {
                     checkTokens(unit.AnnotationUnits[i]);
                 }
@@ -406,7 +406,7 @@
             for (var i = 0; i < serverData.tokens.length; i++) {
                 treeTokensIdsList.push(serverData.tokens[i].id);
             }
-            for (let i = 1; i < serverData.annotation_units.length; i++) { // Beginning from 1, because unit 0 doesn't have children_tokens
+            for (var i = 1; i < serverData.annotation_units.length; i++) { // Beginning from 1, because unit 0 doesn't have children_tokens
                 // If it's an implicit unit don't check it because implicit unit doesn't have children_tokens
                 if (serverData.annotation_units[i].type === 'IMPLICIT') {
                     if (serverData.annotation_units[i].children_tokens.length) {
@@ -418,9 +418,9 @@
                 if (!serverData.annotation_units[i].children_tokens.length) {
                     throw "Annotation unit "+ i + " doesn't have children tokens";
                 }
-                let childrenTokensIdsList = [];
+                var childrenTokensIdsList = [];
                 // Check if children token in the tokens of the task
-                for (let j = 0; j < serverData.annotation_units[i].children_tokens.length; j++) {
+                for (var j = 0; j < serverData.annotation_units[i].children_tokens.length; j++) {
                     if (!treeTokensIdsList.includes(serverData.annotation_units[i].children_tokens[j].id)) {
                         throw "Token " +  serverData.annotation_units[i].children_tokens[j].id + " doesn't exist in the tokens of the task";
                     }
@@ -429,7 +429,7 @@
                     childrenTokensIdsList.push(serverData.annotation_units[i].children_tokens[j].id);
                 }
                 // Check no duplicates in childrenTokensIdsList
-                for (let  k = childrenTokensIdsList.length-1; k < 0; k--) {
+                for (var  k = childrenTokensIdsList.length-1; k < 0; k--) {
                     if (k && childrenTokensIdsList[k] <= childrenTokensIdsList[k-1]) {
                         throw "Tokens " + childrenTokensIdsList[k] + ", " + childrenTokensIdsList[k-1] + " are duplicated or not sorted";
                     }
@@ -460,7 +460,7 @@
             }
             AssertionService.firstTokenInPreUnit = unit.tokens[0].id;
 
-            for (let i = 0; i < unit.AnnotationUnits.length; i++) {
+            for (var i = 0; i < unit.AnnotationUnits.length; i++) {
                 if (unit.AnnotationUnits[i].AnnotationUnits) {
                     checkTokensOrder(unit.AnnotationUnits[i]);
                 }
