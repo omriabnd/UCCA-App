@@ -197,7 +197,7 @@
                         break;
                     }
                 }
-                console.log("_________TokenInUnit=", tokenInUnit)
+                // console.log("_________TokenInUnit=", tokenInUnit)
                 return tokenInUnit;
             },
 
@@ -269,7 +269,6 @@
                 return $q(function(resolve, reject) {
                     // debugger
                     DataService.serverData.annotation_units.forEach(function(unit,index){
-                        console.log("-----index=", index, "unit=", unit)
 
                         // Add this declaration with Omri Feb 11
                         unit.AnnotationUnits = [];
@@ -382,7 +381,7 @@
                             }
 
                             DataService.unitsUsedAsRemote[unit.tree_id][unit.parent_tree_id + "-" + parseInt(parseInt(amountOfRemotes+1))] = true;
-                            console.log("In initTree, unitsUsedAsRemote=", DataService.unitsUsedAsRemote);
+                            // console.log("In initTree, unitsUsedAsRemote=", DataService.unitsUsedAsRemote);
 
 
 
@@ -625,6 +624,7 @@
         }
 
         function updateNextTokenNotAdjacent(selectedTokenList){
+            // debugger
             trace("selectionHandlerService - updateNextTokenNotAdjacent");
             selectedTokenList.forEach(function(token,index){
                 if(index === selectedTokenList.length-1 || token.indexInUnit + 1 === selectedTokenList[index+1].indexInUnit){

@@ -203,9 +203,8 @@
          * @param children_tokens
          */
         function checkTokenMap(tokenMap, children_tokens) {
-            debugger
-            // TODO: Check that all the IDs on the children's list also exist on the tokens list
-            // todo- Check that the MAP of a specific ID points to the token with that specific ID in map list
+            // Check that all the IDs on the children's list also exist on the tokens list
+            // Check that the MAP of a specific ID points to the token with that specific ID in map list
 
             // Check only if localStorage.validate is true
             if (!getValidate()) {
@@ -219,8 +218,11 @@
                     throw "The lengths of tokens and tokenMap are not equals";
                 }
                 for (let i = 0; i < tokenMap_ids.length; i++) {
-                    if (parseInt(tokenMap_ids[i]) !== children_tokens[i].static.id) {
+                    if (parseInt(tokenMap_ids[i]) !== children_tokens[i].id) {
                         throw "The ids at place " + i + " are different between token map and tokens";
+                    }
+                    if (children_tokens[i].id !== tokenMap[children_tokens[i].id].id) {
+                        throw "The map of id = " + children_tokens[i].id +" does not point to the token with this id";
                     }
                 }
             } catch(e) {
@@ -286,6 +288,7 @@
 
                         if (!flag) { // If inChildUnitTreeId is null
                             // debugger
+                            console.log("Buggy, token=", token, " internal unit=", unit.AnnotationUnits[index].tokens[tokenIndex])
                             throw "inChildUnitTreeId is null, it cannot be a token of any of the children of the unit unitTreeId";
                         }
                         // else- if inChildUnitTreeId exists
@@ -321,20 +324,44 @@
             }
         }
 
-        function checkTokens(unit) {
-            const tokens = unit.tokens;
+        // Checking the tokens against the tokenMap
+        function checkTokensAndTokenMap(unit) {
+            // tokenMap - tokens object: {id: token, id: token, ...}
+            const tokenMap_ids = Object.keys(unit.tokenMap);
+            if (tokenMap_ids.length !== unit.tokens.length) {
+                throw "The lengths of tokens and tokenMap are not equals";
+            }
+            for (let i = 0; i < tokenMap_ids.length; i++) {
+                if (parseInt(tokenMap_ids[i]) !== unit.tokens[i].static.id) {
+                    throw "The ids at place " + i + " are different between token map and tokens";
+                }
+                if (unit.tokens[i].static.id !== unit.tokenMap[unit.tokens[i].static.id].id) {
+                    throw "The map of id = " + unit.tokens[i].static.id +" does not point to the token with this id";
+                }
+            }
+        }
 
+
+        function checkTokens(unit) {
+            // Check tokens against tokenMap
+            // checkTokensAndTokenMap(unit); // tODO- comment it out
+
+
+            const tokens = unit.tokens;
             for (let t = 0; t < tokens.length; t++) {
 
                 /*** Check inChildUnitTreeId ***/
-                checkInChildUnitTreeId(unit, tokens[t]);
+                // checkInChildUnitTreeId(unit, tokens[t]); // TODO- comment it out
 
 
                 /*** Check indexInUnit ***/
                 // should be the same as the index of the token inside the unit.tokens (maybe +1: we should check)
-                const indexInUnit = tokens[t].indexInUnit;
-                // TODO- indexInUnit attribute is not exist
-
+                    if (unit.tree_id!=="0") {
+                        const indexInUnit = tokens[t].indexInUnit;
+                        // TODO- indexInUnit attribute is not exist
+                        debugger
+                        // console.log("//////////////////////indexInUnit=", indexInUnit);
+                    }
 
                 /*** Check unitTreeId ***/
                 // unitTreeId: the same as the tree_id of the unit the token is in
@@ -346,8 +373,8 @@
                 /*** Check positionInChildUnit ***/
                 // positionInChildUnit: if inChildUnitTreeId is null, positionInChildUnit should not exist (or null or empty);
                 const positionInChildUnit = tokens[t].positionInChildUnit;
-                if (!tokens[t].inChildUnitTreeId && positionInChildUnit) {
-                    throw "inChildUnitTreeId is null, positionInChildUnit should not exist (" + positionInChildUnit + " ).";
+                if (!tokens[t].inChildUnitTreeId && positionInChildUnit) {// TODO- understand why it should not exist?
+                    throw "inChildUnitTreeId is null, positionInChildUnit should not exist (" + positionInChildUnit + ").";
                 }
 
                 // if not null: verify that the value is correct.

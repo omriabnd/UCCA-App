@@ -146,7 +146,8 @@
                 
                 // --- Process Tokens ---
                 // TODO- buggy: Change tokens order
-                taskResponse.tokens = replaceEnterWithBr(tokensInStaticFormat(taskResponse.tokens));
+                taskResponse.tokens = replaceEnterWithBr(taskResponse.tokens);
+                // taskResponse.tokens = replaceEnterWithBr(tokensInStaticFormat(taskResponse.tokens));
 
                 // TODO --  stop using currentTask, anything we need from it (e.g., tokens);
                 /** we should copy to the DataService other fields we need for either sending
@@ -263,7 +264,8 @@
 
         function replaceEnterWithBr(tokensArray){
             tokensArray.forEach(function(token){
-              token.static.text = token.static.text.replace(/\n/g,'<br>').replace(/\u21b5/g,'<br>');
+              token.text = token.text.replace(/\n/g,'<br>').replace(/\u21b5/g,'<br>');
+              // token.static.text = token.static.text.replace(/\n/g,'<br>').replace(/\u21b5/g,'<br>');
           });
           return tokensArray;
         }

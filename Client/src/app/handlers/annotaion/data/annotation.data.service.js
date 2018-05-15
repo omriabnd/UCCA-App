@@ -17,7 +17,6 @@
 
         var unitsUsedAsRemote = {};
 
-        console.log("tokens - create tree.tokens list");
         var DataService = {
             /**
              * A data structure that contains rows of selectable words.
@@ -87,7 +86,7 @@
             trace("DataService - tokensArrayToHash");
             var hash = {};
             annotationTokensArray.forEach(function(token){
-                hash[token.static.id] = DataService.hashTables.tokensHashTable[token.static.id]
+                hash[token.id] = DataService.hashTables.tokensHashTable[token.id]
             });
             return hash;
         }
@@ -110,9 +109,8 @@
          */
         function createHashTables(){
             trace("DataService - createHashTables");
-            console.log("tokens - iterate serverData.tokens and create tokens hash table");
             DataService.serverData.tokens.forEach(function(token){
-                DataService.hashTables.tokensHashTable[token.static.id] = token;
+                DataService.hashTables.tokensHashTable[token.id] = token;
             });
                         
             DataService.categories.forEach(function(category){
@@ -290,7 +288,6 @@
                 if(selectedUnit.AnnotationUnits[i] == undefined){
                   continue
                 }
-                console.log("tokens - create an array with token id according to AnnotationUnits[i].tokens array");
                 var tokenPosition = selectedUnit.AnnotationUnits[i].tokens.map(function(x) {return x.id; }).indexOf(token.id);
                 if(tokenPosition > -1){
                     tokenInUnit = selectedUnit.AnnotationUnits[i].tree_id;
@@ -342,7 +339,6 @@
                 var units = [];
 
                 if (newObject.unitType != "REMOTE") {
-                    console.log("tokens - iterate newObject.tokens");
                     newObject.tokens.forEach(function (token) {
                         if (token.
                             inChildUnitTreeId !== null && token.inChildUnitTreeId !== undefined) {
@@ -365,7 +361,6 @@
                             }).indexOf(token.id);
 
                             if (elementPos > -1) {
-                                console.log("tokens - set tokens[pos].inChildUnitTreeId to tree_id");
                                 parentUnit.tokens[elementPos].inChildUnitTreeId = newObject.tree_id;
                             }
                         }
@@ -421,9 +416,10 @@
 
 
                 //Update indexInUnit attribute
-                console.log("tokens - update indexInUnit in newObject.tokens");
-                debugger;
+                // debugger;
+                // console.log("new object!!!, first token='''''''''''''", newObject.tokens[0].static.text, "''''''''''''', tokens length=" , newObject.tokens.length);
                 newObject.tokens.forEach(function (token, index, inInit) {
+                    console.log("------------------------ update indexInUnit to ", index, " token=", token);
                     token.indexInUnit = index;
                 });
 
@@ -463,7 +459,6 @@
                 /**
                  * Sort the tokens.
                  */
-                console.log("tokens - sort newObject.tokens");
                 newObject.tokens.sort(function (a, b) {
                     if (a.static.start_index > b.static.start_index) {
                         return 1
@@ -481,7 +476,6 @@
 
                 parentUnit.AnnotationUnits[index_int - 1] = newObject;
 
-                console.log("tokens - take parentUnit.tokens");
                 var parentUnitTokens = parentUnit.tokens;
 
                 parentUnitTokens.forEach(function (token, index) {
@@ -806,7 +800,8 @@
                 gui_status : treeNode.gui_status || "OPEN",
                 type: angular.copy(treeNode.unitType.toUpperCase()),
                 is_remote_copy: treeNode.unitType.toUpperCase() === 'REMOTE',
-                children_tokens: treeNode.tree_id === "0" ? filterTokensAtt(angular.copy(treeNode.tokens)) : filterTokensAttForUnit(angular.copy(treeNode.tokens)),
+                // todo- remove stsic from tokens
+                children_tokens: treeNode.tree_id === "0" ? filterStaticTokens(filterTokensAtt(angular.copy(treeNode.tokens))) : filterStaticTokens(filterTokensAttForUnit(angular.copy(treeNode.tokens))),
                 cloned_from_tree_id: treeNode.unitType.toUpperCase() === 'REMOTE' ? treeNode.remote_original_id ? treeNode.remote_original_id: treeNode.cloned_from_tree_id : null
                 // remote_original_id - if the tree updated in frontend tree data, cloned_from_tree_id - if the tree updated from server data
             };
@@ -860,9 +855,6 @@
                 }
             }
 
-            debugger
-            AssertionService.checkTokenMap(DataService.tree.tokenMap, DataService.tree.tokens);
-
             return true;
         }
 
@@ -901,6 +893,19 @@
         //     })
         //
         // }
+
+
+        // Remove static from tokens, because the server need get the fields without static member
+        function filterStaticTokens(tokens) {
+            const newTokens = [];
+            if(tokens !== undefined){
+                tokens.forEach(function(token){
+                    newTokens.push(token.static);
+                });
+            }
+            return newTokens;
+        }
+
 
         /**
          * Delete some attributes from tokens for the tree root
@@ -983,6 +988,8 @@
             annotation_units = [];
             var tokensCopy = angular.copy(DataService.tree.tokens);
             tokensCopy = filterTokensAtt(tokensCopy);
+            tokensCopy = filterStaticTokens(tokensCopy);// TODO-- remove static from tokens list
+
             // arrangeUnitTokens("0");
             // Update annotation_units
             var traversResult = traversInTree(DataService.tree);
@@ -995,7 +1002,6 @@
             DataService.serverData.tokens = [];
             DataService.serverData.tokens= tokensCopy;
 
-            console.log("current task before save", DataService.serverData);
             return apiService.annotation.putTaskData(mode,DataService.serverData).then(function(res){
                 // Check tree in AssertionService when saving the task
                 AssertionService.checkTree(DataService.tree, DataService.serverData);
@@ -1173,7 +1179,7 @@
          */
         function errorFunction(err){
             trace("DataService - errorFunction");
-            console.log(err);
+            console.error(err);
         }
 
         /**
