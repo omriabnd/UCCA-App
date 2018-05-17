@@ -374,7 +374,6 @@
                     }
 
                     units.forEach(function (unit) {
-                        debugger
                         var parentUnitId = getParentUnitId(unit.id);
                         var parentUnit = getUnitById(parentUnitId);
                         var elementPos = parentUnit.AnnotationUnits.map(function (x) {
@@ -400,8 +399,6 @@
 
                 //Removing children unit from parent unit
                 if (units.length > 1) {
-
-                    debugger
                     units.forEach(function (unit) {
                         var parentUnitId = getParentUnitId(unit.id);
                         var parentUnit = getUnitById(parentUnitId);
@@ -505,6 +502,12 @@
 
                 // Check tree in AssertionService after add unit
                 if (!inInitStage) {
+                    // Add indexInUnit attribute to tree.tokens, its needed in the assertion
+                    if (!DataService.tree.tokens[1].indexInUnit) {
+                        DataService.tree.tokens.forEach(function (token, index) {
+                            token.indexInUnit = index;
+                        });
+                    }
                     AssertionService.checkTree(DataService.tree, DataService.serverData);
                 }
                 return resolve({status: 'InsertSuccess',id: newObject.tree_id});
@@ -607,7 +610,7 @@
                 DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
 
                 // Check tree in AssertionService after delete unit
-                debugger
+                // debugger
                 AssertionService.checkTree(DataService.tree, DataService.serverData);
 
                 return resolve('DeleteSuccess');
@@ -833,10 +836,11 @@
                    return false;
                 }
             }
-            
-            if(unit.tree_id === "0"){
-                delete unit.children_tokens;
-            }
+
+
+            // if(unit.tree_id === "0"){
+            //     delete unit.children_tokens;
+            // }
             unit.type === 'REMOTE' ? unit.type = 'REGULAR' : '';
             if(unit.categories.length === 1 && unit.categories[0].id === -1){
                 unit.categories = [];

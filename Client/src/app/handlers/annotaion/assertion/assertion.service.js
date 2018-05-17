@@ -298,9 +298,9 @@
                     if (unit.AnnotationUnits[index].tokens[tokenIndex].static.id === token.static.id) {
 
                         if (!flag) { // If inChildUnitTreeId is null
-                            // debugger
-                            console.log("Buggy, token=", token, " internal unit=", unit.AnnotationUnits[index].tokens[tokenIndex])
-                            throw "inChildUnitTreeId is null, it cannot be a token of any of the children of the unit unitTreeId";
+                            // debugger//tODO
+                            // console.log("Buggy, token=", token, " internal unit=", unit.AnnotationUnits[index].tokens[tokenIndex])
+                            // throw "inChildUnitTreeId is null, it cannot be a token of any of the children of the unit unitTreeId";
                         }
                         // else- if inChildUnitTreeId exists
                         AssertionService.flagToInChildUnitTreeId = true;
@@ -364,23 +364,20 @@
 
         function checkTokens(unit, treeTokens) {
             // Check tokens against tokenMap
-            // checkTokensAndTokenMap(unit); // tODO- comment it out
+            if (unit.tree_id === "0") {
+                checkTokensAndTokenMap(unit);
+            }
 
             var tokens = unit.tokens;
             for (var t = 0; t < tokens.length; t++) {
                 /*** Check inChildUnitTreeId ***/
-                // checkInChildUnitTreeId(unit, tokens[t]); // TODO- comment it out
-
+                checkInChildUnitTreeId(unit, tokens[t]);
 
                 /*** Check indexInUnit ***/
-                // should be the same as the index of the token inside the unit.tokens (maybe +1: we should check)
-
-                if (unit.tree_id!=="0") {
-                    var indexInUnit = tokens[t].indexInUnit;
-                    // TODO- indexInUnit attribute is not exist in tree.tokens
-                    if (indexInUnit !== _findToken(treeTokens, tokens[t].static.id).indexInUnit) {
-                        throw "indexInUnit should be the same as the index of the token inside the unit.tokens";
-                    }
+                // should be the same as the index of the token inside the unit.tokens
+                if (t !== tokens[t].indexInUnit) {
+                    // debugger
+                    throw "indexInUnit should be the same as the index of the token inside the unit.tokens";
                 }
 
                 /*** Check unitTreeId ***/
@@ -392,15 +389,18 @@
 
                 /*** Check positionInChildUnit ***/
                 // positionInChildUnit: if inChildUnitTreeId is null, positionInChildUnit should not exist (or null or empty);
-                var positionInChildUnit = tokens[t].positionInChildUnit;
-                if (!tokens[t].inChildUnitTreeId && positionInChildUnit) {// TODO- understand why it should not exist?
-                    throw "inChildUnitTreeId is null, positionInChildUnit should not exist (" + positionInChildUnit + ").";
-                }
+                if (unit.tree_id!=="0") {
+                    var positionInChildUnit = tokens[t].positionInChildUnit;
+                    if (!tokens[t].inChildUnitTreeId && positionInChildUnit) {// TODO- understand why it should not exist?
+                        // debugger
+                        throw "In unit "+ unit.tree_id +", token= " + tokens[t].static.id + " inChildUnitTreeId is null, positionInChildUnit should not exist (" + positionInChildUnit + ").";
+                    }
 
-                // if not null: verify that the value is correct.
-                if (positionInChildUnit) {
-                    if (!(positionInChildUnit === 'Last' || positionInChildUnit === 'First' || positionInChildUnit === 'Middle' || positionInChildUnit === 'FirstAndLast')) {
-                        throw "positionInChildUnit value is not correct (" + positionInChildUnit + ").";
+                    // if not null: verify that the value is correct.
+                    if (positionInChildUnit) {
+                        if (!(positionInChildUnit === 'Last' || positionInChildUnit === 'First' || positionInChildUnit === 'Middle' || positionInChildUnit === 'FirstAndLast')) {
+                            throw "positionInChildUnit value is not correct (" + positionInChildUnit + ").";
+                        }
                     }
                 }
             }
@@ -429,7 +429,7 @@
             for (var i = 1; i < serverData.annotation_units.length; i++) { // Beginning from 1, because unit 0 doesn't have children_tokens
                 // If it's an implicit unit don't check it because implicit unit doesn't have children_tokens
                 if (serverData.annotation_units[i].type === 'IMPLICIT') {
-                    if (serverData.annotation_units[i].children_tokens.length) {
+                    if (serverData.annotation_units[i].children_tokens && serverData.annotation_units[i].children_tokens.length) {
                        throw "Annotation unit "+ i + " is an implicit unit, it should not have children tokens";
                     }
                     return;
@@ -527,8 +527,8 @@
                 // Check annotations units
                 checkAnnotationUnits(tree.AnnotationUnits);
 
-                //Check tokens field (with static)
-                // checkTokens(tree, tree.tokens); // TODO- comment it out
+                // Check tokens fields (with static)
+                checkTokens(tree, tree.tokens); // TODO- comment it out
 
                 // TODO- delete DataService.serverData, change tokens in DataService.tree to children_tokens, and then check tree.children_tokens (email, March 27)
                 // Check children tokens

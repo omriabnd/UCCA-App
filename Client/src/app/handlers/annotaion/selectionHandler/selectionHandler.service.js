@@ -29,7 +29,7 @@
             mouseDown: mouseDown,
             selectedToken: selectedToken,
             lastSelectedToken:lastSelectedToken,
-            updateIndexInParentAttribute:updateIndexInParentAttribute,
+            updateIndexInUnitAttribute:updateIndexInUnitAttribute,
             updatePositionInChildUnitAttribute:updatePositionInChildUnitAttribute,
             updateNextTokenNotAdjacent:updateNextTokenNotAdjacent,
             updateLastTokenNotAdjacent:updateLastTokenNotAdjacent,
@@ -268,9 +268,7 @@
             initTree: function(data){
                 trace("selectionHandlerService - initTree");
                 return $q(function(resolve, reject) {
-                    // debugger
                     DataService.serverData.annotation_units.forEach(function(unit,index){
-
                         // Add this declaration with Omri Feb 11
                         unit.AnnotationUnits = [];
 
@@ -359,7 +357,6 @@
                                     unitToAddTo["usedAsRemote"] = [];
                                 }
 
-                                debugger
                                 var remotePosition = DataService.getUnitById(unit.remote_original_id).AnnotationUnits.map(function(x) {return x.id; }).indexOf(unit.id);
                                 if(remotePosition > -1){
                                     unitToAddTo["usedAsRemote"].push(DataService.getUnitById(unit.parent_tree_id).AnnotationUnits[remotePosition].tree_id);
@@ -392,7 +389,6 @@
 
                         }else if(unit.tree_id !== "0"){
                             unit.children_tokens.forEach(function(token){
-                                // debugger
                                 var parentId = unit.tree_id.length === 1 ? "0" : unit.tree_id.split("-").slice(0,unit.tree_id.split("-").length-1).join("-");
                                 _handler.addTokenToList(_handler.copyTokenToStaticFormat(DataService.hashTables.tokensHashTable[token.id]), parentId)
                             });
@@ -414,7 +410,6 @@
 
                             _handler.clearTokenList();
                         }
-
                     });
                     DataService.unitType = 'REGULAR';
                     // after init the tree, is it needed?
@@ -422,7 +417,6 @@
                     _handler.updateSelectedUnit("0",false);
 
                     // Check tree in AssertionService at the end of init tree
-                    // debugger
                     AssertionService.checkTree(DataService.tree, DataService.serverData);
                     return resolve({status: 'InitTreeFinished'});
                 })
@@ -441,7 +435,7 @@
                     if(!aUnitIsSelected(_handler.selectedTokenList,inInitStage) && (_handler.selectedTokenList.length && !justToggle) || remote || inInitStage){
                         //_handler mean we selected token and now we need to create new unit.
 
-                        updateIndexInParentAttribute(_handler.selectedTokenList);
+                        updateIndexInUnitAttribute(_handler.selectedTokenList);
                         updatePositionInChildUnitAttribute(_handler.selectedTokenList);
                         updateNextTokenNotAdjacent(_handler.selectedTokenList);
                         updateLastTokenNotAdjacent(_handler.selectedTokenList);
@@ -590,8 +584,8 @@
             return DataService.getUnitById(tokenInUnit);
         }
 
-        function updateIndexInParentAttribute(selectedTokenList){
-            trace("selectionHandlerService - updateIndexInParentAttribute");
+        function updateIndexInUnitAttribute(selectedTokenList){
+            trace("selectionHandlerService - updateIndexInUnitAttribute");
             selectedTokenList.forEach(function(token,index){
                 var parentUnitTokens;
                 if(token.unitTreeId){

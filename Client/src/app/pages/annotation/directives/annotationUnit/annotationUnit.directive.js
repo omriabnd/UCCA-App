@@ -302,7 +302,7 @@
                           }
                         })
 
-                        // selectionHandlerService.updateIndexInParentAttribute(unit.tokens); // Is it needed?
+                        // selectionHandlerService.updateIndexInUnitAttribute(unit.tokens); // Is it needed?
                         selectionHandlerService.updatePositionInChildUnitAttribute(unit.tokens);
                         selectionHandlerService.updateNextTokenNotAdjacent(unit.tokens);
                         selectionHandlerService.updateLastTokenNotAdjacent(unit.tokens);
@@ -630,7 +630,6 @@
         }
 
         function unitClicked(vm, index, event){
-            // debugger
             trace("annotationUnitDirective - unitClicked");
             if(selectionHandlerService.getUnitToAddRemotes() !== "0" && selectionHandlerService.getUnitToAddRemotes() !== index){
                 var unitUsed = DataService.getUnitById(selectionHandlerService.getUnitToAddRemotes()).AnnotationUnits.map(function(x) {return x.remote_original_id; }).indexOf(vm.unit.tree_id);
