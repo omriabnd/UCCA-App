@@ -924,7 +924,7 @@
                     delete token.borderStyle;
                     delete token.lastTokenNotAdjacent;
                     delete token.nextTokenNotAdjacent;
-                    delete token.positionInChildUnit;
+                    delete token.positionInUnit;
                     delete token.backgroundColor;
                 })
             }
@@ -947,7 +947,7 @@
                     delete token.borderStyle;
                     delete token.lastTokenNotAdjacent;
                     delete token.nextTokenNotAdjacent;
-                    delete token.positionInChildUnit;
+                    delete token.positionInUnit;
                     delete token.backgroundColor;
 
                     delete token.static.start_index;

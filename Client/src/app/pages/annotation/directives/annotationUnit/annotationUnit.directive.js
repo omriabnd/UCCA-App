@@ -359,7 +359,7 @@
                             }
                             
 
-                            switch(token.positionInChildUnit){
+                            switch(token.positionInUnit){
                                 case 'First': {
                                     tokens[elementPosInThisUnit].borderStyle = borderForFirstToken(childUnitTokens[elementPos],unit.categories);
                                     break;

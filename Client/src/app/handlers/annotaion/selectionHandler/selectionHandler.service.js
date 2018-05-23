@@ -325,7 +325,6 @@
                                 unit["tokens"].push(_handler.copyTokenToStaticFormat(DataService.hashTables.tokensHashTable[token.id]));
                             });
 
-                            // debugger
                             unit["children_tokens"] = unit["tokens"];
 
                             // unit["remote_original_id"] = angular.copy(unit.tree_id);
@@ -410,6 +409,26 @@
 
                             _handler.clearTokenList();
                         }
+
+                        else if (unit.tree_id === "0") { // Build tokens list to unit 0
+                            console.log("tree tokens=", DataService.tree.tokens)
+
+                            DataService.serverData.tokens.forEach(function(token) {
+                                DataService.tree.tokens.push(_handler.copyTokenToStaticFormat(token));
+                            });
+
+                            // unit.children_tokens.forEach(function(token){
+                            //     _handler.addTokenToList(_handler.copyTokenToStaticFormat(DataService.hashTables.tokensHashTable[token.id]), "0")
+                            // });
+
+                            // Add attributes to tree.tokens: indexInUnit, unitTreeId
+                            updateIndexInUnitAttribute(DataService.tree.tokens);
+
+                            // add unitTreeId
+                            DataService.tree.tokens.forEach(function(token) {
+                                token['unitTreeId'] = "0";
+                            });
+                        }
                     });
                     DataService.unitType = 'REGULAR';
                     // after init the tree, is it needed?
@@ -417,6 +436,7 @@
                     _handler.updateSelectedUnit("0",false);
 
                     // Check tree in AssertionService at the end of init tree
+                    console.log("Check tree after selectionService.initTree");
                     AssertionService.checkTree(DataService.tree, DataService.serverData);
                     return resolve({status: 'InitTreeFinished'});
                 })
@@ -428,6 +448,7 @@
                  */
                 trace("selectionHandlerService - toggleCategory");
                 return $q(function(resolve, reject) {
+                    console.log("toggle category!!!!!!!!!!!!!, handler.selectedTokenList= " , _handler.selectedTokenList)
                     if(_handler.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(_handler.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(_handler.selectedTokenList,inInitStage)){
                         return
                     }
@@ -608,13 +629,13 @@
             trace("selectionHandlerService - updatePositionInChildUnitAttribute");
             selectedTokenList.forEach(function(token,index){
                 if(selectedTokenList.length === 1){
-                    token['positionInChildUnit'] = 'FirstAndLast';
+                    token['positionInUnit'] = 'FirstAndLast';
                 }else if(index === 0){
-                    token['positionInChildUnit'] = 'First';
+                    token['positionInUnit'] = 'First';
                 }else if(index === selectedTokenList.length-1){
-                    token['positionInChildUnit'] = 'Last';
+                    token['positionInUnit'] = 'Last';
                 }else{
-                    token['positionInChildUnit'] = 'Middle';
+                    token['positionInUnit'] = 'Middle';
                 }
             })
         }
@@ -639,20 +660,20 @@
                     token['lastTokenNotAdjacent'] = true;
                 }
 
-                if(token["positionInChildUnit"] === "First" && token['nextTokenNotAdjacent']){
-                    token['positionInChildUnit'] = 'FirstAndLast';
+                if(token["positionInUnit"] === "First" && token['nextTokenNotAdjacent']){
+                    token['positionInUnit'] = 'FirstAndLast';
                 }
-                if(token["positionInChildUnit"] === "Last" && token['lastTokenNotAdjacent']){
-                    token['positionInChildUnit'] = 'FirstAndLast';
+                if(token["positionInUnit"] === "Last" && token['lastTokenNotAdjacent']){
+                    token['positionInUnit'] = 'FirstAndLast';
                 }
-                if(token["positionInChildUnit"] === "Middle" && token['lastTokenNotAdjacent'] && token['nextTokenNotAdjacent']){
-                    token['positionInChildUnit'] = 'FirstAndLast';
+                if(token["positionInUnit"] === "Middle" && token['lastTokenNotAdjacent'] && token['nextTokenNotAdjacent']){
+                    token['positionInUnit'] = 'FirstAndLast';
                 }
-                if(token["positionInChildUnit"] === "Middle" && token['lastTokenNotAdjacent']){
-                    token['positionInChildUnit'] = 'First';
+                if(token["positionInUnit"] === "Middle" && token['lastTokenNotAdjacent']){
+                    token['positionInUnit'] = 'First';
                 }
-                if(token["positionInChildUnit"] === "Middle" && token['nextTokenNotAdjacent']){
-                    token['positionInChildUnit'] = 'Last';
+                if(token["positionInUnit"] === "Middle" && token['nextTokenNotAdjacent']){
+                    token['positionInUnit'] = 'Last';
                 }
 
             })
