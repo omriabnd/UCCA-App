@@ -443,6 +443,7 @@
             },
 
             toggleCategory: function(category,justToggle,remote,unit,inInitStage){
+                // debugger
                 /**
                  * toggleCategory is also responsible for creating new units which are assigned a category.
                  */
@@ -461,6 +462,7 @@
                         updateNextTokenNotAdjacent(_handler.selectedTokenList);
                         updateLastTokenNotAdjacent(_handler.selectedTokenList);
 
+                        console.log("before create new ubnit, _handler.selectedTokenList=", _handler.selectedTokenList)
                         var newUnit = {
                             tokens : angular.copy(_handler.selectedTokenList),
                             categories:[],
@@ -472,6 +474,8 @@
                             is_remote_copy: unit && unit.is_remote_copy ? unit.is_remote_copy : false,
                             cloned_from_tree_id: unit && unit.cloned_from_tree_id ? unit.cloned_from_tree_id : null
                         };
+
+
                         if(remote){
                             newUnit = angular.copy(remote);
                             var tempCat = angular.copy(newUnit.categories[0]);
@@ -481,6 +485,7 @@
                             _handler.selectedUnit = newUnit.parent_tree_id;
 
                         }
+
 
                         category !== null && !remote ? newUnit.categories.push(angular.copy(category)) : '';
                         /**
@@ -626,16 +631,17 @@
         }
 
         function updatePositionInChildUnitAttribute(selectedTokenList){
+            console.log("selectedTokenList=", selectedTokenList)
             trace("selectionHandlerService - updatePositionInChildUnitAttribute");
             selectedTokenList.forEach(function(token,index){
                 if(selectedTokenList.length === 1){
-                    token['positionInUnit'] = 'FirstAndLast';
+                    token['positionInChildUnit'] = 'FirstAndLast';
                 }else if(index === 0){
-                    token['positionInUnit'] = 'First';
+                    token['positionInChildUnit'] = 'First';
                 }else if(index === selectedTokenList.length-1){
-                    token['positionInUnit'] = 'Last';
+                    token['positionInChildUnit'] = 'Last';
                 }else{
-                    token['positionInUnit'] = 'Middle';
+                    token['positionInChildUnit'] = 'Middle';
                 }
             })
         }
@@ -660,20 +666,20 @@
                     token['lastTokenNotAdjacent'] = true;
                 }
 
-                if(token["positionInUnit"] === "First" && token['nextTokenNotAdjacent']){
-                    token['positionInUnit'] = 'FirstAndLast';
+                if(token["positionInChildUnit"] === "First" && token['nextTokenNotAdjacent']){
+                    token['positionInChildUnit'] = 'FirstAndLast';
                 }
-                if(token["positionInUnit"] === "Last" && token['lastTokenNotAdjacent']){
-                    token['positionInUnit'] = 'FirstAndLast';
+                if(token["positionInChildUnit"] === "Last" && token['lastTokenNotAdjacent']){
+                    token['positionInChildUnit'] = 'FirstAndLast';
                 }
-                if(token["positionInUnit"] === "Middle" && token['lastTokenNotAdjacent'] && token['nextTokenNotAdjacent']){
-                    token['positionInUnit'] = 'FirstAndLast';
+                if(token["positionInChildUnit"] === "Middle" && token['lastTokenNotAdjacent'] && token['nextTokenNotAdjacent']){
+                    token['positionInChildUnit'] = 'FirstAndLast';
                 }
-                if(token["positionInUnit"] === "Middle" && token['lastTokenNotAdjacent']){
-                    token['positionInUnit'] = 'First';
+                if(token["positionInChildUnit"] === "Middle" && token['lastTokenNotAdjacent']){
+                    token['positionInChildUnit'] = 'First';
                 }
-                if(token["positionInUnit"] === "Middle" && token['nextTokenNotAdjacent']){
-                    token['positionInUnit'] = 'Last';
+                if(token["positionInChildUnit"] === "Middle" && token['nextTokenNotAdjacent']){
+                    token['positionInChildUnit'] = 'Last';
                 }
 
             })

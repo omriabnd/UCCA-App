@@ -359,9 +359,12 @@
                             }
                             
 
-                            switch(token.positionInUnit){
+                            switch(token.positionInChildUnit){
                                 case 'First': {
+                                    console.log("Setting style of ", token);
+                                    console.log("Which is the child of ", tokens[elementPosInThisUnit]);
                                     tokens[elementPosInThisUnit].borderStyle = borderForFirstToken(childUnitTokens[elementPos],unit.categories);
+                                    console.log(tokens[elementPosInThisUnit])
                                     break;
                                 }
                                 case 'FirstAndLast':{
@@ -410,6 +413,7 @@
         }
 
         function borderForFirstToken(token,categories){
+            console.log("borderForFirstToken ", token, categories);
             trace("annotationUnitDirective - borderForFirstToken");
             var actualCategories = categories.filter(function(category){
                 return category.id !== undefined;

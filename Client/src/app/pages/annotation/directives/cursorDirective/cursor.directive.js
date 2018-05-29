@@ -42,7 +42,7 @@
                 if(args.unitTreeId.toString() === $scope.vm.unitId.toString() ){
 
                     var unitTokens = getUnitTokens($scope);
-                    // var location = args.token.positionInUnit !== "Last" ? args.token.indexInUnit : args.token.indexInUnit+1; //old code
+                    // var location = args.token.positionInChildUnit !== "Last" ? args.token.indexInUnit : args.token.indexInUnit+1; //old code
                     // setCursorPosition($scope, location);
                     if (args.token) {
                         setCursorPosition($scope, args.token.indexInUnit);
@@ -139,13 +139,13 @@
                             var tokenPosition = unit.tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                             var sliceTokenArray = angular.copy(unit.tokens);
                             sliceTokenArray = sliceTokenArray.splice(tokenPosition,sliceTokenArray.length);
-                            var elementPos = sliceTokenArray.map(function(x) {return x.positionInUnit; }).indexOf("Last");
+                            var elementPos = sliceTokenArray.map(function(x) {return x.positionInChildUnit; }).indexOf("Last");
 
                             if(elementPos === -1){
                                 var firstAndLastPosition = 0;
                                 for(var i=0; i<sliceTokenArray.length; i++){
                                     var current_token = sliceTokenArray[i];
-                                    if(current_token.positionInUnit == "FirstAndLast"){
+                                    if(current_token.positionInChildUnit == "FirstAndLast"){
                                         firstAndLastPosition = i;
                                     }
                                 }
@@ -220,13 +220,13 @@
                             sliceTokenArray = sliceTokenArray.splice(0,tokenPosition);
                             sliceTokenArray = sliceTokenArray.reverse();
 
-                            var elementPos = sliceTokenArray.map(function(x) {return x.positionInUnit; }).indexOf("First");
+                            var elementPos = sliceTokenArray.map(function(x) {return x.positionInChildUnit; }).indexOf("First");
 
                             if(elementPos === -1){
                                 var firstAndLastPosition = 0;
                                 for(var i=sliceTokenArray.length-1; i>=0; i--){
                                     var current_token = sliceTokenArray[i];
-                                    if(current_token.positionInUnit == "FirstAndLast"){
+                                    if(current_token.positionInChildUnit == "FirstAndLast"){
                                         firstAndLastPosition = i;
                                     }
                                 }

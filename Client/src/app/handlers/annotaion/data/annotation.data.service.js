@@ -305,7 +305,7 @@
          */
         function insertToTree(newObject, level, inInitStage){
             trace("DataService - insertToTree");
-            // console.log("In insertToTree, newObject=", newObject);
+            console.log("In insertToTree, newObject=", newObject);
 
             return $q(function(resolve, reject) {
 
@@ -366,6 +366,9 @@
                     });
                 }
 
+
+                // todo- here is the insertion of the old unit into the new unit (sub unit)
+                // todo -- update the id and parent tree id of the new unit
                 //Adding children to new unit
                 if (units.length > 1) {
 
@@ -487,7 +490,8 @@
 //                parentUnit.gui_status = "OPEN";
 
                 if (!inInitStage) { // After add unit- send to sortAndUpdate. (add unit, no in tree initializing)
-                    // Removed code - The is sorUndUpdate in selectionHendler service in the end of initTree.
+                    // Removed code - The is sorUndUpdate in selectionHandler service in the end of initTree.
+                    debugger
                     sortAndUpdate(true); // This is needed when adding a unit whose location is before existing units
                 }
 
@@ -924,7 +928,7 @@
                     delete token.borderStyle;
                     delete token.lastTokenNotAdjacent;
                     delete token.nextTokenNotAdjacent;
-                    delete token.positionInUnit;
+                    delete token.positionInChildUnit;
                     delete token.backgroundColor;
                 })
             }
@@ -947,7 +951,7 @@
                     delete token.borderStyle;
                     delete token.lastTokenNotAdjacent;
                     delete token.nextTokenNotAdjacent;
-                    delete token.positionInUnit;
+                    delete token.positionInChildUnit;
                     delete token.backgroundColor;
 
                     delete token.static.start_index;
