@@ -139,13 +139,13 @@
                             var tokenPosition = unit.tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                             var sliceTokenArray = angular.copy(unit.tokens);
                             sliceTokenArray = sliceTokenArray.splice(tokenPosition,sliceTokenArray.length);
-                            var elementPos = sliceTokenArray.map(function(x) {return x.positionInChildUnit; }).indexOf("Last");
+                            var elementPos = sliceTokenArray.map(function(x) {return DataService.positionInUnit(unit, x); }).indexOf("Last");
 
                             if(elementPos === -1){
                                 var firstAndLastPosition = 0;
                                 for(var i=0; i<sliceTokenArray.length; i++){
                                     var current_token = sliceTokenArray[i];
-                                    if(current_token.positionInChildUnit == "FirstAndLast"){
+                                    if(DataService.positionInUnit(unit, current_token) == "FirstAndLast"){
                                         firstAndLastPosition = i;
                                     }
                                 }
@@ -220,13 +220,13 @@
                             sliceTokenArray = sliceTokenArray.splice(0,tokenPosition);
                             sliceTokenArray = sliceTokenArray.reverse();
 
-                            var elementPos = sliceTokenArray.map(function(x) {return x.positionInChildUnit; }).indexOf("First");
+                            var elementPos = sliceTokenArray.map(function(x) {return DataService.positionInUnit(unit, x); }).indexOf("First");
 
                             if(elementPos === -1){
                                 var firstAndLastPosition = 0;
                                 for(var i=sliceTokenArray.length-1; i>=0; i--){
                                     var current_token = sliceTokenArray[i];
-                                    if(current_token.positionInChildUnit == "FirstAndLast"){
+                                    if(DataService.positionInUnit(unit, current_token) == "FirstAndLast"){
                                         firstAndLastPosition = i;
                                     }
                                 }

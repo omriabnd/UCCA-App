@@ -58,6 +58,7 @@
             isTokenInUnit:isTokenInUnit,
             resetTree:resetTree,
             sortAndUpdate:sortAndUpdate,
+            positionInUnit: positionInUnit,
             REMOTE_TEMPS_OBJ_FOR_UPDATE_AFTER_DELETE_UNIT_FOR_UPDATE_AFTER_DELETE_UNIT:{},
             USED_AS_REMOTE_TEMPS_OBJ_FOR_UPDATE_AFTER_DELETE_UNIT_FOR_UPDATE_AFTER_DELETE_UNIT:{},
             createTokensHashByTokensArrayForPassage:createTokensHashByTokensArrayForPassage
@@ -928,7 +929,7 @@
                     delete token.borderStyle;
                     delete token.lastTokenNotAdjacent;
                     delete token.nextTokenNotAdjacent;
-                    delete token.positionInChildUnit;
+                    // delete token.positionInChildUnit;
                     delete token.backgroundColor;
                 })
             }
@@ -951,7 +952,7 @@
                     delete token.borderStyle;
                     delete token.lastTokenNotAdjacent;
                     delete token.nextTokenNotAdjacent;
-                    delete token.positionInChildUnit;
+                    // delete token.positionInChildUnit;
                     delete token.backgroundColor;
 
                     delete token.static.start_index;
@@ -1218,6 +1219,24 @@
             var parentUnitId = unitId.split('-');
             parentUnitId = parentUnitId.slice(0,length-1).join('-');
             return parentUnitId.toString()
+        }
+
+        function positionInUnit(unit, token) {
+            for (var i = 0; i < unit.tokens.length; i++) {
+                if (unit.tokens[i].static.id === token.static.id) {
+                    if (unit.tokens.length === 1) {
+                        return 'FirstAndLast';
+                    }
+                    if (unit.tokens[i].indexInUnit === 0) {
+                        return 'First';
+                    }
+                    if (unit.tokens[i].indexInUnit === unit.tokens.length) {
+                        return 'Last';
+                    }
+                    return 'Middle';
+                }
+            }
+            throw "The token " + token.static.text + " isn't exist in unit.tokens";
         }
     }
 

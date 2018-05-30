@@ -30,9 +30,9 @@
             selectedToken: selectedToken,
             lastSelectedToken:lastSelectedToken,
             updateIndexInUnitAttribute:updateIndexInUnitAttribute,
-            updatePositionInChildUnitAttribute:updatePositionInChildUnitAttribute,
-            updateNextTokenNotAdjacent:updateNextTokenNotAdjacent,
-            updateLastTokenNotAdjacent:updateLastTokenNotAdjacent,
+            // updatePositionInChildUnitAttribute:updatePositionInChildUnitAttribute,
+            // updateNextTokenNotAdjacent:updateNextTokenNotAdjacent,
+            // updateLastTokenNotAdjacent:updateLastTokenNotAdjacent,
             getTreeLastId:getTreeLastId,
             getSelectedTokenList: function(){
                 trace("selectionHandlerService - getSelectedTokenList");
@@ -409,27 +409,41 @@
 
                             _handler.clearTokenList();
                         }
-
-                        else if (unit.tree_id === "0") { // Build tokens list to unit 0
-                            console.log("tree tokens=", DataService.tree.tokens)
-
-                            DataService.serverData.tokens.forEach(function(token) {
-                                DataService.tree.tokens.push(_handler.copyTokenToStaticFormat(token));
-                            });
-
-                            // unit.children_tokens.forEach(function(token){
-                            //     _handler.addTokenToList(_handler.copyTokenToStaticFormat(DataService.hashTables.tokensHashTable[token.id]), "0")
-                            // });
-
-                            // Add attributes to tree.tokens: indexInUnit, unitTreeId
-                            updateIndexInUnitAttribute(DataService.tree.tokens);
-
-                            // add unitTreeId
-                            DataService.tree.tokens.forEach(function(token) {
-                                token['unitTreeId'] = "0";
-                            });
-                        }
+                        // else if (unit.tree_id === "0") { // Build tokens list to unit 0
+                        //     console.log("tree tokens=", DataService.tree.tokens)
+                        //
+                        //     DataService.serverData.tokens.forEach(function(token) {
+                        //         DataService.tree.tokens.push(_handler.copyTokenToStaticFormat(token));
+                        //     });
+                        //
+                        //     // unit.children_tokens.forEach(function(token){
+                        //     //     _handler.addTokenToList(_handler.copyTokenToStaticFormat(DataService.hashTables.tokensHashTable[token.id]), "0")
+                        //     // });
+                        //
+                        //     // Add attributes to tree.tokens: indexInUnit, unitTreeId
+                        //     updateIndexInUnitAttribute(DataService.tree.tokens);
+                        //
+                        //     // add unitTreeId
+                        //     DataService.tree.tokens.forEach(function(token) {
+                        //         token['unitTreeId'] = "0";
+                        //     });
+                        // }
                     });
+
+                    if (!DataService.tree.tokens.length) { // Builds a tokens list unit 0, if it does not exist
+                        DataService.serverData.tokens.forEach(function (token) {
+                            DataService.tree.tokens.push(_handler.copyTokenToStaticFormat(token));
+                        });
+                    }
+
+                    // Add attributes to tree.tokens: indexInUnit, unitTreeId
+                    updateIndexInUnitAttribute(DataService.tree.tokens);
+
+                    // add unitTreeId
+                    DataService.tree.tokens.forEach(function(token) {
+                        token['unitTreeId'] = "0";
+                    });
+
                     DataService.unitType = 'REGULAR';
                     // after init the tree, is it needed?
                     // DataService.sortAndUpdate();
@@ -458,9 +472,9 @@
                         //_handler mean we selected token and now we need to create new unit.
 
                         updateIndexInUnitAttribute(_handler.selectedTokenList);
-                        updatePositionInChildUnitAttribute(_handler.selectedTokenList);
-                        updateNextTokenNotAdjacent(_handler.selectedTokenList);
-                        updateLastTokenNotAdjacent(_handler.selectedTokenList);
+                        // updatePositionInChildUnitAttribute(_handler.selectedTokenList);
+                        // updateNextTokenNotAdjacent(_handler.selectedTokenList);
+                        // updateLastTokenNotAdjacent(_handler.selectedTokenList);
 
                         console.log("before create new ubnit, _handler.selectedTokenList=", _handler.selectedTokenList)
                         var newUnit = {
@@ -630,61 +644,61 @@
             })
         }
 
-        function updatePositionInChildUnitAttribute(selectedTokenList){
-            console.log("selectedTokenList=", selectedTokenList)
-            trace("selectionHandlerService - updatePositionInChildUnitAttribute");
-            selectedTokenList.forEach(function(token,index){
-                if(selectedTokenList.length === 1){
-                    token['positionInChildUnit'] = 'FirstAndLast';
-                }else if(index === 0){
-                    token['positionInChildUnit'] = 'First';
-                }else if(index === selectedTokenList.length-1){
-                    token['positionInChildUnit'] = 'Last';
-                }else{
-                    token['positionInChildUnit'] = 'Middle';
-                }
-            })
-        }
+        // function updatePositionInChildUnitAttribute(selectedTokenList){
+        //     console.log("selectedTokenList=", selectedTokenList)
+        //     trace("selectionHandlerService - updatePositionInChildUnitAttribute");
+        //     selectedTokenList.forEach(function(token,index){
+        //         if(selectedTokenList.length === 1){
+        //             token['positionInChildUnit'] = 'FirstAndLast';
+        //         }else if(index === 0){
+        //             token['positionInChildUnit'] = 'First';
+        //         }else if(index === selectedTokenList.length-1){
+        //             token['positionInChildUnit'] = 'Last';
+        //         }else{
+        //             token['positionInChildUnit'] = 'Middle';
+        //         }
+        //     })
+        // }
 
-        function updateNextTokenNotAdjacent(selectedTokenList){
-            trace("selectionHandlerService - updateNextTokenNotAdjacent");
-            selectedTokenList.forEach(function(token,index){
-                if(index === selectedTokenList.length-1 || token.indexInUnit + 1 === selectedTokenList[index+1].indexInUnit){
-                    token['nextTokenNotAdjacent'] = false;
-                }else if(token.indexInUnit + 1 !== selectedTokenList[index+1].indexInUnit){
-                    token['nextTokenNotAdjacent'] = true;
-                }
-            })
-        }
+        // function updateNextTokenNotAdjacent(selectedTokenList){
+        //     trace("selectionHandlerService - updateNextTokenNotAdjacent");
+        //     selectedTokenList.forEach(function(token,index){
+        //         if(index === selectedTokenList.length-1 || token.indexInUnit + 1 === selectedTokenList[index+1].indexInUnit){
+        //             token['nextTokenNotAdjacent'] = false;
+        //         }else if(token.indexInUnit + 1 !== selectedTokenList[index+1].indexInUnit){
+        //             token['nextTokenNotAdjacent'] = true;
+        //         }
+        //     })
+        // }
         
-        function updateLastTokenNotAdjacent(selectedTokenList){
-            trace("selectionHandlerService - updateLastTokenNotAdjacent");
-            selectedTokenList.forEach(function(token,index){
-                if(index === 0 || token.indexInUnit - 1 === selectedTokenList[index-1].indexInUnit){
-                    token['lastTokenNotAdjacent'] = false;
-                }else if(token.indexInUnit - 1 !== selectedTokenList[index-1].indexInUnit){
-                    token['lastTokenNotAdjacent'] = true;
-                }
-
-                if(token["positionInChildUnit"] === "First" && token['nextTokenNotAdjacent']){
-                    token['positionInChildUnit'] = 'FirstAndLast';
-                }
-                if(token["positionInChildUnit"] === "Last" && token['lastTokenNotAdjacent']){
-                    token['positionInChildUnit'] = 'FirstAndLast';
-                }
-                if(token["positionInChildUnit"] === "Middle" && token['lastTokenNotAdjacent'] && token['nextTokenNotAdjacent']){
-                    token['positionInChildUnit'] = 'FirstAndLast';
-                }
-                if(token["positionInChildUnit"] === "Middle" && token['lastTokenNotAdjacent']){
-                    token['positionInChildUnit'] = 'First';
-                }
-                if(token["positionInChildUnit"] === "Middle" && token['nextTokenNotAdjacent']){
-                    token['positionInChildUnit'] = 'Last';
-                }
-
-            })
-
-        }
+        // function updateLastTokenNotAdjacent(selectedTokenList){
+        //     trace("selectionHandlerService - updateLastTokenNotAdjacent");
+        //     selectedTokenList.forEach(function(token,index){
+        //         if(index === 0 || token.indexInUnit - 1 === selectedTokenList[index-1].indexInUnit){
+        //             token['lastTokenNotAdjacent'] = false;
+        //         }else if(token.indexInUnit - 1 !== selectedTokenList[index-1].indexInUnit){
+        //             token['lastTokenNotAdjacent'] = true;
+        //         }
+        //
+        //         if(token["positionInChildUnit"] === "First" && token['nextTokenNotAdjacent']){
+        //             token['positionInChildUnit'] = 'FirstAndLast';
+        //         }
+        //         if(token["positionInChildUnit"] === "Last" && token['lastTokenNotAdjacent']){
+        //             token['positionInChildUnit'] = 'FirstAndLast';
+        //         }
+        //         if(token["positionInChildUnit"] === "Middle" && token['lastTokenNotAdjacent'] && token['nextTokenNotAdjacent']){
+        //             token['positionInChildUnit'] = 'FirstAndLast';
+        //         }
+        //         if(token["positionInChildUnit"] === "Middle" && token['lastTokenNotAdjacent']){
+        //             token['positionInChildUnit'] = 'First';
+        //         }
+        //         if(token["positionInChildUnit"] === "Middle" && token['nextTokenNotAdjacent']){
+        //             token['positionInChildUnit'] = 'Last';
+        //         }
+        //
+        //     })
+        //
+        // }
 
         function sortSelectedTokenList(selectedTokenList){
             trace("selectionHandlerService - sortSelectedTokenList");

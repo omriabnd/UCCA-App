@@ -315,7 +315,8 @@
             }
         }
 
-        // // Make sure that the child unit is really a child of the current unit, and that this token is really in it.
+        // Old function
+        // Make sure that the child unit is really a child of the current unit, and that this token is really in it.
         // function checkInChildUnitTreeId(unit, token) {
         //     var inChildUnitTreeId = token.inChildUnitTreeId;
         //
@@ -340,12 +341,32 @@
         //     // }
         // }
 
+        function checkInChildUnitTreeId(unit, token) {
+            if (!token.inChildUnitTreeId) {
+                return;
+            }
+            // Check inChildUnitTreeId is a child of unit
+            var childUnit = undefined;
+            for (var i = 0; i < unit.AnnotationUnits.length; i++) {
+                if (token.inChildUnitTreeId === unit.AnnotationUnits[i].tree_id) {
+                    childUnit = unit.AnnotationUnits[i];
+                    break;
+                }
+            }
+            if (!childUnit) {
+                throw "There is no child unit with id " + token.inChildUnitTreeId;
+            }
+        }
+
         // Checking the tokens against the tokenMap
         function checkTokensAndTokenMap(unit) {
             // tokenMap - tokens object: {id: token, id: token, ...}
+            if (!unit.tokens.length) {
+                throw " There is no token list in unit " + unit.tree_id;
+            }
             var tokenMap_ids = Object.keys(unit.tokenMap);
             if (tokenMap_ids.length !== unit.tokens.length) {
-                throw "The lengths of tokens and tokenMap are not equals";
+                throw "222The lengths of tokens and tokenMap are not equals";
             }
             for (var i = 0; i < tokenMap_ids.length; i++) {
                 if (parseInt(tokenMap_ids[i]) !== unit.tokens[i].static.id) {
@@ -368,73 +389,72 @@
         }
 
         // verify that positionInChildUnit exist and the value is correct.
-        function checkPositionInChildUnit(positionInChildUnit, index, tokensLength, unit, token) {
-            console.log("check position---positionInChildUnit, index, tokensLength, unit, token=", positionInChildUnit, index, tokensLength, unit, token)
-            switch(positionInChildUnit) {
-                case 'First': {
-                    if (index !== 0) {
-                        throw "positionInChildUnit is 'First', but the token is not the first in tokens list, token is " + token.static.text + ", unit is " + unit.tree_id;
-                    }
-                    break;
-                }
-                case 'Middle': {
-                    if (index === 0) {
-                        throw "positionInChildUnit is 'Middle', but the token is the first in tokens list, token is " + token.static.text  + ", unit is " + unit.tree_id;
-                    } else if (index === tokensLength-1) {
-                        throw "positionInChildUnit is 'Middle', but the token is the last in tokens list, token is " + token.static.text  + ", unit is " + unit.tree_id;
-                    }
-                    break;
-                }
-                case 'Last': {
-                    if (index !== tokensLength-1) {
-                        throw "positionInChildUnit is 'Last', but the token is not the last in tokens list, token is " + token.static.text  + ", unit is " + unit.tree_id;
-                    }
-                    break;
-                }
-                case 'FirstAndLast': {
-                    if (tokensLength !== 1) {
-                        throw "positionInChildUnit is 'FirstAndLast', but the tokens list length is " + tokens.length; + ", , token is " + token.static.text + ", unit is " + unit.tree_id;
-                    }
-                    break;
-                }
-                default: {
-                    throw "positionInChildUnit value is not correct (" + positionInChildUnit + ").";
-                }
-            }
-        }
+        // function checkPositionInChildUnit(positionInChildUnit, index, tokensLength, unit, token) {
+        //     console.log("check position---positionInChildUnit, index, tokensLength, unit, token=", positionInChildUnit, index, tokensLength, unit, token)
+        //     switch(positionInChildUnit) {
+        //         case 'First': {
+        //             if (index !== 0) {
+        //                 throw "positionInChildUnit is 'First', but the token is not the first in tokens list, token is " + token.static.text + ", unit is " + unit.tree_id;
+        //             }
+        //             break;
+        //         }
+        //         case 'Middle': {
+        //             if (index === 0) {
+        //                 throw "positionInChildUnit is 'Middle', but the token is the first in tokens list, token is " + token.static.text  + ", unit is " + unit.tree_id;
+        //             } else if (index === tokensLength-1) {
+        //                 throw "positionInChildUnit is 'Middle', but the token is the last in tokens list, token is " + token.static.text  + ", unit is " + unit.tree_id;
+        //             }
+        //             break;
+        //         }
+        //         case 'Last': {
+        //             if (index !== tokensLength-1) {
+        //                 throw "positionInChildUnit is 'Last', but the token is not the last in tokens list, token is " + token.static.text  + ", unit is " + unit.tree_id;
+        //             }
+        //             break;
+        //         }
+        //         case 'FirstAndLast': {
+        //             if (tokensLength !== 1) {
+        //                 throw "positionInChildUnit is 'FirstAndLast', but the tokens list length is " + tokens.length; + ", , token is " + token.static.text + ", unit is " + unit.tree_id;
+        //             }
+        //             break;
+        //         }
+        //         default: {
+        //             throw "positionInChildUnit value is not correct (" + positionInChildUnit + ").";
+        //         }
+        //     }
+        // }
 
-        function checkPositionAndInChildUnit(token, unit) {
-            if (token.inChildUnitTreeId && !token.positionInChildUnit) {
-                throw "inChildUnitTreeId exist, but positionInChildUnit not, token="+ token.static.text;
-            }
-            if (!token.inChildUnitTreeId && token.positionInChildUnit) {
-                throw "positionInChildUnit exist, but inChildUnitTreeId not, token="+  token.static.text;
-            }
-            if (!token.inChildUnitTreeId && !token.positionInChildUnit) {
-                return
-            }
-
-            // Check inChildUnitTreeId is a child of unit
-            var childUnit = undefined;
-            for (var i = 0; i < unit.AnnotationUnits.length; i++) {
-                if (token.inChildUnitTreeId === unit.AnnotationUnits[i].tree_id) {
-                    childUnit = unit.AnnotationUnits[i];
-                    break;
-                }
-            }
-            if (!childUnit) {
-                throw "There is no child unit with id inChildUnitTreeId=" + token.inChildUnitTreeId;
-            }
-
-            console.log("**********childUnit=", childUnit)
-            for (var i = 0 ; i < childUnit.tokens.length; i++) {
-                if (childUnit.tokens[i].static.id === token.static.id) {
-                    console.log("childUnit.tokens[i].id === token.id", childUnit.tokens[i].static.id , token.static.id, "-----i=", i)
-                    checkPositionInChildUnit(token.positionInChildUnit, i, childUnit.tokens.length, unit, token);
-                    break;
-                }
-            }
-        }
+        // function checkPositionAndInChildUnit(token, unit) {
+        //     if (token.inChildUnitTreeId && !token.positionInChildUnit) {
+        //         throw "inChildUnitTreeId exist, but positionInChildUnit not, token="+ token.static.text;
+        //     }
+        //     if (!token.inChildUnitTreeId && token.positionInChildUnit) {
+        //         throw "positionInChildUnit exist, but inChildUnitTreeId not, token="+  token.static.text;
+        //     }
+        //     if (!token.inChildUnitTreeId && !token.positionInChildUnit) {
+        //         return
+        //     }
+        //
+        //     // Check inChildUnitTreeId is a child of unit
+        //     var childUnit = undefined;
+        //     for (var i = 0; i < unit.AnnotationUnits.length; i++) {
+        //         if (token.inChildUnitTreeId === unit.AnnotationUnits[i].tree_id) {
+        //             childUnit = unit.AnnotationUnits[i];
+        //             break;
+        //         }
+        //     }
+        //     if (!childUnit) {
+        //         throw "There is no child unit with id inChildUnitTreeId=" + token.inChildUnitTreeId;
+        //     }
+        //
+        //     console.log("**********childUnit=", childUnit)
+        //     for (var i = 0 ; i < childUnit.tokens.length; i++) {
+        //         if (childUnit.tokens[i].static.id === token.static.id) {
+        //             checkPositionInChildUnit(token.positionInChildUnit, i, childUnit.tokens.length, unit, token);
+        //             break;
+        //         }
+        //     }
+        // }
 
         function checkTokens(unit, treeTokens) {
             // Check tokens against tokenMap
@@ -446,13 +466,13 @@
             for (var t = 0; t < tokens.length; t++) {
 
                 /*** Check inChildUnitTreeId ***/
-                // checkInChildUnitTreeId(unit, tokens[t]);
+                checkInChildUnitTreeId(unit, tokens[t]);
 
                 /*** Check positionInChildUnit ***/
-                if (unit.tree_id!=="0") {
-                    checkPositionAndInChildUnit(tokens[t], unit);
-                    // checkPositionInChildUnit(tokens[t].positionInChildUnit, t, tokens.length);
-                }
+                // if (unit.tree_id!=="0") {
+                //     checkPositionAndInChildUnit(tokens[t], unit);
+                //     checkPositionInChildUnit(tokens[t].positionInChildUnit, t, tokens.length);
+                // }
 
                 /*** Check indexInUnit ***/
                 // should be the same as the index of the token inside the unit.tokens
@@ -592,7 +612,7 @@
                 checkAnnotationUnits(tree.AnnotationUnits);
 
                 // Check tokens fields (with static)
-                checkTokens(tree, tree.tokens); // TODO- comment it out
+                checkTokens(tree, tree.tokens);
 
                 // TODO- delete DataService.serverData, change tokens in DataService.tree to children_tokens, and then check tree.children_tokens (email, March 27)
                 // Check children tokens

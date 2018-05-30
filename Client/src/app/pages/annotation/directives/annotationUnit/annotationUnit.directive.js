@@ -303,9 +303,10 @@
                         })
 
                         // selectionHandlerService.updateIndexInUnitAttribute(unit.tokens); // Is it needed?
-                        selectionHandlerService.updatePositionInChildUnitAttribute(unit.tokens);
-                        selectionHandlerService.updateNextTokenNotAdjacent(unit.tokens);
-                        selectionHandlerService.updateLastTokenNotAdjacent(unit.tokens);
+
+                    //     selectionHandlerService.updatePositionInChildUnitAttribute(unit.tokens);
+                    //     selectionHandlerService.updateNextTokenNotAdjacent(unit.tokens);
+                    //     selectionHandlerService.updateLastTokenNotAdjacent(unit.tokens);
                     }
                     
 
@@ -359,7 +360,8 @@
                             }
                             
 
-                            switch(token.positionInChildUnit){
+                            var position = DataService.positionInUnit(unit, token);
+                            switch(position){
                                 case 'First': {
                                     console.log("Setting style of ", token);
                                     console.log("Which is the child of ", tokens[elementPosInThisUnit]);
