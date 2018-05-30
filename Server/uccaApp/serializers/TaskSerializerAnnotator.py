@@ -1,3 +1,7 @@
+import logging
+logger = logging.getLogger("ucca.api")
+
+
 from rest_framework.generics import get_object_or_404
 from rest_framework import serializers
 
@@ -69,6 +73,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         return tokens_json
 
     def get_annotation_units(self, obj):
+        logger.info("get_annotation_units accessed")
         # **********************************
         #           AS ARRAY
         # **********************************
