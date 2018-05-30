@@ -106,12 +106,12 @@
 
                         var requireAnnotation = isRequiredAnnotation(tokenText);
 
-                        var token = {static: {
+                        var token = {
                             start_index: startIndex,
                             end_index: endIndex,
                             text: tokenText,
                             require_annotation: requireAnnotation
-                        }};
+                        };
 
                         tokens.push(token);
                     }
