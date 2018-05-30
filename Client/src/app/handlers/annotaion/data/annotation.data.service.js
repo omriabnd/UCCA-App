@@ -690,6 +690,9 @@
                     // change to getChildTreeId
                     unit.AnnotationUnits[i].tree_id = (unit.tree_id === "0" ? (i+1).toString() : treeId+"-"+(i+1).toString());
 
+                    // update parent treeId
+                    unit.AnnotationUnits[i].parent_tree_id = DataService.getParentUnitId(unit.AnnotationUnits[i].tree_id);
+
                     // if the Id has changed, change the remote units references
                     if(oldId !== unit.AnnotationUnits[i].tree_id){
 
@@ -1230,7 +1233,7 @@
                     if (unit.tokens[i].indexInUnit === 0) {
                         return 'First';
                     }
-                    if (unit.tokens[i].indexInUnit === unit.tokens.length) {
+                    if (unit.tokens[i].indexInUnit === unit.tokens.length-1) {
                         return 'Last';
                     }
                     return 'Middle';
