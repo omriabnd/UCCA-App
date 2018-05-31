@@ -492,7 +492,6 @@
 
                 if (!inInitStage) { // After add unit- send to sortAndUpdate. (add unit, no in tree initializing)
                     // Removed code - The is sorUndUpdate in selectionHandler service in the end of initTree.
-                    debugger
                     sortAndUpdate(true); // This is needed when adding a unit whose location is before existing units
                 }
 
