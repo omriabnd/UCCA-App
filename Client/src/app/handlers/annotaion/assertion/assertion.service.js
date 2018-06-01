@@ -83,7 +83,6 @@
             correctFormat(parentTreeId, 'Parent tree id');
 
             if (!validPrefix(parentTreeId, treeId)) {
-                debugger
                 throw "Parent tree id (" + parentTreeId + ") is not a prefix of tree id (" + treeId + ")";
             }
 
