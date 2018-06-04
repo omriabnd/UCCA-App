@@ -304,7 +304,7 @@
                         console.log(unit);
                         
                         if(unit !== null && unit.tree_id !== "0"){
-	                        if(!!oldUnit && (!oldUnit.parentUnitId || oldUnit.parentUnitId === "0")){
+	                        if(!!oldUnit && (!oldUnit.parent_tree_id || oldUnit.parent_tree_id === "0")){
 	                        	oldUnit.gui_status = "HIDDEN";
 	                        }
 	                        unit.gui_status = "OPEN";
