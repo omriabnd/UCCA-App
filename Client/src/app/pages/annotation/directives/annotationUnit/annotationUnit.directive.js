@@ -51,7 +51,6 @@
             vm.dataBlock = DataService.getUnitById(vm.unit.tree_id);
 
             vm.dataBlock['cursorLocation'] = 0;
-            vm.dataBlock.parentUnitId = DataService.getParentUnitId(vm.dataBlock.tree_id);
             vm.dataBlock.tree_id !== "0" ? updateStartEndIndexForTokens(vm.dataBlock.tokens) : '';
 
             vm.dataBlock.categoriesTooltip = categoriesTooltip(vm);

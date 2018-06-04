@@ -1202,25 +1202,49 @@
         }
 
         /**
+         * OLD FUNCTION
          * Get parent unit id
          * @param unitId - unit id, which we search his parent
          * @returns {*} - parent unit id
          */
-        function getParentUnitId(unitId){
+        // function getParentUnitId(unitId){
+        //     trace("DataService - getParentUnitId");
+        //     if(unitId === null){
+        //         return null;
+        //     }
+        //     unitId = unitId.toString();
+        //     if(unitId.length == 1){
+        //         if(unitId =="0"){
+        //             return null;
+        //         }
+        //         return "0";
+        //     }
+        //     var parentUnitId = unitId.split('-');
+        //     parentUnitId = parentUnitId.slice(0,length-1).join('-');
+        //     return parentUnitId.toString()
+        // }
+
+        /**
+         * Get parent unit id
+         * @param unitId - unit id, which we search his parent
+         * @returns {*} - parent unit id
+         */
+        function getParentUnitId(unitId) {
             trace("DataService - getParentUnitId");
             if(unitId === null){
                 return null;
             }
-            unitId = unitId.toString();
-            if(unitId.length == 1){
-                if(unitId =="0"){
+            var isNum = /^\d+$/.test(unitId);
+            if (isNum) {
+                 if(unitId === "0"){
                     return null;
                 }
+                // If unitId is first sub unit of the tree root, parentTreeId should be '0', like '1', '2', their parent is '0'
                 return "0";
             }
-            var parentUnitId = unitId.split('-');
-            parentUnitId = parentUnitId.slice(0,length-1).join('-');
-            return parentUnitId.toString()
+            var index = unitId.lastIndexOf("-");
+            var parent = unitId.slice(0, index);
+            return parent;
         }
 
         function positionInUnit(unit, token) {
