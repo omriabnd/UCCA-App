@@ -2,6 +2,7 @@
 <div class="directive-container" ng-class="{'remote-unit':vm.dataBlock.unitType == 'REMOTE' || vm.dataBlock.unitType == 'IMPLICIT','selected-unit': dirCtrl.treeId == '0' || vm.unitIsSelected(vm)}" id="unit-{{dirCtrl.treeId}}" ng-mousedown="vm.toggleMouseUpDown($event)" ng-mouseup="vm.toggleMouseUp($event)" ng-click="vm.unitClicked(vm,dirCtrl.treeId,$event)" title="{{vm.dataBlock.categoriesTooltip}}">
     <div ng-show="vm.dataBlock.tree_id !== '0' && vm.dataBlock.AnnotationUnits.length " class="expand-btn" ng-click="vm.toggleAnnotationUnitView(vm);" ng-if="vm.dataBlock.unitType === 'REGULAR'">
 
+    <!--TODO    <pre>{{ vm.dataBlock.gui_status }}</pre>-->
         <i ng-class="{'minus-round':vm.dataBlock.gui_status=='OPEN',
             'plus-round':vm.dataBlock.gui_status=='COLLAPSE'}"
         >

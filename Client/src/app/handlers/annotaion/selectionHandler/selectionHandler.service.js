@@ -33,6 +33,7 @@
             // updatePositionInChildUnitAttribute:updatePositionInChildUnitAttribute,
             // updateNextTokenNotAdjacent:updateNextTokenNotAdjacent,
             // updateLastTokenNotAdjacent:updateLastTokenNotAdjacent,
+            updateTokenBorders:updateTokenBorders,
             getTreeLastId:getTreeLastId,
             getSelectedTokenList: function(){
                 trace("selectionHandlerService - getSelectedTokenList");
@@ -456,6 +457,27 @@
                 })
             },
 
+            /***
+               When copying to the child unit we delete leftBorder and rightBorder properties
+               as there are no borders in the child unit. However, we still need to know whether to show an ellipsis.
+               Ellipses are shown at discontinuities, which are right before leftBorder is true (except for before
+               the first token in the unit).
+             */
+            copyTokensToSubUnit: function(selectedTokenList) {
+                var tokens = angular.copy(selectedTokenList);
+                if(tokens !== undefined){
+                    tokens.forEach(function(token, index){
+                        // If token has rightBorder, and not the last token
+                        if (token.rightBorder && index !== tokens.length-1) {
+                            token.showEllipsis = true;
+                        }
+                        delete token.leftBorder;
+                        delete token.rightBorder;
+                    })
+                }
+                return tokens;
+            },
+
             toggleCategory: function(category,justToggle,remote,unit,inInitStage){
                 // debugger
                 /**
@@ -476,9 +498,12 @@
                         // updateNextTokenNotAdjacent(_handler.selectedTokenList);
                         // updateLastTokenNotAdjacent(_handler.selectedTokenList);
 
-                        console.log("before create new ubnit, _handler.selectedTokenList=", _handler.selectedTokenList)
+                        console.log("updateBOrders-------------_handler.selectedTokenList")
+                        updateTokenBorders(_handler.selectedTokenList);
+
+                        console.log("before create new unit, _handler.selectedTokenList=", _handler.selectedTokenList)
                         var newUnit = {
-                            tokens : angular.copy(_handler.selectedTokenList),
+                            tokens : _handler.copyTokensToSubUnit(_handler.selectedTokenList), //angular.copy(_handler.selectedTokenList), // TODO: Move to function - copyTokensToChildUnit
                             categories:[],
                             gui_status:unit ? unit.gui_status : "OPEN",
                             comment: unit ? unit.comment : '',
@@ -488,6 +513,8 @@
                             is_remote_copy: unit && unit.is_remote_copy ? unit.is_remote_copy : false,
                             cloned_from_tree_id: unit && unit.cloned_from_tree_id ? unit.cloned_from_tree_id : null
                         };
+
+
 
 
                         if(remote){
@@ -660,45 +687,82 @@
         //     })
         // }
 
-        // function updateNextTokenNotAdjacent(selectedTokenList){
-        //     trace("selectionHandlerService - updateNextTokenNotAdjacent");
-        //     selectedTokenList.forEach(function(token,index){
-        //         if(index === selectedTokenList.length-1 || token.indexInUnit + 1 === selectedTokenList[index+1].indexInUnit){
-        //             token['nextTokenNotAdjacent'] = false;
-        //         }else if(token.indexInUnit + 1 !== selectedTokenList[index+1].indexInUnit){
-        //             token['nextTokenNotAdjacent'] = true;
-        //         }
-        //     })
-        // }
+        function updateTokenBorders(selectedTokenList) {
+            // Each token has three properties regarding borders:
+            //    leftBorder indicates whether we need to add a left border to the token. This is true if the token
+            //    is the first in the unit, or is first after a discontinuity.
+            //
+            //    rightBorder indiicates whether we need to add a right border to the token. This is true if the token
+            //    is the last in the unit, or last before a discontinuity.
+            //
+            //    This all applies to tokens in the parent unit. When copying to the child unit we delete these properties
+            //    as there are no borders in the child unit. However, we still need to know whether to show an ellipsis.
+            //    Ellipses are shown at discontinuities, which are right before leftBorder is true (except for before
+            //    the first token in the unit). We handle that in a different place in the code.
+            //
+            //    TODO: Add all this explanation to a suitable document.
+
+            trace("selectionHandlerService - updateTokenBorders");
+            var numTokens = selectedTokenList.length;
+
+            selectedTokenList[0].leftBorder = true;
+
+            for(var index=0; index < numTokens-1; index++) {
+                // Compare selectedTokenList[index] to selectedTokenList[index+1]
+                var first = selectedTokenList[index];
+                var second = selectedTokenList[index+1];
+                if (first.static.id + 1 === second.static.id) {
+                // if (first.indexInUnit + 1 === second.indexInUnit) {
+                    first.rightBorder = second.leftBorder = false;
+                } else {
+                    first.rightBorder = second.leftBorder = true;
+                }
+            }
+
+            selectedTokenList[selectedTokenList.length - 1].rightBorder = true;
+        }
+
+        /*
+        function updateNextTokenNotAdjacent(selectedTokenList){
+            trace("selectionHandlerService - updateNextTokenNotAdjacent");
+            selectedTokenList.forEach(function(token,index){
+                if(index === selectedTokenList.length-1 || token.indexInUnit + 1 === selectedTokenList[index+1].indexInUnit){
+                    token['nextTokenNotAdjacent'] = false;
+                }else if(token.indexInUnit + 1 !== selectedTokenList[index+1].indexInUnit){
+                    token['nextTokenNotAdjacent'] = true;
+                }
+            })
+        }
         
-        // function updateLastTokenNotAdjacent(selectedTokenList){
-        //     trace("selectionHandlerService - updateLastTokenNotAdjacent");
-        //     selectedTokenList.forEach(function(token,index){
-        //         if(index === 0 || token.indexInUnit - 1 === selectedTokenList[index-1].indexInUnit){
-        //             token['lastTokenNotAdjacent'] = false;
-        //         }else if(token.indexInUnit - 1 !== selectedTokenList[index-1].indexInUnit){
-        //             token['lastTokenNotAdjacent'] = true;
-        //         }
-        //
-        //         if(token["positionInChildUnit"] === "First" && token['nextTokenNotAdjacent']){
-        //             token['positionInChildUnit'] = 'FirstAndLast';
-        //         }
-        //         if(token["positionInChildUnit"] === "Last" && token['lastTokenNotAdjacent']){
-        //             token['positionInChildUnit'] = 'FirstAndLast';
-        //         }
-        //         if(token["positionInChildUnit"] === "Middle" && token['lastTokenNotAdjacent'] && token['nextTokenNotAdjacent']){
-        //             token['positionInChildUnit'] = 'FirstAndLast';
-        //         }
-        //         if(token["positionInChildUnit"] === "Middle" && token['lastTokenNotAdjacent']){
-        //             token['positionInChildUnit'] = 'First';
-        //         }
-        //         if(token["positionInChildUnit"] === "Middle" && token['nextTokenNotAdjacent']){
-        //             token['positionInChildUnit'] = 'Last';
-        //         }
-        //
-        //     })
-        //
-        // }
+        function updateLastTokenNotAdjacent(selectedTokenList){
+            trace("selectionHandlerService - updateLastTokenNotAdjacent");
+            selectedTokenList.forEach(function(token,index){
+                if(index === 0 || token.indexInUnit - 1 === selectedTokenList[index-1].indexInUnit){
+                    token['lastTokenNotAdjacent'] = false;
+                }else if(token.indexInUnit - 1 !== selectedTokenList[index-1].indexInUnit){
+                    token['lastTokenNotAdjacent'] = true;
+                }
+
+                // TODO: What about this in DataService.positionInUnit function?
+                // if(token["positionInChildUnit"] === "First" && token['nextTokenNotAdjacent']){
+                //     token['positionInChildUnit'] = 'FirstAndLast';
+                // }
+                // if(token["positionInChildUnit"] === "Last" && token['lastTokenNotAdjacent']){
+                //     token['positionInChildUnit'] = 'FirstAndLast';
+                // }
+                // if(token["positionInChildUnit"] === "Middle" && token['lastTokenNotAdjacent'] && token['nextTokenNotAdjacent']){
+                //     token['positionInChildUnit'] = 'FirstAndLast';
+                // }
+                // if(token["positionInChildUnit"] === "Middle" && token['lastTokenNotAdjacent']){
+                //     token['positionInChildUnit'] = 'First';
+                // }
+                // if(token["positionInChildUnit"] === "Middle" && token['nextTokenNotAdjacent']){
+                //     token['positionInChildUnit'] = 'Last';
+                // }
+
+            })
+
+        } */
 
         function sortSelectedTokenList(selectedTokenList){
             trace("selectionHandlerService - sortSelectedTokenList");

@@ -367,9 +367,6 @@
                     });
                 }
 
-
-                // todo- here is the insertion of the old unit into the new unit (sub unit)
-                // todo -- update the id and parent tree id of the new unit
                 //Adding children to new unit
                 if (units.length > 1) {
 
@@ -418,7 +415,6 @@
 
 
                 //Update indexInUnit attribute
-                // debugger;
                 newObject.tokens.forEach(function (token, index, inInit) {
                     token.indexInUnit = index;
                 });
@@ -614,7 +610,6 @@
                 DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
 
                 // Check tree in AssertionService after delete unit
-                // debugger
                 AssertionService.checkTree(DataService.tree, DataService.serverData);
 
                 return resolve('DeleteSuccess');
@@ -1248,6 +1243,57 @@
         }
 
         function positionInUnit(unit, token) {
+            var position = undefined;
+            if (unit.tokens[0].static.id === token.static.id) {
+                position = 'First';
+                if (unit.tokens.length === 1) {
+                    position = 'FirstAndLast';
+                }
+            } else if (unit.tokens[unit.tokens.length - 1].static.id === token.static.id) {
+                position = 'Last'; // We already know it's not the first one
+            } else {
+                position = 'Middle';
+            }
+
+            // Sanity check - make sure the token is really in the unit
+            if (position === 'Middle') { // If it's First, Last or FirstAndLast we've already made sure of this
+                var found = false;
+                for (var i = 1; i < unit.tokens.length - 1; i++) {
+                    if (unit.tokens[i].static.id === token.static.id) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    throw "The token " + token.static.text + " isn't exist in unit.tokens";
+                }
+            }
+
+            return position;
+        }
+
+/*                    if (position === "First" && token['nextTokenNotAdjacent']) {
+                        position = 'FirstAndLast';
+                    }
+                    if (position === "Last" && token['lastTokenNotAdjacent']) {
+                        position = 'FirstAndLast';
+                    }
+                    if (position === "Middle" && token['lastTokenNotAdjacent'] && token['nextTokenNotAdjacent']) {
+                        position = 'FirstAndLast';
+                    }
+                    if (position === "Middle" && token['lastTokenNotAdjacent']) {
+                        position = 'First';
+                    }
+                    if (position === "Middle" && token['nextTokenNotAdjacent']) {
+                        position = 'Last';
+                    }
+                    return position;
+                }
+            }
+        } */
+
+
+        /*function positionInUnit(unit, token) {
             for (var i = 0; i < unit.tokens.length; i++) {
                 if (unit.tokens[i].static.id === token.static.id) {
                     if (unit.tokens.length === 1) {
@@ -1263,7 +1309,7 @@
                 }
             }
             throw "The token " + token.static.text + " isn't exist in unit.tokens";
-        }
+        }*/
     }
 
 })();

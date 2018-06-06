@@ -303,11 +303,16 @@
 
                         // selectionHandlerService.updateIndexInUnitAttribute(unit.tokens); // Is it needed?
 
-                    //     selectionHandlerService.updatePositionInChildUnitAttribute(unit.tokens);
-                    //     selectionHandlerService.updateNextTokenNotAdjacent(unit.tokens);
-                    //     selectionHandlerService.updateLastTokenNotAdjacent(unit.tokens);
+                        // selectionHandlerService.updatePositionInChildUnitAttribute(unit.tokens);
+                        // selectionHandlerService.updateNextTokenNotAdjacent(unit.tokens);
+                        // selectionHandlerService.updateLastTokenNotAdjacent(unit.tokens);
+
+                        // selectionHandlerService.updateTokenBorders(unit.tokens);
                     }
-                    
+
+                    debugger
+                    console.log("updateBorders----------------unit.tokens")
+                    selectionHandlerService.updateTokenBorders(unit.tokens);
 
                     unit.tokens.forEach(function(token){
                       	var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
@@ -317,71 +322,94 @@
 
                         // token.indexInUnit = elementPosInThisUnit;
 
-                        if(elementPos !== -1 && elementPosInThisUnit !== -1){
-                            if(unit.categories.length === 1 && unit.categories[0] === undefined || unit.categories.length === 0){
+                        if(elementPos !== -1 && elementPosInThisUnit !== -1) {
+                            if (unit.categories.length === 1 && unit.categories[0] === undefined || unit.categories.length === 0) {
                                 unit.categories[0] = {
-                                    id:-1,
+                                    id: -1,
                                     backgroundColor: 'gray'
                                 }
                             }
                             childUnitTokens[elementPos].backgroundColor = unit.categories[0] ? unit.categories[0].backgroundColor : "transparent";
-                            
-                            if(unit.categories[0].fromParentLayer && !unit.categories[0].refinedCategory){
 
-                            	var relevant = false;
-                            	unit.AnnotationUnits.forEach(function(childUnit){
-                            		paintTokens(childUnit.tokens, childUnit);
-                            		if(!childUnit.categories[0].fromParentLayer || childUnit.categories[0].refinedCategory){
-                            			relevant = true;
-                            		}
-                            	})
-                            	if(!relevant){
-                            		unit.categories[0].backgroundColor = "gray";
-                                	unit.gui_status = "HIDDEN";
-                            	}else{
+                            if (unit.categories[0].fromParentLayer && !unit.categories[0].refinedCategory) {
+
+                                var relevant = false;
+                                unit.AnnotationUnits.forEach(function (childUnit) {
+                                    paintTokens(childUnit.tokens, childUnit);
+                                    if (!childUnit.categories[0].fromParentLayer || childUnit.categories[0].refinedCategory) {
+                                        relevant = true;
+                                    }
+                                })
+                                if (!relevant) {
+                                    unit.categories[0].backgroundColor = "gray";
+                                    unit.gui_status = "HIDDEN";
+                                } else {
 //                            		unit.gui_status = "OPEN";
-                            	}
+                                }
 //                            }else if(unit.categories.some(function(category){return category.refinementCategory})){
 //                             	unit.gui_status = "HIDDEN";
-                        	}else{
+                            } else {
 //                        		unit.gui_status = "OPEN";
-                        	}
-                            
-                            if(unit.categories.length === 1 && unit.categories[0].id === -1){
+                            }
+
+                            if (unit.categories.length === 1 && unit.categories[0].id === -1) {
                                 tokens[elementPosInThisUnit].borderStyle = "transparent";
                             }
 
-                            if(unit.categories.length > 1){
-                                var elementPos = unit.categories.map(function(x) {return x.id; }).indexOf(-1);
-                                if(elementPos > -1){
-                                    unit.categories.splice(unit.categories,1);
+                            if (unit.categories.length > 1) {
+                                var elementPos = unit.categories.map(function (x) {
+                                    return x.id;
+                                }).indexOf(-1);
+                                if (elementPos > -1) {
+                                    unit.categories.splice(unit.categories, 1);
                                 }
                             }
-                            
 
-                            var position = DataService.positionInUnit(unit, token);
-                            switch(position){
-                                case 'First': {
+
+                            // TODO: Check if token is in a child-unit and only apply borders then.
+                            // Apply borders based on borderLeft and borderRight
+                            // var position = DataService.positionInUnit(unit, token);
+                            // switch(position){
+                            //     case 'First': {  // if borderLeft 2
+                            //         console.log("Setting style of ", token);
+                            //         console.log("Which is the child of ", tokens[elementPosInThisUnit]);
+                            //         tokens[elementPosInThisUnit].borderStyle = borderForFirstToken(childUnitTokens[elementPos],unit.categories);
+                            //         console.log(tokens[elementPosInThisUnit])
+                            //         break;
+                            //     }
+                            //     case 'FirstAndLast':{ // if borderLEft && borderRight 1
+                            //         tokens[elementPosInThisUnit].borderStyle = borderForFirstAndLastToken(unit.categories);
+                            //         break;
+                            //     }
+                            //     case 'Last': {  // if borderRight 3
+                            //         tokens[elementPosInThisUnit].borderStyle = borderForLastToken(childUnitTokens[elementPos],unit.categories);
+                            //         break;
+                            //     }
+                            //     case 'Middle': { // else 4
+                            //         tokens[elementPosInThisUnit].borderStyle = borderForMiddleToken(childUnitTokens[elementPos],unit.categories);
+                            //         break;
+                            //     }
+                            // }
+
+
+                            debugger
+                            // if (token.inChildUnitTreeId) {
+                                if (token.leftBorder && token.rightBorder) {
+                                    tokens[elementPosInThisUnit].borderStyle = borderForFirstAndLastToken(unit.categories);
+                                }
+                                else if (token.leftBorder) {
                                     console.log("Setting style of ", token);
                                     console.log("Which is the child of ", tokens[elementPosInThisUnit]);
-                                    tokens[elementPosInThisUnit].borderStyle = borderForFirstToken(childUnitTokens[elementPos],unit.categories);
+                                    tokens[elementPosInThisUnit].borderStyle = borderForFirstToken(childUnitTokens[elementPos], unit.categories);
                                     console.log(tokens[elementPosInThisUnit])
-                                    break;
                                 }
-                                case 'FirstAndLast':{
-                                    tokens[elementPosInThisUnit].borderStyle = borderForFirstAndLastToken(unit.categories);
-                                    break;
+                                else if (token.rightBorder) {
+                                    tokens[elementPosInThisUnit].borderStyle = borderForLastToken(childUnitTokens[elementPos], unit.categories);
                                 }
-                                case 'Last': {
-                                    tokens[elementPosInThisUnit].borderStyle = borderForLastToken(childUnitTokens[elementPos],unit.categories);
-                                    break;
+                                else {
+                                    tokens[elementPosInThisUnit].borderStyle = borderForMiddleToken(childUnitTokens[elementPos], unit.categories);
                                 }
-                                case 'Middle': {
-                                    tokens[elementPosInThisUnit].borderStyle = borderForMiddleToken(childUnitTokens[elementPos],unit.categories);
-                                    break;
-                                }
-                            }
-
+                            // }
                         }
                     })
                 }
@@ -414,6 +442,7 @@
         }
 
         function borderForFirstToken(token,categories){
+            debugger
             console.log("borderForFirstToken ", token, categories);
             trace("annotationUnitDirective - borderForFirstToken");
             var actualCategories = categories.filter(function(category){
@@ -454,11 +483,11 @@
                 }
             }
 
-            if(token.lastTokenNotAdjacent && token.nextTokenNotAdjacent){
+            if(token.rightBorder && token.leftBorder){
                 return "border : 3px solid "+token.backgroundColor+";";
-            }else if(token.lastTokenNotAdjacent){
+            }else if(token.rightBorder){
                 return "border-top : 3px solid "+token.backgroundColor+"; border-bottom : 3px solid "+token.backgroundColor+"; border-left : 3px solid "+token.backgroundColor+";"
-            }else if(token.nextTokenNotAdjacent){
+            }else if(token.leftBorder){
                 return "border-top : 3px solid "+token.backgroundColor+";  border-bottom : 3px solid "+token.backgroundColor+"; border-right : 3px solid "+token.backgroundColor+";"
             }
             return "border-top : 3px solid "+token.backgroundColor+"; border-bottom : 3px solid "+token.backgroundColor+";";
