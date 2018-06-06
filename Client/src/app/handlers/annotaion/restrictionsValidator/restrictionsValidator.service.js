@@ -839,13 +839,14 @@
         }
         
         function scrollToViolationUnit(selectionHandlerServiceProvider,violationUnit){
-            
-            if(violationUnit.parentId === undefined){
-               violationUnit.parentId = violationUnit.tree_id;
+
+            if (!violationUnit.parentId){
+               violationUnit.parentId = violationUnit.unitTreeId; // tree_id
             }
-            
+
+            // In the past- scroll had done to violationUnit.parentId
             selectionHandlerServiceProvider.updateSelectedUnit(violationUnit.parentId);
-            
+
             Core.scrollToUnit(violationUnit.parentId);
         }
     }

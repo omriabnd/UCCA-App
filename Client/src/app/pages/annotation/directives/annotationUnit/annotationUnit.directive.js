@@ -531,7 +531,7 @@
             var hashTables = DataService.hashTables;
             var isUnitValidated = restrictionsValidatorService.checkRestrictionsOnFinish(unitToValidate,parentUnit,hashTables);
             if(isUnitValidated){
-                selectionHandlerService.updateSelectedUnit(parentUnit.tree_id);
+                selectionHandlerService.updateSelectedUnit(unit_id); // In the past- scroll had done to parentUnit.tree_id
                 if(parentUnit.tree_id === "0"){
                     unitToValidate.gui_status = 'HIDDEN';
                 }else{
@@ -540,7 +540,8 @@
 
                 subTreeToCollapse(unitToValidate);
 
-                Core.scrollToUnit(parentUnit.tree_id);
+                Core.scrollToUnit(unit_id);  // In the past- scroll had done to parentUnit.tree_id
+                // Core.scrollToUnit(parentUnit.tree_id);
 //                Core.showNotification('success','Annotation unit ' + unitToValidate.tree_id + ' has finished successfully' )
             }
 
