@@ -310,7 +310,6 @@
                         // selectionHandlerService.updateTokenBorders(unit.tokens);
                     }
 
-                    debugger
                     console.log("updateBorders----------------unit.tokens")
                     selectionHandlerService.updateTokenBorders(unit.tokens);
 
@@ -392,26 +391,24 @@
                             // }
 
 
-                            debugger
-                            // if (token.inChildUnitTreeId) {
-                                if (token.leftBorder && token.rightBorder) {
-                                    tokens[elementPosInThisUnit].borderStyle = borderForFirstAndLastToken(unit.categories);
+                            // debugger
+                            var parentToken = tokens[elementPosInThisUnit];
+                            if (parentToken.inChildUnitTreeId) {
+                                if (parentToken.leftBorder && parentToken.rightBorder) {
+                                    parentToken.borderStyle = borderForFirstAndLastToken(unit.categories);
                                 }
-                                else if (token.leftBorder) {
-                                    console.log("Setting style of ", token);
-                                    console.log("Which is the child of ", tokens[elementPosInThisUnit]);
-                                    tokens[elementPosInThisUnit].borderStyle = borderForFirstToken(childUnitTokens[elementPos], unit.categories);
-                                    console.log(tokens[elementPosInThisUnit])
+                                else if (parentToken.leftBorder) {
+                                    parentToken.borderStyle = borderForFirstToken(childUnitTokens[elementPos], unit.categories);
                                 }
-                                else if (token.rightBorder) {
-                                    tokens[elementPosInThisUnit].borderStyle = borderForLastToken(childUnitTokens[elementPos], unit.categories);
+                                else if (parentToken.rightBorder) {
+                                   parentToken.borderStyle = borderForLastToken(childUnitTokens[elementPos], unit.categories);
                                 }
                                 else {
-                                    tokens[elementPosInThisUnit].borderStyle = borderForMiddleToken(childUnitTokens[elementPos], unit.categories);
+                                    parentToken.borderStyle = borderForMiddleToken(childUnitTokens[elementPos], unit.categories);
                                 }
-                            // }
+                            }
                         }
-                    })
+                    });
                 }
 
             });
@@ -442,7 +439,6 @@
         }
 
         function borderForFirstToken(token,categories){
-            debugger
             console.log("borderForFirstToken ", token, categories);
             trace("annotationUnitDirective - borderForFirstToken");
             var actualCategories = categories.filter(function(category){
