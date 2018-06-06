@@ -35,7 +35,7 @@
   }
 
 
-  annotation-units{
+  annotation-unit{
     .token.clicked{
       color: white;
       background-color: #337ab7;
@@ -139,7 +139,7 @@
 
 
 
-  annotation-units.has-elements.unit-collapse {
+  annotation-unit.has-elements.unit-collapse {
     height: 0;
     overflow: hidden;
     animation: .3s all linear;
