@@ -535,9 +535,9 @@
                         return DataService.insertToTree(newUnit,_handler.selectedUnit,inInitStage).then(function(res){
                             if(res.status === "InsertSuccess"){
 
-                                _handler.updateSelectedUnit(res.id,true);
-                                
-                                Core.scrollToUnit(res.id);
+                                // Remove focus from new unit -- Cancel change focus to newly created unit
+                                // _handler.updateSelectedUnit(res.id,true);
+                                // Core.scrollToUnit(res.id);
                                 
                                 // _handler.clearTokenList();
                                 return resolve({id: res.id});
@@ -711,8 +711,8 @@
                 // Compare selectedTokenList[index] to selectedTokenList[index+1]
                 var first = selectedTokenList[index];
                 var second = selectedTokenList[index+1];
-                if (first.static.id + 1 === second.static.id) {
-                // if (first.indexInUnit + 1 === second.indexInUnit) {
+                // if (first.static.id + 1 === second.static.id) {
+                if (first.indexInUnit + 1 === second.indexInUnit) {
                     first.rightBorder = second.leftBorder = false;
                 } else {
                     first.rightBorder = second.leftBorder = true;
