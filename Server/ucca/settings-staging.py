@@ -28,7 +28,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Place for log files. This is a sensible default, you can hard code the actual directory if you want, as this is a
 # settings file
 # Also, make sure the directory actually exists with the proper permissions - pr_ucca should have write permissions.
-LOG_DIR = os.path.join(BASE_DIR, 'logs')  # Make sure this is the right folder, hard-code the right log folder if not
+LOG_DIR = '/cs/labs/oabend/webserver/ucca-zigit/staging/Server/logs'
+#os.path.join(BASE_DIR, 'logs')  # Make sure this is the right folder, hard-code the right log folder if not
 
 LOGGING = {
     'version': 1,
@@ -49,7 +50,7 @@ LOGGING = {
             'formatter': 'verbose',
         },
         'api_log': {
-            'level': 'ERROR',
+            'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': os.path.join(LOG_DIR, 'api.log'),
             'formatter': 'verbose',
@@ -57,7 +58,7 @@ LOGGING = {
     },
     'loggers': {
         'ucca.api': {
-            'handlers': ['api_log', 'console'],
+            'handlers': ['api_log'],
             'level': 'DEBUG',
             'propagate': True,
         },
@@ -67,4 +68,5 @@ LOGGING = {
         },
     }
 }
+
 
