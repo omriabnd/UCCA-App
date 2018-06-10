@@ -286,8 +286,150 @@
             });
         }
 
-        function paintTokens(tokens, dataBlock, afterDelete){
+        function getUnitBorderColors(categories) {
+            trace("annotationUnitDirective - getUnitBorderColors");
+            // if (!categories) {
+            //     // debugger
+            //     return
+            // }
+            // Return dict according categories list
+            var actualCategories = categories.filter(function(category){
+                return category.id !== undefined;
+            });
+            var unitBorderColors = {
+                top: 'none',
+                bottom: 'none',
+                left: 'none',
+                right: 'none',
+            };
+            switch(actualCategories.length){
+                case 0:{
+                    return unitBorderColors;
+                }
+                case 1:{
+                    unitBorderColors = {
+                        top: actualCategories[0].backgroundColor,
+                        bottom: actualCategories[0].backgroundColor,
+                        left: actualCategories[0].backgroundColor,
+                        right: actualCategories[0].backgroundColor
+                    };
+                    return unitBorderColors;
+                }
+                case 2:{
+                    unitBorderColors = {
+                        top: actualCategories[0].backgroundColor,
+                        bottom: actualCategories[0].backgroundColor,
+                        left: actualCategories[1].backgroundColor,
+                        right: actualCategories[1].backgroundColor
+                    };
+                    return unitBorderColors;
+                }
+                case 3:{
+                    unitBorderColors = {
+                        top: actualCategories[0].backgroundColor,
+                        bottom: actualCategories[1].backgroundColor,
+                        left: actualCategories[2].backgroundColor,
+                        right: actualCategories[2].backgroundColor
+                    };
+                    return unitBorderColors;
+                }
+                default:{
+                    unitBorderColors = {
+                        top: actualCategories[0].backgroundColor,
+                        bottom: actualCategories[1].backgroundColor,
+                        left: actualCategories[2].backgroundColor,
+                        right: actualCategories[3].backgroundColor
+                    };
+                    return unitBorderColors;
+                }
+            }
+        }
+
+        function removeLeftRightBorders(borderColors, rightBorder, leftBorder) {
+            trace("annotationUnitDirective - removeLeftRightBorders");
+            if (!rightBorder) {
+                delete borderColors.right;
+            }
+            if (!leftBorder) {
+                delete borderColors.left;
+            }
+            return borderColors;
+        }
+
+        function borderTokens(borderColors) {
+            trace("annotationUnitDirective - borderTokens");
+            if (borderColors.left && borderColors.right) {
+                return "border-top : 3px solid "+ borderColors.top +"; border-bottom : 3px solid "+ borderColors.bottom +"; border-left : 3px solid " +
+                    borderColors.left + ";border-right : 3px solid "+ borderColors.right + "; margin-left: 3px;";
+            }
+            if (!borderColors.left && !borderColors.right) {
+                return "border-top : 3px solid "+ borderColors.top +"; border-bottom : 3px solid "+ borderColors.bottom;
+            }
+            if (!borderColors.left) {
+                return "border-top : 3px solid "+ borderColors.top +"; border-bottom : 3px solid "+ borderColors.bottom + "; border-right : 3px solid "+ borderColors.right;
+            }
+            if (!borderColors.right) {
+                return "border-top : 3px solid "+ borderColors.top + "; border-bottom : 3px solid "+ borderColors.bottom +"; border-left : 3px solid "+ borderColors.left +"; margin-left: 3px;";
+            }
+            return "border: none"
+        }
+
+        function colorUnitTokens(unit) {
+            trace("annotationUnitDirective - colorUnitTokens");
+            var lastChildUnitColors = null;
+            var lastChildUnit = null;
+            var leftBorder = false;
+            var rightBorder = false;
+
+            unit.tokens.forEach(function(token, index) {
+                var leftBorder = false;
+                var rightBorder = false;
+                if (!token.inChildUnitTreeId) {
+                    // if token has no child unit then– set border to none
+                    token.borderStyle = "border: none;";
+                    lastChildUnit = null;
+                    lastChildUnitColors = null;
+                } else {// if (token.inChildUnitTreeId) {// left border
+                    if (token.inChildUnitTreeId !== lastChildUnit) {
+                        lastChildUnit = token.inChildUnitTreeId;
+                        lastChildUnitColors = getUnitBorderColors(unit.categories);
+                        leftBorder = true;
+                    }
+                    // right border
+                    if (index === unit.tokens.length || (index < unit.tokens.length-1 && token.inChildUnitTreeId !== unit.tokens[index+1].inChildUnitTreeId )) {
+                       // debugger
+                        lastChildUnit = token.inChildUnitTreeId;
+                        lastChildUnitColors = getUnitBorderColors(unit.categories);
+                        rightBorder = true;
+                    }
+
+                    lastChildUnitColors = removeLeftRightBorders(lastChildUnitColors, rightBorder, leftBorder);
+
+                    token.borderStyle = borderTokens(lastChildUnitColors);
+                    console.log("token.borderStyle=", token.borderStyle)
+                }
+            });
+        }
+
+        function colorUnit(unit) {
+            trace("annotationUnitDirective - colorUnit");
+            colorUnitTokens(unit);
+
+            unit.AnnotationUnits.forEach(function(unit) {
+                colorUnit(unit);
+            });
+        }
+
+        // TODO- remove this function and change paintTokens calls to colorUnit
+        function paintTokens(tokens, dataBlock, afterDelete) {
+            colorUnit(dataBlock);
+        }
+
+        function paintTokens_old(tokens, dataBlock, afterDelete){
             trace("annotationUnitDirective - paintTokens");
+
+            // First paint all the tokens we have received
+            console.log("Painting tokens from unit ", tokens[0].unitTreeId, ": ", dataBlock);
             dataBlock.AnnotationUnits.forEach(function(unit,index){
                 if(unit.unitType !== "REMOTE"){
                     if(afterDelete){
@@ -295,6 +437,8 @@
                           var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
                           var elementPos = childUnitTokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                           var elementPosInThisUnit = tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
+
+                          // TODO: Do not update tokens here at all, just use what we already have
                           token.indexInUnit = elementPosInThisUnit;
                           if(DataService.getParentUnit(token.unitTreeId)){
                             token.unitTreeId = DataService.getParentUnit(token.unitTreeId).tree_id;
@@ -307,11 +451,10 @@
                         // selectionHandlerService.updateNextTokenNotAdjacent(unit.tokens);
                         // selectionHandlerService.updateLastTokenNotAdjacent(unit.tokens);
 
-                        // selectionHandlerService.updateTokenBorders(unit.tokens);
+                        selectionHandlerService.updateTokenBorders(unit.tokens);
                     }
 
-                    console.log("updateBorders----------------unit.tokens")
-                    selectionHandlerService.updateTokenBorders(unit.tokens);
+                    // selectionHandlerService.updateTokenBorders(unit.tokens);
 
                     unit.tokens.forEach(function(token){
                       	var childUnitTokens = dataBlock.AnnotationUnits[index].tokens;
