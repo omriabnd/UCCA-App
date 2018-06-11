@@ -361,6 +361,7 @@
                             }).indexOf(token.static.id);
 
                             if (elementPos > -1) {
+                                // debugger
                                 parentUnit.tokens[elementPos].inChildUnitTreeId = newObject.tree_id;
                             }
                         }
@@ -473,7 +474,7 @@
                 parentUnit.AnnotationUnits[index_int - 1] = newObject;
 
                 var parentUnitTokens = parentUnit.tokens;
-
+debugger
                 parentUnitTokens.forEach(function (token, index) {
                     var elementPos = newObject.tokens.map(function (x) {
                         return x.static.id;
@@ -617,7 +618,9 @@
         }
 
         function updateInUnitIdsForTokens(unit){
+            // debugger
             trace("DataService - updateInUnitIdsForTokens");
+                debugger
             unit.tokens.forEach(function(token){
                 token.unitTreeId = unit.tree_id;
 
@@ -924,8 +927,8 @@
                     delete token.unitTreeId;
                     delete token.indexInUnit;
                     delete token.borderStyle;
-                    delete token.lastTokenNotAdjacent;
-                    delete token.nextTokenNotAdjacent;
+                    // delete token.lastTokenNotAdjacent;
+                    // delete token.nextTokenNotAdjacent;
                     // delete token.positionInChildUnit;
                     delete token.backgroundColor;
                 })
@@ -947,8 +950,8 @@
                     delete token.unitTreeId;
                     delete token.indexInUnit;
                     delete token.borderStyle;
-                    delete token.lastTokenNotAdjacent;
-                    delete token.nextTokenNotAdjacent;
+                    // delete token.lastTokenNotAdjacent;
+                    // delete token.nextTokenNotAdjacent;
                     // delete token.positionInChildUnit;
                     delete token.backgroundColor;
 

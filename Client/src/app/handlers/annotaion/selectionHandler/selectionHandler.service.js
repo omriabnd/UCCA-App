@@ -267,6 +267,7 @@
              * @returns {*}
              */
             initTree: function(data){
+                debugger
                 trace("selectionHandlerService - initTree");
                 return $q(function(resolve, reject) {
                     DataService.serverData.annotation_units.forEach(function(unit,index){
@@ -534,6 +535,7 @@
                          */
                         return DataService.insertToTree(newUnit,_handler.selectedUnit,inInitStage).then(function(res){
                             if(res.status === "InsertSuccess"){
+                                debugger
 
                                 // Remove focus from new unit -- Cancel change focus to newly created unit
                                 // _handler.updateSelectedUnit(res.id,true);

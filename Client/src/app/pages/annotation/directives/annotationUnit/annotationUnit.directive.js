@@ -93,6 +93,7 @@
             $scope.$on('ToggleSuccess', function(event, args) {
                 if(args.id.toString() === $scope.vm.dataBlock.tree_id ){
                     var parentUnit = DataService.getUnitById(DataService.getParentUnitId($scope.vm.dataBlock.tree_id ));
+                    debugger
                     paintTokens(parentUnit.tokens,parentUnit);
                 }
                 $scope.vm.dataBlock.categoriesTooltip = categoriesTooltip($scope.vm);
@@ -118,6 +119,8 @@
                         delete $scope.vm.dataBlock.AnnotationUnits.AnnotationUnits;
                     }
                     selectionHandlerService.updateSelectedUnit($scope.vm.dataBlock.tree_id,true);
+                    console.log("After insert success----------$scope.vm.tokens,$scope.vm.dataBlock=", $scope.vm.tokens,$scope.vm.dataBlock)
+                    debugger
                     paintTokens($scope.vm.tokens,$scope.vm.dataBlock);
                     
                 }
@@ -131,6 +134,7 @@
                    $scope.vm.tokens.forEach(function(token,index,inInit){
                        token.indexInUnit = index;
                    });
+                   debugger
                     paintTokens($scope.vm.tokens,$scope.vm.dataBlock,true);
                 }
 
@@ -148,6 +152,7 @@
 
 
             if($scope.vm.dataBlock.AnnotationUnits && $scope.vm.dataBlock.AnnotationUnits.length > 0){
+                debugger
             	paintTokens($scope.vm.tokens,$scope.vm.dataBlock);
             }else{
             	""; //$scope.vm.dataBlock.gui_status = "HIDDEN";
@@ -288,22 +293,20 @@
 
         function getUnitBorderColors(categories) {
             trace("annotationUnitDirective - getUnitBorderColors");
-            // if (!categories) {
-            //     // debugger
-            //     return
-            // }
             // Return dict according categories list
             var actualCategories = categories.filter(function(category){
                 return category.id !== undefined;
             });
-            var unitBorderColors = {
-                top: 'none',
-                bottom: 'none',
-                left: 'none',
-                right: 'none',
-            };
+            var unitBorderColors = {};
+
             switch(actualCategories.length){
                 case 0:{
+                    unitBorderColors = {
+                        top: 'none',
+                        bottom: 'none',
+                        left: 'none',
+                        right: 'none'
+                    };
                     return unitBorderColors;
                 }
                 case 1:{
@@ -374,6 +377,15 @@
             return "border: none"
         }
 
+        function findCategoriesChildUnit(unit, childId) {
+            trace("annotationUnitDirective - findCategoriesChildUnit");
+            for (var i = 0; i < unit.AnnotationUnits.length; i++) {
+                if (unit.AnnotationUnits[i].tree_id === childId) {
+                    return unit.AnnotationUnits[i].categories;
+                }
+            }
+        }
+
         function colorUnitTokens(unit) {
             trace("annotationUnitDirective - colorUnitTokens");
             var lastChildUnitColors = null;
@@ -389,24 +401,22 @@
                     token.borderStyle = "border: none;";
                     lastChildUnit = null;
                     lastChildUnitColors = null;
-                } else {// if (token.inChildUnitTreeId) {// left border
-                    if (token.inChildUnitTreeId !== lastChildUnit) {
-                        lastChildUnit = token.inChildUnitTreeId;
-                        lastChildUnitColors = getUnitBorderColors(unit.categories);
+                } else { // if token.inChildUnitTreeId
+                    var categoriesChildUnit = [];
+                    if (token.inChildUnitTreeId !== lastChildUnit) {// left border
                         leftBorder = true;
                     }
                     // right border
-                    if (index === unit.tokens.length || (index < unit.tokens.length-1 && token.inChildUnitTreeId !== unit.tokens[index+1].inChildUnitTreeId )) {
-                       // debugger
-                        lastChildUnit = token.inChildUnitTreeId;
-                        lastChildUnitColors = getUnitBorderColors(unit.categories);
+                    if (index === unit.tokens.length-1 || (index < unit.tokens.length-1 && token.inChildUnitTreeId !== unit.tokens[index+1].inChildUnitTreeId )) {
                         rightBorder = true;
                     }
 
+                    lastChildUnit = token.inChildUnitTreeId;
+                    categoriesChildUnit = findCategoriesChildUnit(unit, lastChildUnit);
+                    lastChildUnitColors = getUnitBorderColors(categoriesChildUnit);
                     lastChildUnitColors = removeLeftRightBorders(lastChildUnitColors, rightBorder, leftBorder);
 
                     token.borderStyle = borderTokens(lastChildUnitColors);
-                    console.log("token.borderStyle=", token.borderStyle)
                 }
             });
         }
@@ -582,7 +592,6 @@
         }
 
         function borderForFirstToken(token,categories){
-            console.log("borderForFirstToken ", token, categories);
             trace("annotationUnitDirective - borderForFirstToken");
             var actualCategories = categories.filter(function(category){
                 return category.id !== undefined;
