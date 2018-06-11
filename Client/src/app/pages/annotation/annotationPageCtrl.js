@@ -44,23 +44,6 @@
       init();
       
       $scope.sortByPrototypes = function(category){
-//    	var selectedTokenList = [];
-//    	var selectedUnitId;
-//        var selectedUnit;
-//        
-//    	if (selectionHandlerService.getSelectedTokenList() != undefined){
-//	      	selectedTokenList = selectionHandlerService.getSelectedTokenList();
-//	      	if(selectedTokenList.length == 0){
-//	      		selectedUnitId = selectionHandlerService.getSelectedUnitId();
-//	      	    if(selectedUnitId != undefined && selectedUnitId != 0) {
-//	      			selectedUnit = DataService.getUnitById(selectedUnitId);
-//		      		if(selectedUnit != undefined){
-//		      			selectedTokenList = selectedUnit.tokenCopy;
-//		      		}
-//	      	    }
-//	      	}
-//        }
-//    	console.log(selectedTokenList)
     	var selectedTokenList = [];
     	var selectedUnitId = selectionHandlerService.getSelectedUnitId();
     	var selectedUnit = DataService.getUnitById(selectedUnitId);
@@ -114,13 +97,6 @@
       	}
       	var sceneRoles = sceneFunctionRoles[category.name] || {};
       	return -sceneRoles["_total_"] || 0;
-      	
-//      	var ind = prototypes.indexOf(cat.name);
-//      	if (ind === -1) {
-//      		return vm.categories.length;
-//      	} else {
-//      		return ind;
-//      	}
       }
       
       $scope.fromParentLayer = function(cat){
