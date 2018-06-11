@@ -63,13 +63,14 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         else:
             # get the tokens array from the root tokenization task
             root_tokeniztion_task_id = self.get_root_task(obj)
-            tokens = Tokens.objects.all().filter(task_id=root_tokeniztion_task_id)
+            tokens = Tokens.objects.all().filter(task_id=root_tokeniztion_task_id).order_by("start_index")
 
         tokens_json = []
-        for t in tokens:
-            tokens_json.append(TokensSerializer(t).data)
+        for index,t in enumerate(tokens):
+            cur_json = TokensSerializer(t).data
+            cur_json['index_in_task'] = index
+            tokens_json.append(cur_json)
 
-        tokens_json.sort(key=lambda x: x["start_index"])
         return tokens_json
 
     def get_annotation_units(self, obj):
