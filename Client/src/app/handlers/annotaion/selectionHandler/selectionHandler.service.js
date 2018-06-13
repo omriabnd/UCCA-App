@@ -267,7 +267,6 @@
              * @returns {*}
              */
             initTree: function(data){
-                debugger
                 trace("selectionHandlerService - initTree");
                 return $q(function(resolve, reject) {
                     DataService.serverData.annotation_units.forEach(function(unit,index){

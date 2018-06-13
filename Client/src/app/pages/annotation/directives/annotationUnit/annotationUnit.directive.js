@@ -61,9 +61,9 @@
             $scope.vm = $scope.dirCtrl;
             $scope.vm.dataBlock.tokens = $scope.vm.tokens;
 
-            /*$scope.vm.dataBlock.tokens.forEach(function(token){
+            $scope.vm.dataBlock.tokens.forEach(function(token){
                 token.unitTreeId = $scope.vm.dataBlock.tree_id;
-            })*/
+            });
 
             /**
              * if dataBlock.children_token_map not exist, create this dictionary {tokenId: token, tokenId: token, ...}
@@ -93,8 +93,8 @@
             $scope.$on('ToggleSuccess', function(event, args) {
                 if(args.id.toString() === $scope.vm.dataBlock.tree_id ){
                     var parentUnit = DataService.getUnitById(DataService.getParentUnitId($scope.vm.dataBlock.tree_id ));
-                    debugger
-                    paintTokens(parentUnit.tokens,parentUnit);
+                    // paintTokens(parentUnit.tokens,parentUnit);
+                    colorUnit(parentUnit);
                 }
                 $scope.vm.dataBlock.categoriesTooltip = categoriesTooltip($scope.vm);
             });
@@ -119,9 +119,9 @@
                         delete $scope.vm.dataBlock.AnnotationUnits.AnnotationUnits;
                     }
                     selectionHandlerService.updateSelectedUnit($scope.vm.dataBlock.tree_id,true);
-                    console.log("************After insert success----------$scope.vm.tokens, ", $scope.vm.tokens, "" + "  $scope.vm.dataBlock=", $scope.vm.dataBlock)
-                    paintTokens($scope.vm.tokens,$scope.vm.dataBlock);
-                    
+                    // paintTokens($scope.vm.tokens,$scope.vm.dataBlock);
+                    colorUnit($scope.vm.dataBlock);
+
                 }
             });
 
@@ -133,8 +133,8 @@
                    $scope.vm.tokens.forEach(function(token,index,inInit){
                        token.indexInUnit = index;
                    });
-                   debugger
-                    paintTokens($scope.vm.tokens,$scope.vm.dataBlock,true);
+                    // paintTokens($scope.vm.tokens,$scope.vm.dataBlock,true);
+                    colorUnit($scope.vm.dataBlock);
                 }
 
                 $scope.vm.dataBlock.tokens.forEach(function(token){
@@ -149,15 +149,8 @@
                 }
             });
 
-
-            //if($scope.vm.dataBlock.AnnotationUnits && $scope.vm.dataBlock.AnnotationUnits.length > 0) {
-                console.log("##########Before color the tree----------$scope.vm.tokens,", $scope.vm.tokens, "  $scope.vm.dataBlock=", $scope.vm.dataBlock)
-                paintTokens($scope.vm.tokens, $scope.vm.dataBlock);
-          //  }
-            // }else{
-            // 	""; //$scope.vm.dataBlock.gui_status = "HIDDEN";
-            // }
-            
+            // paintTokens($scope.vm.tokens, $scope.vm.dataBlock);
+            colorUnit($scope.vm.dataBlock);
         }
         
 
@@ -207,6 +200,13 @@
         }
 
         function highlightTokensInUnit0(tokens) {
+            // TODO: Send a dictionary of tokens ids to true instead of a list to speed up lookups
+            // { tokens: {
+            //      1: true,
+            //      2: true,
+            //      4: true
+            // }
+            // }
             trace("annotationUnitDirective - highlightTokensInUnit0");
             $rootScope.$broadcast('highlightTokens',{tokens: tokens});
         }
@@ -407,16 +407,18 @@
                         leftBorder = true;
                     }
                     // right border
-                    if (index === unit.tokens.length-1 || (index < unit.tokens.length-1 && token.inChildUnitTreeId !== unit.tokens[index+1].inChildUnitTreeId )) {
+                    if (index === unit.tokens.length - 1 || (index < unit.tokens.length - 1 && token.inChildUnitTreeId !== unit.tokens[index + 1].inChildUnitTreeId)) {
                         rightBorder = true;
                     }
 
                     lastChildUnit = token.inChildUnitTreeId;
                     categoriesChildUnit = findCategoriesChildUnit(unit, lastChildUnit);
-                    lastChildUnitColors = getUnitBorderColors(categoriesChildUnit);
-                    lastChildUnitColors = removeLeftRightBorders(lastChildUnitColors, rightBorder, leftBorder);
+                    if (categoriesChildUnit) { // If not deleting unit
+                        lastChildUnitColors = getUnitBorderColors(categoriesChildUnit);
+                        lastChildUnitColors = removeLeftRightBorders(lastChildUnitColors, rightBorder, leftBorder);
 
-                    token.borderStyle = borderTokens(lastChildUnitColors);
+                        token.borderStyle = borderTokens(lastChildUnitColors);
+                    }
                 }
             });
         }
@@ -430,11 +432,7 @@
             });
         }
 
-        // TODO- remove this function and change paintTokens calls to colorUnit
-        function paintTokens(tokens, dataBlock, afterDelete) {
-            colorUnit(dataBlock);
-        }
-
+        /*
         function paintTokens_old(tokens, dataBlock, afterDelete){
             trace("annotationUnitDirective - paintTokens");
 
@@ -565,7 +563,7 @@
                 }
 
             });
-        }
+        }*/
 
         function borderForFirstAndLastToken(categories){
             trace("annotationUnitDirective - borderForFirstAndLastToken");

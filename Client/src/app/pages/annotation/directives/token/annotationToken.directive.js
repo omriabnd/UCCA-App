@@ -49,6 +49,8 @@
             });
 
             /*
+            // TODO: Only catch this event if this token is in unit 0
+            // TODO: Highlight using a CSS class and not a style
             $scope.$on('highlightTokens', function(event, args) {
                 $scope.vm.token.highlightStyle = ''; // reset pre highlight
                 for (var i=0; i<args.tokens.length;i++)
