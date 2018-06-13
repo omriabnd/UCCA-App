@@ -61,9 +61,9 @@
             $scope.vm = $scope.dirCtrl;
             $scope.vm.dataBlock.tokens = $scope.vm.tokens;
 
-            $scope.vm.dataBlock.tokens.forEach(function(token){
+            /*$scope.vm.dataBlock.tokens.forEach(function(token){
                 token.unitTreeId = $scope.vm.dataBlock.tree_id;
-            })
+            })*/
 
             /**
              * if dataBlock.children_token_map not exist, create this dictionary {tokenId: token, tokenId: token, ...}
@@ -119,8 +119,7 @@
                         delete $scope.vm.dataBlock.AnnotationUnits.AnnotationUnits;
                     }
                     selectionHandlerService.updateSelectedUnit($scope.vm.dataBlock.tree_id,true);
-                    console.log("After insert success----------$scope.vm.tokens,$scope.vm.dataBlock=", $scope.vm.tokens,$scope.vm.dataBlock)
-                    debugger
+                    console.log("************After insert success----------$scope.vm.tokens, ", $scope.vm.tokens, "" + "  $scope.vm.dataBlock=", $scope.vm.dataBlock)
                     paintTokens($scope.vm.tokens,$scope.vm.dataBlock);
                     
                 }
@@ -151,12 +150,13 @@
             });
 
 
-            if($scope.vm.dataBlock.AnnotationUnits && $scope.vm.dataBlock.AnnotationUnits.length > 0){
-                debugger
-            	paintTokens($scope.vm.tokens,$scope.vm.dataBlock);
-            }else{
-            	""; //$scope.vm.dataBlock.gui_status = "HIDDEN";
-            }
+            //if($scope.vm.dataBlock.AnnotationUnits && $scope.vm.dataBlock.AnnotationUnits.length > 0) {
+                console.log("##########Before color the tree----------$scope.vm.tokens,", $scope.vm.tokens, "  $scope.vm.dataBlock=", $scope.vm.dataBlock)
+                paintTokens($scope.vm.tokens, $scope.vm.dataBlock);
+          //  }
+            // }else{
+            // 	""; //$scope.vm.dataBlock.gui_status = "HIDDEN";
+            // }
             
         }
         

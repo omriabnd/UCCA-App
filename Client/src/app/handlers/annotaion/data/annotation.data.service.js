@@ -474,7 +474,7 @@
                 parentUnit.AnnotationUnits[index_int - 1] = newObject;
 
                 var parentUnitTokens = parentUnit.tokens;
-debugger
+
                 parentUnitTokens.forEach(function (token, index) {
                     var elementPos = newObject.tokens.map(function (x) {
                         return x.static.id;
@@ -618,9 +618,7 @@ debugger
         }
 
         function updateInUnitIdsForTokens(unit){
-            // debugger
             trace("DataService - updateInUnitIdsForTokens");
-                debugger
             unit.tokens.forEach(function(token){
                 token.unitTreeId = unit.tree_id;
 

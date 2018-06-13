@@ -10,7 +10,8 @@
   function AnnotationPageCtrl(DefaultHotKeys,TaskMetaData,AnnotationTextService,DataService, $rootScope,$scope,hotkeys,HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService,$timeout,$state, selectionHandlerService,$uibModal) {
       var vm = this;
       vm.tokenizationTask = TaskMetaData.Task;
-      vm.annotationTokens = tokensInStaticFormat(); // vm.tokenizationTask.tokens; // TODO- change tokens structure
+      // vm.annotationTokens = tokensInStaticFormat(); // vm.tokenizationTask.tokens;
+      vm.annotationTokens = DataService.tree.tokens;
       vm.categories = TaskMetaData.Categories;
       vm.defaultHotKeys = DefaultHotKeys;
       vm.categorizedWords = [];
@@ -107,14 +108,14 @@
     	  return !cat.fromParentLayer;
       }
 
-      function tokensInStaticFormat() {
-          var tokens = [];
-          for (var i = 0; i < vm.tokenizationTask.tokens.length; i++) {
-              // Build token array includes static fields
-              tokens.push(selectionHandlerService.copyTokenToStaticFormat(vm.tokenizationTask.tokens[i]));
-          }
-          return tokens;
-      }
+      // function tokensInStaticFormat() {
+      //     var tokens = [];
+      //     for (var i = 0; i < vm.tokenizationTask.tokens.length; i++) {
+      //         // Build token array includes static fields
+      //         tokens.push(selectionHandlerService.copyTokenToStaticFormat(vm.tokenizationTask.tokens[i]));
+      //     }
+      //     return tokens;
+      // }
       
       function toggleParents(){
 		  $scope.showParents = !$scope.showParents;
