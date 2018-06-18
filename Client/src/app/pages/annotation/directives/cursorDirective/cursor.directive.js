@@ -129,7 +129,6 @@
                             for (var pos = tokenPosition; pos < tokenUnit.tokens.length; pos++) {
                                 if (tokenUnit.tokens[pos].inChildUnitTreeId !== lastInChildUnit) {
                                     // set cursor to these token position
-                                    console.log("setCursorPosition to ", pos, "(token=)", tokenUnit.tokens[pos])
                                     setCursorPosition($scope, pos);
                                     break;
                                 }
@@ -201,7 +200,7 @@
                         if(shiftPressed){
                             $rootScope.$broadcast('tokenIsClicked',{token: token, unitTreeId: $scope.vm.unitId, moveLeft: true});
                         }else{
-                            // $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
+                            $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
                             !ctrlPressed ? selectionHandlerService.clearTokenList() : $scope.vm.cursorUpdated = true;
                         }
                         var unitToCheckIn = DataService.getUnitById(args.unitId);
@@ -233,11 +232,13 @@
                         else {
                             var tokenPosition = tokenUnit.tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                             // check what is the prev token that has another inChildUnit
-                            for (var pos = tokenPosition; pos > 0; pos--) {
+                            for (var pos = tokenPosition; pos >= 0; pos--) {
                                 if (tokenUnit.tokens[pos].inChildUnitTreeId !== prenInChildUnit) {
                                     // set cursor to these token position
-                                    setCursorPosition($scope, pos+1);
+                                    setCursorPosition($scope, pos + 1);
                                     break;
+                                } else if(!pos) { // set cursor to the beginning of the text- before the first token
+                                    setCursorPosition($scope, 0);
                                 }
                             }
                         }
