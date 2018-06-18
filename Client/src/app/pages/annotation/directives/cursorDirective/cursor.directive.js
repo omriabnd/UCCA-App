@@ -98,16 +98,14 @@
                             setCursorPosition($scope, $scope.vm.cursorLocation + 1);
                             !ctrlPressed ? selectionHandlerService.clearTokenList() : $scope.vm.cursorUpdated = true;
                         }
+
+                        var nextToken = undefined;
+
                         var unitToCheckIn = DataService.getUnitById(args.unitId);
-
-                        //console.log(DataService.getUnitById(token.inChildUnitTreeId))
-
 
                         var sameParentTokens = unitToCheckIn.tokens.filter(function(element,index,array){
                             return element.inChildUnitTreeId == token.inChildUnitTreeId;
                         });
-
-                        var nextToken = undefined;
 
                         if(sameParentTokens.length > 1){
                             for(var i=0; i< sameParentTokens.length; i++){
@@ -116,48 +114,69 @@
                                     nextToken = currentToken;
                                 }
                             }
-                        }                        
-
+                        }
                         //This is the last token
                         if(nextToken === undefined) return;
 
-                        var unit = DataService.getUnitById(nextToken.inChildUnitTreeId);
-                        // unitTokens = DataService.getUnitById(token.inChildUnitTreeId).tokens;
-                        // if(unitTokens.length > 1){
-                        //     var tokenPosition = unitTokens.map(function(x) {return x.id; }).indexOf(token.id);
-                        //     if(tokenPosition !== unitTokens.length - 1){
-                        //         nextToken = unitTokens[tokenPosition];
-                        //     }
-
-                        // }
-                        if(token.inChildUnitTreeId === nextToken.inChildUnitTreeId && unit !== null && unit.tree_id !== "0"){
-                            if(shiftPressed){
-                                unit.tokens.forEach(function(curr_token){
-                                    $rootScope.$broadcast('tokenIsClicked',{token: curr_token, unitTreeId: $scope.vm.unitId, moveLeft: false,doNotRemoveExistingToken: true});
-                                })
-                            }
-                            var tokenPosition = unit.tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
-                            var sliceTokenArray = angular.copy(unit.tokens);
-                            sliceTokenArray = sliceTokenArray.splice(tokenPosition,sliceTokenArray.length);
-                            var elementPos = sliceTokenArray.map(function(x) {return DataService.positionInUnit(unit, x); }).indexOf("Last");
-
-                            if(elementPos === -1){
-                                var firstAndLastPosition = 0;
-                                for(var i=0; i<sliceTokenArray.length; i++){
-                                    var current_token = sliceTokenArray[i];
-                                    if(DataService.positionInUnit(unit, current_token) == "FirstAndLast"){
-                                        firstAndLastPosition = i;
-                                    }
-                                }
-                                elementPos = firstAndLastPosition;
-                            }
-
-                            var parentUnit = DataService.getParentUnit(unit.tree_id);
-                            elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(sliceTokenArray[elementPos].static.id);
-
-                            setCursorPosition($scope, elementPos+1);
-                            $scope.vm.cursorLocation === unitTokens.length ? $(elem).insertAfter( unitTokens[unitTokens.length - 1] ) : $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
+                        var lastInChildUnit = token.inChildUnitTreeId;
+                        if (!nextToken.inChildUnitTreeId) {
+                            // set cursor to next  token
+                            setCursorPosition($scope, $scope.vm.cursorLocation);
                         }
+                        else {
+                            var tokenPosition = tokenUnit.tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
+                            // check what is the next token that has another inChildUnit
+                            for (var pos = tokenPosition; pos < tokenUnit.tokens.length; pos++) {
+                                if (tokenUnit.tokens[pos].inChildUnitTreeId !== lastInChildUnit) {
+                                    // set cursor to these token position
+                                    setCursorPosition($scope, pos);
+                                    break;
+                                }
+                            }
+                        }
+
+                        $scope.vm.cursorLocation === unitTokens.length ? $(elem).insertAfter( unitTokens[unitTokens.length - 1] ) : $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
+
+
+                        /*
+                        // Old code
+                        var unit = DataService.getUnitById(nextToken.inChildUnitTreeId);
+                         // unitTokens = DataService.getUnitById(token.inChildUnitTreeId).tokens;
+                         // if(unitTokens.length > 1){
+                         //     var tokenPosition = unitTokens.map(function(x) {return x.id; }).indexOf(token.id);
+                         //     if(tokenPosition !== unitTokens.length - 1){
+                         //         nextToken = unitTokens[tokenPosition];
+                         //     }
+                         // }
+
+                         if(token.inChildUnitTreeId === nextToken.inChildUnitTreeId && unit !== null && unit.tree_id !== "0"){
+                             if(shiftPressed){
+                                 unit.tokens.forEach(function(curr_token){
+                                     $rootScope.$broadcast('tokenIsClicked',{token: curr_token, unitTreeId: $scope.vm.unitId, moveLeft: false,doNotRemoveExistingToken: true});
+                                 })
+                             }
+                             var tokenPosition = unit.tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
+                             var sliceTokenArray = angular.copy(unit.tokens);
+                             sliceTokenArray = sliceTokenArray.splice(tokenPosition,sliceTokenArray.length);
+                             var elementPos = sliceTokenArray.map(function(x) {return DataService.positionInUnit(unit, x); }).indexOf("Last");
+
+                             if(elementPos === -1){
+                                 var firstAndLastPosition = 0;
+                                 for(var i=0; i<sliceTokenArray.length; i++){
+                                     var current_token = sliceTokenArray[i];
+                                     if(DataService.positionInUnit(unit, current_token) == "FirstAndLast"){
+                                         firstAndLastPosition = i;
+                                     }
+                                 }
+                                 elementPos = firstAndLastPosition;
+                             }
+
+                             var parentUnit = DataService.getParentUnit(unit.tree_id);
+                             elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(sliceTokenArray[elementPos].static.id);
+
+                             setCursorPosition($scope, elementPos+1);
+                             $scope.vm.cursorLocation === unitTokens.length ? $(elem).insertAfter( unitTokens[unitTokens.length - 1] ) : $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
+                         }*/
                     }
                 }else if($scope.vm.cursorUpdated){
                     $scope.vm.cursorUpdated = false;
@@ -184,8 +203,6 @@
                             $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
                             !ctrlPressed ? selectionHandlerService.clearTokenList() : $scope.vm.cursorUpdated = true;
                         }
-                        // var prevToken = DataService.getUnitById(args.unitId).tokens[token.indexInUnit-1];
-
                         var unitToCheckIn = DataService.getUnitById(args.unitId);
 
                         var sameParentTokens = unitToCheckIn.tokens.filter(function(element,index,array){
@@ -206,6 +223,29 @@
                         //This is the last token
                         if(prevToken === undefined) return;
 
+                        var prenInChildUnit = token.inChildUnitTreeId;
+
+                        if (!prevToken.inChildUnitTreeId) {
+                            // set cursor to prev token
+                            setCursorPosition($scope, $scope.vm.cursorLocation);
+                        }
+                        else {
+                            var tokenPosition = tokenUnit.tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
+                            // check what is the prev token that has another inChildUnit
+                            for (var pos = tokenPosition; pos >= 0; pos--) {
+                                if (tokenUnit.tokens[pos].inChildUnitTreeId !== prenInChildUnit) {
+                                    // set cursor to these token position
+                                    setCursorPosition($scope, pos + 1);
+                                    break;
+                                } else if(!pos) { // set cursor to the beginning of the text- before the first token
+                                    setCursorPosition($scope, 0);
+                                }
+                            }
+                        }
+
+                        $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
+
+                        /* // old code
                         var unit = DataService.getUnitById(prevToken.inChildUnitTreeId);
                         if(token.inChildUnitTreeId === prevToken.inChildUnitTreeId && unit !== null && unit.tree_id !== "0"){
                             if(shiftPressed){
@@ -238,27 +278,27 @@
 
                             setCursorPosition($scope, elementPos);
                             $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
-                        }
+                        }*/
                     }
                 }else if($scope.vm.cursorUpdated){
                     $scope.vm.cursorUpdated = false;
                 }
             });
-            
+
             $scope.$on('moveToNextRelevant', function(event, args) {
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
-            	
+
                 if(args.unitId === $scope.vm.unitId.toString()  && !$scope.vm.cursorUpdated){
                     var unit = $('#unit-'+$scope.vm.unitId.toString());
                     var unitTokens = unit.find('.token-wrapper');
-                    
+
                     if($scope.vm.cursorLocation <= unitTokens.length){
-                    	var tokenUnit = DataService.getUnitById(args.unitId);
+                        var tokenUnit = DataService.getUnitById(args.unitId);
                         if($scope.vm.cursorLocation < 0 || $scope.vm.cursorLocation > tokenUnit.tokens.length){
                             return;
                         }
                         var token = tokenUnit.tokens[$scope.vm.cursorLocation - 1];
-                        
+
                         var oldUnit = token != undefined ? DataService.getUnitById(token.inChildUnitTreeId) : undefined;
                         var unitToCheckIn = tokenUnit;
 
@@ -266,62 +306,62 @@
                         var annotationUnits = unitToCheckIn.AnnotationUnits;
                         var tokens = unitToCheckIn.tokens;
                         if(shiftPressed){
-                        	annotationUnits = annotationUnits.slice().reverse();
-                        	tokens = tokens.slice().reverse();
+                            annotationUnits = annotationUnits.slice().reverse();
+                            tokens = tokens.slice().reverse();
                         }
                         var oldUnitIndex = oldUnit != undefined ? annotationUnits.map(function(x) {return x.tree_id; }).indexOf(oldUnit.tree_id) : undefined;
                         if(annotationUnits.length > 0 && oldUnitIndex != undefined){
                             for(var i=oldUnitIndex+1; i<annotationUnits.length; i++){
                                 var currentUnit = annotationUnits[i];
                                 if(!!currentUnit && !!currentUnit.categories && (!$rootScope.isRefinementLayerProject || currentUnit.categories[0].refinedCategory)){
-                                	nextUnit = currentUnit;
-                                	break;
+                                    nextUnit = currentUnit;
+                                    break;
                                 }
                             }
                         }
-                        
+
                         if(nextUnit === undefined) {
-                        	var nextToken = undefined;
-                        	if(tokens.length > 0){
+                            var nextToken = undefined;
+                            if(tokens.length > 0){
                                 for(var i=0; i< tokens.length; i++){
-                                	var currentToken = tokens[i];
+                                    var currentToken = tokens[i];
                                     var currentUnit = DataService.getUnitById(currentToken.inChildUnitTreeId);
                                     if(!!currentUnit && !!currentUnit.categories && (!$rootScope.isRefinementLayerProject || currentUnit.categories[0].refinedCategory)){
-                                    	nextToken = currentToken;
-                                    	nextUnit = currentUnit;
-                                    	break;
+                                        nextToken = currentToken;
+                                        nextUnit = currentUnit;
+                                        break;
                                     }
                                 }
                             }
                         }
-                        
+
                         //This is the last token
                         if(nextUnit === undefined) return;
 
                         var unit = nextUnit;
-                        
-                        
+
+
                         console.log(unit);
-                        
+
                         if(unit !== null && unit.tree_id !== "0"){
-	                        if(!!oldUnit && (!oldUnit.parent_tree_id || oldUnit.parent_tree_id === "0")){
-	                        	oldUnit.gui_status = "HIDDEN";
-	                        }
-	                        unit.gui_status = "OPEN";
-	                        
-	                        selectionHandlerService.clearTokenList();
-	                        unit.tokens.forEach(function(curr_token){
-	                            $rootScope.$broadcast('tokenIsClicked',{token: curr_token, unitTreeId: $scope.vm.unitId, moveLeft: false, selectAllTokenInUnit: true});
-	                        });
-	
-	                        $scope.vm.cursorLocation = unitToCheckIn.tokens.map(function(x) {return x.static.id; }).indexOf(unit.tokens[unit.tokens.length-1].static.id) + 1;
-	                        $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
-	                    }
+                            if(!!oldUnit && (!oldUnit.parent_tree_id || oldUnit.parent_tree_id === "0")){
+                                oldUnit.gui_status = "HIDDEN";
+                            }
+                            unit.gui_status = "OPEN";
+
+                            selectionHandlerService.clearTokenList();
+                            unit.tokens.forEach(function(curr_token){
+                                $rootScope.$broadcast('tokenIsClicked',{token: curr_token, unitTreeId: $scope.vm.unitId, moveLeft: false, selectAllTokenInUnit: true});
+                            });
+
+                            $scope.vm.cursorLocation = unitToCheckIn.tokens.map(function(x) {return x.static.id; }).indexOf(unit.tokens[unit.tokens.length-1].static.id) + 1;
+                            $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
+                        }
 
                     }
 
                 }else if($scope.vm.cursorUpdated){
-	                    $scope.vm.cursorUpdated = false;
+                    $scope.vm.cursorUpdated = false;
                 }
             });
         }
