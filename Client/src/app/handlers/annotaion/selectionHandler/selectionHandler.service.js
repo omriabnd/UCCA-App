@@ -498,8 +498,9 @@
                         // updateNextTokenNotAdjacent(_handler.selectedTokenList);
                         // updateLastTokenNotAdjacent(_handler.selectedTokenList);
 
-                        console.log("updateBOrders-------------_handler.selectedTokenList")
-                        updateTokenBorders(_handler.selectedTokenList);
+                        if (_handler.selectedTokenList.length) {
+                            updateTokenBorders(_handler.selectedTokenList);
+                        }
 
                         console.log("before create new unit, _handler.selectedTokenList=", _handler.selectedTokenList)
                         var newUnit = {
