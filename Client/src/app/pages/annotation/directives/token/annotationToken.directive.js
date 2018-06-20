@@ -75,7 +75,7 @@
             vm.tokenUnitIsSelected = tokenUnitIsSelected;
             vm.initToken = initToken;
             vm.mouseUpFromToken = mouseUpFromToken;
-            // vm.showEllipsis = showEllipsis;
+            vm.showEllipsis = showEllipsis;
             vm.currntToken = null;
         }
 
@@ -258,9 +258,12 @@
 
         }
 
-        // function showEllipsis(vm, index){
-        //     return false;
-        // }
+        function showEllipsis(token) {
+            if (!token.unit || !token.unit.tokens[token.indexInUnit + 1]) {
+                return false;
+            }
+            return token.static.index_in_task + 1 !== token.unit.tokens[token.indexInUnit + 1].static.index_in_task;
+        }
     }
 
 })();

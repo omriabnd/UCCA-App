@@ -515,8 +515,9 @@
                             cloned_from_tree_id: unit && unit.cloned_from_tree_id ? unit.cloned_from_tree_id : null
                         };
 
-
-
+                        for (var index = 0; index < newUnit.tokens.length; index++) {
+                            newUnit.tokens[index].unit = newUnit;
+                        }
 
                         if(remote){
                             newUnit = angular.copy(remote);

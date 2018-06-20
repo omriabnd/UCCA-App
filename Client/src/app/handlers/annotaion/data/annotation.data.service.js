@@ -34,7 +34,7 @@
             lastInsertedUnitIndex: lastInsertedUnitIndex,
             unitType:unitType,
             serverData:null,
-            baseTokenData: ['id', 'start_index', 'end_index', 'require_annotation', 'text', 'tokenization_task_id', 'splitByTokenization'],
+            baseTokenData: ['id', 'start_index', 'end_index', 'index_in_task', 'require_annotation', 'text', 'tokenization_task_id', 'splitByTokenization'],
             hashTables: hashTables,
             categories: [],
             unitsUsedAsRemote:unitsUsedAsRemote,
