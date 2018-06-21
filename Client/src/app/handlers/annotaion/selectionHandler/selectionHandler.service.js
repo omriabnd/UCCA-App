@@ -463,20 +463,21 @@
                Ellipses are shown at discontinuities, which are right before leftBorder is true (except for before
                the first token in the unit).
              */
-            copyTokensToSubUnit: function(selectedTokenList) {
-                var tokens = angular.copy(selectedTokenList);
-                if(tokens !== undefined){
-                    tokens.forEach(function(token, index){
-                        // If token has rightBorder, and not the last token
-                        if (token.rightBorder && index !== tokens.length-1) {
-                            token.showEllipsis = true;
-                        }
-                        delete token.leftBorder;
-                        delete token.rightBorder;
-                    })
-                }
-                return tokens;
-            },
+            // Commented because we removed showEllipsis field from token
+            // copyTokensToSubUnit: function(selectedTokenList) {
+            //     var tokens = angular.copy(selectedTokenList);
+            //     if(tokens !== undefined){
+            //         tokens.forEach(function(token, index){
+            //             // If token has rightBorder, and not the last token
+            //             if (token.rightBorder && index !== tokens.length-1) {
+            //                 token.showEllipsis = true;
+            //             }
+            //             delete token.leftBorder;
+            //             delete token.rightBorder;
+            //         })
+            //     }
+            //     return tokens;
+            // },
 
             toggleCategory: function(category,justToggle,remote,unit,inInitStage){
                 // debugger
@@ -502,9 +503,8 @@
                             updateTokenBorders(_handler.selectedTokenList);
                         }
 
-                        console.log("before create new unit, _handler.selectedTokenList=", _handler.selectedTokenList)
                         var newUnit = {
-                            tokens : _handler.copyTokensToSubUnit(_handler.selectedTokenList), //angular.copy(_handler.selectedTokenList), // TODO: Move to function - copyTokensToChildUnit
+                            tokens : angular.copy(_handler.selectedTokenList),
                             categories:[],
                             gui_status:unit ? unit.gui_status : "OPEN",
                             comment: unit ? unit.comment : '',
