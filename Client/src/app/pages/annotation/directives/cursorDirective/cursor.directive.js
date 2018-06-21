@@ -138,6 +138,20 @@
                         $scope.vm.cursorLocation === unitTokens.length ? $(elem).insertAfter( unitTokens[unitTokens.length - 1] ) : $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
 
 
+                        var unit = DataService.getUnitById(nextToken.inChildUnitTreeId);
+                        if(token.inChildUnitTreeId === nextToken.inChildUnitTreeId && unit !== null && unit.tree_id !== "0") {
+                            if (shiftPressed) {
+                                unit.tokens.forEach(function (curr_token) {
+                                    $rootScope.$broadcast('tokenIsClicked', {
+                                        token: curr_token,
+                                        unitTreeId: $scope.vm.unitId,
+                                        moveLeft: false,
+                                        doNotRemoveExistingToken: true
+                                    });
+                                })
+                            }
+                        }
+
                         /*
                         // Old code
                         var unit = DataService.getUnitById(nextToken.inChildUnitTreeId);
@@ -244,6 +258,26 @@
                         }
 
                         $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
+
+                         var unit = DataService.getUnitById(prevToken.inChildUnitTreeId);
+                        if(token.inChildUnitTreeId === prevToken.inChildUnitTreeId && unit !== null && unit.tree_id !== "0") {
+                            if (shiftPressed) {
+                                unit.tokens.forEach(function (curr_token, index) {
+                                    $rootScope.$broadcast('tokenIsClicked', {
+                                        token: curr_token,
+                                        unitTreeId: $scope.vm.unitId,
+                                        moveLeft: false,
+                                        doNotRemoveExistingToken: false
+                                    });
+                                })
+                                $rootScope.$broadcast('tokenIsClicked', {
+                                    token: token,
+                                    unitTreeId: $scope.vm.unitId,
+                                    moveLeft: false,
+                                    doNotRemoveExistingToken: false
+                                });
+                            }
+                        }
 
                         /* // old code
                         var unit = DataService.getUnitById(prevToken.inChildUnitTreeId);

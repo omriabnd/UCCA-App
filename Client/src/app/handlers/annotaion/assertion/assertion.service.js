@@ -15,6 +15,7 @@
             unitsIdsList: [],
             firstTokenInPreUnit: 0,
             flagToInChildUnitTreeId: false,
+            implicitFinished: {},
             checkTree: checkTree,
             checkTokenMap: checkTokenMap,
         };
@@ -361,11 +362,11 @@
         function checkTokensAndTokenMap(unit) {
             // tokenMap - tokens object: {id: token, id: token, ...}
             if (!unit.tokens.length) {
-                throw " There is no token list in unit " + unit.tree_id;
+                throw "There is no token list in unit " + unit.tree_id;
             }
             var tokenMap_ids = Object.keys(unit.tokenMap);
             if (tokenMap_ids.length !== unit.tokens.length) {
-                throw "222The lengths of tokens and tokenMap are not equals";
+                throw "The lengths of tokens and tokenMap are not equals";
             }
             for (var i = 0; i < tokenMap_ids.length; i++) {
                 if (parseInt(tokenMap_ids[i]) !== unit.tokens[i].static.id) {
@@ -545,6 +546,14 @@
             checkChildrenTokensSubSet(serverData);
         }
 
+        function _firstPrefix(id) {
+            var isNum = /^\d+$/.test(id);
+            if (isNum) { // without '-'
+                return null;
+            }
+            var index = id.lastIndexOf("-");
+            return id.slice(0, index);
+        }
 
         /***
          * recursive function, send to check correctly ordered function
@@ -553,9 +562,14 @@
          */
         function checkTokensOrder(unit) {
             // Check implicit unit in the beginning
-            if (unit.unitType === 'IMPLICIT') {
-                if (!(unit.tree_id.endsWith('-1') || unit.tree_id === '1')) {
-                    throw "Implicit unit is no in the beginning, " + unit.tree_id;
+            var firstPrefix = _firstPrefix(unit.tree_id);
+            if (firstPrefix) {
+                if (unit.unitType === 'IMPLICIT') {
+                    if (AssertionService.implicitFinished[firstPrefix]) { // implicit unit appears after another unit
+                        throw "Implicit unit is no in the beginning, " + unit.tree_id;
+                    }
+                } else {
+                    AssertionService.implicitFinished[firstPrefix] = true;
                 }
             }
             if (unit.tree_id !== "0") {
@@ -604,6 +618,8 @@
                 // Check tree ids
                 checkTreeId(tree.tree_id);
                 AssertionService.unitsIdsList = [];
+                AssertionService.implicitFinished = {};
+
                 buildUnitsIdList(tree.tree_id, tree.AnnotationUnits);
                 checkUnitsIdsList();
 

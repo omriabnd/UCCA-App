@@ -4,7 +4,5 @@
       ng-init="vm.initToken(vm,$index)"
       ng-dblclick="vm.tokenDbClick(vm)">
   <span class="token" ng-class="{'split-by-tokenization':vm.token.static.splitByTokenization,'line-feed':vm.token.static.text == '<br>','clicked': vm.tokenInSelectionList(vm) && vm.tokenUnitIsSelected(vm), bold: vm.token.unitTreeId==0 && vm.token.highlightStyle}" ng-mouseover="vm.addOnHover(vm)" ng-mousedown="vm.tokenClicked(vm)" ng-mouseup="vm.mouseUpFromToken(vm)"> {{::vm.token.static.text}} </span>
-  <span class="three-dot-separator" ng-if="vm.token.showEllipsis">...</span> <!--todo- ng-if="vm.showEllipsis(vm.token)" according to index, Omri should add it in the backend) -->
-<!--  <pre>{{ vm.token }}</pre>
--->
+  <span class="three-dot-separator" ng-if="vm.showEllipsis(vm.token)">...</span>
 </span>
