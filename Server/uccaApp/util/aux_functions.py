@@ -6,7 +6,6 @@ def is_tree_ids_uniq_and_consecutive(tree_ids_list):
     """
     Receives a list of tree_ids and returns True if they are consecutive, in the right order, and unique.
     """
-    print(tree_ids_list)
     splitter = lambda x: [int(y) for y in x.split('-')]
     if tree_ids_list[0] != "0":
         return False
@@ -57,14 +56,15 @@ def strictly_increasing(L):
     """
     return all(x<y for x, y in zip(L, L[1:]))
 
-def check_children_tokens(children_tokens_dict):
+def check_children_tokens(children_tokens_items_list):
     """
-    Receives a dict which maps a unit ID to a pair of (parent_tree_id, is_remote_copy, children_tokens).
+    Receives a list of pairs: a unit ID and a pair of (parent_tree_id, is_remote_copy, children_tokens).
     children_tokens is a list of start_index values of the tokens.
     Implcit units have None instead of children_tokens
     Returns True iff it's valid
     """
-    for annotation_unit,entry in children_tokens_dict.items():
+    children_tokens_dict = dict(children_tokens_items_list)
+    for annotation_unit,entry in children_tokens_items_list:
         parent_tree_id = entry[0]
         is_remote_copy = entry[1]
         children_tokens = entry[2]
@@ -78,7 +78,7 @@ def check_children_tokens(children_tokens_dict):
         # validating that:
         # (1) implicits are first, then by minimal start_index
         # (2) no overlap between tokens of siblings, unless they're remote
-        child_units = [(k,v) for k,v in children_tokens_dict.items() if v[0] == annotation_unit]
+        child_units = [(k,v) for k,v in children_tokens_items_list if v[0] == annotation_unit]
         non_implicit_seen = False
         last_start_index = -1  # the last start_index of any child under this unit
         observed_start_indices = set() # the start_indices of all observed children so far
@@ -90,9 +90,6 @@ def check_children_tokens(children_tokens_dict):
                 non_implicit_seen = True
                 is_remote_child = child_entry[1]
                 if not is_remote_child:
-                    print(child_id)
-                    print(child_entry[2])
-                    print(observed_start_indices)
                     if set(child_entry[2]) & observed_start_indices:
                         raise TokensInvalid("There cannot be an overlap in the tokens of sibling non-remote units")
                     observed_start_indices.update(child_entry[2])

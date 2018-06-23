@@ -255,7 +255,10 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             except KeyError:
                 raise TokensInvalid("children_tokens contains a token which is not in the task's tokens list.")
             children_tokens_list_for_validation.append((au['tree_id'],(au['parent_tree_id'],au['is_remote_copy'],cur_children_tokens_start_indices)))
-        if not check_children_tokens(dict(children_tokens_list_for_validation)):
+
+
+        print("children_tokens_list_for_validation: "+str(cur_children_tokens_start_indices))
+        if not check_children_tokens(children_tokens_list_for_validation):
             raise TokensInvalid("Inconsistency in children_tokens detected.")
 
         all_tree_ids = [] # a list of all tree_ids by their order in the input
