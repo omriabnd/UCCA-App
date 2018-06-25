@@ -122,7 +122,8 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             
         # return all array sorted with all the remote units in the end
 
-        return sorted(annotation_units_json, key=lambda x: tuple(x['tree_id'].split('-')))
+        annotation_units_json.sort(key=lambda x: tuple([int(a) for a in x['tree_id'].split('-')]))
+        return annotation_units_json
 
         #return sorted(annotation_units_json, key=operator.itemgetter('is_remote_copy'), reverse=False)
 
