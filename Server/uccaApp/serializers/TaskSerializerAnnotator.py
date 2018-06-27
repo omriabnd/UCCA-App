@@ -67,8 +67,8 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
 
         tokens_json = []
         for index,t in enumerate(tokens):
-            cur_json = TokensSerializer(t).data
-            cur_json['index_in_task'] = index
+            cur_json = TokensSerializer(t,context={'index_in_task':index}).data
+            #cur_json['index_in_task'] = index
             tokens_json.append(cur_json)
 
         return tokens_json
