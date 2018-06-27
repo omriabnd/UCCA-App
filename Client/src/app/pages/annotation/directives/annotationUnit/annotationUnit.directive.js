@@ -413,7 +413,7 @@
 
                     lastChildUnit = token.inChildUnitTreeId;
                     categoriesChildUnit = findCategoriesChildUnit(unit, lastChildUnit);
-                    if (!categoriesChildUnit.length) { // || !categoriesChildUnit
+                    if (!categoriesChildUnit || !categoriesChildUnit.length) {
                         categoriesChildUnit = [{
                             id:-1,
                             backgroundColor: 'gray'

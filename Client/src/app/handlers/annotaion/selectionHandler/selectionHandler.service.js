@@ -327,10 +327,6 @@
                                 unit["tokens"].push(_handler.copyTokenToStaticFormat(DataService.hashTables.tokensHashTable[token.id]));
                             });
 
-                            unit["children_tokens"] = unit["tokens"];
-
-                            // unit["remote_original_id"] = angular.copy(unit.tree_id);
-
                             var unitCategory = unit.categories[0] ? DataService.hashTables.categoriesHashTable[ unit.categories[0].id] : null;
 
                             _handler.toggleCategory(unitCategory,null,unit,unit,index != DataService.serverData.annotation_units.length -1).then(function(res){
