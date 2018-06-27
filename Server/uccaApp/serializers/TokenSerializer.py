@@ -18,7 +18,7 @@ class TokensSerializer(serializers.ModelSerializer):
         return obj.task_id_id
 
     def get_index_in_task(self, obj):
-        return self.context['index_in_task']
+        return self.context.get('index_in_task',-1)
 
     class Meta:
         model = Tokens
