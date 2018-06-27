@@ -316,7 +316,6 @@
         }
 
         // Old function
-        // Make sure that the child unit is really a child of the current unit, and that this token is really in it.
         // function checkInChildUnitTreeId(unit, token) {
         //     var inChildUnitTreeId = token.inChildUnitTreeId;
         //
@@ -341,6 +340,7 @@
         //     // }
         // }
 
+        // Make sure that the child unit is really a child of the current unit, and that this token is really in it.
         function checkInChildUnitTreeId(unit, token) {
             if (!token.inChildUnitTreeId) {
                 return;

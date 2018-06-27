@@ -31,7 +31,6 @@
             $scope.vm.tokenInSelectionList = tokenInSelectionList;
 
             $scope.$on('tokenIsClicked', function(event, args) {
-                // debugger
                 var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
 
