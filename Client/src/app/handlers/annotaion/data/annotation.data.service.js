@@ -309,6 +309,7 @@
             console.log("In insertToTree, newObject=", newObject);
 
             return $q(function(resolve, reject) {
+                // debugger
 
                 if (!inInitStage && DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT) {
                     Core.showAlert("Cant create annotation units in refinement layer")
@@ -566,6 +567,7 @@
         function deleteUnit(unitId){
             trace("DataService - deleteUnit");
             return $q(function(resolve, reject) {
+                // debugger
                 var unit = getUnitById(unitId);
                 var parentUnit = getUnitById(getParentUnitId(unitId));
                 var splitUnitId = unit.tree_id.split('-');

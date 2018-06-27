@@ -477,7 +477,8 @@
                 /*** Check indexInUnit ***/
                 // should be the same as the index of the token inside the unit.tokens
                 if (t !== tokens[t].indexInUnit) {
-                    throw "indexInUnit should be the same as the index of the token inside the unit.tokens";
+                    console.log("token=====", tokens[t])
+                    throw "indexInUnit should be the same as the index of the token inside the unit.tokens, unit=" + unit.tree_id + "token=" + tokens[t].static.text + "--t="+t + "--tokens[t].indexInUnit="+ tokens[t].indexInUnit;
                 }
 
                 /*** Check unitTreeId ***/
