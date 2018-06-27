@@ -161,12 +161,6 @@
 
         function categoriesTooltip(vm){
             trace("annotationUnitDirective - categoriesTooltip");
-            if (vm.dataBlock.categories && !vm.dataBlock.categories[0]) {
-                vm.dataBlock.categories = [{
-                    id:-1,
-                    backgroundColor: 'gray'
-                }];
-            }
             var output = '';
             for (var index in vm.dataBlock.categories) {
                 output = output + ' ' + vm.dataBlock.categories[index].name;
@@ -300,15 +294,6 @@
         function getUnitBorderColors(categories) {
             trace("annotationUnitDirective - getUnitBorderColors");
             // Return dict according categories list
-            if (categories.length > 1) {
-                // Check if categories contain default category(gary) in addition to another categories, and remove it.
-                for (var i = 0; i < categories.length; i++) {
-                    if (categories[i].id === -1) {
-                        categories.splice(i, 1);
-                    }
-                }
-            }
-
             var actualCategories = categories.filter(function(category){
                 return category.id !== undefined;
             });
@@ -428,7 +413,7 @@
 
                     lastChildUnit = token.inChildUnitTreeId;
                     categoriesChildUnit = findCategoriesChildUnit(unit, lastChildUnit);
-                    if (!categoriesChildUnit || !categoriesChildUnit.length || !categoriesChildUnit[0]) {
+                    if (!categoriesChildUnit.length) { // || !categoriesChildUnit
                         categoriesChildUnit = [{
                             id:-1,
                             backgroundColor: 'gray'

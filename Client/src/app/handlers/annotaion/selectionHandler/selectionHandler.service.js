@@ -177,9 +177,10 @@
                             if (selectedUnitId.toString() != "0") {
                                 newInUnitField = selectedUnitId + "-" + newInUnitField;
                             }
-                            token['inChildUnitTreeId'] = newInUnitField;
+                            // Buggy, because it put inChildUnit field in clicked token, without crete unit to this token.
+                            // Remove this line (26/6)
+                            // token['inChildUnitTreeId'] = newInUnitField;
                         }
-
                     }
                 }
             },
@@ -530,7 +531,7 @@
                         }
 
 
-                        category !== null && !remote ? newUnit.categories.push(angular.copy(category)) : '';
+                        category && !remote ? newUnit.categories.push(angular.copy(category)) : '';
                         /**
                          * InsertToTree for regular (non-implicit) units
                          */
