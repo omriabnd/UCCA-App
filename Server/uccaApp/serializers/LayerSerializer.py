@@ -113,7 +113,8 @@ class LayerSerializer(serializers.ModelSerializer):
             "created_by",
             "created_at",
             "updated_at",
-            "slotted"
+            "slotted",
+            "restriction_all_tokens_covered_upon_submit"
         )
 
     def create(self, validated_data):

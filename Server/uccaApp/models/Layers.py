@@ -20,7 +20,8 @@ class Layers(models.Model):
     tooltip = models.CharField(max_length=Constants.TOOLTIPS_MAX_LENGTH)
     slotted = models.BooleanField(null=False, default=False)
     category_reorderings = models.TextField(default='', null=True)
-    
+    restriction_all_tokens_covered_upon_submit = models.BooleanField(null=False,default=True)
+
     created_by = models.ForeignKey(User, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=datetime.now, blank=True)

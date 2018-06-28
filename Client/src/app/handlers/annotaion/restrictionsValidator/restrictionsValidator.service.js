@@ -434,9 +434,10 @@
         }
 
         function checkIfVoilateEachTokenInUnit(annotationUnit){
-            /*return false;*/
+            if (!$rootScope.restrictionAllTokensCoveredUponSubmit) {
+                return false;
+            }
 
-            
             var isViolated = false;
             var sumOfNonPuctuationTokens = annotationUnit.tokens.filter(function(token) {
                 return token.require_annotation === false ;
