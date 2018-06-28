@@ -336,7 +336,19 @@
     "filter":true,
     "search":true,
     "type":"checkbox",
-    "placeholder":"Is Active...",
+    "placeholder":"Is Slotted...",
+    "value":true,
+    "showInTable":true,
+    "shouldSendToServer":true
+  },
+  {
+    "key":"restriction_all_tokens_covered_upon_submit",
+    "name":"All tokens must be covered upon submission",
+    "order":11,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"Is Applied...",
     "value":true,
     "showInTable":true,
     "shouldSendToServer":true
