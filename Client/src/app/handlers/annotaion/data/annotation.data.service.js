@@ -416,7 +416,8 @@
                 }
 
 
-                //Update indexInUnit attribute
+                // Update indexInUnit attribute to tokens in units instead of unit 0. todo: Where the update to unit 0???
+                // debugger
                 newObject.tokens.forEach(function (token, index, inInit) {
                     token.indexInUnit = index;
                 });
@@ -494,6 +495,12 @@
                 }
 
                 updateInUnitIdsForTokens(DataService.tree);
+
+                // tODO- update indexInUnit in unit 0 (to tree.tokens) -- maybe in another place  ???
+                // DataService.tree.tokens.forEach(function (token, index) {
+                //     token.indexInUnit = index;
+                // });
+
 
                 newObject.unitType !== "REMOTE" ? $rootScope.$broadcast("InsertSuccess", {
                     dataBlock: {
@@ -734,22 +741,30 @@
             var aElementPos = aParentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(a.tokens[0].static.id);
             var bElementPos = bParentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(b.tokens[0].static.id);
 
-            if(a.unitType !== "REGULAR" || b.unitType !== "REGULAR"){ // Not REGULAR is first
-                if(a.unitType === "REGULAR" && b.unitType !== "REGULAR"){
+            if(a.unitType !== "REGULAR" || b.unitType !== "REGULAR"){ // At least, one is no regular
+                if(a.unitType === "REGULAR" && b.unitType === "IMPLICIT"){ // Implicit should be before regular
                     return 1;
+                }else if((a.unitType === "REMOTE" && b.unitType === "REGULAR") || (b.unitType === "REMOTE"  && a.unitType === "REGULAR")){ // According to first start_index
+                    if (a.tokens[0].static.start_index > b.tokens[0].static.start_index) {
+                        return -1
+                    } else if (a.tokens[0].static.start_index < b.tokens[0].static.start_index) {
+                        return 1;
+                    }
+                    return 0;
                 }else if(b.unitType === "REGULAR" && a.unitType !== "REGULAR"){
                     return -1;
                 }else{  // Both not regular
-                    if(a.unitType === "REMOTE" && b.unitType === "IMPLICIT"){ // Remote before implicit
-                        return -1;
-                    }else if(a.unitType === "IMPLICIT" && b.unitType === "REMOTE"){
+                    if(a.unitType === "REMOTE" && b.unitType === "IMPLICIT"){ // Implicit should be before remote
                         return 1;
+                    }else if(a.unitType === "IMPLICIT" && b.unitType === "REMOTE"){
+                        return -1; // implicit should be first
                     }else{ // Both remote or both implicit
                         if(a.unitType === "REMOTE" && b.unitType === "REMOTE"){ // Both remote
-                            if(a.remote_original_id > b.remote_original_id){ //TODO: What is this? cloned_from_id?
+                            console.log("A and B are remotes", a.cloned_from_tree_id, b.cloned_from_tree_id,  "  remotes ids:", a.remote_original_id, b.remote_original_id)
+                            if(a.cloned_from_tree_id > b.remote_original_id){ // TODO: when adding a new remote unit, there is no cloned_from_tree_id attribute, instead of this there is remote_original_id.
                                 return 1;
                             }
-                            else if(a.remote_original_id < b.remote_original_id){
+                            else if(a.cloned_from_tree_id < b.remote_original_id){
                                 return -1;
                             }else{
                                 return 0;  // TODO: Add to assertion service - fail if two remote units have the same parent and clone_from_id

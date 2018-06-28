@@ -276,6 +276,7 @@
 
                         var tokenStack = [];
                         if(unit.type === "IMPLICIT"){
+                            // debugger
                             var objToPush = {
                                 rowId : '',
                                 text : '<span>IMPLICIT UNIT</span>',
@@ -386,7 +387,8 @@
 
                         }else if(unit.tree_id !== "0"){
                             unit.children_tokens.forEach(function(token){
-                                var parentId = unit.tree_id.length === 1 ? "0" : unit.tree_id.split("-").slice(0,unit.tree_id.split("-").length-1).join("-");
+                                var parentId = unit.tree_id.indexOf('-') === -1 ? "0" : unit.tree_id.split("-").slice(0,unit.tree_id.split("-").length-1).join("-");
+                                // Fill parent tokens, if unit=1-> fill tree.tokens
                                 _handler.addTokenToList(_handler.copyTokenToStaticFormat(DataService.hashTables.tokensHashTable[token.id]), parentId)
                             });
                             if(unit.categories.length === 0){
@@ -437,10 +439,14 @@
                     // Add attributes to tree.tokens: indexInUnit, unitTreeId
                     updateIndexInUnitAttribute(DataService.tree.tokens);
 
-                    // add unitTreeId
-                    DataService.tree.tokens.forEach(function(token) {
+                    // debugger
+                    // todo: check if indexInUnit updated here in unit 0 (in tree.tokens)
+                    // add unitTreeId and indexInUnit attributes
+                    DataService.tree.tokens.forEach(function(token, index) {
                         token['unitTreeId'] = "0";
+                        token.indexInUnit = index;
                     });
+
 
                     DataService.unitType = 'REGULAR';
                     // after init the tree, is it needed?
@@ -652,6 +658,7 @@
 
         function updateIndexInUnitAttribute(selectedTokenList){
             trace("selectionHandlerService - updateIndexInUnitAttribute");
+            // debugger
             selectedTokenList.forEach(function(token,index){
                 var parentUnitTokens;
                 if(token.unitTreeId){
