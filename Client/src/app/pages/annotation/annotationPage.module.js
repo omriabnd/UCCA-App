@@ -152,9 +152,9 @@
                 setCategoriesAbbreviation(AnnotationTextService,allCategories);
                 setCategoriesName(AnnotationTextService,allCategories);
                 
-                $rootScope.isSlottedLayerProject = DataService.serverData.project.layer.slotted;
-                $rootScope.restrictionAllTokensCoveredUponSubmit = DataService.serverData.project.layer.restriction_all_tokens_covered_upon_submit;
-                $rootScope.isRefinementLayerProject = DataService.serverData.project.layer.type === "REFINEMENT";
+                $rootScope.isSlottedLayerProject = DataService.currentTask.project.layer.slotted;
+                $rootScope.restrictionAllTokensCoveredUponSubmit = DataService.currentTask.project.layer.restriction_all_tokens_covered_upon_submit;
+                $rootScope.isRefinementLayerProject = DataService.currentTask.project.layer.type === "REFINEMENT";
 
                 // we here add the createdByTokenization field for each token
                 // first, sort tokens by start_index

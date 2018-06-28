@@ -434,10 +434,6 @@
         }
 
         function checkIfVoilateEachTokenInUnit(annotationUnit){
-            if (!$rootScope.restrictionAllTokensCoveredUponSubmit) {
-                return false;
-            }
-
             var isViolated = false;
             var sumOfNonPuctuationTokens = annotationUnit.tokens.filter(function(token) {
                 return token.require_annotation === false ;
@@ -720,6 +716,11 @@
             var evaluationResult = true;
 
             if(fromSubmit){
+                console.log("$rootScope.restrictionAllTokensCoveredUponSubmit: "+$rootScope.restrictionAllTokensCoveredUponSubmit);
+                if (!$rootScope.restrictionAllTokensCoveredUponSubmit) {
+                    return true;
+                }
+                
                 var hash_tokens = hashTables.tokensHashTable;
                 // Commented out by Omri Abend, 24/7 because it is not working properly
                 //checkIfAllTokenThatRequireAnnotationIsInUnit(mainPassage,hash_tokens,true);
