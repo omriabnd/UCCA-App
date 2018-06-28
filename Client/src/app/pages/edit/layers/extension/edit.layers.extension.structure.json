@@ -393,6 +393,18 @@
     "value":"",
     "showInTable":false
   },
+        {
+    "key":"category_reorderings",
+    "name":"Category Re-orderings (JSON)",
+    "order":13,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter JSON...",
+    "value":"",
+    "showInTable":true,
+    "shouldSendToServer":true
+  },
   {
     "key":"updated_at",
     "name":"Updated At",
