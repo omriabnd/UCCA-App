@@ -339,34 +339,17 @@
 
                 var units = [];
 
+
+                /**
+                 * By Shai
+                 * Extracted long inner functionality to private function
+                 * _updateParentUnitTokensUponUnitCreation
+                 *
+                 */
+
+
                 if (newObject.unitType != "REMOTE") {
-                    newObject.tokens.forEach(function (token) {
-                        if (token.
-                            inChildUnitTreeId !== null && token.inChildUnitTreeId !== undefined) {
-                            var unitPos = units.map(function (x) {
-                                return x.id;
-                            }).indexOf(token.inChildUnitTreeId);
-                            if (unitPos === -1) {
-                                units.push({
-                                    id: token.inChildUnitTreeId
-                                });
-                            };
-                            //Find token in parent
-                            if (token.unitTreeId === undefined) {
-                                token.unitTreeId = "0";
-                            }
-
-                            var parentUnit = DataService.getUnitById(token.unitTreeId);
-                            var elementPos = parentUnit.tokens.map(function (x) {
-                                return x.static.id;
-                            }).indexOf(token.static.id);
-
-                            if (elementPos > -1) {
-                                // debugger
-                                parentUnit.tokens[elementPos].inChildUnitTreeId = newObject.tree_id;
-                            }
-                        }
-                    });
+                    newObject.tokens.forEach(_updateParentUnitTokensUponUnitCreation(token));
                 }
 
                 //Adding children to new unit
@@ -1288,6 +1271,47 @@
             }
 
             return position;
+        }
+
+
+        /**
+         *
+         * @param token
+         * @private
+         *
+         * Updates the inChildUnitTreeId fields of tokens of a unit upon creating a sub-unit of it.
+         * token is a token in the newly created sub-unit.
+
+         *
+         */
+
+        function _updateParentUnitTokensUponUnitCreation(token){
+            if (token.
+                    inChildUnitTreeId !== null && token.inChildUnitTreeId !== undefined) {
+                var unitPos = units.map(function (x) {
+                    return x.id;
+                }).indexOf(token.inChildUnitTreeId);
+                if (unitPos === -1) {
+                    units.push({
+                        id: token.inChildUnitTreeId
+                    });
+                };
+                //Find token in parent
+                if (token.unitTreeId === undefined) {
+                    token.unitTreeId = "0";
+                }
+
+                var parentUnit = DataService.getUnitById(token.unitTreeId);
+                var elementPos = parentUnit.tokens.map(function (x) {
+                    return x.static.id;
+                }).indexOf(token.static.id);
+
+                if (elementPos > -1) {
+                    // debugger
+                    parentUnit.tokens[elementPos].inChildUnitTreeId = newObject.tree_id;
+                }
+            }
+
         }
 
 /*                    if (position === "First" && token['nextTokenNotAdjacent']) {
