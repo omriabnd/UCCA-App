@@ -597,10 +597,12 @@
                                     parentUnit.AnnotationUnits.splice(i,1);
                                     i--;
                                 }
-                            }else{
+                            }
+                            /* This code used to delete implicit units and remote units to other parts of the tree
+                            else{
                                 parentUnit.AnnotationUnits.splice(i,1);
                                 i--;
-                            }
+                            } */
 
                         }
                     }
