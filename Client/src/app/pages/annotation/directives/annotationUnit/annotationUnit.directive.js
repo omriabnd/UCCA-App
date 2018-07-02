@@ -772,13 +772,13 @@
             }else{
                 if(currentUnit.unitType === "REMOTE"){
                     //UpdateUsedAsRemote
-                    var remoteUnit = DataService.getUnitById(currentUnit.remote_original_id);
-                    var elementPos = DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.tree_id]
+                    var remoteUnit = DataService.getUnitById(currentUnit.cloned_from_tree_id);
+                    var elementPos = DataService.unitsUsedAsRemote[currentUnit.cloned_from_tree_id][currentUnit.tree_id]
                     if(elementPos){
-                        delete DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.tree_id];
+                        delete DataService.unitsUsedAsRemote[currentUnit.cloned_from_tree_id][currentUnit.tree_id];
                     }
 
-                    delete DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.tree_id];
+                    delete DataService.unitsUsedAsRemote[currentUnit.cloned_from_tree_id][currentUnit.tree_id];
                 }
                 var parentUnit = DataService.getParentUnitId(unitId);
                 DataService.deleteUnit(unitId).then(function(res){
@@ -819,7 +819,7 @@
         function unitClicked(vm, index, event){
             trace("annotationUnitDirective - unitClicked");
             if(selectionHandlerService.getUnitToAddRemotes() !== "0" && selectionHandlerService.getUnitToAddRemotes() !== index){
-                var unitUsed = DataService.getUnitById(selectionHandlerService.getUnitToAddRemotes()).AnnotationUnits.map(function(x) {return x.remote_original_id; }).indexOf(vm.unit.tree_id);
+                var unitUsed = DataService.getUnitById(selectionHandlerService.getUnitToAddRemotes()).AnnotationUnits.map(function(x) {return x.cloned_from_tree_id; }).indexOf(vm.unit.tree_id);
 
                 if(index == 0){
                   selectionHandlerService.setUnitToAddRemotes("0");
@@ -856,14 +856,15 @@
                     children_tokens:[],
                     containsAllParentUnits: false,
                     tokens:angular.copy(DataService.getUnitById(index).tokens),
+                    cloned_from_tree_id: vm.dataBlock.tree_id,
+                    is_remote_copy: true,
                     AnnotationUnits : [
-
                     ]
                 };
 
                 selectionHandlerService.clearCategoryForRemote();
 
-                objToPush["remote_original_id"] = vm.dataBlock.tree_id;
+                objToPush["cloned_from_tree_id"] = vm.dataBlock.tree_id;
 
                 var newRowId = DataService.insertToTree(objToPush,selectionHandlerService.getUnitToAddRemotes()).then(function(res){
                     DataService.unitType = 'REGULAR';

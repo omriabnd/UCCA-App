@@ -581,28 +581,29 @@
                 var unitPositionInParentAnnotationUnits = parseInt(splitUnitId[splitUnitId.length-1])-1;
                 $rootScope.$broadcast("RemoveBorder",{id: unit.tree_id});
                 if(!unit.AnnotationUnits || unit.AnnotationUnits.length === 0){
+                    // Remove unit from parent and that's it - there are no child units to handle
                     parentUnit.AnnotationUnits.splice(unitPositionInParentAnnotationUnits,1);
                 }else{
+                    // Move child to parent, so if X->Y->Z and Y is deleted, we get X->Z
+                    var preArray = parentUnit.AnnotationUnits.slice(0,unitPositionInParentAnnotationUnits); // Parent units up to us
+                    var afterArray = parentUnit.AnnotationUnits.slice(unitPositionInParentAnnotationUnits+1,parentUnit.AnnotationUnits.length); // Parent units from us
+                    parentUnit.AnnotationUnits = preArray.concat(unit.AnnotationUnits).concat(afterArray); // Move child units instead of us
 
-                    var preArray = parentUnit.AnnotationUnits.slice(0,unitPositionInParentAnnotationUnits);
-                    var afterArray = parentUnit.AnnotationUnits.slice(unitPositionInParentAnnotationUnits+1,parentUnit.AnnotationUnits.length);
-                    parentUnit.AnnotationUnits = preArray.concat(unit.AnnotationUnits).concat(afterArray);
+                    for(var i=0; i<parentUnit.AnnotationUnits.length; i++){ // TODO: Why another units deleted, if they remote or implicit?
+                        if(parentUnit.AnnotationUnits[i].unitType !== "REGULAR"){
+                            if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id]){
+                                if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id][parentUnit.AnnotationUnits[i].tree_id]){
+                                    delete DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id][parentUnit.AnnotationUnits[i].tree_id];
+                                    parentUnit.AnnotationUnits.splice(i,1);
+                                    i--;
+                                }
+                            }else{
+                                parentUnit.AnnotationUnits.splice(i,1);
+                                i--;
+                            }
 
-                    // for(var i=0; i<parentUnit.AnnotationUnits.length; i++){ // TODO: Why another units deleted, if they remote or implicit?
-                    //     if(parentUnit.AnnotationUnits[i].unitType !== "REGULAR"){
-                    //         if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id]){
-                    //             if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id][parentUnit.AnnotationUnits[i].tree_id]){
-                    //                 delete DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id][parentUnit.AnnotationUnits[i].tree_id];
-                    //                 parentUnit.AnnotationUnits.splice(i,1);
-                    //                 i--;
-                    //             }
-                    //         }else{
-                    //             parentUnit.AnnotationUnits.splice(i,1);
-                    //             i--;
-                    //         }
-                    //
-                    //     }
-                    // }
+                        }
+                    }
                 }
 
                 updateTreeIds(DataService.tree);
@@ -773,6 +774,7 @@
          * @returns {boolean}
          */
         function traversInTree(treeNode){
+            debugger;
             trace("DataService - traversInTree");
             var unit = {
                 tree_id : treeNode.tree_id.toString(),
@@ -786,11 +788,10 @@
                 is_remote_copy: treeNode.unitType.toUpperCase() === 'REMOTE',
                 // todo- remove stsic from tokens
                 children_tokens: treeNode.tree_id === "0" ? filterStaticTokens(filterTokensAtt(angular.copy(treeNode.tokens))) : filterStaticTokens(filterTokensAttForUnit(angular.copy(treeNode.tokens))),
-                cloned_from_tree_id: treeNode.unitType.toUpperCase() === 'REMOTE' ? treeNode.remote_original_id ? treeNode.remote_original_id: treeNode.cloned_from_tree_id : null
-                // remote_original_id - if the tree updated in frontend tree data, cloned_from_tree_id - if the tree updated from server data
+                cloned_from_tree_id: treeNode.unitType.toUpperCase() === 'REMOTE' ? treeNode.cloned_from_tree_id : null
             };
             if($rootScope.isSlottedLayerProject){
-                
+
                 var firstSlotIndex = 0;
                 for(var i=0; i<unit.categories.length; i++){
                     var currentCategoy = unit.categories[i];
@@ -824,7 +825,6 @@
             // if(unit.tree_id === "0"){
             //     delete unit.children_tokens;
             // }
-            unit.type === 'REMOTE' ? unit.type = 'REGULAR' : '';
             if(unit.categories.length === 1 && unit.categories[0].id === -1){
                 unit.categories = [];
             }
@@ -832,6 +832,12 @@
             if(unit.type === "IMPLICIT"){
                 delete unit.children_tokens;
             }
+
+            if(unit.type === "REMOTE") {
+                // The server doesn't have a REMOTE type, it judges the remoteness based on other fields
+                unit.type = "REGULAR";
+            }
+
             annotation_units.push(unit);
             for(var i=0; i<treeNode.AnnotationUnits.length; i++){
                 var output_val = traversInTree(treeNode.AnnotationUnits[i]);
@@ -984,7 +990,6 @@
             }
             var mode = shouldSubmit ? 'submit' : 'draft';
             DataService.serverData['annotation_units'] = annotation_units;
-            DataService.serverData.tokens = [];
             DataService.serverData.tokens= tokensCopy;
 
             return apiService.annotation.putTaskData(mode,DataService.serverData).then(function(res){

@@ -98,7 +98,6 @@
                  * If groupUnit is false, remove the token from unit tokens
                  * @type {Number}
                  */
-                // debugger
                 var elementPos = this.selectedTokenList.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                 if(elementPos === -1){
                     !groupUnit ? _handler.removeTokenFromUnitTokens(token) : ''; // this token is already in static format
@@ -268,166 +267,161 @@
              * @returns {*}
              */
             initTree: function(data){
-                trace("selectionHandlerService - initTree");
-                return $q(function(resolve, reject) {
-                    DataService.serverData.annotation_units.forEach(function(unit,index){
-                        // Add this declaration with Omri Feb 11
-                        unit.AnnotationUnits = [];
+                function initImplicitUnit(unit, index) {
 
-                        var tokenStack = [];
-                        if(unit.type === "IMPLICIT"){
-                            // debugger
-                            var objToPush = {
-                                rowId : '',
-                                text : '<span>IMPLICIT UNIT</span>',
-                                numOfAnnotationUnits: 0,
-                                categories:[],
-                                comment:"",
-                                cluster:"",
-                                rowShape:'',
-                                unitType:'IMPLICIT',
-                                orderNumber: '-1',
-                                gui_status:'OPEN',
-                                usedAsRemote:[],
-                                children_tokens:[],
-                                containsAllParentUnits: false,
-                                tokens:[{
-                                    static: {
-                                        "text": "IMPLICIT UNIT",
-                                    },
-                                    "unitTreeId":unit.parent_tree_id,
-                                    "inChildUnitTreeId":null
-                                }],
-                                AnnotationUnits : [
+                    var objToPush = {
+                        rowId : '',
+                        text : '<span>IMPLICIT UNIT</span>',
+                        numOfAnnotationUnits: 0,
+                        categories:[],
+                        comment:"",
+                        cluster:"",
+                        rowShape:'',
+                        unitType:'IMPLICIT',
+                        orderNumber: '-1',
+                        gui_status:'OPEN',
+                        usedAsRemote:[],
+                        children_tokens:[],
+                        containsAllParentUnits: false,
+                        tokens:[{
+                            static: {
+                                "text": "IMPLICIT UNIT",
+                            },
+                            "unitTreeId":unit.parent_tree_id,
+                            "inChildUnitTreeId":null
+                        }],
+                        AnnotationUnits : [
 
-                                ],
-                                parent_tree_id: unit.parent_tree_id
-                            };
+                        ],
+                        parent_tree_id: unit.parent_tree_id
+                    };
 
-                            /**
-                             * insertToTree for implicit units
-                             */
-                            var newRowId = DataService.insertToTree(objToPush,unit.parent_tree_id,index != DataService.serverData.annotation_units.length -1);
+                    /**
+                     * insertToTree for implicit units
+                     */
+                    var newRowId = DataService.insertToTree(objToPush,unit.parent_tree_id,index != DataService.serverData.annotation_units.length -1);
 
-                            unit.categories.forEach(function(category,index){
-                                _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id);
-                                _handler.clearTokenList();
-                            });
+                    unit.categories.forEach(function(category,index){
+                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id);
+                        _handler.clearTokenList();
+                    });
+                }
 
-                        }else if(unit.is_remote_copy){// insertToTree for remote units
+                function initRemoteUnit(unit, index) {
+                    console.log("Init tree, unit is remote copy", unit);
 
-                            console.log("Init tree, unit is remote copy", unit);
+                    DataService.unitType = 'REMOTE';
+                    unit["tokens"] = [];
+                    unit.unitType = "REMOTE";
+                    unit.children_tokens.forEach(function(token){
+                        unit["tokens"].push(_handler.copyTokenToStaticFormat(DataService.hashTables.tokensHashTable[token.id]));
+                    });
 
-                            DataService.unitType = 'REMOTE';
+                    var unitCategory = unit.categories[0] ? DataService.hashTables.categoriesHashTable[ unit.categories[0].id] : null;
+                    _handler.toggleCategory(unitCategory,null,unit,unit,index != DataService.serverData.annotation_units.length -1).then(function(res){
+                        unit.categories.forEach(function(category,index){
+                            if(index === 0){
 
-                            unit["tokens"] = [];
+                            }else{
+                                _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],res.id);
+                            }
+                            _handler.clearTokenList();
+                        });
+                    });
 
-                            unit.unitType = "REMOTE";
 
-                            unit.children_tokens.forEach(function(token){
-                                unit["tokens"].push(_handler.copyTokenToStaticFormat(DataService.hashTables.tokensHashTable[token.id]));
-                            });
+                    // if(unit.categories.length === 0){
+                    //     _handler.toggleCategory(null,null,unit);
+                    // }
 
-                            var unitCategory = unit.categories[0] ? DataService.hashTables.categoriesHashTable[ unit.categories[0].id] : null;
+                    DataService.unitType = 'REGULAR';
+                    var unitToAddTo = DataService.getUnitById(unit.tree_id);
 
-                            _handler.toggleCategory(unitCategory,null,unit,unit,index != DataService.serverData.annotation_units.length -1).then(function(res){
+                    if(unitToAddTo){
+                        if(unitToAddTo.usedAsRemote === undefined){
+                            unitToAddTo["usedAsRemote"] = [];
+                        }
+
+                        var remotePosition = DataService.getUnitById(unit.cloned_from_tree_id).AnnotationUnits.map(function(x) {return x.id; }).indexOf(unit.id);
+                        if(remotePosition > -1){
+                            unitToAddTo["usedAsRemote"].push(DataService.getUnitById(unit.parent_tree_id).AnnotationUnits[remotePosition].tree_id);
+                        }else{
+                            unitToAddTo["usedAsRemote"].push(unit.parent_tree_id + "-" + DataService.getUnitById(unit.parent_tree_id).AnnotationUnits.length);
+                        }
+                    }
+
+                    if(DataService.unitsUsedAsRemote[unit.tree_id] === undefined){
+                        DataService.unitsUsedAsRemote[unit.tree_id] = {};
+                    }
+
+                    var parentUnitUnits = DataService.getUnitById(unit.tree_id);
+                    var amountOfRemotes = 0;
+                    if (parentUnitUnits) { // TODO: remove this line, added this condition because sometimes parentUnitUnits was undefined
+                        parentUnitUnits.AnnotationUnits.forEach(function (unit) {
+                            if (unit.unitType === "REMOTE") {
+                                amountOfRemotes++;
+                            }
+                        });
+                    }
+
+                    DataService.unitsUsedAsRemote[unit.tree_id][unit.parent_tree_id + "-" + parseInt(parseInt(amountOfRemotes+1))] = true;
+                    // console.log("In initTree, unitsUsedAsRemote=", DataService.unitsUsedAsRemote);
+
+                    // selectionHandlerService.setUnitToAddRemotes("0");
+                    $('.annotation-page-container').toggleClass('crosshair-cursor');
+                }
+
+                function initRegularUnit(unit) {
+                    unit.children_tokens.forEach(function(token){
+                        var parentId = unit.tree_id.indexOf('-') === -1 ? "0" : unit.tree_id.split("-").slice(0,unit.tree_id.split("-").length-1).join("-");
+                        // Fill parent tokens, if unit=1-> fill tree.tokens
+                        _handler.addTokenToList(_handler.copyTokenToStaticFormat(DataService.hashTables.tokensHashTable[token.id]), parentId)
+                    });
+                    if(unit.categories.length === 0){
+                        _handler.toggleCategory(null,false,unit.is_remote_copy,unit,true);
+                    }else{
+                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[unit.categories[0].id],false,false,unit,true)
+                            .then(function(){
                                 unit.categories.forEach(function(category,index){
                                     if(index === 0){
-
+                                        // _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],false,false,unit.gui_status);
                                     }else{
-                                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],res.id);
+                                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id,false);
                                     }
                                     _handler.clearTokenList();
                                 });
                             });
+                    }
 
+                    _handler.clearTokenList();
+                }
 
-                            // if(unit.categories.length === 0){
-                            //     _handler.toggleCategory(null,null,unit);
-                            // }
+                trace("selectionHandlerService - initTree");
+                return $q(function(resolve, reject) {
+                    // First create the regular and implicit units
+                    DataService.serverData.annotation_units.forEach(function(unit,index){
+                        unit.AnnotationUnits = [];
 
-                            DataService.unitType = 'REGULAR';
-
-                            var unitToAddTo = DataService.getUnitById(unit.tree_id);
-
-                            if(unitToAddTo){
-                                if(unitToAddTo.usedAsRemote === undefined){
-                                    unitToAddTo["usedAsRemote"] = [];
-                                }
-
-                                var remotePosition = DataService.getUnitById(unit.remote_original_id).AnnotationUnits.map(function(x) {return x.id; }).indexOf(unit.id);
-                                if(remotePosition > -1){
-                                    unitToAddTo["usedAsRemote"].push(DataService.getUnitById(unit.parent_tree_id).AnnotationUnits[remotePosition].tree_id);
-                                }else{
-                                    unitToAddTo["usedAsRemote"].push(unit.parent_tree_id + "-" + DataService.getUnitById(unit.parent_tree_id).AnnotationUnits.length);
-                                }
-                            }
-
-                            if(DataService.unitsUsedAsRemote[unit.tree_id] === undefined){
-                                DataService.unitsUsedAsRemote[unit.tree_id] = {};
-                            }
-
-                            var parentUnitUnits = DataService.getUnitById(unit.tree_id);
-                            var amountOfRemotes = 0;
-                            if (parentUnitUnits) { // TODO: remove this line, added this condition because sometimes parentUnitUnits was undefined
-                                parentUnitUnits.AnnotationUnits.forEach(function (unit) {
-                                    if (unit.unitType === "REMOTE") {
-                                        amountOfRemotes++;
-                                    }
-                                });
-                            }
-
-                            DataService.unitsUsedAsRemote[unit.tree_id][unit.parent_tree_id + "-" + parseInt(parseInt(amountOfRemotes+1))] = true;
-                            // console.log("In initTree, unitsUsedAsRemote=", DataService.unitsUsedAsRemote);
-
-
-
-                            // selectionHandlerService.setUnitToAddRemotes("0");
-                            $('.annotation-page-container').toggleClass('crosshair-cursor');
-
-                        }else if(unit.tree_id !== "0"){
-                            unit.children_tokens.forEach(function(token){
-                                var parentId = unit.tree_id.indexOf('-') === -1 ? "0" : unit.tree_id.split("-").slice(0,unit.tree_id.split("-").length-1).join("-");
-                                // Fill parent tokens, if unit=1-> fill tree.tokens
-                                _handler.addTokenToList(_handler.copyTokenToStaticFormat(DataService.hashTables.tokensHashTable[token.id]), parentId)
-                            });
-                            if(unit.categories.length === 0){
-                                _handler.toggleCategory(null,false,unit.is_remote_copy,unit,true);
-                            }else{
-                                _handler.toggleCategory(DataService.hashTables.categoriesHashTable[unit.categories[0].id],false,false,unit,true)
-                                    .then(function(){
-                                        unit.categories.forEach(function(category,index){
-                                            if(index === 0){
-                                                // _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],false,false,unit.gui_status);
-                                            }else{
-                                                _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id,false);
-                                            }
-                                            _handler.clearTokenList();
-                                        });
-                                    });
-                            }
-
-                            _handler.clearTokenList();
+                        // We're checking unit.type and not unit.unitType because the server sends unit.type
+                        if(unit.type === "IMPLICIT"){
+                            initImplicitUnit(unit, index);
+                        }else if(!unit.cloned_from_tree_id && unit.tree_id !== "0"){
+                            initRegularUnit(unit);
                         }
-                        // else if (unit.tree_id === "0") { // Build tokens list to unit 0
-                        //     console.log("tree tokens=", DataService.tree.tokens)
-                        //
-                        //     DataService.serverData.tokens.forEach(function(token) {
-                        //         DataService.tree.tokens.push(_handler.copyTokenToStaticFormat(token));
-                        //     });
-                        //
-                        //     // unit.children_tokens.forEach(function(token){
-                        //     //     _handler.addTokenToList(_handler.copyTokenToStaticFormat(DataService.hashTables.tokensHashTable[token.id]), "0")
-                        //     // });
-                        //
-                        //     // Add attributes to tree.tokens: indexInUnit, unitTreeId
-                        //     updateIndexInUnitAttribute(DataService.tree.tokens);
-                        //
-                        //     // add unitTreeId
-                        //     DataService.tree.tokens.forEach(function(token) {
-                        //         token['unitTreeId'] = "0";
-                        //     });
-                        // }
+                    });
+
+                    // Now create the remote units. We create them after the regular units because they
+                    // reference regular units, and this way we're sure the regular units exist before the
+                    // remote units are created
+                    DataService.serverData.annotation_units.forEach(function(unit,index){
+                        if(unit.cloned_from_tree_id) {
+                            // The server's unit.type for remote units is REGULAR, so we need to check cloned_from_tree_id,
+                            // which is not undefined in case the unit is remote
+                            // We don't bother checking if unit.cloned_from_tree_id is 0 (which may be falsey in Javascript,
+                            // because unit 0 cannot be cloned).
+                            unit.AnnotationUnits = [];
+                            initRemoteUnit(unit, index);
+                        }
                     });
 
                     if (!DataService.tree.tokens.length) { // Builds a tokens list unit 0, if it does not exist
@@ -439,7 +433,6 @@
                     // Add attributes to tree.tokens: indexInUnit, unitTreeId
                     updateIndexInUnitAttribute(DataService.tree.tokens);
 
-                    // debugger
                     // todo: check if indexInUnit updated here in unit 0 (in tree.tokens)
                     // add unitTreeId and indexInUnit attributes
                     DataService.tree.tokens.forEach(function(token, index) {
@@ -483,7 +476,6 @@
             // },
 
             toggleCategory: function(category,justToggle,remote,unit,inInitStage){
-                // debugger
                 /**
                  * toggleCategory is also responsible for creating new units which are assigned a category.
                  */
@@ -658,7 +650,6 @@
 
         function updateIndexInUnitAttribute(selectedTokenList){
             trace("selectionHandlerService - updateIndexInUnitAttribute");
-            // debugger
             selectedTokenList.forEach(function(token,index){
                 var parentUnitTokens;
                 if(token.unitTreeId){
