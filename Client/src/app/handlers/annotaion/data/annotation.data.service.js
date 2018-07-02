@@ -416,11 +416,11 @@
                 }
 
 
-                // Update indexInUnit attribute to tokens in units instead of unit 0. todo: Where the update to unit 0???
-                // debugger
-                newObject.tokens.forEach(function (token, index, inInit) {
-                    token.indexInUnit = index;
-                });
+                // // Update indexInUnit attribute to tokens in units instead of unit 0. todo: Where the update to unit 0???
+                // // debugger
+                // newObject.tokens.forEach(function (token, index, inInit) {
+                //     token.indexInUnit = index;
+                // });
 
                 /**
                  * This part computes index_int, which is the index where the unit will be inserted into the list
@@ -581,28 +581,31 @@
                 var unitPositionInParentAnnotationUnits = parseInt(splitUnitId[splitUnitId.length-1])-1;
                 $rootScope.$broadcast("RemoveBorder",{id: unit.tree_id});
                 if(!unit.AnnotationUnits || unit.AnnotationUnits.length === 0){
+                    // Remove unit from parent and that's it - there are no child units to handle
                     parentUnit.AnnotationUnits.splice(unitPositionInParentAnnotationUnits,1);
                 }else{
+                    // Move child to parent, so if X->Y->Z and Y is deleted, we get X->Z
+                    var preArray = parentUnit.AnnotationUnits.slice(0,unitPositionInParentAnnotationUnits); // Parent units up to us
+                    var afterArray = parentUnit.AnnotationUnits.slice(unitPositionInParentAnnotationUnits+1,parentUnit.AnnotationUnits.length); // Parent units from us
+                    parentUnit.AnnotationUnits = preArray.concat(unit.AnnotationUnits).concat(afterArray); // Move child units instead of us
 
-                    var preArray = parentUnit.AnnotationUnits.slice(0,unitPositionInParentAnnotationUnits);
-                    var afterArray = parentUnit.AnnotationUnits.slice(unitPositionInParentAnnotationUnits+1,parentUnit.AnnotationUnits.length);
-                    parentUnit.AnnotationUnits = preArray.concat(unit.AnnotationUnits).concat(afterArray);
+                    for(var i=0; i<parentUnit.AnnotationUnits.length; i++){ // TODO: Why another units deleted, if they remote or implicit?
+                        if(parentUnit.AnnotationUnits[i].unitType !== "REGULAR"){
+                            if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id]){
+                                if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id][parentUnit.AnnotationUnits[i].tree_id]){
+                                    delete DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id][parentUnit.AnnotationUnits[i].tree_id];
+                                    parentUnit.AnnotationUnits.splice(i,1);
+                                    i--;
+                                }
+                            }
+                            /* This code used to delete implicit units and remote units to other parts of the tree
+                            else{
+                                parentUnit.AnnotationUnits.splice(i,1);
+                                i--;
+                            } */
 
-                    // for(var i=0; i<parentUnit.AnnotationUnits.length; i++){ // TODO: Why another units deleted, if they remote or implicit?
-                    //     if(parentUnit.AnnotationUnits[i].unitType !== "REGULAR"){
-                    //         if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id]){
-                    //             if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id][parentUnit.AnnotationUnits[i].tree_id]){
-                    //                 delete DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id][parentUnit.AnnotationUnits[i].tree_id];
-                    //                 parentUnit.AnnotationUnits.splice(i,1);
-                    //                 i--;
-                    //             }
-                    //         }else{
-                    //             parentUnit.AnnotationUnits.splice(i,1);
-                    //             i--;
-                    //         }
-                    //
-                    //     }
-                    // }
+                        }
+                    }
                 }
 
                 updateTreeIds(DataService.tree);
@@ -730,60 +733,23 @@
          * @param a - first unit
          * @param b - second unit
          * @returns {number} - according the priority of a
-         * BUGGY - sortAndUpdate calls to sortTree, sortTree calls to this function,
-         * sometimes parentUnit.tokens contain the tokens list, and sometimes parentUnit.tokenCopy contain the tokens list.
          */
-        function unitComparator(a, b){
-            trace("DataService - unitComparator");
-            var aParentUnit = getParentUnit(a.tree_id);
-            var bParentUnit = getParentUnit(b.tree_id);
-
-            var aElementPos = aParentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(a.tokens[0].static.id);
-            var bElementPos = bParentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(b.tokens[0].static.id);
-
-            if(a.unitType !== "REGULAR" || b.unitType !== "REGULAR"){ // At least, one is no regular
-                if(a.unitType === "REGULAR" && b.unitType === "IMPLICIT"){ // Implicit should be before regular
-                    return 1;
-                }else if((a.unitType === "REMOTE" && b.unitType === "REGULAR") || (b.unitType === "REMOTE"  && a.unitType === "REGULAR")){ // According to first start_index
-                    if (a.tokens[0].static.start_index > b.tokens[0].static.start_index) {
-                        return -1
-                    } else if (a.tokens[0].static.start_index < b.tokens[0].static.start_index) {
-                        return 1;
-                    }
-                    return 0;
-                }else if(b.unitType === "REGULAR" && a.unitType !== "REGULAR"){
-                    return -1;
-                }else{  // Both not regular
-                    if(a.unitType === "REMOTE" && b.unitType === "IMPLICIT"){ // Implicit should be before remote
-                        return 1;
-                    }else if(a.unitType === "IMPLICIT" && b.unitType === "REMOTE"){
-                        return -1; // implicit should be first
-                    }else{ // Both remote or both implicit
-                        if(a.unitType === "REMOTE" && b.unitType === "REMOTE"){ // Both remote
-                            console.log("A and B are remotes", a.cloned_from_tree_id, b.cloned_from_tree_id,  "  remotes ids:", a.remote_original_id, b.remote_original_id)
-                            if(a.cloned_from_tree_id > b.remote_original_id){ // TODO: when adding a new remote unit, there is no cloned_from_tree_id attribute, instead of this there is remote_original_id.
-                                return 1;
-                            }
-                            else if(a.cloned_from_tree_id < b.remote_original_id){
-                                return -1;
-                            }else{
-                                return 0;  // TODO: Add to assertion service - fail if two remote units have the same parent and clone_from_id
-                            }
-                        }
-                        return 0; // TODO: compare based on an ID, so the sort is stable  - both IMPLICIT
-                    }
-                }
+        function unitComparator(a, b) {
+            // Both implicit, the order doesn't matter much but we need to use something to make the sort stable
+            if(a.unitType === 'IMPLICIT' && b.unitType === 'IMPLICIT') {
+                return (a.tree_id < b.tree_id ? -1 : 1);  // a and b are never the same unit
             }
-            // tokenCopy is not contain indexInUnit attribute, with remote units- tokens=[]---error: Cannot read property 'indexInUnit' of undefined
-            else {  // Both are regular units
-                if(aParentUnit.tokens[aElementPos].indexInUnit > bParentUnit.tokens[bElementPos].indexInUnit){
-                    return 1;
-                }else if(aParentUnit.tokens[aElementPos].indexInUnit < bParentUnit.tokens[bElementPos].indexInUnit){
-                    return -1;
-                }else{
-                    return 0;
-                }
+
+            // One is implicit, the other isn't - the implicit is first
+            if(a.unitType === 'IMPLICIT') {
+                return -1;
             }
+            if(b.unitType === 'IMPLICIT') {  // B is implicit, A isin't.
+                return 1;
+            }
+
+            // None implicit, order based on the order of tokens in the task
+            return a.tokens[0].static.index_in_task < b.tokens[0].static.index_in_task ? -1 : 1;
         }
 
         function tokenStartIndexInParent(token){
@@ -810,6 +776,7 @@
          * @returns {boolean}
          */
         function traversInTree(treeNode){
+            debugger;
             trace("DataService - traversInTree");
             var unit = {
                 tree_id : treeNode.tree_id.toString(),
@@ -823,11 +790,10 @@
                 is_remote_copy: treeNode.unitType.toUpperCase() === 'REMOTE',
                 // todo- remove stsic from tokens
                 children_tokens: treeNode.tree_id === "0" ? filterStaticTokens(filterTokensAtt(angular.copy(treeNode.tokens))) : filterStaticTokens(filterTokensAttForUnit(angular.copy(treeNode.tokens))),
-                cloned_from_tree_id: treeNode.unitType.toUpperCase() === 'REMOTE' ? treeNode.remote_original_id ? treeNode.remote_original_id: treeNode.cloned_from_tree_id : null
-                // remote_original_id - if the tree updated in frontend tree data, cloned_from_tree_id - if the tree updated from server data
+                cloned_from_tree_id: treeNode.unitType.toUpperCase() === 'REMOTE' ? treeNode.cloned_from_tree_id : null
             };
             if($rootScope.isSlottedLayerProject){
-                
+
                 var firstSlotIndex = 0;
                 for(var i=0; i<unit.categories.length; i++){
                     var currentCategoy = unit.categories[i];
@@ -861,7 +827,6 @@
             // if(unit.tree_id === "0"){
             //     delete unit.children_tokens;
             // }
-            unit.type === 'REMOTE' ? unit.type = 'REGULAR' : '';
             if(unit.categories.length === 1 && unit.categories[0].id === -1){
                 unit.categories = [];
             }
@@ -869,6 +834,12 @@
             if(unit.type === "IMPLICIT"){
                 delete unit.children_tokens;
             }
+
+            if(unit.type === "REMOTE") {
+                // The server doesn't have a REMOTE type, it judges the remoteness based on other fields
+                unit.type = "REGULAR";
+            }
+
             annotation_units.push(unit);
             for(var i=0; i<treeNode.AnnotationUnits.length; i++){
                 var output_val = traversInTree(treeNode.AnnotationUnits[i]);
@@ -1021,7 +992,6 @@
             }
             var mode = shouldSubmit ? 'submit' : 'draft';
             DataService.serverData['annotation_units'] = annotation_units;
-            DataService.serverData.tokens = [];
             DataService.serverData.tokens= tokensCopy;
 
             return apiService.annotation.putTaskData(mode,DataService.serverData).then(function(res){
@@ -1243,6 +1213,7 @@
          * @returns {*} - parent unit id
          */
         function getParentUnitId(unitId) {
+            // TODO: Remove this function altogether, getting the parent tree id is now as simple as looking at a property
             trace("DataService - getParentUnitId");
             if(unitId === null){
                 return null;

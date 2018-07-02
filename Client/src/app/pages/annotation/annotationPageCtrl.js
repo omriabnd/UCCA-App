@@ -607,13 +607,13 @@
                                         }else{
                                             if(currentUnit.unitType === "REMOTE"){
                                                 //UpdateUsedAsRemote
-                                                var remoteUnit = DataService.getUnitById(currentUnit.remote_original_id);
-                                                var elementPos = DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.tree_id]
+                                                var remoteUnit = DataService.getUnitById(currentUnit.cloned_from_tree_id);
+                                                var elementPos = DataService.unitsUsedAsRemote[currentUnit.cloned_from_tree_id][currentUnit.tree_id]
                                                 if(elementPos){
-                                                    delete DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.tree_id];
+                                                    delete DataService.unitsUsedAsRemote[currentUnit.cloned_from_tree_id][currentUnit.tree_id];
                                                 }
 
-                                                delete DataService.unitsUsedAsRemote[currentUnit.remote_original_id][currentUnit.tree_id];
+                                                delete DataService.unitsUsedAsRemote[currentUnit.cloned_from_tree_id][currentUnit.tree_id];
                                             }
                                             var parentUnit = DataService.getParentUnitId(selectedUnitId);
                                             DataService.deleteUnit(selectedUnitId).then(function(res){
