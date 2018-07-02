@@ -588,21 +588,21 @@
                     var afterArray = parentUnit.AnnotationUnits.slice(unitPositionInParentAnnotationUnits+1,parentUnit.AnnotationUnits.length);
                     parentUnit.AnnotationUnits = preArray.concat(unit.AnnotationUnits).concat(afterArray);
 
-                    for(var i=0; i<parentUnit.AnnotationUnits.length; i++){
-                        if(parentUnit.AnnotationUnits[i].unitType !== "REGULAR"){
-                            if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id]){
-                                if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id][parentUnit.AnnotationUnits[i].tree_id]){
-                                    delete DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id][parentUnit.AnnotationUnits[i].tree_id];
-                                    parentUnit.AnnotationUnits.splice(i,1);
-                                    i--;
-                                }
-                            }else{
-                                parentUnit.AnnotationUnits.splice(i,1);
-                                i--;
-                            }
-                          
-                        }
-                    }
+                    // for(var i=0; i<parentUnit.AnnotationUnits.length; i++){ // TODO: Why another units deleted, if they remote or implicit?
+                    //     if(parentUnit.AnnotationUnits[i].unitType !== "REGULAR"){
+                    //         if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id]){
+                    //             if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id][parentUnit.AnnotationUnits[i].tree_id]){
+                    //                 delete DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].remote_original_id][parentUnit.AnnotationUnits[i].tree_id];
+                    //                 parentUnit.AnnotationUnits.splice(i,1);
+                    //                 i--;
+                    //             }
+                    //         }else{
+                    //             parentUnit.AnnotationUnits.splice(i,1);
+                    //             i--;
+                    //         }
+                    //
+                    //     }
+                    // }
                 }
 
                 updateTreeIds(DataService.tree);
