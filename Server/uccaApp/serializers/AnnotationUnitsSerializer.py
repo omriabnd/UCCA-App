@@ -54,7 +54,6 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
 
         if categories:
             pass
-            #pdb.set_trace()
 
         return categories_json
 

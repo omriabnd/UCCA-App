@@ -5,7 +5,7 @@ logger = logging.getLogger("ucca.api")
 from rest_framework.generics import get_object_or_404
 from rest_framework import serializers
 
-from uccaApp.util.exceptions import SaveTaskTypeDeniedException, CantChangeSubmittedTaskExeption, GetForInactiveTaskException, TreeIdInvalid, TokensInvalid
+from uccaApp.util.exceptions import SaveTaskTypeDeniedException, CantChangeSubmittedTaskExeption, GetForInactiveTaskException, TreeIdInvalid, TokensInvalid, UnallowedValueError
 from uccaApp.util.functions import get_value_or_none, active_obj_or_raise_exeption
 from uccaApp.util.tokenizer import isPunct
 from uccaApp.models import Annotation_Remote_Units_Annotation_Units
@@ -273,7 +273,11 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
                 raise TreeIdInvalid("tree_id is in an incorrect format; fix unit " + str(annotation_unit.tree_id))
 
             annotation_unit.task_id = instance
-            annotation_unit.type = au['type']
+            if au['type'] in [x[0] for x in Constants.ANNOTATION_UNIT_TYPES]:
+                annotation_unit.type = au['type']
+            else:
+                raise UnallowedValueError("An annotation unit is given an unallowed type: "+au['type'])
+            
             annotation_unit.comment = au['comment']
             annotation_unit.cluster = au['cluster']
 
