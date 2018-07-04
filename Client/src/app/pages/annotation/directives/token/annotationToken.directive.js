@@ -258,10 +258,22 @@
         }
 
         function showEllipsis(token) {
-            if (!token.unit || !token.unit.tokens[token.indexInUnit + 1]) {
+            if (!token.unit) { // In unit 0, tokens haven't unit field
                 return false;
             }
-            return token.static.index_in_task + 1 !== token.unit.tokens[token.indexInUnit + 1].static.index_in_task;
+
+            var index = undefined;
+            for (var i = 0; i < token.unit.tokens.length; i++) {
+                if (token.static.id === token.unit.tokens[i].static.id) {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (!token.unit || index === undefined || !token.unit.tokens[index + 1]) {
+                return false;
+            }
+            return token.static.index_in_task + 1 !== token.unit.tokens[index + 1].static.index_in_task;
         }
     }
 

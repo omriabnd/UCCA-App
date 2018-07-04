@@ -589,7 +589,7 @@
                     var afterArray = parentUnit.AnnotationUnits.slice(unitPositionInParentAnnotationUnits+1,parentUnit.AnnotationUnits.length); // Parent units from us
                     parentUnit.AnnotationUnits = preArray.concat(unit.AnnotationUnits).concat(afterArray); // Move child units instead of us
 
-                    for(var i=0; i<parentUnit.AnnotationUnits.length; i++){ // TODO: Why another units deleted, if they remote or implicit?
+                    for(var i=0; i<parentUnit.AnnotationUnits.length; i++){
                         if(parentUnit.AnnotationUnits[i].unitType !== "REGULAR"){
                             if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id]){
                                 if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id][parentUnit.AnnotationUnits[i].tree_id]){
