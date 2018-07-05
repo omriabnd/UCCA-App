@@ -356,13 +356,13 @@
 
                     var parentUnitUnits = DataService.getUnitById(unit.tree_id);
                     var amountOfRemotes = 0;
-                    if (parentUnitUnits) { // TODO: remove this line, added this condition because sometimes parentUnitUnits was undefined
+                    // if (parentUnitUnits) { // TODO: remove this line, added this condition because sometimes parentUnitUnits was undefined
                         parentUnitUnits.AnnotationUnits.forEach(function (unit) {
                             if (unit.unitType === "REMOTE") {
                                 amountOfRemotes++;
                             }
                         });
-                    }
+                    // }
 
                     DataService.unitsUsedAsRemote[unit.tree_id][unit.parent_tree_id + "-" + parseInt(parseInt(amountOfRemotes+1))] = true;
                     // console.log("In initTree, unitsUsedAsRemote=", DataService.unitsUsedAsRemote);

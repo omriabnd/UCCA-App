@@ -365,7 +365,7 @@
                     var remoteOriginalTreeId = remoteOriginalId;
                     $scope.deleteAllRemoteInstanceOfThisUnit = function(){
 
-                        for(var key in DataService.unitsUsedAsRemote[$scope.vm.dataBlock.tree_id]){
+                        for(var key in DataService.getUnitsUsedAsRemote()[$scope.vm.dataBlock.tree_id]){
                             DataService.deleteUnit(key);
                             delete DataService.unitsUsedAsRemote[$scope.vm.dataBlock.tree_id][key];
                         }
@@ -580,6 +580,7 @@
                                         var currentUnit = DataService.getUnitById(selectedUnitId);
                                       
                                         if(DataService.unitsUsedAsRemote[selectedUnitId] !==  undefined && !Core.isEmptyObject(DataService.unitsUsedAsRemote[selectedUnitId])){
+                                            debugger
                                             open('app/pages/annotation/templates/deleteAllRemoteModal.html','md',Object.keys(DataService.unitsUsedAsRemote[selectedUnitId]).length,vm);
                                         }else{
                                             if(currentUnit.unitType === "REMOTE"){

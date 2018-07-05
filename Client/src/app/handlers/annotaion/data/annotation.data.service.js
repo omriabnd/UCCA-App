@@ -38,6 +38,10 @@
             hashTables: hashTables,
             categories: [],
             unitsUsedAsRemote:unitsUsedAsRemote,
+            getUnitsUsedAsRemote: getUnitsUsedAsRemote,
+            addUnitsUsedAsRemote: addUnitsUsedAsRemote,
+            removeUnitsUsedAsRemote: removeUnitsUsedAsRemote,
+            updateUnitsUsedAsRemote: updateUnitsUsedAsRemote,
             getData: getData,
             insertToTree: insertToTree,
             toggleCategoryForUnit:toggleCategoryForUnit,
@@ -65,6 +69,26 @@
         };
 
         return DataService;
+
+        function getUnitsUsedAsRemote() {
+            return DataService.unitsUsedAsRemote;
+        }
+
+        function addUnitsUsedAsRemote(clonedFrom, treeId) {
+            DataService.unitsUsedAsRemote[clonedFrom][treeId] = true;
+        }
+
+        function removeUnitsUsedAsRemote(clonedFrom, treeId) {
+            if(DataService.unitsUsedAsRemote[clonedFrom][treeId]) {
+                delete DataService.unitsUsedAsRemote[clonedFrom][treeId];
+            }
+        }
+
+        function updateUnitsUsedAsRemote(clonedFrom, oldTreeId, newTreeId) {
+            if(DataService.unitsUsedAsRemote[clonedFrom][oldTreeId]){
+                DataService.unitsUsedAsRemote[clonedFrom][newTreeId] = true;
+            }
+        }
 
         function initTree(){
             trace("DataService - initTree");
@@ -690,6 +714,8 @@
             //     //    }
             //     //}
 
+                console.log("#################################DataService.unitsUsedAsRemote", DataService.unitsUsedAsRemote)
+
                 for (var i = 0; i < unit.AnnotationUnits.length; i++) {
 
                     if(unit.AnnotationUnits[i] == undefined){
@@ -782,7 +808,6 @@
          * @returns {boolean}
          */
         function traversInTree(treeNode){
-            debugger;
             trace("DataService - traversInTree");
             var unit = {
                 tree_id : treeNode.tree_id.toString(),
