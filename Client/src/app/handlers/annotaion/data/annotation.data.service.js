@@ -262,8 +262,8 @@
                 DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
                 DataService.getUnitById(unit.tree_id).gui_status = "OPEN";
 
-                // Check tree in AssertionService after toggle category
-                AssertionService.checkTree(DataService.tree, DataService.serverData);
+                // Comment -  because the tree has not yet been built in its entirety, and token.inChildUnit field is missing during the building.
+                // AssertionService.checkTree(DataService.tree, DataService.serverData);
 
                 $rootScope.$broadcast("ToggleSuccess",{categories: unit.categories, id: unit.tree_id});
                 resolve('ToggleSuccess');
@@ -309,7 +309,7 @@
             console.log("In insertToTree, newObject=", newObject);
 
             return $q(function(resolve, reject) {
-                // debugger
+                debugger
 
                 if (!inInitStage && DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT) {
                     Core.showAlert("Cant create annotation units in refinement layer")
@@ -415,12 +415,10 @@
                     })
                 }
 
-
-                // // Update indexInUnit attribute to tokens in units instead of unit 0. todo: Where the update to unit 0???
-                // // debugger
-                // newObject.tokens.forEach(function (token, index, inInit) {
-                //     token.indexInUnit = index;
-                // });
+                // // Update indexInUnit attribute to tokens in the new unit.
+                newObject.tokens.forEach(function (token, index, inInit) {
+                    token.indexInUnit = index;
+                });
 
                 /**
                  * This part computes index_int, which is the index where the unit will be inserted into the list
@@ -584,28 +582,36 @@
                     // Remove unit from parent and that's it - there are no child units to handle
                     parentUnit.AnnotationUnits.splice(unitPositionInParentAnnotationUnits,1);
                 }else{
+                    // When deleting a unit, first delete her remote and implicit sons, and then move the regular sons to be children of her parent.
+                    for (var i = 0; i < unit.AnnotationUnits.length; i++) {
+                        if (unit.AnnotationUnits[i].unitType !== 'REGULAR') {
+                            unit.AnnotationUnits.splice(i, 1);
+                        }
+                    }
+
                     // Move child to parent, so if X->Y->Z and Y is deleted, we get X->Z
                     var preArray = parentUnit.AnnotationUnits.slice(0,unitPositionInParentAnnotationUnits); // Parent units up to us
                     var afterArray = parentUnit.AnnotationUnits.slice(unitPositionInParentAnnotationUnits+1,parentUnit.AnnotationUnits.length); // Parent units from us
                     parentUnit.AnnotationUnits = preArray.concat(unit.AnnotationUnits).concat(afterArray); // Move child units instead of us
 
-                    for(var i=0; i<parentUnit.AnnotationUnits.length; i++){
-                        if(parentUnit.AnnotationUnits[i].unitType !== "REGULAR"){
-                            if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id]){
-                                if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id][parentUnit.AnnotationUnits[i].tree_id]){
-                                    delete DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id][parentUnit.AnnotationUnits[i].tree_id];
-                                    parentUnit.AnnotationUnits.splice(i,1);
-                                    i--;
-                                }
-                            }
-                            /* This code used to delete implicit units and remote units to other parts of the tree
-                            else{
-                                parentUnit.AnnotationUnits.splice(i,1);
-                                i--;
-                            } */
-
-                        }
-                    }
+                    // Old code
+                    // for(i=0; i<parentUnit.AnnotationUnits.length; i++){
+                    //     if(parentUnit.AnnotationUnits[i].unitType !== "REGULAR"){
+                    //         if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id]){
+                    //             if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id][parentUnit.AnnotationUnits[i].tree_id]){
+                    //                 delete DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id][parentUnit.AnnotationUnits[i].tree_id];
+                    //                 parentUnit.AnnotationUnits.splice(i,1);
+                    //                 i--;
+                    //             }
+                    //         }
+                    //         /* This code used to delete implicit units and remote units to other parts of the tree
+                    //         else{
+                    //             parentUnit.AnnotationUnits.splice(i,1);
+                    //             i--;
+                    //         } */
+                    //
+                    //     }
+                    // }
                 }
 
                 updateTreeIds(DataService.tree);
