@@ -100,9 +100,10 @@
                  */
                 var elementPos = this.selectedTokenList.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                 if(elementPos === -1){
-                    !groupUnit ? _handler.removeTokenFromUnitTokens(token) : ''; // this token is already in static format
-                    // var copiedToken = angular.copy(token);
-                    // var newFormatToken = _handler.copyTokenToStaticFormat(token);
+                    // Remove this line because removeTokenFromUnitTokens function updates inChildUnitTreeId (before adding the unit)
+                    // Buggy, because it put inChildUnitTreeId field in clicked token, without crete unit to this token.
+                    // !groupUnit ? _handler.removeTokenFromUnitTokens(token) : '';
+
                     this.selectedTokenList.push(token);
                     sortSelectedTokenList(this.selectedTokenList);
                 }
@@ -176,9 +177,7 @@
                             if (selectedUnitId.toString() != "0") {
                                 newInUnitField = selectedUnitId + "-" + newInUnitField;
                             }
-                            // Buggy, because it put inChildUnit field in clicked token, without crete unit to this token.
-                            // Remove this line (26/6)
-                            // token['inChildUnitTreeId'] = newInUnitField;
+                            token['inChildUnitTreeId'] = newInUnitField;
                         }
                     }
                 }
@@ -488,6 +487,11 @@
 
                     if(!aUnitIsSelected(_handler.selectedTokenList,inInitStage) && (_handler.selectedTokenList.length && !justToggle) || remote || inInitStage){
                         //_handler mean we selected token and now we need to create new unit.
+
+                        // Call here to removeTokenFromUnitTokens function, so inChildUnitTreeId field will update here, when the unit is adding to the tree.
+                        for (var t = 0; t < _handler.selectedTokenList.length; t++) {
+                            _handler.removeTokenFromUnitTokens(_handler.selectedTokenList[t]);
+                        }
 
                         updateIndexInUnitAttribute(_handler.selectedTokenList);
                         // updatePositionInChildUnitAttribute(_handler.selectedTokenList);
