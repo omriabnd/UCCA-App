@@ -24,6 +24,7 @@
       vm.setFontSize = setFontSize;
       vm.submitTask = submitTask;
       vm.finishAll = finishAll;
+      vm.checkSubmissionRestrictions = checkSubmissionRestrictions;
       vm.goToMainMenu = goToMainMenu;
       vm.resetAllAnnotations = resetAllAnnotations;
       vm.inRemoteMode = inRemoteMode;
@@ -198,7 +199,7 @@
       }
 
       function submitTask(){
-          var finishAllResult = vm.finishAll(true);
+          var finishAllResult = vm.checkSubmissionRestrictions();
           if(finishAllResult){
               return DataService.saveTask().then(function(){
                   return DataService.submitTask().then(function(res){
@@ -209,10 +210,24 @@
           }
       }
 
-      function finishAll(fromSubmit){
+
+      function checkSubmissionRestrictions(){
           var rootUnit = DataService.getUnitById("0");
           var hashTables = DataService.hashTables;
-          var finishAllResult = restrictionsValidatorService.evaluateFinishAll(rootUnit,fromSubmit,hashTables);
+          if (restrictionsValidatorService.evaluateSubmissionRestrictions(rootUnit,hashTables)) {
+              selectionHandlerService.updateSelectedUnit(0);
+              Core.showNotification('success','Finish All was successful');
+              return true;
+          }
+          return false;
+      }
+
+
+
+      function finishAll(){
+          var rootUnit = DataService.getUnitById("0");
+          var hashTables = DataService.hashTables;
+          var finishAllResult = restrictionsValidatorService.evaluateFinishAll(rootUnit,hashTables);
           if(finishAllResult){
               selectionHandlerService.updateSelectedUnit(0);
               Core.showNotification('success','Finish All was successful');
