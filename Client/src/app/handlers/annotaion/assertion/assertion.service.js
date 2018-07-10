@@ -12,6 +12,7 @@
      */
     function AssertionService() {
         var AssertionService = {
+            tree: undefined,
             unitsIdsList: [],
             firstTokenInPreUnit: 0,
             flagToInChildUnitTreeId: false,
@@ -21,6 +22,34 @@
         };
 
         return AssertionService;
+
+        /***
+         * This function has been copied from the DataService because of the opposite dependency.
+         * DataService has been dependent on AssertionService.
+         */
+        function getUnitById(unitID){
+            if(unitID == -1){
+                return null
+            }else if(!unitID || unitID == 0){
+                return AssertionService.tree;
+            }else{
+                var splittedUnitId = unitID.toString().split("-");
+                var tempUnit = AssertionService.tree;
+
+                for(var i=0; i<splittedUnitId.length; i++){
+                    var unitIdToFind = splittedUnitId.slice(0,i+1).join("-");
+
+                    var unitIndex = tempUnit.AnnotationUnits.findIndex(function(unit){
+                        if(unit == undefined){
+                            return false;
+                        }
+                        return unit.tree_id == unitIdToFind
+                    });
+                    tempUnit.AnnotationUnits.length > 0 && unitIndex > -1 ? tempUnit = tempUnit.AnnotationUnits[unitIndex] : '';
+                }
+                return !!tempUnit && tempUnit.tree_id == unitID ? tempUnit : null;
+            }
+        }
 
         /**
          * check if id is in the correct format ('i-j-k')
@@ -297,7 +326,6 @@
                 for (var tokenIndex = 0; tokenIndex < unit.AnnotationUnits[index].tokens.length; tokenIndex++) {
                     if (unit.AnnotationUnits[index].tokens[tokenIndex].static.id === token.static.id) {
                         if (!inChildUnitTreeId) { // If inChildUnitTreeId is null
-                            // console.log("Buggy, token=", token, " internal unit=", unit.AnnotationUnits[index].tokens[tokenIndex])
                             throw "inChildUnitTreeId is null, it cannot be a token of any of the children of the unit unitTreeId";
                         }
                         // else- if inChildUnitTreeId exists
@@ -478,7 +506,6 @@
                 // should be the same as the index of the token inside the unit.tokens
                 if (tokens[t].static.text !== 'IMPLICIT UNIT' && t !== tokens[t].indexInUnit) {
                     if (!tokens[t].indexInUnit) {
-                        debugger
                         throw "indexInUnit isn't exists in token " + tokens[t].static.text + " t = " + t + " in unit " + unit.tree_id;
                     }
                     throw "indexInUnit should be the same as the index of the token inside the unit.tokens, unit = " + unit.tree_id + ", token = " + tokens[t].static.text + ", t = " + t + ", indexInUnit = "+ tokens[t].indexInUnit;
@@ -514,7 +541,7 @@
             for (var i = 0; i < serverData.tokens.length; i++) {
                 treeTokensIdsList.push(serverData.tokens[i].id);
             }
-            for (var i = 1; i < serverData.annotation_units.length; i++) { // Beginning from 1, because unit 0 doesn't have children_tokens
+            for (i = 1; i < serverData.annotation_units.length; i++) { // Beginning from 1, because unit 0 doesn't have children_tokens
                 // If it's an implicit unit don't check it because implicit unit doesn't have children_tokens
                 if (serverData.annotation_units[i].type === 'IMPLICIT') {
                     if (serverData.annotation_units[i].children_tokens && serverData.annotation_units[i].children_tokens.length) {
@@ -607,6 +634,35 @@
             }
         }
 
+
+        /**
+         * Check if cloned_from_tree_id matches to cloned_to_tree_ids and the opposite
+         * @param unit
+         */
+        function checkRemoteUnits(unit) {
+            if (unit.cloned_from_tree_id) {// This is remote unit
+                var clonedFromUnit = getUnitById(unit.cloned_from_tree_id);
+                // Check if clonedFromUnit.cloned_to_tree_ids contain unit.tree_id
+                var index = clonedFromUnit.cloned_to_tree_ids.indexOf(unit.tree_id);
+                if (index < 0) {
+                    debugger
+                    throw "Cloned from unit " + clonedFromUnit.tree_id + " doesn't contain tree id " + unit.tree_id + " in his cloned_to_tree_ids list";
+                }
+            } else if (unit.cloned_to_tree_ids) { // This is cloned unit
+                var remoteUnit = undefined;
+                for (var j = 0; j < unit.cloned_to_tree_ids.length; j++) {
+                    remoteUnit = getUnitById(unit.cloned_to_tree_ids[j]);
+                    if (remoteUnit.cloned_from_tree_id !== unit.tree_id) {
+                        throw " Remote unit " + remoteUnit.tree_id + " has cloned_from_tree_id " + remoteUnit.cloned_from_tree_id + " !== " + unit.cloned_to_tree_ids[j];
+                    }
+                }
+            }
+
+            for (var i = 0; i < unit.AnnotationUnits.length; i++) {
+                checkRemoteUnits(unit.AnnotationUnits[i]);
+            }
+        }
+
         /**
          * Main function, checkTree- sends to check tree ids, annotations units and children tokens
          * @param tree (DataService.tree)- to check the ids and annotations units
@@ -619,6 +675,8 @@
             }
             console.log("-------------------------check tree-------------------------", tree);
             try {
+                AssertionService.tree = tree; // Save DataService.tree into AssertionService.tree (to getUnitByI function).
+
                 // Check tree ids
                 checkTreeId(tree.tree_id);
                 AssertionService.unitsIdsList = [];
@@ -640,6 +698,8 @@
                 // Correctly ordered (by first token, implicit units come first)
                 AssertionService.firstTokenInPreUnit = tree.tokens[0].static.id;
                 checkTokensOrder(tree);
+
+                checkRemoteUnits(tree);
             } catch(e) {
                 console.error(e);
             }

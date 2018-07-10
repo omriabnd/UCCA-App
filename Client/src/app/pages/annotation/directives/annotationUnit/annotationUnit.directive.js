@@ -253,9 +253,11 @@
                     var remoteOriginalTreeId = remoteOriginalId;
                     $scope.deleteAllRemoteInstanceOfThisUnit = function(){
 
-                        for(var key in DataService.unitsUsedAsRemote[$scope.vm.dataBlock.tree_id]){
-                            DataService.deleteUnit(key);
-                            delete DataService.unitsUsedAsRemote[$scope.vm.dataBlock.tree_id][key];
+                        // New Remote
+                        var clonedList = angular.copy($scope.vm.dataBlock.cloned_to_tree_ids);
+                        for (var i = 0; i < clonedList.length; i++) {
+                            DataService.deleteRemoteUnit(DataService.getUnitById(clonedList[i]));
+                            DataService.deleteUnit(clonedList[i]);
                         }
                         DataService.deleteUnit($scope.vm.dataBlock.tree_id);
                         // selCtrl.updateUI(DataService.getUnitById($("[unit-wrapper-id="+$rootScope.clickedUnit+"]").attr('child-unit-id')));
@@ -767,18 +769,18 @@
             var currentUnit = DataService.getUnitById(unitId);
 
 
-            if(DataService.unitsUsedAsRemote[unitId] !==  undefined && !Core.isEmptyObject(DataService.unitsUsedAsRemote[unitId])){
-                open('app/pages/annotation/templates/deleteAllRemoteModal.html','md',Object.keys(DataService.unitsUsedAsRemote[unitId]).length,vm);
+            // if(DataService.unitsUsedAsRemote[unitId] !==  undefined && !Core.isEmptyObject(DataService.unitsUsedAsRemote[unitId])){
+            if(currentUnit.cloned_to_tree_ids){
+                // open('app/pages/annotation/templates/deleteAllRemoteModal.html','md',Object.keys(DataService.unitsUsedAsRemote[unitId]).length,vm);
+                open('app/pages/annotation/templates/deleteAllRemoteModal.html','md', currentUnit.cloned_to_tree_ids.length,vm);
             }else{
                 if(currentUnit.unitType === "REMOTE"){
                     //UpdateUsedAsRemote
                     var remoteUnit = DataService.getUnitById(currentUnit.cloned_from_tree_id);
-                    var elementPos = DataService.unitsUsedAsRemote[currentUnit.cloned_from_tree_id][currentUnit.tree_id]
-                    if(elementPos){
-                        delete DataService.unitsUsedAsRemote[currentUnit.cloned_from_tree_id][currentUnit.tree_id];
-                    }
+                    // New Remote
+                    DataService.deleteRemoteUnit(currentUnit);
 
-                    delete DataService.unitsUsedAsRemote[currentUnit.cloned_from_tree_id][currentUnit.tree_id];
+                    // delete DataService.unitsUsedAsRemote[currentUnit.cloned_from_tree_id][currentUnit.tree_id];
                 }
                 var parentUnit = DataService.getParentUnitId(unitId);
                 DataService.deleteUnit(unitId).then(function(res){
@@ -869,10 +871,14 @@
                 var newRowId = DataService.insertToTree(objToPush,selectionHandlerService.getUnitToAddRemotes()).then(function(res){
                     DataService.unitType = 'REGULAR';
 
-                    if(DataService.unitsUsedAsRemote[vm.dataBlock.tree_id] === undefined){
-                        DataService.unitsUsedAsRemote[vm.dataBlock.tree_id] = {};
-                    }
-                    DataService.unitsUsedAsRemote[vm.dataBlock.tree_id][res.id] = true;
+                    // if(DataService.unitsUsedAsRemote[vm.dataBlock.tree_id] === undefined){
+                    //     DataService.unitsUsedAsRemote[vm.dataBlock.tree_id] = {};
+                    // }
+
+                    // New Remote
+                    DataService.addRemoteUnit(objToPush);
+
+                    // DataService.unitsUsedAsRemote[vm.dataBlock.tree_id][res.id] = true;
 
 
                     selectionHandlerService.setUnitToAddRemotes("0");

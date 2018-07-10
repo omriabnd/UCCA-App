@@ -365,9 +365,11 @@
                     var remoteOriginalTreeId = remoteOriginalId;
                     $scope.deleteAllRemoteInstanceOfThisUnit = function(){
 
-                        for(var key in DataService.getUnitsUsedAsRemote()[$scope.vm.dataBlock.tree_id]){
-                            DataService.deleteUnit(key);
-                            delete DataService.unitsUsedAsRemote[$scope.vm.dataBlock.tree_id][key];
+                        // New Remote
+                        var clonedList = angular.copy($scope.vm.dataBlock.cloned_to_tree_ids);
+                        for (var i = 0; i < clonedList.length; i++) {
+                            DataService.deleteRemoteUnit(DataService.getUnitById(clonedList[i]));
+                            DataService.deleteUnit(clonedList[i]);
                         }
                         DataService.deleteUnit($scope.vm.dataBlock.tree_id);
                         // selCtrl.updateUI(DataService.getUnitById($("[unit-wrapper-id="+$rootScope.clickedUnit+"]").attr('child-unit-id')));
@@ -578,20 +580,15 @@
 
                                   if(selectedUnitId !== '0'){
                                         var currentUnit = DataService.getUnitById(selectedUnitId);
-                                      
-                                        if(DataService.unitsUsedAsRemote[selectedUnitId] !==  undefined && !Core.isEmptyObject(DataService.unitsUsedAsRemote[selectedUnitId])){
-                                            debugger
-                                            open('app/pages/annotation/templates/deleteAllRemoteModal.html','md',Object.keys(DataService.unitsUsedAsRemote[selectedUnitId]).length,vm);
+
+                                        if(currentUnit.cloned_to_tree_ids){
+                                            open('app/pages/annotation/templates/deleteAllRemoteModal.html','md', currentUnit.cloned_to_tree_ids.length,vm);
                                         }else{
                                             if(currentUnit.unitType === "REMOTE"){
-                                                //UpdateUsedAsRemote
                                                 var remoteUnit = DataService.getUnitById(currentUnit.cloned_from_tree_id);
-                                                var elementPos = DataService.unitsUsedAsRemote[currentUnit.cloned_from_tree_id][currentUnit.tree_id]
-                                                if(elementPos){
-                                                    delete DataService.unitsUsedAsRemote[currentUnit.cloned_from_tree_id][currentUnit.tree_id];
-                                                }
 
-                                                delete DataService.unitsUsedAsRemote[currentUnit.cloned_from_tree_id][currentUnit.tree_id];
+                                                // New Remote
+                                                DataService.deleteRemoteUnit(currentUnit);
                                             }
                                             var parentUnit = DataService.getParentUnitId(selectedUnitId);
                                             DataService.deleteUnit(selectedUnitId).then(function(res){

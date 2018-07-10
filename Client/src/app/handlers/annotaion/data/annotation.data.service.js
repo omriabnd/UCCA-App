@@ -15,8 +15,6 @@
             categoriesHashTable: {}
         };
 
-        var unitsUsedAsRemote = {};
-
         var DataService = {
             /**
              * A data structure that contains rows of selectable words.
@@ -37,11 +35,9 @@
             baseTokenData: ['id', 'start_index', 'end_index', 'index_in_task', 'require_annotation', 'text', 'tokenization_task_id', 'splitByTokenization'],
             hashTables: hashTables,
             categories: [],
-            unitsUsedAsRemote:unitsUsedAsRemote,
-            getUnitsUsedAsRemote: getUnitsUsedAsRemote,
-            addUnitsUsedAsRemote: addUnitsUsedAsRemote,
-            removeUnitsUsedAsRemote: removeUnitsUsedAsRemote,
-            updateUnitsUsedAsRemote: updateUnitsUsedAsRemote,
+            addRemoteUnit: addRemoteUnit,
+            deleteRemoteUnit: deleteRemoteUnit,
+            changeRemoteUnitTreeId: changeRemoteUnitTreeId,
             getData: getData,
             insertToTree: insertToTree,
             toggleCategoryForUnit:toggleCategoryForUnit,
@@ -70,23 +66,75 @@
 
         return DataService;
 
-        function getUnitsUsedAsRemote() {
-            return DataService.unitsUsedAsRemote;
-        }
+        // We're adding cloned_to_tree_ids to each unit - a list of units that are all cloned from this unit.
+        // Adding code that sets cloned_from_tree_id and cloned_to_tree_ids to the units.
 
-        function addUnitsUsedAsRemote(clonedFrom, treeId) {
-            DataService.unitsUsedAsRemote[clonedFrom][treeId] = true;
-        }
+        /**
+         * Adds the tree_id of the new remote unit to the cloned from unit cloned_from_tree_id list.
+         * @param remoteUnit - the new remote unit to add
+         */
+        function addRemoteUnit(remoteUnit) { // or (remoteUnitTreeId)
+            trace("DataService - addRemoteUnit");
 
-        function removeUnitsUsedAsRemote(clonedFrom, treeId) {
-            if(DataService.unitsUsedAsRemote[clonedFrom][treeId]) {
-                delete DataService.unitsUsedAsRemote[clonedFrom][treeId];
+            var clonedFromUnit = getUnitById(remoteUnit.cloned_from_tree_id);
+            if (!clonedFromUnit.cloned_to_tree_ids) {
+                clonedFromUnit.cloned_to_tree_ids = [remoteUnit.tree_id];
+            } else {
+                clonedFromUnit.cloned_to_tree_ids.push(remoteUnit.tree_id);
             }
         }
 
-        function updateUnitsUsedAsRemote(clonedFrom, oldTreeId, newTreeId) {
-            if(DataService.unitsUsedAsRemote[clonedFrom][oldTreeId]){
-                DataService.unitsUsedAsRemote[clonedFrom][newTreeId] = true;
+         /**
+         * Removes the tree_id of the deleted remote unit from the cloned from unit cloned_from_tree_id list.
+         * @param remoteUnit - the unit to delete
+         */
+        function deleteRemoteUnit(remoteUnit) {
+            trace("DataService - deleteRemoteUnit");
+
+            var clonedFromUnit = getUnitById(remoteUnit.cloned_from_tree_id);
+
+            if (!clonedFromUnit.cloned_to_tree_ids) {
+                debugger
+                console.log("clonedFromUnit doesn't have cloned_from_tree_ids list", clonedFromUnit)
+            }
+
+            var index = clonedFromUnit.cloned_to_tree_ids.indexOf(remoteUnit.tree_id);
+            if (index > -1) {
+                clonedFromUnit.cloned_to_tree_ids.splice(index, 1);
+            } else {
+                throw "Cloned from unit " + clonedFromUnit.tree_id + " doesn't have cloned to tree id " + remoteUnit.tree_id;
+            }
+        }
+
+        /**
+         * Checks if unit contains cloned_from_tree_id, so the unit is remote, and then updates in the clonedFromUnit.
+         * Else, if unit contains cloned_to_tree_ids, so the unit is regular cloned unit, and then updates in her remotes units.
+         * @param unit - unit to upadte (remote or regular-cloned)
+         * @param oldTreeId - the old id to (of the unit)
+         */
+        function changeRemoteUnitTreeId(unit, oldTreeId) {
+            // debugger
+            trace("DataService - changeRemoteUnitTreeId");
+            var newTreeId = unit.tree_id;
+
+            console.log("####changeRemoteUnitTreeId, unit=, newTreeId=", unit, newTreeId);
+            if (unit.cloned_from_tree_id) { // the unit is remote, so we have to update in the cloned from unit
+                var clonedFromUnit = getUnitById(unit.cloned_from_tree_id);
+                var index = clonedFromUnit.cloned_to_tree_ids.indexOf(oldTreeId);
+                if (index > -1) {
+                     clonedFromUnit.cloned_to_tree_ids[index] = newTreeId;
+                }
+            } else if (unit.cloned_to_tree_ids) { // the unit is cloned unit, update in the remotes
+                var remoteUnit = undefined;
+                for (var i = 0; i < unit.cloned_to_tree_ids.length; i++) {
+                    remoteUnit = getUnitById(unit.cloned_to_tree_ids[i]);
+
+                    if (!remoteUnit) {
+                        debugger
+
+                    }
+                    remoteUnit.cloned_from_tree_id = newTreeId;
+                }
             }
         }
 
@@ -137,7 +185,7 @@
             DataService.serverData.tokens.forEach(function(token){
                 DataService.hashTables.tokensHashTable[token.id] = token;
             });
-                        
+
             DataService.categories.forEach(function(category){
                 DataService.hashTables.categoriesHashTable[category.id] = category;
             });
@@ -210,12 +258,12 @@
         function toggleCategoryForUnit(unitId, category){
             trace("DataService - toggleCategoryForUnit");
             return $q(function(resolve, reject) {
-                
+
                 if(category.id == undefined){
-                   return reject();
+                    return reject();
                 }
 
-                var unit = getUnitById(unitId);              
+                var unit = getUnitById(unitId);
 
                 if(unit === null){
                     return reject('ToggleSuccess');
@@ -225,22 +273,22 @@
                 //if the category isn't assigned to that unit yet - add it
                 if(elementPos === -1) {
                     if (!restrictionsValidatorService.checkRestrictionsBeforeInsert(getParentUnit(unit.tree_id),unit,DataService.hashTables.tokensHashTable, category)){
-                      return reject("Failed") ;
+                        return reject("Failed") ;
                     }
                     if( unit.AnnotationUnits && unit.AnnotationUnits.length > 0 && restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction([category])){
                         return true;
                     }
-                    
+
                     if($rootScope.isSlottedLayerProject){
-                    
+
                         var firstSlotIndex = 0;
                         for(var i=0; i<unit.categories.length; i++){
                             var currentCategory = unit.categories[i];
                             if(currentCategory.fromParentLayer){
-                               firstSlotIndex++;
+                                firstSlotIndex++;
                             }
                         }
-                        
+
                         if(!unit.slotOne){
                             unit.categories[firstSlotIndex] = category;
                         }else if(!unit.slotTwo){
@@ -250,22 +298,22 @@
                         unit.categories.push(category);
                     }
                     unit = updateUnitSlots(unit);
-                    
+
                 }
                 //if the category is already assigned to a unit, remove it
                 else{
-                    if(unit.categories.length > 1){                        
-                        
+                    if(unit.categories.length > 1){
+
                         if($rootScope.isSlottedLayerProject){
                             var firstSlotIndex = 0;
                             for(var i=0; i<unit.categories.length; i++){
                                 var currentCategoy = unit.categories[i];
                                 if(currentCategoy.fromParentLayer){
-                                   firstSlotIndex++;
+                                    firstSlotIndex++;
                                 }
                             }
                             unit.categories[elementPos] = {};
-                            
+
                             switch(elementPos-firstSlotIndex){
                                 case 0:
                                     unit.slotOne = false;
@@ -278,7 +326,7 @@
                         }else{
                             unit.categories.splice(elementPos,1);
                         }
-                        
+
                     }else{
                         unit.categories = [];
                     }
@@ -310,7 +358,7 @@
             }
             for(var i=0; i<selectedUnit.AnnotationUnits.length; i++){
                 if(selectedUnit.AnnotationUnits[i] == undefined){
-                  continue
+                    continue
                 }
                 var tokenPosition = selectedUnit.AnnotationUnits[i].tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
                 if(tokenPosition > -1){
@@ -333,7 +381,6 @@
             console.log("In insertToTree, newObject=", newObject);
 
             return $q(function(resolve, reject) {
-                debugger
 
                 if (!inInitStage && DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT) {
                     Core.showAlert("Cant create annotation units in refinement layer")
@@ -386,7 +433,6 @@
                             }).indexOf(token.static.id);
 
                             if (elementPos > -1) {
-                                // debugger
                                 parentUnit.tokens[elementPos].inChildUnitTreeId = newObject.tree_id;
                             }
                         }
@@ -475,6 +521,8 @@
                      * we need to update it and this is done in the following line.
                      */
                     newObject.tree_id = newObject.parent_tree_id + "-" + index_int.toString();
+
+                    addRemoteUnit(newObject);
                 }
 
                 /**
@@ -544,28 +592,28 @@
                 return resolve({status: 'InsertSuccess',id: newObject.tree_id});
             });
         }
-        
+
         function updateUnitSlots(newObject){
             trace("DataService - updateUnitSlots");
             var firstSlotIndex = 0; //the first slot not occupied by the parent layer's categories
             for(var i=0; i<newObject.categories.length; i++){
                 var currentCategory = newObject.categories[i];
                 if(currentCategory !== undefined && currentCategory.fromParentLayer){
-                   firstSlotIndex++;
+                    firstSlotIndex++;
                 }
             }
             if(newObject.categories[firstSlotIndex] !== undefined && newObject.categories[firstSlotIndex].id && !newObject.categories[firstSlotIndex].fromParentLayer){
-               newObject.slotOne = true;
+                newObject.slotOne = true;
             }else{
-               newObject.slotOne = false;
+                newObject.slotOne = false;
             }
-            
+
             if(newObject.categories[firstSlotIndex+1] !== undefined && newObject.categories[firstSlotIndex+1].id && !newObject.categories[firstSlotIndex+1].fromParentLayer){
-               newObject.slotTwo = true;
+                newObject.slotTwo = true;
             }else{
-               newObject.slotTwo = false;
+                newObject.slotTwo = false;
             }
-            
+
             return newObject;
         }
 
@@ -596,7 +644,6 @@
         function deleteUnit(unitId){
             trace("DataService - deleteUnit");
             return $q(function(resolve, reject) {
-                // debugger
                 var unit = getUnitById(unitId);
                 var parentUnit = getUnitById(getParentUnitId(unitId));
                 var splitUnitId = unit.tree_id.split('-');
@@ -609,6 +656,7 @@
                     // When deleting a unit, first delete her remote and implicit sons, and then move the regular sons to be children of her parent.
                     for (var i = 0; i < unit.AnnotationUnits.length; i++) {
                         if (unit.AnnotationUnits[i].unitType !== 'REGULAR') {
+                            deleteRemoteUnit(unit.AnnotationUnits[i]);
                             unit.AnnotationUnits.splice(i, 1);
                         }
                     }
@@ -664,13 +712,13 @@
             unit.tokens.forEach(function(token){
                 token.unitTreeId = unit.tree_id;
 
-                    var isTokenInUnit = DataService.isTokenInUnit(unit,token);
+                var isTokenInUnit = DataService.isTokenInUnit(unit,token);
 
-                    if(isTokenInUnit){
-                        token.inChildUnitTreeId = isTokenInUnit;
-                    }else{
-                        token.inChildUnitTreeId = null;
-                    }
+                if(isTokenInUnit){
+                    token.inChildUnitTreeId = isTokenInUnit;
+                }else{
+                    token.inChildUnitTreeId = null;
+                }
             })
 
             unit.AnnotationUnits.forEach(function(child_unit){
@@ -691,14 +739,14 @@
             }
             for (var i = 0; i < annotationUnits.length; i++) {
                 if(annotationUnits[i] == undefined){
-                  continue
+                    continue
                 }
                 sortTree(annotationUnits[i].AnnotationUnits || []);
             }
         }
 
         /**
-         * This function updates the tree IDs so that the index of the unit in the AnnotationUnits 
+         * This function updates the tree IDs so that the index of the unit in the AnnotationUnits
          * array of its parent is consistent with the tree_id data member.
          * TODO: BUGGY. CHECK AGAIN AFTER MODIFYING THE BACKEND.
          */
@@ -706,20 +754,19 @@
             trace("DataService - updateTreeIds");
             if(unit.AnnotationUnits && unit.AnnotationUnits.length > 0){
 
-            //     // remove all empty elements in the array
-            //     //for (var i = 0; i < unit.AnnotationUnits.length; i++) {
-            //     //    if (unit.AnnotationUnits[i] == undefined) {
-            //     //        unit.AnnotationUnits.splice(i,1);
-            //     //        i--;
-            //     //    }
-            //     //}
+                //     // remove all empty elements in the array
+                //     //for (var i = 0; i < unit.AnnotationUnits.length; i++) {
+                //     //    if (unit.AnnotationUnits[i] == undefined) {
+                //     //        unit.AnnotationUnits.splice(i,1);
+                //     //        i--;
+                //     //    }
+                //     //}
 
-                console.log("#################################DataService.unitsUsedAsRemote", DataService.unitsUsedAsRemote)
 
                 for (var i = 0; i < unit.AnnotationUnits.length; i++) {
 
                     if(unit.AnnotationUnits[i] == undefined){
-                      continue
+                        continue
                     }
 
                     // the old tree id of the unit
@@ -735,19 +782,20 @@
                     // if the Id has changed, change the remote units references
                     if(oldId !== unit.AnnotationUnits[i].tree_id){
 
-                        // TODO: Update clonedFromId ?
-                        if(DataService.unitsUsedAsRemote[oldId]){
-                            DataService.unitsUsedAsRemote[unit.AnnotationUnits[i].tree_id] = angular.copy(DataService.unitsUsedAsRemote[oldId]);
-                            delete DataService.unitsUsedAsRemote[oldId];
-                        }else{
-                            for(var key in DataService.unitsUsedAsRemote){
-                                if(DataService.unitsUsedAsRemote[key][oldId]){
-                                    DataService.unitsUsedAsRemote[key][unit.AnnotationUnits[i].tree_id] = true;
-                                    delete DataService.unitsUsedAsRemote[key][oldId];
-                                }
-                            }
-                        }
+                        // New Remote
+                        DataService.changeRemoteUnitTreeId(unit.AnnotationUnits[i], oldId);
 
+                        // if(DataService.unitsUsedAsRemote[oldId]){
+                        //     DataService.unitsUsedAsRemote[unit.AnnotationUnits[i].tree_id] = angular.copy(DataService.unitsUsedAsRemote[oldId]);
+                        //     delete DataService.unitsUsedAsRemote[oldId];
+                        // }else{
+                        //     for(var key in DataService.unitsUsedAsRemote){
+                        //         if(DataService.unitsUsedAsRemote[key][oldId]){
+                        //             DataService.unitsUsedAsRemote[key][unit.AnnotationUnits[i].tree_id] = true;
+                        //             delete DataService.unitsUsedAsRemote[key][oldId];
+                        //         }
+                        //     }
+                        // }
                     }
                     updateTreeIds(unit.AnnotationUnits[i],unit.AnnotationUnits[i].tree_id);
                 }
@@ -829,18 +877,18 @@
                 for(var i=0; i<unit.categories.length; i++){
                     var currentCategoy = unit.categories[i];
                     if(currentCategoy.fromParentLayer){
-                       currentCategoy['slot'] = i+3;
-                       firstSlotIndex++;
+                        currentCategoy['slot'] = i+3;
+                        firstSlotIndex++;
                     }
                 }
-                
+
                 if(treeNode.slotOne){
-                  unit.categories[firstSlotIndex]['slot'] = 1;
+                    unit.categories[firstSlotIndex]['slot'] = 1;
                 }
                 if(treeNode.slotTwo){
-                  unit.categories[firstSlotIndex+1]['slot'] = 2;
+                    unit.categories[firstSlotIndex+1]['slot'] = 2;
                 }
-                
+
                 for(var i=0; i<unit.categories.length; i++){
                     var currentCategory = unit.categories[i];
                     if(currentCategory.id == undefined){
@@ -848,9 +896,9 @@
                         i--;
                     }
                 }
-                
+
                 if(!treeNode.slotOne && treeNode.slotTwo){
-                   return false;
+                    return false;
                 }
             }
 
@@ -1052,10 +1100,10 @@
                     var unitIdToFind = splittedUnitId.slice(0,i+1).join("-");
 
                     var unitIndex = tempUnit.AnnotationUnits.findIndex(function(unit){
-                      if(unit == undefined){
-                        return false;
-                      }
-                      return unit.tree_id == unitIdToFind
+                        if(unit == undefined){
+                            return false;
+                        }
+                        return unit.tree_id == unitIdToFind
                     });
                     tempUnit.AnnotationUnits.length > 0 && unitIndex > -1 ? tempUnit = tempUnit.AnnotationUnits[unitIndex] : '';
                 }
@@ -1251,7 +1299,7 @@
             }
             var isNum = /^\d+$/.test(unitId);
             if (isNum) {
-                 if(unitId === "0"){
+                if(unitId === "0"){
                     return null;
                 }
                 // If unitId is first sub unit of the tree root, parentTreeId should be '0', like '1', '2', their parent is '0'
@@ -1292,25 +1340,25 @@
             return position;
         }
 
-/*                    if (position === "First" && token['nextTokenNotAdjacent']) {
-                        position = 'FirstAndLast';
+        /*                    if (position === "First" && token['nextTokenNotAdjacent']) {
+                                position = 'FirstAndLast';
+                            }
+                            if (position === "Last" && token['lastTokenNotAdjacent']) {
+                                position = 'FirstAndLast';
+                            }
+                            if (position === "Middle" && token['lastTokenNotAdjacent'] && token['nextTokenNotAdjacent']) {
+                                position = 'FirstAndLast';
+                            }
+                            if (position === "Middle" && token['lastTokenNotAdjacent']) {
+                                position = 'First';
+                            }
+                            if (position === "Middle" && token['nextTokenNotAdjacent']) {
+                                position = 'Last';
+                            }
+                            return position;
+                        }
                     }
-                    if (position === "Last" && token['lastTokenNotAdjacent']) {
-                        position = 'FirstAndLast';
-                    }
-                    if (position === "Middle" && token['lastTokenNotAdjacent'] && token['nextTokenNotAdjacent']) {
-                        position = 'FirstAndLast';
-                    }
-                    if (position === "Middle" && token['lastTokenNotAdjacent']) {
-                        position = 'First';
-                    }
-                    if (position === "Middle" && token['nextTokenNotAdjacent']) {
-                        position = 'Last';
-                    }
-                    return position;
-                }
-            }
-        } */
+                } */
 
 
         /*function positionInUnit(unit, token) {
