@@ -120,20 +120,25 @@
             console.log("####changeRemoteUnitTreeId, unit=, newTreeId=", unit, newTreeId);
             if (unit.cloned_from_tree_id) { // the unit is remote, so we have to update in the cloned from unit
                 var clonedFromUnit = getUnitById(unit.cloned_from_tree_id);
-                var index = clonedFromUnit.cloned_to_tree_ids.indexOf(oldTreeId);
-                if (index > -1) {
-                     clonedFromUnit.cloned_to_tree_ids[index] = newTreeId;
+                if (clonedFromUnit) {
+                    var index = clonedFromUnit.cloned_to_tree_ids.indexOf(oldTreeId);
+                    if (index > -1) {
+                        clonedFromUnit.cloned_to_tree_ids[index] = newTreeId;
+                    }
+                } else {
+                    debugger;
+                    console.log("changeRemoteUnitTreeId-----------------------clonedFromUnit is null");
                 }
             } else if (unit.cloned_to_tree_ids) { // the unit is cloned unit, update in the remotes
                 var remoteUnit = undefined;
                 for (var i = 0; i < unit.cloned_to_tree_ids.length; i++) {
                     remoteUnit = getUnitById(unit.cloned_to_tree_ids[i]);
-
-                    if (!remoteUnit) {
-                        debugger
-
+                    if (remoteUnit) {
+                        remoteUnit.cloned_from_tree_id = newTreeId;
+                    } else {
+                        debugger;
+                        console.log("changeRemoteUnitTreeId----------------------------remoteUnit is null");
                     }
-                    remoteUnit.cloned_from_tree_id = newTreeId;
                 }
             }
         }
@@ -764,6 +769,8 @@
 
 
                 for (var i = 0; i < unit.AnnotationUnits.length; i++) {
+                    console.log("================================unit=", unit.AnnotationUnits[i])
+                    debugger
 
                     if(unit.AnnotationUnits[i] == undefined){
                         continue
@@ -783,6 +790,8 @@
                     if(oldId !== unit.AnnotationUnits[i].tree_id){
 
                         // New Remote
+                        // TODO: The cloned field no updates in unit.AnnotationUnits[i]
+                        // Update here, and then send to changeRemoteUnitTreeId function( to update the another unit- cloned or remote)
                         DataService.changeRemoteUnitTreeId(unit.AnnotationUnits[i], oldId);
 
                         // if(DataService.unitsUsedAsRemote[oldId]){

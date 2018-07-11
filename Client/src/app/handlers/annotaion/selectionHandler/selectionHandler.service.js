@@ -353,19 +353,19 @@
                     //     DataService.unitsUsedAsRemote[unit.tree_id] = {};
                     // }
 
-                    var parentUnitUnits = DataService.getUnitById(unit.tree_id);
-                    var amountOfRemotes = 0;
-                    // if (parentUnitUnits) { // TODO: remove this line, added this condition because sometimes parentUnitUnits was undefined
-                        parentUnitUnits.AnnotationUnits.forEach(function (unit) {
-                            if (unit.unitType === "REMOTE") {
-                                amountOfRemotes++;
-                            }
-                        });
-                    // }
+                    // var parentUnitUnits = DataService.getUnitById(unit.tree_id);
+                    // var amountOfRemotes = 0;
+                    // // if (parentUnitUnits) {
+                    //     parentUnitUnits.AnnotationUnits.forEach(function (unit) {
+                    //         if (unit.unitType === "REMOTE") {
+                    //             amountOfRemotes++;
+                    //         }
+                    //     });
+                    // // }
 
                     // New Remote
                     // DataService.addRemoteUnit(unit); // Comment it because we added this call in insertToTree function.
-                    //
+
                     // DataService.unitsUsedAsRemote[unit.tree_id][unit.parent_tree_id + "-" + parseInt(parseInt(amountOfRemotes+1))] = true;
 
                     // selectionHandlerService.setUnitToAddRemotes("0");
