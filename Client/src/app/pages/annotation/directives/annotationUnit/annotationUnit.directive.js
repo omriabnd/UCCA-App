@@ -875,11 +875,7 @@
                     //     DataService.unitsUsedAsRemote[vm.dataBlock.tree_id] = {};
                     // }
 
-                    // New Remote
-                    DataService.addRemoteUnit(objToPush);
-
                     // DataService.unitsUsedAsRemote[vm.dataBlock.tree_id][res.id] = true;
-
 
                     selectionHandlerService.setUnitToAddRemotes("0");
                     $('.annotation-page-container').toggleClass('crosshair-cursor');

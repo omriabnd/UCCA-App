@@ -645,13 +645,15 @@
                 // Check if clonedFromUnit.cloned_to_tree_ids contain unit.tree_id
                 var index = clonedFromUnit.cloned_to_tree_ids.indexOf(unit.tree_id);
                 if (index < 0) {
-                    debugger
                     throw "Cloned from unit " + clonedFromUnit.tree_id + " doesn't contain tree id " + unit.tree_id + " in his cloned_to_tree_ids list";
                 }
             } else if (unit.cloned_to_tree_ids) { // This is cloned unit
                 var remoteUnit = undefined;
                 for (var j = 0; j < unit.cloned_to_tree_ids.length; j++) {
                     remoteUnit = getUnitById(unit.cloned_to_tree_ids[j]);
+                    if (!remoteUnit) {
+                        throw "There is no remote unit with id " + unit.cloned_to_tree_ids[j];
+                    }
                     if (remoteUnit.cloned_from_tree_id !== unit.tree_id) {
                         throw " Remote unit " + remoteUnit.tree_id + " has cloned_from_tree_id " + remoteUnit.cloned_from_tree_id + " !== " + unit.cloned_to_tree_ids[j];
                     }

@@ -10,6 +10,7 @@
         var lastInsertedUnitIndex = 0;
         var unitType = 'REGULAR';
         var annotation_units = [];
+        var changedIdsObject = [];
         var hashTables = {
             tokensHashTable: {},
             categoriesHashTable: {}
@@ -29,6 +30,7 @@
                 gui_status: 'OPEN',
                 tokens: []
             },
+            changedIdsObject: changedIdsObject,
             lastInsertedUnitIndex: lastInsertedUnitIndex,
             unitType:unitType,
             serverData:null,
@@ -37,7 +39,8 @@
             categories: [],
             addRemoteUnit: addRemoteUnit,
             deleteRemoteUnit: deleteRemoteUnit,
-            changeRemoteUnitTreeId: changeRemoteUnitTreeId,
+            updateClonedIds: updateClonedIds,
+            // changeRemoteUnitTreeId: changeRemoteUnitTreeId,
             getData: getData,
             insertToTree: insertToTree,
             toggleCategoryForUnit:toggleCategoryForUnit,
@@ -73,7 +76,7 @@
          * Adds the tree_id of the new remote unit to the cloned from unit cloned_from_tree_id list.
          * @param remoteUnit - the new remote unit to add
          */
-        function addRemoteUnit(remoteUnit) { // or (remoteUnitTreeId)
+        function addRemoteUnit(remoteUnit) {
             trace("DataService - addRemoteUnit");
 
             var clonedFromUnit = getUnitById(remoteUnit.cloned_from_tree_id);
@@ -84,18 +87,16 @@
             }
         }
 
-         /**
+        /**
          * Removes the tree_id of the deleted remote unit from the cloned from unit cloned_from_tree_id list.
          * @param remoteUnit - the unit to delete
          */
         function deleteRemoteUnit(remoteUnit) {
             trace("DataService - deleteRemoteUnit");
-
             var clonedFromUnit = getUnitById(remoteUnit.cloned_from_tree_id);
 
-            if (!clonedFromUnit.cloned_to_tree_ids) {
-                debugger
-                console.log("clonedFromUnit doesn't have cloned_from_tree_ids list", clonedFromUnit)
+            if (!clonedFromUnit) {
+                throw "In deleteRemoteUnit function, there is no clonedFromUnit with id " + remoteUnit.cloned_from_tree_id;
             }
 
             var index = clonedFromUnit.cloned_to_tree_ids.indexOf(remoteUnit.tree_id);
@@ -106,42 +107,73 @@
             }
         }
 
+
+        function updateClonedIds(unit) {
+            if(unit.AnnotationUnits && unit.AnnotationUnits.length > 0) {
+                for (var i = 0; i < unit.AnnotationUnits.length; i++) {
+                    if (unit.AnnotationUnits[i] == undefined) {
+                        continue
+                    }
+
+                    // Check if there is a cloned_from or a cloned_to id from the old ids list, changed it to the new id from the list.
+                    if (unit.AnnotationUnits[i].cloned_from_tree_id) {
+                        for (var p = 0; p < DataService.changedIdsObject.length; p++) {
+                            if (unit.AnnotationUnits[i].cloned_from_tree_id === DataService.changedIdsObject[p].oldTreeId) {
+                                unit.AnnotationUnits[i].cloned_from_tree_id = DataService.changedIdsObject[p].newTreeId;
+                                break;
+                            }
+                        }
+                    } else if (unit.AnnotationUnits[i].cloned_to_tree_ids) {
+                        for (var j = 0; j < unit.AnnotationUnits[i].cloned_to_tree_ids.length; j++) {
+                            for (var p = 0; p < DataService.changedIdsObject.length; p++) {
+                                if (unit.AnnotationUnits[i].cloned_to_tree_ids[j] === DataService.changedIdsObject[p].oldTreeId) {
+                                    unit.AnnotationUnits[i].cloned_to_tree_ids[j] = DataService.changedIdsObject[p].newTreeId;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    updateClonedIds(unit.AnnotationUnits[i]);
+                }
+            }
+        }
+
         /**
          * Checks if unit contains cloned_from_tree_id, so the unit is remote, and then updates in the clonedFromUnit.
          * Else, if unit contains cloned_to_tree_ids, so the unit is regular cloned unit, and then updates in her remotes units.
          * @param unit - unit to upadte (remote or regular-cloned)
          * @param oldTreeId - the old id to (of the unit)
          */
-        function changeRemoteUnitTreeId(unit, oldTreeId) {
-            // debugger
-            trace("DataService - changeRemoteUnitTreeId");
-            var newTreeId = unit.tree_id;
-
-            console.log("####changeRemoteUnitTreeId, unit=, newTreeId=", unit, newTreeId);
-            if (unit.cloned_from_tree_id) { // the unit is remote, so we have to update in the cloned from unit
-                var clonedFromUnit = getUnitById(unit.cloned_from_tree_id);
-                if (clonedFromUnit) {
-                    var index = clonedFromUnit.cloned_to_tree_ids.indexOf(oldTreeId);
-                    if (index > -1) {
-                        clonedFromUnit.cloned_to_tree_ids[index] = newTreeId;
-                    }
-                } else {
-                    debugger;
-                    console.log("changeRemoteUnitTreeId-----------------------clonedFromUnit is null");
-                }
-            } else if (unit.cloned_to_tree_ids) { // the unit is cloned unit, update in the remotes
-                var remoteUnit = undefined;
-                for (var i = 0; i < unit.cloned_to_tree_ids.length; i++) {
-                    remoteUnit = getUnitById(unit.cloned_to_tree_ids[i]);
-                    if (remoteUnit) {
-                        remoteUnit.cloned_from_tree_id = newTreeId;
-                    } else {
-                        debugger;
-                        console.log("changeRemoteUnitTreeId----------------------------remoteUnit is null");
-                    }
-                }
-            }
-        }
+        // function changeRemoteUnitTreeId(unit, oldTreeId) {
+        //     // debugger
+        //     trace("DataService - changeRemoteUnitTreeId");
+        //     var newTreeId = unit.tree_id;
+        //
+        //     console.log("####changeRemoteUnitTreeId, unit=, newTreeId=", unit, newTreeId);
+        //     if (unit.cloned_from_tree_id) { // the unit is remote, so we have to update in the cloned from unit
+        //         var clonedFromUnit = getUnitById(unit.cloned_from_tree_id);
+        //         if (clonedFromUnit) {
+        //             var index = clonedFromUnit.cloned_to_tree_ids.indexOf(oldTreeId);
+        //             if (index > -1) {
+        //                 clonedFromUnit.cloned_to_tree_ids[index] = newTreeId;
+        //             }
+        //         } else {
+        //             debugger;
+        //             console.log("changeRemoteUnitTreeId-----------------------clonedFromUnit is null");
+        //         }
+        //     } else if (unit.cloned_to_tree_ids) { // the unit is cloned unit, update in the remotes
+        //         var remoteUnit = undefined;
+        //         for (var i = 0; i < unit.cloned_to_tree_ids.length; i++) {
+        //             remoteUnit = getUnitById(unit.cloned_to_tree_ids[i]);
+        //             if (remoteUnit) {
+        //                 remoteUnit.cloned_from_tree_id = newTreeId;
+        //             } else {
+        //                 debugger;
+        //                 console.log("changeRemoteUnitTreeId----------------------------remoteUnit is null");
+        //             }
+        //         }
+        //     }
+        // }
 
         function initTree(){
             trace("DataService - initTree");
@@ -632,10 +664,12 @@
             trace("DataService - sortAndUpdate");
 
             if(DataService.tree.AnnotationUnits.length > 0){
+                DataService.changedIdsObject = []; // Reset the object before calling to updateTreeIds
                 updateTreeIds(DataService.tree);
 
                 doSort ? sortTree(DataService.tree.AnnotationUnits) : '';
 
+                DataService.changedIdsObject = []; // Reset the object before calling to updateTreeIds
                 updateTreeIds(DataService.tree);
             }
         }
@@ -663,6 +697,7 @@
                         if (unit.AnnotationUnits[i].unitType !== 'REGULAR') {
                             deleteRemoteUnit(unit.AnnotationUnits[i]);
                             unit.AnnotationUnits.splice(i, 1);
+                            i = i-1;
                         }
                     }
 
@@ -691,10 +726,12 @@
                     // }
                 }
 
+                DataService.changedIdsObject = []; // Reset the object before calling to updateTreeIds
                 updateTreeIds(DataService.tree);
 
                 sortTree(DataService.tree.AnnotationUnits);
 
+                DataService.changedIdsObject = []; // Reset the object before calling to updateTreeIds
                 updateTreeIds(DataService.tree);
 
                 updateInUnitIdsForTokens(DataService.getParentUnit(unit.tree_id));
@@ -769,9 +806,6 @@
 
 
                 for (var i = 0; i < unit.AnnotationUnits.length; i++) {
-                    console.log("================================unit=", unit.AnnotationUnits[i])
-                    debugger
-
                     if(unit.AnnotationUnits[i] == undefined){
                         continue
                     }
@@ -782,6 +816,11 @@
                     // updating the id of the unit according to its place in the array
                     // change to getChildTreeId
                     unit.AnnotationUnits[i].tree_id = (unit.tree_id === "0" ? (i+1).toString() : treeId+"-"+(i+1).toString());
+                    // Check if cloned_to or cloned_from id changed
+                    if (unit.AnnotationUnits[i].tree_id !== oldId) {
+                        var obj = {oldTreeId: oldId, newTreeId: unit.AnnotationUnits[i].tree_id};
+                        DataService.changedIdsObject.push(obj);
+                    }
 
                     // update parent treeId
                     unit.AnnotationUnits[i].parent_tree_id = DataService.getParentUnitId(unit.AnnotationUnits[i].tree_id);
@@ -790,9 +829,8 @@
                     if(oldId !== unit.AnnotationUnits[i].tree_id){
 
                         // New Remote
-                        // TODO: The cloned field no updates in unit.AnnotationUnits[i]
                         // Update here, and then send to changeRemoteUnitTreeId function( to update the another unit- cloned or remote)
-                        DataService.changeRemoteUnitTreeId(unit.AnnotationUnits[i], oldId);
+                        // DataService.changeRemoteUnitTreeId(unit.AnnotationUnits[i], oldId);
 
                         // if(DataService.unitsUsedAsRemote[oldId]){
                         //     DataService.unitsUsedAsRemote[unit.AnnotationUnits[i].tree_id] = angular.copy(DataService.unitsUsedAsRemote[oldId]);
@@ -814,6 +852,8 @@
                     token.inChildUnitTreeId = null;
                 });
 
+                // Send to updateClonedIds function
+                updateClonedIds(DataService.tree);
             }
         }
 
