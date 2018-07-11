@@ -875,8 +875,8 @@
                 parent_tree_id: treeNode.unitType === 'REMOTE' ? DataService.getParentUnitId(treeNode.tree_id) : DataService.getParentUnitId(treeNode.tree_id),
                 gui_status : treeNode.gui_status || "OPEN",
                 type: angular.copy(treeNode.unitType.toUpperCase()),
+                is_finished: treeNode.is_finished ? treeNode.is_finished : false,
                 is_remote_copy: treeNode.unitType.toUpperCase() === 'REMOTE',
-                // todo- remove stsic from tokens
                 children_tokens: treeNode.tree_id === "0" ? filterStaticTokens(filterTokensAtt(angular.copy(treeNode.tokens))) : filterStaticTokens(filterTokensAttForUnit(angular.copy(treeNode.tokens))),
                 cloned_from_tree_id: treeNode.unitType.toUpperCase() === 'REMOTE' ? treeNode.cloned_from_tree_id : null
             };

@@ -513,6 +513,7 @@
                             tree_id: unit && unit.tree_id ? unit.tree_id : null,
                             parent_tree_id: unit && unit.parent_tree_id ? unit.parent_tree_id : null,
                             is_remote_copy: unit && unit.is_remote_copy ? unit.is_remote_copy : false,
+                            is_finished: unit && unit.is_finished ? unit.finished: false,
                             cloned_from_tree_id: unit && unit.cloned_from_tree_id ? unit.cloned_from_tree_id : null
                         };
 
