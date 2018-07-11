@@ -54,7 +54,6 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
 
         if categories:
             pass
-            #pdb.set_trace()
 
         return categories_json
 
@@ -81,5 +80,7 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
             'children_tokens',
             #'children',
             'parent_tree_id',
-            'gui_status'
+            'gui_status',
+            'is_finished'
+
         )

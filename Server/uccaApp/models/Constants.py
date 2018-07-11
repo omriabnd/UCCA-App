@@ -75,7 +75,7 @@ TASK_STATUS_JSON = {
 SAVE_TYPES = ['draft','submit','reset']
 
 ANNOTATION_UNIT_TYPES = [
-    ('IMPLICIT','REGULAR'),
+    ('IMPLICIT','IMPLICIT'),
     ('REGULAR','REGULAR')
 ]
 ANNOTATION_GUI_STATUS = [

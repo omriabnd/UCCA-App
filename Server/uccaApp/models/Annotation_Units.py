@@ -11,6 +11,7 @@ class Annotation_Units(models.Model):
     cluster = models.CharField(max_length=Constants.CLUSTER_MAX_LENGTH, default='')
     parent_id = models.ForeignKey('self',null=True,blank=True)
     gui_status = models.CharField(max_length=50, choices=Constants.ANNOTATION_GUI_STATUS)
+    is_finished = models.BooleanField(null=False, default=False)
 
     def __unicode__(self):
       return self.id

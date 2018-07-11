@@ -35,6 +35,7 @@
           checkRestrictionsBeforeInsert: checkRestrictionsBeforeInsert,
           checkRestrictionsOnFinish: checkRestrictionsOnFinish,
           evaluateFinishAll: evaluateFinishAll,
+          evaluateSubmissionRestrictions: evaluateSubmissionRestrictions,
           checkIfUnitViolateForbidChildrenRestriction:checkIfUnitViolateForbidChildrenRestriction,
           getTables: getTables
         };
@@ -695,38 +696,26 @@
         }
 
         var NOT_ALL_TOKENS_IN_UNIT_ERROR = false;
-        function evaluateFinishAll(mainPassage,fromSubmit,hashTables){
-            var evaluationResult = true;
-
-            if(fromSubmit){
-                var hash_tokens = hashTables.tokensHashTable;
-                // Commented out by Omri Abend, 24/7 because it is not working properly
-                //checkIfAllTokenThatRequireAnnotationIsInUnit(mainPassage,hash_tokens,true);
-                //if(NOT_ALL_TOKENS_IN_UNIT_ERROR){
-                //    evaluationResult = false;
-                //}
-                NOT_ALL_TOKENS_IN_UNIT_ERROR = false;
-                
-                var checkPassageTokenResult = checkIfAllTokenThatRequireAnnotationIsInUnit(mainPassage,hash_tokens);
-                if(checkPassageTokenResult === false){
-                    showErrorModal("Not all non-punctuation tokens are in units.")
+        function evaluateFinishAll(mainPassage,hashTables) {
+            for (var i = 0; i < mainPassage.AnnotationUnits.length; i++) {
+                var evaluationResult = checkRestrictionsOnFinish(mainPassage.AnnotationUnits[i], mainPassage, hashTables);
+                if (!evaluationResult) {
                     return false;
                 }
             }
+            return true;
+        }
 
-            if(!evaluationResult){
-                showErrorModal("Not all non-punctuation tokens are in units.")
-                return false
-            }else{
-                for(var i=0; i<mainPassage.AnnotationUnits.length; i++){
-                    evaluationResult = checkRestrictionsOnFinish(mainPassage.AnnotationUnits[i],mainPassage,hashTables);
-                    if(!evaluationResult){
-                        return false
-                    }
-                }
-                return true;
+        function evaluateSubmissionRestrictions(mainPassage,hashTables) {
+            if (!evaluateFinishAll(mainPassage,hashTables)) {
+                return false;
             }
-
+            var hash_tokens = hashTables.tokensHashTable;
+            if (!checkIfAllTokenThatRequireAnnotationIsInUnit(mainPassage,hash_tokens)) {
+                showErrorModal("Not all non-punctuation tokens are in units.");
+                return false;
+            }
+            return true;
         }
 
         function isForbidAnyChild(unit){

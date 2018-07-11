@@ -5,7 +5,7 @@ logger = logging.getLogger("ucca.api")
 from rest_framework.generics import get_object_or_404
 from rest_framework import serializers
 
-from uccaApp.util.exceptions import SaveTaskTypeDeniedException, CantChangeSubmittedTaskExeption, GetForInactiveTaskException, TreeIdInvalid, TokensInvalid
+from uccaApp.util.exceptions import SaveTaskTypeDeniedException, CantChangeSubmittedTaskExeption, GetForInactiveTaskException, TreeIdInvalid, TokensInvalid, UnallowedValueError
 from uccaApp.util.functions import get_value_or_none, active_obj_or_raise_exeption
 from uccaApp.util.tokenizer import isPunct
 from uccaApp.models import Annotation_Remote_Units_Annotation_Units
@@ -67,8 +67,8 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
 
         tokens_json = []
         for index,t in enumerate(tokens):
-            cur_json = TokensSerializer(t).data
-            cur_json['index_in_task'] = index
+            cur_json = TokensSerializer(t,context={'index_in_task':index}).data
+            #cur_json['index_in_task'] = index
             tokens_json.append(cur_json)
 
         return tokens_json
@@ -122,7 +122,8 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             
         # return all array sorted with all the remote units in the end
 
-        return sorted(annotation_units_json, key=lambda x: tuple(x['tree_id'].split('-')))
+        annotation_units_json.sort(key=lambda x: tuple([int(a) for a in x['tree_id'].split('-')]))
+        return annotation_units_json
 
         #return sorted(annotation_units_json, key=operator.itemgetter('is_remote_copy'), reverse=False)
 
@@ -255,7 +256,10 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             except KeyError:
                 raise TokensInvalid("children_tokens contains a token which is not in the task's tokens list.")
             children_tokens_list_for_validation.append((au['tree_id'],(au['parent_tree_id'],au['is_remote_copy'],cur_children_tokens_start_indices)))
-        if not check_children_tokens(dict(children_tokens_list_for_validation)):
+
+
+        print("children_tokens_list_for_validation: "+str(cur_children_tokens_start_indices))
+        if not check_children_tokens(children_tokens_list_for_validation):
             raise TokensInvalid("Inconsistency in children_tokens detected.")
 
         all_tree_ids = [] # a list of all tree_ids by their order in the input
@@ -269,7 +273,11 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
                 raise TreeIdInvalid("tree_id is in an incorrect format; fix unit " + str(annotation_unit.tree_id))
 
             annotation_unit.task_id = instance
-            annotation_unit.type = au['type']
+            if au['type'] in [x[0] for x in Constants.ANNOTATION_UNIT_TYPES]:
+                annotation_unit.type = au['type']
+            else:
+                raise UnallowedValueError("An annotation unit is given an unallowed type: "+au['type'])
+            
             annotation_unit.comment = au['comment']
             annotation_unit.cluster = au['cluster']
 
