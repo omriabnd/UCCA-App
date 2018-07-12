@@ -655,7 +655,7 @@
         }
 
         /**
-         * Calls to updateTreeIds function, and to sortTree function if the parameter doSort = true
+         * Calls to updateTreeIdsAndClonedIds function, and to sortTree function if the parameter doSort = true
          * Buggy function, as now, we commented her calls.
          * But it needed for special annotations, for example- annotate two units together
          * @param doSort
@@ -664,13 +664,11 @@
             trace("DataService - sortAndUpdate");
 
             if(DataService.tree.AnnotationUnits.length > 0){
-                DataService.changedIdsObject = []; // Reset the object before calling to updateTreeIds
-                updateTreeIds(DataService.tree);
+                updateTreeIdsAndClonedIds();
 
                 doSort ? sortTree(DataService.tree.AnnotationUnits) : '';
 
-                DataService.changedIdsObject = []; // Reset the object before calling to updateTreeIds
-                updateTreeIds(DataService.tree);
+                updateTreeIdsAndClonedIds();
             }
         }
 
@@ -726,13 +724,12 @@
                     // }
                 }
 
-                DataService.changedIdsObject = []; // Reset the object before calling to updateTreeIds
-                updateTreeIds(DataService.tree);
-
-                sortTree(DataService.tree.AnnotationUnits);
-
-                DataService.changedIdsObject = []; // Reset the object before calling to updateTreeIds
-                updateTreeIds(DataService.tree);
+                sortAndUpdate(true);
+                // updateTreeIdsAndClonedIds();
+                //
+                // sortTree(DataService.tree.AnnotationUnits);
+                //
+                // updateTreeIdsAndClonedIds();
 
                 updateInUnitIdsForTokens(DataService.getParentUnit(unit.tree_id));
 
@@ -785,6 +782,18 @@
                 }
                 sortTree(annotationUnits[i].AnnotationUnits || []);
             }
+        }
+
+        /**
+         * This function resets changedIdsObject object, updates treeIds, and then updates clonedIds according to changedIdsObject object.
+         */
+        function updateTreeIdsAndClonedIds() {
+            trace("DataService - updateTreeIdsAndClonedIds");
+            DataService.changedIdsObject = []; // Reset the object before calling to updateTreeIds
+            updateTreeIds(DataService.tree);
+
+            // Send to updateClonedIds function
+            updateClonedIds(DataService.tree);
         }
 
         /**
@@ -851,9 +860,6 @@
                     token.unitTreeId = treeId;
                     token.inChildUnitTreeId = null;
                 });
-
-                // Send to updateClonedIds function
-                updateClonedIds(DataService.tree);
             }
         }
 
