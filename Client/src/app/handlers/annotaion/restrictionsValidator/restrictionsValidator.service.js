@@ -15,7 +15,7 @@
             %NAME%, %NAME_1%, %NAME_2%
             will change to the category name in the alert modal
         */
-        var errorMasseges ={
+        var errorMessages ={
             FORBID_ANY_CHILD : 'Category %NAME% cannot have any child.',
             FORBID_CHILD : 'Category %NAME_1% cannot have child with category %NAME_2%.',
             FORBID_SIBLING: 'Category %NAME_1% cannot have sibling with category %NAME_2%.',
@@ -26,7 +26,8 @@
             UNIT_FORBID_SLOTTED_LAYER_RULE: "Both slots are already occupied.",
             SLOT_ONE_VIOLATION: "Annotation unit %NAME_1% is missing a category at slot 1.",
             NONRELEVANT_UNIT: "Annotation unit %NAME_1% with category %NAME_2% is not being refined in this layer.",
-            NONRELEVANT_PARENT_CATEGORY: "Category %NAME_1% is not a valid refinement of category %NAME_2%."
+            NONRELEVANT_PARENT_CATEGORY: "Category %NAME_1% is not a valid refinement of category %NAME_2%.",
+            NO_VALID_CATEGORY: "All units must have at least one non-default category"
         };
         var selectionHandlerServiceProvider;
         var restrictionsTables;
@@ -61,7 +62,7 @@
                 var currentCategoty = categories[i];
                 if(currentCategoty != undefined && restrictionsTables['FORBID_ANY_CHILD'][currentCategoty.id] != undefined){
                     var replacements  = {"%NAME%":currentCategoty.name};
-                    var msg = errorMasseges['FORBID_ANY_CHILD'].replace(/%\w+%/g, function(all) {
+                    var msg = errorMessages['FORBID_ANY_CHILD'].replace(/%\w+%/g, function(all) {
                         return replacements[all] || all;
                     });
                     showErrorModal(msg);
@@ -73,13 +74,10 @@
         
         function initRestrictionsTables(layer_restrictions,selectionHandlerService){
             initRestrictionsTableObject();
-            // console.log(layer_restrictions);
             layer_restrictions.forEach(function(restriction){
                 addRestrictionToTable(restriction);
             });
-            // console.log(restrictionsTables);
             selectionHandlerServiceProvider = selectionHandlerService;
-
         }
 
         function addRestrictionToTable(restriction){
@@ -102,24 +100,134 @@
             }
         }
 
+
+        /**
+         * Returns tree iff none of the restrictions for annotationUnit's sub-tree
+         * has been violated.
+         * @param annotationUnit
+         * @param parentUnit
+         * @param hashTables
+         * @returns {boolean}
+         */
+        function checkRestrictionsOnFinish(annotationUnit,parentUnit,hashTables){
+            var categories_hash = hashTables.categoriesHashTable;
+
+            //TODO: call this function recursively on children
+            var violation = null;
+
+            violation = unitViolatesSlotOneRestriction(annotationUnit);
+            if (violation) {
+                return false;
+            }
+
+            violation = unitHasNonDefaultCategory(annotationUnit,categories_hash);
+            if (violation) {
+                return false;
+            }
+
+            violation = unitViolatesSiblingRestrictions(annotationUnit,parentUnit);
+            if (violation) {
+                return false;
+            }
+
+            if (unitViolatesChildrenRestrictions(annotationUnit)) {
+                //error msg
+                return false;
+            }
+            if (checkIfVoilateEachTokenInUnit(annotationUnit) {
+                //error msg
+                return false;
+            }
+
+            //TODO: error msg
+
+            //TODO: (Omri) this part of the code should move elsewhere. In any even, it should not be hidden unless it's unit 0
+            if(violation_code){
+            	annotationUnit.gui_status = 'OPEN';
+            }else{
+                annotationUnit.gui_status = 'HIDDEN';
+            }
+
+            return (violation_code === null);
+        }
+
+
+        /**
+         * Returns a violation object if the children of annotationUnit conflict with either a REQUIRE_SIBLING
+         * restriction or with a FORBID_SIBLING restriction.
+         * @param annotationUnit
+         * @param parentUnit
+         * @returns {boolean}
+         */
+        function unitViolatesSiblingRestrictions(annotationUnit) {
+            var result = false;
+
+            // extract all the categories of the siblings
+            for(var i=0; i< parentUnit.AnnotationUnits.length; i++){
+                var sibling = annotationUnit.categories[i];
+
+                //if there is an active require_sibling restriction for current category
+                if(restrictionsTables['REQUIRE_SIBLING'][currentCategory.id]){
+
+                    // extract all sibling categories
+
+
+                    var categoriesIdToLookForFoundNotFoundTable = createCategoriesIdToLookForFoundNotFoundTable({
+                        parentCategory: currentCategory,
+                        childCategory:restrictionsTables['REQUIRE_SIBLING'][currentCategory.id]
+                    });
+
+                    //Go over all the unit siblings and look for the required categories.
+                    console.log('REQUIRE_SIBLING annotationUnit',parentUnit);
+                    for(var j=0; j<parentUnit.AnnotationUnits.length; j++){
+                        var currentAnnotationUnitSibling = parentUnit.AnnotationUnits[j];
+
+//                        if(currentAnnotationUnitSibling.tree_id == annotationUnit.tree_id){
+//                            continue
+//                        }
+
+                        //Go over all the current siblings categories.
+                        for(var k=0; k<currentAnnotationUnitSibling.categories.length; k++){
+                            var currentAnnotationUnitSiblingCategory = currentAnnotationUnitSibling.categories[k];
+
+                            if(categoriesIdToLookForFoundNotFoundTable.hasOwnProperty(currentAnnotationUnitSiblingCategory.id)){
+                                categoriesIdToLookForFoundNotFoundTable[currentAnnotationUnitSiblingCategory.id].isFound = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            result = checkIfAtLeastOneRequiredCategoriesWasFound(categoriesIdToLookForFoundNotFoundTable);
+            if(result != false){
+                console.log("annotationUnit " + annotationUnit.tree_id + " is not valid");
+                return result;
+            }else{
+                console.log("annotationUnit " + annotationUnit.tree_id + " is valid");
+                return result;
+            }
+
+        }
+
+
         function checkRestrictionsBeforeInsert(parentAnnotationUnit, newAnnotationUnit,tokensHashTable,newCategory){
             newAnnotationUnit.children_tokens = newAnnotationUnit.tokens;
             var result = checkSlottedLayerProjectRestriction(newAnnotationUnit);
             if(result){
-                var msg = errorMasseges['UNIT_FORBID_SLOTTED_LAYER_RULE'];
+                var msg = errorMessages['UNIT_FORBID_SLOTTED_LAYER_RULE'];
                 showErrorModal(msg);
                 return false;
             }
             result = newAnnotationUnit.unitType != "IMPLICIT" && doesUnitContainsOnlyPunctuation(newAnnotationUnit,tokensHashTable);
             if(result){
-                var msg = errorMasseges['UNIT_CONTAIN_ONLY_PUNCTUATIONS'];
+                var msg = errorMessages['UNIT_CONTAIN_ONLY_PUNCTUATIONS'];
                 showErrorModal(msg);
                 return false;
             }
             result = checkIfUnitViolateForbidAnyChildRestriction(parentAnnotationUnit,newAnnotationUnit,newCategory);
             if(result){
                 var replacements  = {"%NAME%":result.name};
-                var msg = errorMasseges['FORBID_ANY_CHILD'].replace(/%\w+%/g, function(all) {
+                var msg = errorMessages['FORBID_ANY_CHILD'].replace(/%\w+%/g, function(all) {
                     return replacements[all] || all;
                 });
                 showErrorModal(msg);
@@ -128,7 +236,7 @@
             result = checkIfUnitViolateForbidChildRestriction(parentAnnotationUnit,newAnnotationUnit,newCategory);
             if(result){
                 var replacements  = {"%NAME_1%":result[0].name, "%NAME_2%":result[1].name};
-                var msg = errorMasseges['FORBID_CHILD'].replace(/%\w+%/g, function(all) {
+                var msg = errorMessages['FORBID_CHILD'].replace(/%\w+%/g, function(all) {
                     return replacements[all] || all;
                 });
                 showErrorModal(msg);
@@ -137,7 +245,7 @@
             result = checkIfUnitViolateForbidSiblingRestriction(parentAnnotationUnit,newAnnotationUnit,newCategory);
             if(result){
                 var replacements  = {"%NAME_1%":result[0].name, "%NAME_2%":result[1].name};
-                var msg = errorMasseges['FORBID_SIBLING'].replace(/%\w+%/g, function(all) {
+                var msg = errorMessages['FORBID_SIBLING'].replace(/%\w+%/g, function(all) {
                     return replacements[all] || all;
                 });
                 showErrorModal(msg);
@@ -146,7 +254,7 @@
             result = checkIfUnitIsRefinableInRefinementLayer(newAnnotationUnit, newCategory);
             if(result){
             	var replacements  = {"%NAME_1%":result.unit, "%NAME_2%":result.category};
-                var msg = errorMasseges['NONRELEVANT_UNIT'].replace(/%\w+%/g, function(all) {
+                var msg = errorMessages['NONRELEVANT_UNIT'].replace(/%\w+%/g, function(all) {
                     return replacements[all] || all;
                 });
                 showErrorModal(msg);
@@ -155,7 +263,7 @@
             result = checkIfRefinementCategoryIsChildOfParentCategory(newAnnotationUnit, newCategory);
             if(result){
             	var replacements  = {"%NAME_1%":result.refinement, "%NAME_2%":result.parent};
-                var msg = errorMasseges['NONRELEVANT_PARENT_CATEGORY'].replace(/%\w+%/g, function(all) {
+                var msg = errorMessages['NONRELEVANT_PARENT_CATEGORY'].replace(/%\w+%/g, function(all) {
                     return replacements[all] || all;
                 });
                 showErrorModal(msg);
@@ -307,93 +415,44 @@
             }
             return false;
         }
-        
-        function checkIfUnitVioledSlotOneRestriction(annotationUnit){
-            var violated;
-        	if($rootScope.isSlottedLayerProject){
-        		if($rootScope.isRefinementLayerProject){
-                    violated = annotationUnit.categories[0].refinedCategory && !annotationUnit.slotOne;
-        		}else{
-        			violated = !annotationUnit.slotOne;
-        		}
-        	}
-            	
-           if(violated){
-                var replacements  = {"%NAME_1%": annotationUnit.tree_id};
-                var msg = errorMasseges["SLOT_ONE_VIOLATION"].replace(/%\w+%/g, function(all) {
-                    return replacements[all] || all;
-                });
-                showErrorModal(msg,annotationUnit);
-                return true;
-           }else{
-        	   return annotationUnit.AnnotationUnits.some(function(unit){
-        		   return checkIfUnitVioledSlotOneRestriction(unit);
-        	   });
-           }
-           return false;
-            
-        }
 
+        /**
+         * Returns null if there was no slotOneRestriction violation found, otherwise returns the violation.
+         * @param annotationUnit
+         * @returns {*}
+         */
+        function unitViolatesSlotOneRestriction(annotationUnit) {
 
-        var VIOLATED_CATEGORY = {}
-        function checkRestrictionsOnFinish(annotationUnit,parentUnit,hashTables){
-            VIOLATED_CATEGORY = {}
-            var vaiolate = false;
-            var categories_hash = hashTables.categoriesHashTable;
-
-            var violateSlottedLayerSlotOneRestriction = checkIfUnitVioledSlotOneRestriction(annotationUnit);
-            
-            
-            if(!violateSlottedLayerSlotOneRestriction){
-                var violateUnitsCategoriesAmount = checkIfAllUnitsHaveAtLeastOneCategory(annotationUnit,categories_hash);
-                // console.log("violateUnitsCategoriesAmount",violateUnitsCategoriesAmount);
-
-                if(!violateUnitsCategoriesAmount){
-                    var vaiolateForbidSibling = checkIfForbidSiblingHandler(annotationUnit,parentUnit);
-                    // console.log('vaiolateForbidSibling',vaiolateForbidSibling);
-                    if(!vaiolateForbidSibling){
-                        var vaiolateForbidChild = checkIfForbidChildHandler(annotationUnit);
-                        // console.log('vaiolateForbidChild',vaiolateForbidChild);
-                        if(!vaiolateForbidChild){
-                            var vaiolateRequireSibling  = checkIfUnitViolateRequireSiblingAndAlert(annotationUnit,parentUnit,true)
-                            // console.log('vaiolateRequireSibling',vaiolateRequireSibling);
-                            if(!vaiolateRequireSibling){
-                                var violateRequireChild = checkIfUnitViolateRequireChildRestrictionAndAlert(annotationUnit);
-                                // console.log('violateRequireChild',violateRequireChild);
-                                if(!violateRequireChild){
-                                    var voilateEachTokenInUnit = checkIfVoilateEachTokenInUnit(annotationUnit);
-                                    if(voilateEachTokenInUnit){
-                                        vaiolate = true
-                                    }
-                                }else{
-                                    vaiolate = true;
-                                }
-                            }else{
-                                vaiolate = true;
-                            }
-                        }else{
-                            vaiolate = true;
-                        }
-                    }else{
-                        vaiolate = true;
+            var violation = null;
+            // checks if slot 1 has at least one category from the current layer each unit is annotated with
+            if ($rootScope.isSlottedLayerProject) {
+                if ($rootScope.isRefinementLayerProject) {
+                    if (annotationUnit.categories[0].refinedCategory && !annotationUnit.slotOne) {
+                        return {code: "NO_VALID_CATEGORY", violating_unit_tree_id: annotationUnit.tree_id};
                     }
-                }else{
-                    vaiolate = true;
+                } else {
+                    if (!annotationUnit.slotOne) {
+                        return {code: "NO_VALID_CATEGORY", violating_unit_tree_id: annotationUnit.tree_id};
+                    }
                 }
-            }else{
-               vaiolate = true;
             }
-            
-
-
-            if(!vaiolate){
-            	annotationUnit.gui_status = 'HIDDEN'
-            }else{
-            	annotationUnit.gui_status = 'OPEN'
-            }
-
-            return !vaiolate;
+            return null;
         }
+           // if(violated){
+           //      var replacements  = {"%NAME_1%": annotationUnit.tree_id};
+           //      var msg = errorMessages["SLOT_ONE_VIOLATION"].replace(/%\w+%/g, function(all) {
+           //          return replacements[all] || all;
+           //      });
+           //      showErrorModal(msg,annotationUnit);
+           //      return true;
+           // }
+            //
+           // return annotationUnit.AnnotationUnits.some(function(unit){
+        	//    return unitViolatedSlotOneRestriction(unit);
+           // });
+           //
+
+
 
         function checkIfForbidChildHandler(annotationUnit){
             var isVaioled =  false
@@ -448,7 +507,7 @@
                             var tokenInChildUnit = unitToken.inChildUnitTreeId;
                             if(tokenInChildUnit === null){
                                 // isViolated = true;
-                                showErrorModal(errorMasseges['NOT_COMPLETE'], unitToken);
+                                showErrorModal(errorMessages['NOT_COMPLETE'], unitToken);
                                 return true;
                             }else{
                                 var elementPos = annotationUnit.AnnotationUnits.map(function(x) {return x.tree_id; }).indexOf(tokenInChildUnit);
@@ -579,7 +638,7 @@
                     result.unFoundCategory[key].name ? result_string += result.unFoundCategory[key].name + ", " : ''; 
                 }
                 var replacements  = {"%NAME_1%": result.parentCategory.name, "%NAME_2%": result_string};
-                var msg = errorMasseges[restrictionType].replace(/%\w+%/g, function(all) {
+                var msg = errorMessages[restrictionType].replace(/%\w+%/g, function(all) {
                     return replacements[all] || all;
                 });
                 showErrorModal(msg,result.violatingUnit);
@@ -594,7 +653,7 @@
         function restrictionResultHandler(result,annotationUnit,restrictionType){
             if(result){
                 var replacements  = {"%NAME_1%": result.parentCategory.name, "%NAME_2%": result.unFoundCategory.name};
-                var msg = errorMasseges[restrictionType].replace(/%\w+%/g, function(all) {
+                var msg = errorMessages[restrictionType].replace(/%\w+%/g, function(all) {
                     return replacements[all] || all;
                 });
                 showErrorModal(msg,result.violatingUnit);
@@ -609,7 +668,7 @@
         function restrictionResultHandleForForbidChild(result,annotationUnit){
             if(result){
                 var replacements  = {"%NAME_1%":result[0].name, "%NAME_2%":result[1].name};
-                var msg = errorMasseges['FORBID_CHILD'].replace(/%\w+%/g, function(all) {
+                var msg = errorMessages['FORBID_CHILD'].replace(/%\w+%/g, function(all) {
                     return replacements[all] || all;
                 });
                 showErrorModal(msg);
@@ -620,7 +679,7 @@
         function restrictionResultHandleForForbidSibling(result,annotationUnit){
             if(result){
                 var replacements  = {"%NAME_1%":result[0].name, "%NAME_2%":result[1].name};
-                var msg = errorMasseges['FORBID_SIBLING'].replace(/%\w+%/g, function(all) {
+                var msg = errorMessages['FORBID_SIBLING'].replace(/%\w+%/g, function(all) {
                     return replacements[all] || all;
                 });
                 showErrorModal(msg);
@@ -731,81 +790,88 @@
             }
         }
 
-        function checkIfAllTokenThatRequireAnnotationIsInUnit(rootUnit,hash_tokens,checkIfOk){
-            var rootUnit = rootUnit;
-            if (rootUnit.unitType == 'IMPLICIT') {
-                return false;
-            }
-            
-            if(NOT_ALL_TOKENS_IN_UNIT_ERROR){
-                return checkIfOk = false
-            }
-            /**
-             * The some() method tests whether at least one element in the array passes the test implemented by the provided function.
-             * Check if at least one token from rootUnit.tokenMap has no inChildUnitTreeId attribute.
-             */
-            Object.keys(rootUnit.tokenMap).some(function(tokenId){
-                var token = hash_tokens[tokenId];
-                console.log("checkIfAllTokenThatRequireAnnotationIsInUnit",token,rootUnit);
+        // function checkIfAllTokenThatRequireAnnotationIsInUnit(rootUnit,hash_tokens,checkIfOk){
+        //     var rootUnit = rootUnit;
+        //     if (rootUnit.unitType == 'IMPLICIT') {
+        //         return false;
+        //     }
+        //
+        //     if(NOT_ALL_TOKENS_IN_UNIT_ERROR){
+        //         return checkIfOk = false
+        //     }
+        //     /**
+        //      * The some() method tests whether at least one element in the array passes the test implemented by the provided function.
+        //      * Check if at least one token from rootUnit.tokenMap has no inChildUnitTreeId attribute.
+        //      */
+        //     Object.keys(rootUnit.tokenMap).some(function(tokenId){
+        //         var token = hash_tokens[tokenId];
+        //         console.log("checkIfAllTokenThatRequireAnnotationIsInUnit",token,rootUnit);
+        //
+        //         // if there is only one token and it requires annotation
+        //         if(rootUnit.tree_id == "0"){
+        //             rootUnit.children_tokens = rootUnit.tokenMap;
+        //         }
+        //         if(token.require_annotation && Object.keys(rootUnit.tokenMap).length > 1){
+        //             if(token.inChildUnitTreeId === null){
+        //                 checkIfOk = false;
+        //                 NOT_ALL_TOKENS_IN_UNIT_ERROR = true;
+        //                 console.log("REQUIRE_ANNOTATION",token);
+        //                 return true; // its only break from the some loop
+        //             }
+        //         }
+        //     })
+        //
+        //     rootUnit.AnnotationUnits.forEach(function(unit){
+        //         if(NOT_ALL_TOKENS_IN_UNIT_ERROR){
+        //             return checkIfOk = false
+        //         }
+        //         return checkIfAllTokenThatRequireAnnotationIsInUnit(unit,hash_tokens,checkIfOk)
+        //     });
+        //     return checkIfOk;
+        // }
 
-                // if there is only one token and it requires annotation
-                if(rootUnit.tree_id == "0"){
-                    rootUnit.children_tokens = rootUnit.tokenMap;
+        function checkIfAllTokenThatRequireAnnotationIsInUnit(rootUnit,hash_tokens){
+            for (var i=0; i < rootUnit.tokens.length; i++) {
+                var token = rootUnit.tokens[i];
+                if (!token.inChildUnitTreeId && token.static.require_annotation) {
+                    return false;
                 }
-                if(token.require_annotation && Object.keys(rootUnit.tokenMap).length > 1){
-                    if(token.inChildUnitTreeId === null){
-                        checkIfOk = false;
-                        NOT_ALL_TOKENS_IN_UNIT_ERROR = true;
-                        console.log("REQUIRE_ANNOTATION",token);
-                        return true; // its only break from the some loop
-                    }
-                }
-            })
-
-            rootUnit.AnnotationUnits.forEach(function(unit){
-                if(NOT_ALL_TOKENS_IN_UNIT_ERROR){
-                    return checkIfOk = false
-                }
-                return checkIfAllTokenThatRequireAnnotationIsInUnit(unit,hash_tokens,checkIfOk)
-            });
-            return checkIfOk;
+            }
+            return true;
         }
 
-        function checkAtLeastOneCategoryRecursion(parentUnit,categories_hash){
-            // console.log(parentUnit.tree_id);
-            if(parentUnit.categories == undefined){
-                return false;
-            }else if(!parentUnit.categories.length){
-                return false;
-            }else{
 
-                // check if at least one category is not default
-                var atLeastOnNotDefault = false;
+        /**
+         * Checks if unit has at least one category
+         * @param parentUnit
+         * @param categories_hash
+         * @returns {boolean}
+         */
+        function unitHasNonDefaultCategory(curUnit,categories_hash){
 
-                atLeastOnNotDefault = parentUnit.categories.some(function(currentCategory){
-                    return atLeastOnNotDefault = (categories_hash[currentCategory.id] && categories_hash[currentCategory.id].was_default === false)
-                })
+            var violation = null;
+            // checks if curUnit has at least one category
+            if (!curUnit.categories || curUnit.categories.length === 0) {
+                violation.code = "NO_VALID_CATEGORY";
+                violation.violating_unit_tree_id = annotationUnit.tree_id;
+            }
 
-                if(atLeastOnNotDefault){
-
-                    var foundErrorResult = parentUnit.AnnotationUnits.some(function(unit){
-                        if(checkAtLeastOneCategoryRecursion(unit,categories_hash) === false){
-                            return true
-                        }
-                    })
-
-                    return !foundErrorResult;
-
-                }else{
-                    return atLeastOnNotDefault; // = false
+            // check if at least one category is not default
+            var hasNonDefault = false;
+            for (var i=0; i < curUnit.categories.length; i++) {
+                if (!categories_hash[curUnit.categories[i]].was_default) {
+                    violation.code = "NO_VALID_CATEGORY";
+                    violation.violating_unit_tree_id = annotationUnit.tree_id;
+                    break
                 }
             }
+
+            return violation;
         }
 
-        function checkIfAllUnitsHaveAtLeastOneCategory(parentUnit,categories_hash){
+        function allUnitsHaveAtLeastOneCategory(parentUnit,categories_hash){
             //TODO. Currently buggy, and therefore commented out.
-            /*return false;*/
-            
+
             var allOk = checkAtLeastOneCategoryRecursion(parentUnit,categories_hash);
             if(!allOk){
                 showErrorModal("All units must have at least one non-default category");

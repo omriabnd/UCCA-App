@@ -673,6 +673,11 @@
 
         }
 
+        /**
+         * This function should really be called finishCurrentUnit if restrictions not violated.
+         * @param unit_id
+         * @param event
+         */
         function checkRestrictionForCurrentUnit(unit_id,event){
             trace("annotationUnitDirective - checkRestrictionForCurrentUnit");
             if(!unit_id){
@@ -699,13 +704,10 @@
                 subTreeToCollapse(unitToValidate);
 
                 Core.scrollToUnit(unit_id);  // In the past- scroll had done to parentUnit.tree_id
-                // Core.scrollToUnit(parentUnit.tree_id);
-//                Core.showNotification('success','Annotation unit ' + unitToValidate.tree_id + ' has finished successfully' )
             }
 
             event ? event.stopPropagation() : '';
-            
-            
+
         }
 
         function subTreeToCollapse(subtree_root_unit){
