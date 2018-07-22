@@ -57,7 +57,7 @@
         }
         
         function checkIfUnitViolateForbidChildrenRestriction(categories){
-            
+
             for(var i=0; i < categories.length; i++){
                 var currentCategoty = categories[i];
                 if(currentCategoty != undefined && restrictionsTables['FORBID_ANY_CHILD'][currentCategoty.id] != undefined){
@@ -68,8 +68,8 @@
                     showErrorModal(msg);
                     return true;
                 }
-            }            
-            
+            }
+
         }
         
         function initRestrictionsTables(layer_restrictions,selectionHandlerService){
@@ -134,7 +134,7 @@
                 //error msg
                 return false;
             }
-            if (checkIfVoilateEachTokenInUnit(annotationUnit) {
+            if (checkIfVoilateEachTokenInUnit(annotationUnit)) {
                 //error msg
                 return false;
             }
@@ -160,54 +160,43 @@
          * @returns {boolean}
          */
         function unitViolatesSiblingRestrictions(annotationUnit) {
-            var result = false;
+            var violation = null;
 
             // extract all the categories of the siblings
-            for(var i=0; i< parentUnit.AnnotationUnits.length; i++){
-                var sibling = annotationUnit.categories[i];
+            var children_category_ids = getChildrenCategories(annotationUnit);
 
-                //if there is an active require_sibling restriction for current category
-                if(restrictionsTables['REQUIRE_SIBLING'][currentCategory.id]){
-
-                    // extract all sibling categories
-
-
-                    var categoriesIdToLookForFoundNotFoundTable = createCategoriesIdToLookForFoundNotFoundTable({
-                        parentCategory: currentCategory,
-                        childCategory:restrictionsTables['REQUIRE_SIBLING'][currentCategory.id]
-                    });
-
-                    //Go over all the unit siblings and look for the required categories.
-                    console.log('REQUIRE_SIBLING annotationUnit',parentUnit);
-                    for(var j=0; j<parentUnit.AnnotationUnits.length; j++){
-                        var currentAnnotationUnitSibling = parentUnit.AnnotationUnits[j];
-
-//                        if(currentAnnotationUnitSibling.tree_id == annotationUnit.tree_id){
-//                            continue
-//                        }
-
-                        //Go over all the current siblings categories.
-                        for(var k=0; k<currentAnnotationUnitSibling.categories.length; k++){
-                            var currentAnnotationUnitSiblingCategory = currentAnnotationUnitSibling.categories[k];
-
-                            if(categoriesIdToLookForFoundNotFoundTable.hasOwnProperty(currentAnnotationUnitSiblingCategory.id)){
-                                categoriesIdToLookForFoundNotFoundTable[currentAnnotationUnitSiblingCategory.id].isFound = true;
-                            }
-                        }
-                    }
+            for (var i=0; i< children_category_ids.length; i++){
+                var cur_category_id = children_category_ids[i];
+                var conflicting_category_ids = Core.intersectArrays(restrictionsTablesIds['FORBID_SIBLING'][cur_category_id],children_category_ids);
+                if (conflicting_category_ids.length > 0) {
+                    violation = new Object();
+                    violation.category1 = cur_category_id;
+                    violation.category2 = conflicting_category_ids[0];
                 }
             }
 
-            result = checkIfAtLeastOneRequiredCategoriesWasFound(categoriesIdToLookForFoundNotFoundTable);
-            if(result != false){
-                console.log("annotationUnit " + annotationUnit.tree_id + " is not valid");
-                return result;
-            }else{
-                console.log("annotationUnit " + annotationUnit.tree_id + " is valid");
-                return result;
-            }
-
+            return violation;
         }
+
+        /**
+         * Returns an array of the indices of all categories its children have (regular, remote or implicit)
+         * @param parentAnnotationUnit
+         */
+        function getChildrenCategories(parentAnnotationUnit) {
+            var children_categories = new Array();
+
+            for(var i=0; i< parentAnnotationUnit.AnnotationUnits.length; i++) {
+                var cur_unit = parentAnnotationUnit.AnnotationUnits[i];
+                for (var j=0; j < cur_unit.categories.length; j++) {
+                    var cur_cat = cur_unit.categories[j].id;
+                    if (!children_categories.includes(cur_cat)) {
+                        children_categories.push(cur_cat);
+                    }
+                }
+            }
+            return children_categories;
+        }
+
 
 
         function checkRestrictionsBeforeInsert(parentAnnotationUnit, newAnnotationUnit,tokensHashTable,newCategory){
@@ -625,7 +614,7 @@
             if(!!VIOLATED_CATEGORY && !!VIOLATED_CATEGORY.unFoundCategory && VIOLATED_CATEGORY.unFoundCategory.isFound==false){
                 return VIOLATED_CATEGORY;
             }
-            VIOLATED_CATEGORY = checkIfUnitViolateRequireChildRestriction(annotationUnit);
+            var VIOLATED_CATEGORY = checkIfUnitViolateRequireChildRestriction(annotationUnit);
             console.log('VIOLATED_CATEGORY',VIOLATED_CATEGORY);
             return VIOLATED_CATEGORY
         }
@@ -848,22 +837,18 @@
          * @returns {boolean}
          */
         function unitHasNonDefaultCategory(curUnit,categories_hash){
-
-            var violation = null;
-            // checks if curUnit has at least one category
-            if (!curUnit.categories || curUnit.categories.length === 0) {
-                violation.code = "NO_VALID_CATEGORY";
-                violation.violating_unit_tree_id = annotationUnit.tree_id;
-            }
-
-            // check if at least one category is not default
             var hasNonDefault = false;
             for (var i=0; i < curUnit.categories.length; i++) {
-                if (!categories_hash[curUnit.categories[i]].was_default) {
-                    violation.code = "NO_VALID_CATEGORY";
-                    violation.violating_unit_tree_id = annotationUnit.tree_id;
+                if (!categories_hash[curUnit.categories[i].id].was_default) {
+                    hasNonDefault = true;
                     break
                 }
+            }
+
+            var violation = null;
+            if (!hasNonDefault) {
+                violation.code = "NO_VALID_CATEGORY";
+                violation.violating_unit_tree_id = annotationUnit.tree_id;
             }
 
             return violation;
