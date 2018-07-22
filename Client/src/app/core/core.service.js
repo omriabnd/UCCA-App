@@ -28,6 +28,7 @@
 			checkDependenciesKeys: checkDependenciesKeys,
 			showNotification: showNotification,
 			validate: validate,
+			intersectArrays: intersectArrays,
 			hasValue: hasValue,
 			previewTask: previewTask,
 			showAlert: showAlert,
@@ -424,6 +425,21 @@
 				}
 			});
 			return result;
+		}
+
+		/**
+		 * Returns the intersection of two arrays (not necessarily sorted)
+         * @param A1
+         * @param A2
+         */
+		function intersectArrays(A1,A2) {
+			var output = new Array();
+			for (var i=0; i < A1.length; i++) {
+				if (A2.indexOf(A1[i]) >= 0) {
+					output.push(A1[i]);
+				}
+			}
+			return output;
 		}
 
 		function hasValue(obj){

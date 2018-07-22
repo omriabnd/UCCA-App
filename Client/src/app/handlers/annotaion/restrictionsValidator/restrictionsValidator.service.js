@@ -31,9 +31,10 @@
         };
         var selectionHandlerServiceProvider;
         var restrictionsTables;
+        var restrictionsTablesIds;
         var handler = {
           initRestrictionsTables: initRestrictionsTables,
-          checkRestrictionsBeforeInsert: checkRestrictionsBeforeInsert,
+          //checkRestrictionsBeforeInsert: checkRestrictionsBeforeInsert,
           checkRestrictionsOnFinish: checkRestrictionsOnFinish,
           evaluateFinishAll: evaluateFinishAll,
           evaluateSubmissionRestrictions: evaluateSubmissionRestrictions,
@@ -54,6 +55,13 @@
                 REQUIRE_CHILD: {},
                 REQUIRE_SIBLING:{}
             };
+            restrictionsTablesIds = {
+                FORBID_ANY_CHILD: [],
+                FORBID_CHILD:[],
+                FORBID_SIBLING:[],
+                REQUIRE_CHILD: [],
+                REQUIRE_SIBLING:[]
+            };
         }
         
         function checkIfUnitViolateForbidChildrenRestriction(categories){
@@ -61,7 +69,7 @@
             for(var i=0; i < categories.length; i++){
                 var currentCategoty = categories[i];
                 if(currentCategoty != undefined && restrictionsTables['FORBID_ANY_CHILD'][currentCategoty.id] != undefined){
-                    var replacements  = {"%NAME%":currentCategoty.name};
+                    var replacements  = {"%NAME1%":currentCategoty.name};
                     var msg = errorMessages['FORBID_ANY_CHILD'].replace(/%\w+%/g, function(all) {
                         return replacements[all] || all;
                     });
@@ -86,14 +94,18 @@
             switch(restriction.type){
                 case 'FORBID_ANY_CHILD':
                     categories_1.forEach(function(category_1){
-                        restrictionsTables.FORBID_ANY_CHILD[category_1.id] = 'All'
+                        restrictionsTables.FORBID_ANY_CHILD[category_1.id] = 'All';
+                        restrictionsTablesIds.FORBID_ANY_CHILD.push(category_1.id);
+
                     });
                     break;
                 default:
                     categories_1.forEach(function(category_1){
                         restrictionsTables[restriction.type][category_1.id] = {};
+                        restrictionsTablesIds[restriction.type][category_1.id] = [];
                         categories_2.forEach(function(category_2){
                             restrictionsTables[restriction.type][category_1.id][category_2.id] = category_2.name;
+                            restrictionsTablesIds[restriction.type][category_1.id].push(category_2.id);
                         });
                     });
                     break;
@@ -112,7 +124,6 @@
         function checkRestrictionsOnFinish(annotationUnit,parentUnit,hashTables){
             var categories_hash = hashTables.categoriesHashTable;
 
-            //TODO: call this function recursively on children
             var violation = null;
 
             violation = unitViolatesSlotOneRestriction(annotationUnit);
@@ -125,58 +136,105 @@
                 return false;
             }
 
-            violation = unitViolatesSiblingRestrictions(annotationUnit,parentUnit);
+            violation = unitViolatesSiblingAndChildrenRestrictions(annotationUnit,parentUnit);
             if (violation) {
+                var replacements  = {"%NAME%":violation.category1};
+                var msg = errorMessages[violation.rtype].replace(/%\w+%/g, function(all) {
+                    return replacements[all] || all;
+                });
+                showErrorModal(msg);
                 return false;
             }
 
-            if (unitViolatesChildrenRestrictions(annotationUnit)) {
-                //error msg
-                return false;
-            }
             if (checkIfVoilateEachTokenInUnit(annotationUnit)) {
                 //error msg
                 return false;
             }
 
-            //TODO: error msg
-
             //TODO: (Omri) this part of the code should move elsewhere. In any even, it should not be hidden unless it's unit 0
-            if(violation_code){
+            if(!violation){
             	annotationUnit.gui_status = 'OPEN';
             }else{
                 annotationUnit.gui_status = 'HIDDEN';
             }
 
-            return (violation_code === null);
+            return true;
         }
 
 
         /**
-         * Returns a violation object if the children of annotationUnit conflict with either a REQUIRE_SIBLING
-         * restriction or with a FORBID_SIBLING restriction.
+         * Validates that the children of annotationUnit obey the
+         * REQUIRE_SIBLING and FORBID_SIBLING restrictions among themselves.
+         * Also checks that it obeys the REQUIRE_CHILD and FORBID_CHILD restrictions between
+         * annotationUnit and its children.
+         * Returns a violation object in case of violation or null if valid.
          * @param annotationUnit
-         * @param parentUnit
-         * @returns {boolean}
+         * @returns violation
          */
-        function unitViolatesSiblingRestrictions(annotationUnit) {
+        function unitViolatesSiblingAndChildrenRestrictions(annotationUnit) {
+
             var violation = null;
 
             // extract all the categories of the siblings
             var children_category_ids = getChildrenCategories(annotationUnit);
 
-            for (var i=0; i< children_category_ids.length; i++){
+            for (var i=0; i< children_category_ids.length; i++) {
                 var cur_category_id = children_category_ids[i];
-                var conflicting_category_ids = Core.intersectArrays(restrictionsTablesIds['FORBID_SIBLING'][cur_category_id],children_category_ids);
-                if (conflicting_category_ids.length > 0) {
-                    violation = new Object();
-                    violation.category1 = cur_category_id;
-                    violation.category2 = conflicting_category_ids[0];
+
+                //check FORBID_SIBLING restrictions
+                if (cur_category_id in restrictionsTablesIds['FORBID_SIBLING']) {
+                    var conflicting_category_ids = Core.intersectArrays(restrictionsTablesIds['FORBID_SIBLING'][cur_category_id], children_category_ids);
+                    if (conflicting_category_ids.length > 0) {
+                        violation = new Object();
+                        violation.category1 = cur_category_id;
+                        violation.category2 = conflicting_category_ids[0];
+                        violation.rtype = 'FORBID_SIBLING';
+                        return violation;
+                    }
+                }
+
+                //check REQUIRE_SIBLING restrictions
+                if (cur_category_id in restrictionsTablesIds['REQUIRE_SIBLING']) {
+                    var required_category_ids = restrictionsTablesIds['REQUIRE_SIBLING'][cur_category_id];
+                    if (Core.intersectArrays(required_category_ids, children_category_ids).length == 0) {
+                        violation = new Object();
+                        violation.category1 = cur_category_id;
+                        violation.category2 = required_category_ids;
+                        violation.rtype = 'REQUIRE_SIBLING';
+                        return violation;
+                    }
+                }
+            }
+
+            for (var i=0; i < annotationUnit.categories.length; i++) {
+                var cur_parent_category_id = annotationUnit.categories[i].id;
+
+                if (cur_parent_category_id in restrictionsTablesIds['FORBID_CHILD']) {
+                    var conflicting_category_ids = Core.intersectArrays(restrictionsTablesIds['FORBID_CHILD'][cur_parent_category_id], children_category_ids);
+                    if (conflicting_category_ids.length > 0) {
+                        violation = new Object();
+                        violation.category1 = cur_parent_category_id;
+                        violation.category2 = conflicting_category_ids[0];
+                        violation.rtype = 'FORBID_CHILD';
+                        return violation;
+                    }
+                }
+
+                if (cur_parent_category_id in restrictionsTablesIds['REQUIRE_CHILD']) {
+                    var required_category_ids = restrictionsTablesIds['REQUIRE_CHILD'][cur_parent_category_id];
+                    if (Core.intersectArrays(children_category_ids, required_category_ids). length == 0) {
+                        violation = new Object();
+                        violation.category1 = cur_parent_category_id;
+                        violation.category2 = required_category_ids;
+                        violation.rtype = 'REQUIRE_CHILD';
+                        return violation;
+                    }
                 }
             }
 
             return violation;
         }
+
 
         /**
          * Returns an array of the indices of all categories its children have (regular, remote or implicit)
@@ -199,67 +257,49 @@
 
 
 
-        function checkRestrictionsBeforeInsert(parentAnnotationUnit, newAnnotationUnit,tokensHashTable,newCategory){
-            newAnnotationUnit.children_tokens = newAnnotationUnit.tokens;
-            var result = checkSlottedLayerProjectRestriction(newAnnotationUnit);
-            if(result){
-                var msg = errorMessages['UNIT_FORBID_SLOTTED_LAYER_RULE'];
-                showErrorModal(msg);
-                return false;
-            }
-            result = newAnnotationUnit.unitType != "IMPLICIT" && doesUnitContainsOnlyPunctuation(newAnnotationUnit,tokensHashTable);
-            if(result){
-                var msg = errorMessages['UNIT_CONTAIN_ONLY_PUNCTUATIONS'];
-                showErrorModal(msg);
-                return false;
-            }
-            result = checkIfUnitViolateForbidAnyChildRestriction(parentAnnotationUnit,newAnnotationUnit,newCategory);
-            if(result){
-                var replacements  = {"%NAME%":result.name};
-                var msg = errorMessages['FORBID_ANY_CHILD'].replace(/%\w+%/g, function(all) {
-                    return replacements[all] || all;
-                });
-                showErrorModal(msg);
-                return false;
-            }
-            result = checkIfUnitViolateForbidChildRestriction(parentAnnotationUnit,newAnnotationUnit,newCategory);
-            if(result){
-                var replacements  = {"%NAME_1%":result[0].name, "%NAME_2%":result[1].name};
-                var msg = errorMessages['FORBID_CHILD'].replace(/%\w+%/g, function(all) {
-                    return replacements[all] || all;
-                });
-                showErrorModal(msg);
-                return false;
-            }
-            result = checkIfUnitViolateForbidSiblingRestriction(parentAnnotationUnit,newAnnotationUnit,newCategory);
-            if(result){
-                var replacements  = {"%NAME_1%":result[0].name, "%NAME_2%":result[1].name};
-                var msg = errorMessages['FORBID_SIBLING'].replace(/%\w+%/g, function(all) {
-                    return replacements[all] || all;
-                });
-                showErrorModal(msg);
-                return false;
-            }
-            result = checkIfUnitIsRefinableInRefinementLayer(newAnnotationUnit, newCategory);
-            if(result){
-            	var replacements  = {"%NAME_1%":result.unit, "%NAME_2%":result.category};
-                var msg = errorMessages['NONRELEVANT_UNIT'].replace(/%\w+%/g, function(all) {
-                    return replacements[all] || all;
-                });
-                showErrorModal(msg);
-                return false;
-            }
-            result = checkIfRefinementCategoryIsChildOfParentCategory(newAnnotationUnit, newCategory);
-            if(result){
-            	var replacements  = {"%NAME_1%":result.refinement, "%NAME_2%":result.parent};
-                var msg = errorMessages['NONRELEVANT_PARENT_CATEGORY'].replace(/%\w+%/g, function(all) {
-                    return replacements[all] || all;
-                });
-                showErrorModal(msg);
-                return false;
-            }
-            return true;
-        }
+        //function checkRestrictionsBeforeInsert(parentAnnotationUnit, newAnnotationUnit,tokensHashTable,newCategory){
+        //     newAnnotationUnit.children_tokens = newAnnotationUnit.tokens;
+        //     var result = checkSlottedLayerProjectRestriction(newAnnotationUnit);
+        //     if(result){
+        //         var msg = errorMessages['UNIT_FORBID_SLOTTED_LAYER_RULE'];
+        //         showErrorModal(msg);
+        //         return false;
+        //     }
+        //     result = newAnnotationUnit.unitType != "IMPLICIT" && doesUnitContainsOnlyPunctuation(newAnnotationUnit,tokensHashTable);
+        //     if(result){
+        //         var msg = errorMessages['UNIT_CONTAIN_ONLY_PUNCTUATIONS'];
+        //         showErrorModal(msg);
+        //         return false;
+        //     }
+        //     result = checkIfUnitViolateForbidAnyChildRestriction(parentAnnotationUnit,newAnnotationUnit,newCategory);
+        //     if(result){
+        //         var replacements  = {"%NAME%":result.name};
+        //         var msg = errorMessages['FORBID_ANY_CHILD'].replace(/%\w+%/g, function(all) {
+        //             return replacements[all] || all;
+        //         });
+        //         showErrorModal(msg);
+        //         return false;
+        //     }
+        //     result = checkIfUnitIsRefinableInRefinementLayer(newAnnotationUnit, newCategory);
+        //     if(result){
+        //     	var replacements  = {"%NAME_1%":result.unit, "%NAME_2%":result.category};
+        //         var msg = errorMessages['NONRELEVANT_UNIT'].replace(/%\w+%/g, function(all) {
+        //             return replacements[all] || all;
+        //         });
+        //         showErrorModal(msg);
+        //         return false;
+        //     }
+        //     result = checkIfRefinementCategoryIsChildOfParentCategory(newAnnotationUnit, newCategory);
+        //     if(result){
+        //     	var replacements  = {"%NAME_1%":result.refinement, "%NAME_2%":result.parent};
+        //         var msg = errorMessages['NONRELEVANT_PARENT_CATEGORY'].replace(/%\w+%/g, function(all) {
+        //             return replacements[all] || all;
+        //         });
+        //         showErrorModal(msg);
+        //         return false;
+        //     }
+        //     return true;
+        // }
         
         function checkIfUnitIsRefinableInRefinementLayer(unit, newCategory){
         	var parentCategory = unit.categories[0];
@@ -442,41 +482,9 @@
            //
 
 
-
-        function checkIfForbidChildHandler(annotationUnit){
-            var isVaioled =  false
-            for(var i=0; i<annotationUnit.AnnotationUnits.length; i++){
-                var currentChild = annotationUnit.AnnotationUnits[i];
-                var result = checkIfUnitViolateForbidChildRestriction(annotationUnit,currentChild);
-                restrictionResultHandleForForbidChild(result,annotationUnit);
-
-                if(result){
-                    return isVaioled = true
-                }
-
-            }
-            return isVaioled
-        }
-
-        function checkIfForbidSiblingHandler(annotationUnit,parentUnit){
-            var isVaioled =  false
-            for(var i=0; i<parentUnit.AnnotationUnits.length; i++){
-                var currentChild = parentUnit.AnnotationUnits[i];
-                var result = checkIfUnitViolateForbidSiblingRestriction(parentUnit,currentChild);
-                restrictionResultHandleForForbidSibling(result,annotationUnit);
-
-                if(result){
-                    return isVaioled = true
-                }
-
-            }
-            return isVaioled
-        }
-
         function checkIfVoilateEachTokenInUnit(annotationUnit){
             /*return false;*/
 
-            
             var isViolated = false;
             var sumOfNonPuctuationTokens = annotationUnit.tokens.filter(function(token) {
                 return token.static.require_annotation === false ;
@@ -743,7 +751,6 @@
             return result;
         }
 
-        var NOT_ALL_TOKENS_IN_UNIT_ERROR = false;
         function evaluateFinishAll(mainPassage,hashTables) {
             for (var i = 0; i < mainPassage.AnnotationUnits.length; i++) {
                 var evaluationResult = checkRestrictionsOnFinish(mainPassage.AnnotationUnits[i], mainPassage, hashTables);

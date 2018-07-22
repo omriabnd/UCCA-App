@@ -309,9 +309,9 @@
 
                 //if the category isn't assigned to that unit yet - add it
                 if(elementPos === -1) {
-                    if (!restrictionsValidatorService.checkRestrictionsBeforeInsert(getParentUnit(unit.tree_id),unit,DataService.hashTables.tokensHashTable, category)){
-                        return reject("Failed") ;
-                    }
+                    // if (!restrictionsValidatorService.checkRestrictionsBeforeInsert(getParentUnit(unit.tree_id),unit,DataService.hashTables.tokensHashTable, category)){
+                    //     return reject("Failed") ;
+                    // }
                     if( unit.AnnotationUnits && unit.AnnotationUnits.length > 0 && restrictionsValidatorService.checkIfUnitViolateForbidChildrenRestriction([category])){
                         return true;
                     }
@@ -502,10 +502,10 @@
 
                 newObject.unitType = newObject.unitType ? newObject.unitType : "REGULAR";
 
-                if (!inInitStage && newObject.unitType !== "IMPLICIT" && !restrictionsValidatorService.checkRestrictionsBeforeInsert(parentUnit, newObject, DataService.hashTables.tokensHashTable)) {
-                    // if no unit has been added, return the parent unitRowId
-                    return level;
-                }
+                // if (!inInitStage && newObject.unitType !== "IMPLICIT" && !restrictionsValidatorService.checkRestrictionsBeforeInsert(parentUnit, newObject, DataService.hashTables.tokensHashTable)) {
+                //     // if no unit has been added, return the parent unitRowId
+                //     return level;
+                // }
 
                 //Removing children unit from parent unit
                 if (units.length > 1) {
