@@ -42,7 +42,7 @@
         
         var restictionTables = restrictionsValidatorService.getTables();
         
-        if(restictionTables['FORBID_ANY_CHILD'][defCtrl.definitionDetails.id] !== undefined){
+        if(restictionTables['FORBID_ANY_CHILD'].includes(defCtrl.definitionDetails.id)){
            defCtrl.definitionDetails.forbidAnyChild = true;
         }else{
             defCtrl.definitionDetails.forbidAnyChild = false;

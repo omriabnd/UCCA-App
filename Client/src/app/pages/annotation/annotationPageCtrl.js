@@ -214,7 +214,7 @@
       function checkSubmissionRestrictions(){
           var rootUnit = DataService.getUnitById("0");
           var hashTables = DataService.hashTables;
-          if (restrictionsValidatorService.evaluateSubmissionRestrictions(rootUnit,hashTables)) {
+          if (restrictionsValidatorService.evaluateSubmissionRestrictions(rootUnit)) {
               selectionHandlerService.updateSelectedUnit(0);
               Core.showNotification('success','Finish All was successful');
               return true;
@@ -223,22 +223,21 @@
       }
 
 
-
       function finishAll(){
           var rootUnit = DataService.getUnitById("0");
           var hashTables = DataService.hashTables;
           var finishAllResult = restrictionsValidatorService.evaluateFinishAll(rootUnit,hashTables);
-          if(finishAllResult){
+          if (finishAllResult){
               selectionHandlerService.updateSelectedUnit(0);
               Core.showNotification('success','Finish All was successful');
               return true;
-          }else{
+          } else{
               return false;
           }
       }
 
+
       function spacePressed(){
-            
             if(selectionHandlerService.getUnitToAddRemotes() !== "0"){
               $rootScope.unitClicked($rootScope.currentVm,selectionHandlerService.getSelectedUnitId(),null)
             }else{              
@@ -261,8 +260,8 @@
                   selectionHandlerService.toggleCategory();
               }
             }
-
       }
+
 
       function isUnitSelected(selectionList){
           var result = true;
@@ -283,7 +282,6 @@
               return DataService.getUnitById(tokenIntUnit);
           }
           return result;
-
       }
 
       function goToMainMenu(res){

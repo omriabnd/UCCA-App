@@ -694,17 +694,19 @@
             var hashTables = DataService.hashTables;
             var isUnitValidated = restrictionsValidatorService.checkRestrictionsOnFinish(unitToValidate,parentUnit,hashTables);
             if(isUnitValidated){
-                selectionHandlerService.updateSelectedUnit(unit_id); // In the past- scroll had done to parentUnit.tree_id
                 if(parentUnit.tree_id === "0"){
                     unitToValidate.gui_status = 'HIDDEN';
+                    selectionHandlerService.updateSelectedUnit('0');
                 }else{
                     unitToValidate.gui_status = 'COLLAPSE';
+                    selectionHandlerService.updateSelectedUnit(unit_id); // In the past- scroll had done to parentUnit.tree_id
                 }
 
                 subTreeToCollapse(unitToValidate);
 
                 Core.scrollToUnit(unit_id);  // In the past- scroll had done to parentUnit.tree_id
             }
+            //TODO: add here to reset the selection handler if not validated;
 
             event ? event.stopPropagation() : '';
 
