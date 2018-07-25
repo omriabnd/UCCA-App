@@ -704,7 +704,8 @@
 
                 subTreeToCollapse(unitToValidate);
 
-                Core.scrollToUnit(unit_id);  // In the past- scroll had done to parentUnit.tree_id
+                selectionHandlerService.updateSelectedUnit(parentUnit.tree_id);
+                Core.scrollToUnit(parentUnit.tree_id);  // In the past- scroll had done to parentUnit.tree_id
             }
             //TODO: add here to reset the selection handler if not validated;
 

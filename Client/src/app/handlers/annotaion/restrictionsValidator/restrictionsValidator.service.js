@@ -16,22 +16,23 @@
             will change to the category name in the alert modal
         */
         var errorMessages ={
-            FORBID_ANY_CHILD : 'Category %NAME% cannot have any child.',
+            FORBID_ANY_CHILD : 'Category %NAME% cannot have any children.',
+            FORBID_ANY_CHILD_ADD_CATEGORY: 'Category %NAME% cannot have any children.',
             FORBID_CHILD : 'Category %NAME_1% cannot have child with category %NAME_2%.',
             FORBID_SIBLING: 'Category %NAME_1% cannot have sibling with category %NAME_2%.',
-            REQUIRE_SIBLING: 'Category %NAME_1% requires one of the following categories : %NAME_2% as a sibling.',
-            REQUIRE_CHILD: 'Category %NAME_1% requires one of the following categories : %NAME_2% as a child.',
+            REQUIRE_SIBLING: 'Category %NAME_1% requires one of the following categories : [%NAME_2%] as a sibling.',
+            REQUIRE_CHILD: 'Category %NAME_1% requires one of the following categories : [%NAME_2%] as a child.',
+            NONRELEVANT_PARENT_CATEGORY: "Category %NAME_1% is not a valid refinement of category %NAME_2%.",
             UNIT_CONTAIN_ONLY_PUNCTUATIONS : 'You cannot create annotation unit from only punctuation tokens',
             NOT_COMPLETE : "All non-punctuation tokens must either be in a unit of their own or in an unanalyzable unit.",
             UNIT_FORBID_SLOTTED_LAYER_RULE: "Both slots are already occupied.",
             NONRELEVANT_UNIT: "None of the categories of the unit are being refined in this layer.",
-            NONRELEVANT_PARENT_CATEGORY: "Category %NAME_1% is not a valid refinement of category %NAME_2%.",
             NO_VALID_CATEGORY: "All units must have at least one non-default category",
-            SLOT_ONE_RESTRICTION_VIOLATION: "All units in a slotted layer must have a category in their slot #1",
-            FORBID_ANY_CHILD_ADD_CATEGORY: "Unanalyzable units cannot have any sub-units"
+            SLOT_ONE_RESTRICTION_VIOLATION: "All units in a slotted layer must have a category in their slot #1"
         };
         var selectionHandlerServiceProvider;
         var restrictionsTablesIds;
+        var allCategoriesTable;
         var handler = {
           initRestrictionsTables: initRestrictionsTables,
           checkRestrictionsBeforeInsert: checkRestrictionsBeforeInsert,
@@ -57,7 +58,13 @@
         }
         
 
-        function initRestrictionsTables(layer_restrictions,selectionHandlerService){
+        function initRestrictionsTables(layer_restrictions,selectionHandlerService,categoriesArray){
+
+            allCategoriesTable = {};
+            for (var i=0; i < categoriesArray.length; i++) {
+                allCategoriesTable[categoriesArray[i].id] = categoriesArray[i];
+            }
+
             initRestrictionsTableObject();
             layer_restrictions.forEach(function(restriction){
                 addRestrictionToTable(restriction);
@@ -115,18 +122,21 @@
                 violation = unitViolatesSlotOneRestriction(annotationUnit);
                 if (violation) {
                     showErrorModal(errorMessages[violation.rcode] + ' (failed in unit ' + annotationUnit.tree_id + ')');
+                    scrollToViolationUnit(selectionHandlerServiceProvider,annotationUnit);
                     return false;
                 }
 
                 violation = unitHasNonDefaultCategory(annotationUnit);
                 if (violation) {
                     showErrorModal(errorMessages[violation.rcode] + ' (failed in unit ' + annotationUnit.tree_id + ')');
+                    scrollToViolationUnit(selectionHandlerServiceProvider,annotationUnit);
                     return false;
                 }
 
                 violation = checkIfVoilateEachTokenInUnit(annotationUnit);
                 if (violation) {
                     showErrorModal(errorMessages[violation.rcode]+' (failed in unit '+annotationUnit.tree_id+')');
+                    scrollToViolationUnit(selectionHandlerServiceProvider,annotationUnit);
                     return false;
                 }
             }
@@ -134,7 +144,8 @@
 
             violation = unitViolatesSiblingAndChildrenRestrictions(annotationUnit);
             if (violation) {
-                showErrorModal(errorMessages[violation.rcode]+' (failed in unit '+annotationUnit.tree_id+')');
+                showErrorModal(getErrorMessage(violation.rcode,{'%NAME_1%': violation.category1, '%NAME_2%': violation.category2},annotationUnit.tree_id));
+                scrollToViolationUnit(selectionHandlerServiceProvider,annotationUnit);
                 return false;
             }
 
@@ -153,6 +164,7 @@
          */
         function unitViolatesSiblingAndChildrenRestrictions(annotationUnit) {
 
+            allCategoriesTable;
             var violation = null;
 
             // extract all the categories of the siblings
@@ -165,23 +177,24 @@
                 if (cur_category_id in restrictionsTablesIds['FORBID_SIBLING']) {
                     var conflicting_category_ids = Core.intersectArrays(restrictionsTablesIds['FORBID_SIBLING'][cur_category_id], children_category_ids);
                     if (conflicting_category_ids.length > 0) {
-                        violation = new Object();
-                        violation.category1 = cur_category_id;
-                        violation.category2 = conflicting_category_ids[0];
-                        violation.rcode = 'FORBID_SIBLING';
-                        return violation;
+                        return {rcode: 'FORBID_SIBLING', category1: allCategoriesTable[cur_category_id].name,
+                            category2: allCategoriesTable[conflicting_category_ids[0]].name};
                     }
                 }
 
                 //check REQUIRE_SIBLING restrictions
                 if (cur_category_id in restrictionsTablesIds['REQUIRE_SIBLING']) {
+
                     var required_category_ids = restrictionsTablesIds['REQUIRE_SIBLING'][cur_category_id];
                     if (Core.intersectArrays(required_category_ids, children_category_ids).length == 0) {
-                        violation = new Object();
-                        violation.category1 = cur_category_id;
-                        violation.category2 = required_category_ids;
-                        violation.rcode = 'REQUIRE_SIBLING';
-                        return violation;
+                        var reqiured_category_ids_str = '';
+                        for (var k=0; k < required_category_ids.length; k++) {
+                            reqiured_category_ids_str += allCategoriesTable[required_category_ids[k]].name;
+                            if (k !== required_category_ids.length - 1) {
+                                reqiured_category_ids_str += ', ';
+                            }
+                        }
+                        return {rcode: 'REQUIRE_SIBLING', category1: allCategoriesTable[cur_category_id].name, category2: reqiured_category_ids_str};
                     }
                 }
             }
@@ -193,22 +206,22 @@
                     if (cur_parent_category_id in restrictionsTablesIds['FORBID_CHILD']) {
                         var conflicting_category_ids = Core.intersectArrays(restrictionsTablesIds['FORBID_CHILD'][cur_parent_category_id], children_category_ids);
                         if (conflicting_category_ids.length > 0) {
-                            violation = new Object();
-                            violation.category1 = cur_parent_category_id;
-                            violation.category2 = conflicting_category_ids[0];
-                            violation.rcode = 'FORBID_CHILD';
-                            return violation;
+                        return {rcode: 'FORBID_CHILD', category1: allCategoriesTable[cur_parent_category_id].name,
+                            category2: allCategoriesTable[conflicting_category_ids[0]].name};
                         }
                     }
 
                     if (cur_parent_category_id in restrictionsTablesIds['REQUIRE_CHILD']) {
                         var required_category_ids = restrictionsTablesIds['REQUIRE_CHILD'][cur_parent_category_id];
                         if (Core.intersectArrays(children_category_ids, required_category_ids).length == 0) {
-                            violation = new Object();
-                            violation.category1 = cur_parent_category_id;
-                            violation.category2 = required_category_ids;
-                            violation.rcode = 'REQUIRE_CHILD';
-                            return violation;
+                            var reqiured_category_ids_str = '';
+                            for (var k=0; k < required_category_ids.length; k++) {
+                                reqiured_category_ids_str += allCategoriesTable[required_category_ids[k]].name;
+                                if (k !== required_category_ids.length - 1) {
+                                    reqiured_category_ids_str += ', ';
+                                }
+                            }
+                            return {rcode: 'REQUIRE_CHILD', category1: allCategoriesTable[cur_parent_category_id].name, category2: reqiured_category_ids_str};
                         }
                     }
                 }
@@ -238,6 +251,22 @@
 
 
         /**
+         * Receives a violation code and message parameters as a dictionary and returns
+         * the error message string
+         * @param violation_code
+         * @param replacements
+         */
+        function getErrorMessage(violation_code, msg_parameters, tree_id) {
+            var msg = errorMessages[violation_code].replace(/%\w+%/g, function(all) {
+                return msg_parameters[all] || all;
+            });
+            if (tree_id) {
+                msg += ' (failed in unit '+tree_id+')';
+            }
+            return msg;
+        }
+
+        /**
          * Checks the restrictions that are applicable before creating a unit:
          * 1. If the unit is unanalyzable, you cannot create a sub-unit for it
          * 2. If the unit is unanalyzable, you cannot create it by grouping units
@@ -248,62 +277,83 @@
 
             // check if both slots are full in a slotted  unit
             if(checkSlottedLayerProjectRestriction(newAnnotationUnit)){
-                 showErrorModal(errorMessages['UNIT_FORBID_SLOTTED_LAYER_RULE']);
+                 showErrorModal(errorMessages['UNIT_FORBID_SLOTTED_LAYER_RULE']); //check
                  return false;
             }
             if (newAnnotationUnit.unitType !== "IMPLICIT" && doesUnitContainsOnlyPunctuation(newAnnotationUnit)) {
-               showErrorModal(errorMessages['UNIT_CONTAIN_ONLY_PUNCTUATIONS']);
+               showErrorModal(errorMessages['UNIT_CONTAIN_ONLY_PUNCTUATIONS']); //check
                return false;
             }
 
             //check if parent is unanalyzable
-            if (isUnanalyzableUnit(parentAnnotationUnit)) {
-                showErrorModal(errorMessages['FORBID_ANY_CHILD']);
+            var unanalyzableCategory = isUnanalyzableUnit(parentAnnotationUnit);
+            if (unanalyzableCategory) {
+                showErrorModal(getErrorMessage('FORBID_ANY_CHILD',{"%NAME%": unanalyzableCategory.name}));
                 return false;
             }
 
             //check if child is unanalyzable but has children
-            if (newAnnotationUnit.AnnotationUnits && newAnnotationUnit.AnnotationUnits.length > 0 &&
-                (isUnanalyzableUnit(newAnnotationUnit) || (newCategory && restrictionsTablesIds['FORBID_ANY_CHILD'].includes(newCategory.id)))) {
-                showErrorModal(errorMessages['FORBID_ANY_CHILD_ADD_CATEGORY']);
+            if (newAnnotationUnit.AnnotationUnits && newAnnotationUnit.AnnotationUnits.length > 0) {
+                var unanalyzableCategory = isUnanalyzableUnit(newAnnotationUnit);
+                if (unanalyzableCategory) {
+                    showErrorModal(getErrorMessage('FORBID_ANY_CHILD',{"%NAME%": unanalyzableCategory.name}));
+                    return false;
+                }
+                if (newCategory && restrictionsTablesIds['FORBID_ANY_CHILD'].includes(newCategory.id)) {
+                    showErrorModal(getErrorMessage('FORBID_ANY_CHILD',{"%NAME%": newCategory.name}));
+                    return false;
+                }
+            }
+
+             if (newCategory && !newCategory.fromParentLayer && !isUnitRefinable(newAnnotationUnit)) {
+                showErrorModal(getErrorMessage('NONRELEVANT_UNIT',{})); //check
                 return false;
              }
 
-
-             if (checkIfUnitIsRefinableInRefinementLayer(newAnnotationUnit, newCategory)) {
-                showErrorModal(errorMessages['NONRELEVANT_UNIT']);
+             var violation = isUnitRefinableWithCategory(newAnnotationUnit, newCategory)
+             if (violation) {
+                showErrorModal(getErrorMessage('NONRELEVANT_PARENT_CATEGORY',{"%NAME_1%": violation.category1.name, "%NAME_2%": violation.category2.join(', ')}));
                 return false;
              }
-
-             if (checkIfRefinementCategoryIsChildOfParentCategory(newAnnotationUnit, newCategory)) {
-                showErrorModal(errorMessages['NONRELEVANT_PARENT_CATEGORY']);
-                return false;
-             }
-
-
 
              return true;
         }
 
 
-        function checkIfUnitIsRefinableInRefinementLayer(unit, newCategory){
-        	//TODO: bug. it should be that one of the categories of the parent obeys the restriction, not necessarirly the first one
-            var parentCategory = unit.categories[0];
-        	if($rootScope.isRefinementLayerProject && !!newCategory && !newCategory.fromParentLayer && !parentCategory.refinedCategory){
-        		return {"unit": unit.tree_id, "category": parentCategory.name};
-        	}else{
-        		return null;
-        	}
+        /**
+         * Returns true iff either it's not a refinement layer OR the unit has a category that can be refined.
+         * Otherwise returns false.
+         * @param unit
+         * @param newCategory
+         * @returns {*}
+         */
+        function isUnitRefinable(unit) {
+            if (!$rootScope.isRefinementLayerProject) {
+                return true;
+            }
+            return unit.categories.some(function(category) {
+                return category.refinedCategory;
+            });
         }
-        
-        function checkIfRefinementCategoryIsChildOfParentCategory(unit, newCategory){
-        	//TODO: bug. it should be that one of the categories of the parent obeys the restriction, not necessarirly the first one
-            var parentCategory = unit.categories[0];
-        	if($rootScope.isRefinementLayerProject && !!newCategory && !newCategory.fromParentLayer && parentCategory.id !== newCategory.parent.id){
-        		return {"refinement": newCategory.name, "parent": parentCategory.name};
-        	}else{
-        		return null;
+
+        /**
+         * Returns null if it's not a refinement layer, if newCategory is from the parent layer
+         * or if newCategory is a refinement of one of the categories of unit.
+         * Otherwise returns a violation object.
+         * @param unit
+         * @param newCategory
+         * @returns {*}
+         */
+        function isUnitRefinableWithCategory(unit, newCategory){
+            if (!$rootScope.isRefinementLayerProject || !newCategory || newCategory.fromParentLayer) {
+                return null;
+            }
+            var unitCategoryIds = unit.categories.map(function getId(cat) {return cat.id;});
+            if (!unitCategoryIds.includes(newCategory.parent.id)){
+        		var unitCategoryNames = unit.categories.map(function getName(cat) {return cat.name;});
+                return {"category1": newCategory, "category2": unitCategoryNames};
         	}
+        	return null;
         }
         
         function checkSlottedLayerProjectRestriction(unit){
@@ -341,9 +391,10 @@
                 return category.refinedCategory;
             });
             if ($rootScope.isRefinementLayerProject && hasRefinedCategory) {
+
                 return {rcode: "SLOT_ONE_RESTRICTION_VIOLATION"};
             }
-            return null; //formerly "NO_VALID_CATEGORY"
+            return null;
         }
 
 
@@ -378,7 +429,8 @@
 
 
         /**
-         * Returns true if annotationUnit has a category with 'FORBID_ANY_CHILD' restriction.
+         * Returns the relevant category if annotationUnit has a category with 'FORBID_ANY_CHILD' restriction.
+         * Otherwise returns null
          * @param annotationUnit
          */
         function isUnanalyzableUnit(annotationUnit) {
@@ -387,10 +439,10 @@
             }
             for (var i = 0; i < annotationUnit.categories.length; i++) {
                 if (restrictionsTablesIds["FORBID_ANY_CHILD"].includes(annotationUnit.categories[i].id)) {
-                    return true;
+                    return annotationUnit.categories[i];
                 }
             }
-            return false;
+            return null;
         }
 
         function evaluateFinishAll(mainPassage) {
@@ -444,7 +496,7 @@
         }
 
 
-        function showErrorModal(message, violationUnit){
+        function showErrorModal(message){
             $uibModal.open({
                 animation: true,
                 templateUrl: 'app/pages/annotation/templates/errorModal.html',
@@ -453,20 +505,12 @@
                     $scope.message = message;
                 }
             });
-            
-            violationUnit ? scrollToViolationUnit(selectionHandlerServiceProvider,violationUnit) : '';
+
         }
         
         function scrollToViolationUnit(selectionHandlerServiceProvider,violationUnit){
-
-            if (!violationUnit.parentId){
-               violationUnit.parentId = violationUnit.unitTreeId; // tree_id
-            }
-
-            // In the past- scroll had done to violationUnit.parentId
-            selectionHandlerServiceProvider.updateSelectedUnit(violationUnit.parentId);
-
-            Core.scrollToUnit(violationUnit.parentId);
+            selectionHandlerServiceProvider.updateSelectedUnit(violationUnit.tree_id);
+            Core.scrollToUnit(violationUnit.tree_id);
         }
 
 

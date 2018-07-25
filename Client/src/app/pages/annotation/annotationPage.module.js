@@ -79,8 +79,8 @@
 
                 
                 currentLayer.categories.forEach(function(category){
-	            category.fromParentLayer = false;                    
-                })
+	                category.fromParentLayer = false;
+                });
                 
                 while( !!currentLayer.parent ){
                     currentLayer.parent.categories.forEach(function(category){
@@ -92,7 +92,7 @@
 	                        		category.refinedCategory = true;
 	                        		refinedCategories.push(category);
 	                        }
-                        })
+                        });
                     allCategories = allCategories.concat(currentLayer.parent.categories);
                     currentLayer = currentLayer.parent;
                 }
@@ -152,7 +152,7 @@
                 // it back to the Server or for working in the client.**/
                 DataService.serverData = taskResponse;
 
-                restrictionsValidatorService.initRestrictionsTables(taskResponse.project.layer.restrictions,selectionHandlerService);
+                restrictionsValidatorService.initRestrictionsTables(taskResponse.project.layer.restrictions,selectionHandlerService,allCategories);
 
                 setCategoriesColor(AnnotationTextService,allCategories);
                 setCategoriesAbbreviation(AnnotationTextService,allCategories);

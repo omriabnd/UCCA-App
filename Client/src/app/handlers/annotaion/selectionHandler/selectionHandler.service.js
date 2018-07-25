@@ -301,7 +301,7 @@
                     var newRowId = DataService.insertToTree(objToPush,unit.parent_tree_id,index != DataService.serverData.annotation_units.length -1);
 
                     unit.categories.forEach(function(category,index){
-                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id);
+                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id,null,null,true);
                         _handler.clearTokenList();
                     });
                 }
@@ -317,21 +317,17 @@
                     });
 
                     var unitCategory = unit.categories[0] ? DataService.hashTables.categoriesHashTable[ unit.categories[0].id] : null;
-                    _handler.toggleCategory(unitCategory,null,unit,unit,index != DataService.serverData.annotation_units.length -1).then(function(res){
+                    _handler.toggleCategory(unitCategory,null,unit,unit,index != DataService.serverData.annotation_units.length -1,true).then(function(res){
                         unit.categories.forEach(function(category,index){
                             if(index === 0){
 
                             }else{
-                                _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],res.id);
+                                _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],res.id,null,null,true);
                             }
                             _handler.clearTokenList();
                         });
                     });
 
-
-                    // if(unit.categories.length === 0){
-                    //     _handler.toggleCategory(null,null,unit);
-                    // }
 
                     DataService.unitType = 'REGULAR';
                     var unitToAddTo = DataService.getUnitById(unit.tree_id);
@@ -554,7 +550,8 @@
                         }
                         //Toggle the category for existing unit
                         if(_handler.selectedUnit.toString() !== "0"){
-                            return DataService.toggleCategoryForUnit(_handler.selectedUnit,category).then(function(res){
+
+                            return DataService.toggleCategoryForUnit(_handler.selectedUnit,category,inInitStage).then(function(res){
                                 if(res.status === "ToggleSuccess"){
                                     _handler.updateSelectedUnit(res.id);
                                     _handler.clearTokenList();

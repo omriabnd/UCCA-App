@@ -292,7 +292,7 @@
          * @param category - the category to add to the unit
          * @returns {*}
          */
-        function toggleCategoryForUnit(unitId, category){
+        function toggleCategoryForUnit(unitId, category,inInitStage){
             trace("DataService - toggleCategoryForUnit");
             return $q(function(resolve, reject) {
 
@@ -311,7 +311,8 @@
                 if(elementPos === -1) {
 
                     unit.children_tokens = unit.tokens;
-                    if (!restrictionsValidatorService.checkRestrictionsBeforeInsert(getParentUnit(unit.tree_id),unit,category)){
+
+                    if (!inInitStage && !restrictionsValidatorService.checkRestrictionsBeforeInsert(getParentUnit(unit.tree_id),unit,category)){
                          return reject("Failed") ;
                     }
 
@@ -475,12 +476,11 @@
                     });
                 }
 
+                newObject.unitType = newObject.unitType ? newObject.unitType : "REGULAR";
+
+
                 //Adding children to new unit
                 if (units.length > 1) {
-
-                    // if (!inInitStage && restrictionsValidatorService.checkRestrictionsBeforeInsert(newObject)) {
-                    //     return level;
-                    // }
 
                     units.forEach(function (unit) {
                         var parentUnitId = getParentUnitId(unit.id);
@@ -493,13 +493,11 @@
                         }
                         if (elementPos > -1) {
                             newObject.AnnotationUnits.push(angular.copy(parentUnit.AnnotationUnits[elementPos]));
-//                            parentUnit.AnnotationUnits.splice(elementPos,1);
                         }
                     })
                 }
 
 
-                newObject.unitType = newObject.unitType ? newObject.unitType : "REGULAR";
 
                 newObject.children_tokens = newObject.tokens;
                 if (!inInitStage && newObject.unitType !== "IMPLICIT" && !restrictionsValidatorService.checkRestrictionsBeforeInsert(parentUnit, newObject)) {
