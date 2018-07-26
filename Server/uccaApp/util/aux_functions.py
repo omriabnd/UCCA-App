@@ -54,6 +54,7 @@ def strictly_increasing(L):
     Returns True if every element in L is bigger than its predecessor.
     L is a list
     """
+    pdb.set_trace()
     return all(x<y for x, y in zip(L, L[1:]))
 
 def check_children_tokens(children_tokens_items_list):

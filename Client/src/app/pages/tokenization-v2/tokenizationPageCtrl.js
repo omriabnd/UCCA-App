@@ -18,6 +18,8 @@
       // create a copy of the original text for the tokenized text
       var passageFromTokens = createTextFromTokens(TokenizationTask.tokens);
 
+      console.log("passageFromTokens",TokenizationTask.tokens);
+
       /**
        *
        *
@@ -31,8 +33,8 @@
 
 
 
-
       uccaFactory.originalText = $scope.originalText;
+
 
       uccaFactory.setOriginalTextNoSpaces();
       uccaFactory.setOriginalTextSpaceMap();
@@ -47,10 +49,12 @@
        *
        */
       $scope.$watch("tokenizedText", function(tokenizedText){
-
           console.log('watch tokenizedText');
-          if(tokenizedText)
-          $scope.savedTokens = uccaFactory.getTokensFromText(tokenizedText, uccaFactory.originalText);
+          debugger
+          if(tokenizedText) {
+              $scope.savedTokens = uccaFactory.getTokensFromText(tokenizedText);
+              console.log("watch",$scope.savedTokens);
+          }
       });
 
       /**
@@ -62,7 +66,6 @@
 
       $scope.originalTokens = uccaFactory.getTokensFromText($scope.originalText);
 
-      // $scope.tokenizedText = angular.copy($scope.originalText);
       $scope.tokenizedText = passageFromTokens;
 
 

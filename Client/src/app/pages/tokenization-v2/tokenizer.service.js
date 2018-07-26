@@ -10,9 +10,7 @@
 
             
 
-            var originalText,
-                    originalTextNoSpaces
-                    ;
+            var originalText, originalTextNoSpaces;
 
 
             //spacemap for calculating the token location
@@ -83,7 +81,7 @@
 
                 var processText = text.replace(/\n/g, " \n ");
                 
-                console.log(text, processText);
+                console.log(processText);
 
                 var tokensSplit = processText.split(" ");
                 var startIndex = 0;
