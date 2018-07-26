@@ -220,7 +220,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             newToken = Tokens()
             newToken.task_id_id = instance
             newToken.text = token['text']
-            newToken.require_annotation = ( not isPunct(newToken.text) )
+            newToken.require_annotation = token['require_annotation']
             newToken.start_index = token['start_index']
             newToken.end_index = token['end_index']
             instance.tokens_set.add(newToken,bulk=False)
