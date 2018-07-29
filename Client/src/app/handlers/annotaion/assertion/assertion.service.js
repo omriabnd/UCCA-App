@@ -186,6 +186,20 @@
             }
         }
 
+         /**
+         * Finding out how many times an array element appears
+         * @private
+         */
+        function _countInArray(array, what) {
+            var count = 0;
+            for (var i = 0; i < array.length; i++) {
+                if (array[i] === what) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
         /**
          * Check for each unit (id = i-j-k) if its parent unit is also in the tree (id = i-j-(k-1) )
          */
@@ -209,31 +223,24 @@
                     res = AssertionService.unitsIdsList[i].slice(0, index);
                 }
 
-                // TODO- change => to function caller
-                // debugger
-                if (!AssertionService.unitsIdsList.filter(function(item) { return (item == res).length})) {
+                if(_countInArray(AssertionService.unitsIdsList, res) < 1) {
                     throw "There is a gap, unit " + res + " is not exist in the tree";
                 }
-                // if (!AssertionService.unitsIdsList.filter(item => item == res).length) {
-                //     throw "There is a gap, unit " + res + " is not exist in the tree";
-                // }
+
             }
         }
+
+
 
         /**
          * Check if every tree_id is unique in the tree
          */
         function checkUniqueInTree() {
             for (var i = 0; i < AssertionService.unitsIdsList.length; i++) {
-                // TODO- change => to function caller
-                // debugger
-
-                // if (AssertionService.unitsIdsList.filter(function(item) { return (item == AssertionService.unitsIdsList[i].length) !== 1})) {
-                //     throw "Tree id " + AssertionService.unitsIdsList[i] + " is not unique in the tree";
-                // }
-                // if (AssertionService.unitsIdsList.filter(item => item == AssertionService.unitsIdsList[i]).length !== 1) {
-                //     throw "Tree id " + AssertionService.unitsIdsList[i] + " is not unique in the tree";
-                // }
+                var count = _countInArray(AssertionService.unitsIdsList, AssertionService.unitsIdsList[i]);
+                if (count !== 1) {
+                    throw "Tree id " + AssertionService.unitsIdsList[i] + " is not unique in the tree, it appears " + count + " times";
+                }
             }
         }
 
