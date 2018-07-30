@@ -308,7 +308,7 @@
 
                 function initRemoteUnit(unit, index) {
                     console.log("Init tree, unit is remote copy", unit);
-
+d
                     DataService.unitType = 'REMOTE';
                     unit["tokens"] = [];
                     unit.unitType = "REMOTE";
@@ -472,6 +472,17 @@
             //     return tokens;
             // },
 
+
+            checkRestrictionsForImplicit: function(parentUnit) {
+                return restrictionsValidatorService.checkRestrictionsBeforeInsert(parentUnit, "IMPLICIT", []);
+            },
+
+            checkRestrictionsForRemote: function(parentUnit, category) {
+                return restrictionsValidatorService.checkRestrictionsBeforeInsert(parentUnit, "REMOTE", [], category);
+            },
+
+
+
             checkRestrictions: function(category, unit) {
                 // First decide whether we are adding a new unit or not
                 var selectedUnit = DataService.getUnitById(_handler.selectedUnit);
@@ -493,7 +504,8 @@
                 trace("selectionHandlerService - toggleCategory");
                 return $q(function(resolve, reject) {
                     console.log("toggle category!!!!!!!!!!!!!, handler.selectedTokenList= " , _handler.selectedTokenList)
-                    if(_handler.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(_handler.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(_handler.selectedTokenList,inInitStage)){
+                    if(_handler.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(_handler.selectedTokenList) ||
+                        checkifThereIsPartsOFUnitTokensInsideList(_handler.selectedTokenList,inInitStage)){
                         return
                     }
 

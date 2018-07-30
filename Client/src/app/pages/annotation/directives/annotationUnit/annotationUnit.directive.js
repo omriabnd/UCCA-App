@@ -873,19 +873,19 @@
 
                 objToPush["cloned_from_tree_id"] = vm.dataBlock.tree_id;
 
-                var newRowId = DataService.insertToTree(objToPush,selectionHandlerService.getUnitToAddRemotes()).then(function(res){
-                    DataService.unitType = 'REGULAR';
+                var parentUnit = DataService.getUnitById(selectionHandlerService.getUnitToAddRemotes());
 
-                    // if(DataService.unitsUsedAsRemote[vm.dataBlock.tree_id] === undefined){
-                    //     DataService.unitsUsedAsRemote[vm.dataBlock.tree_id] = {};
-                    // }
+                if (selectionHandlerService.checkRestrictionsForRemote(parentUnit)) {
+                    var newRowId = DataService.insertToTree(objToPush, selectionHandlerService.getUnitToAddRemotes()).then(function (res) {
+                        DataService.unitType = 'REGULAR';
 
-                    // DataService.unitsUsedAsRemote[vm.dataBlock.tree_id][res.id] = true;
-
-                    selectionHandlerService.setUnitToAddRemotes("0");
-                    $('.annotation-page-container').toggleClass('crosshair-cursor');
-                });
-
+                        selectionHandlerService.setUnitToAddRemotes("0");
+                        $('.annotation-page-container').toggleClass('crosshair-cursor');
+                    });
+                }
+                else {
+                    return;
+                }
 
             }
             event ? event.stopPropagation() : '';

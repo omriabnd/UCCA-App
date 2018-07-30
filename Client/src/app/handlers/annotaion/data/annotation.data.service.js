@@ -422,6 +422,7 @@
                     console.log('ALERT - insertToTree -  prevent insert to tree when refinement layer');
                     reject(selectedUnitId);
                 }
+
                 var parentUnit = getUnitById(level);
 
                 if (!parentUnit.AnnotationUnits) {

@@ -286,8 +286,7 @@
          * 4. If grouped tokens are only punctuation, you cannot create a unit just from them.
          */
         function checkRestrictionsBeforeInsert(parentAnnotationUnit, unitType, grouped_tokens, newCategory){
-
-            if (unitType !== "IMPLICIT" && isOnlyPunctuation(grouped_tokens)) {
+            if (unitType === "REGULAR" && isOnlyPunctuation(grouped_tokens)) {
                showErrorModal(errorMessages['UNIT_CONTAIN_ONLY_PUNCTUATIONS']); //check
                return false;
             }
@@ -299,7 +298,7 @@
                 return false;
             }
 
-            //check if child is unanalyzable but has children
+            //check if child is set to be unanalyzable but already has children
             if (newCategory && restrictionsTablesIds['FORBID_ANY_CHILD'].includes(newCategory.id)) {
                 for (var k=0; k < grouped_tokens.length; k++) {
                     if (grouped_tokens[k].inChildUnitTreeId) {

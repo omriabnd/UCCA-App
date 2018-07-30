@@ -79,7 +79,13 @@
                     ]
                 };
 
-                var newRowId = DataService.insertToTree(objToPush,selectionHandlerService.getSelectedUnitId());
+                debugger
+                // OMRI ADDED 30/7
+                if (selectionHandlerService.checkRestrictionsForImplicit(selectedUnit)) {
+                    var newRowId = DataService.insertToTree(objToPush,selectionHandlerService.getSelectedUnitId());
+                }
+
+
                 // DataService.getUnitById($rootScope.clckedLine).usedAsRemote.push(newRowId);
 
                 // $timeout(function(){
