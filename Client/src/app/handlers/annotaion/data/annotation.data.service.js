@@ -309,12 +309,10 @@
 
                 //if the category isn't assigned to that unit yet - add it
                 if(elementPos === -1) {
-
-                    unit.children_tokens = unit.tokens;
-
-                    if (!inInitStage && !restrictionsValidatorService.checkRestrictionsBeforeInsert(getParentUnit(unit.tree_id),unit,category)){
+                    if (!inInitStage && !restrictionsValidatorService.checkRestrictionsBeforeAddingCategory(unit,category)){
                          return reject("Failed") ;
                     }
+                    unit.children_tokens = unit.tokens;
 
                     if($rootScope.isSlottedLayerProject){
 
@@ -497,13 +495,7 @@
                     })
                 }
 
-
-
                 newObject.children_tokens = newObject.tokens;
-                if (!inInitStage && newObject.unitType !== "IMPLICIT" && !restrictionsValidatorService.checkRestrictionsBeforeInsert(parentUnit, newObject)) {
-                     // if no unit has been added, return the parent unitRowId
-                     return level;
-                }
 
                 //Removing children unit from parent unit
                 if (units.length > 1) {

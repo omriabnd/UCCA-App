@@ -7,7 +7,7 @@
         .service('selectionHandlerService', selectionHandlerService);
 
     /** @ngInject */
-    function selectionHandlerService(DataService, $rootScope,$q,Core, AssertionService) {
+    function selectionHandlerService(DataService, $rootScope,$q,Core, AssertionService, restrictionsValidatorService) {
         trace("selectionHandlerService is here");
         var selectedTokenList = [];
         var selectedUnit = "0";
@@ -472,6 +472,20 @@
             //     return tokens;
             // },
 
+            checkRestrictions: function(category, unit) {
+                // First decide whether we are adding a new unit or not
+                var selectedUnit = DataService.getUnitById(_handler.selectedUnit);
+                if(_handler.selectedTokenList && _handler.selectedTokenList.length) {
+                    // If the token list is not empty, we're adding a new unit
+                    // The user is creating a new unit
+                    return restrictionsValidatorService.checkRestrictionsBeforeInsert(selectedUnit, "REGULAR", _handler.selectedTokenList, category);
+                }
+                else {
+                    // We're toggling a category for a unit (which apparently is only called when a category is *added*
+                    return restrictionsValidatorService.checkRestrictionsBeforeAddingCategory(selectedUnit, category);
+                }
+            },
+
             toggleCategory: function(category,justToggle,remote,unit,inInitStage){
                 /**
                  * toggleCategory is also responsible for creating new units which are assigned a category.
@@ -481,6 +495,11 @@
                     console.log("toggle category!!!!!!!!!!!!!, handler.selectedTokenList= " , _handler.selectedTokenList)
                     if(_handler.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(_handler.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(_handler.selectedTokenList,inInitStage)){
                         return
+                    }
+
+                    // Check the restrictions for the new unit here, before making any modifications to the data in the DataService
+			         if(!inInitStage && !_handler.checkRestrictions(category, unit)) {
+                        return reject("Failed");
                     }
 
                     if(!aUnitIsSelected(_handler.selectedTokenList,inInitStage) && (_handler.selectedTokenList.length && !justToggle) || remote || inInitStage){
@@ -534,11 +553,10 @@
                          */
                         return DataService.insertToTree(newUnit,_handler.selectedUnit,inInitStage).then(function(res){
                             if(res.status === "InsertSuccess"){
-
                                 // Remove focus from new unit -- Cancel change focus to newly created unit
                                 // _handler.updateSelectedUnit(res.id,true);
                                 // Core.scrollToUnit(res.id);
-                                
+
                                 // _handler.clearTokenList();
                                 return resolve({id: res.id});
                                 // return res.id;
