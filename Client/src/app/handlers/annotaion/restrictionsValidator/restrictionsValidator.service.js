@@ -319,6 +319,7 @@
          * 2. if has children, but assigned an unanalyzable category
          * 3. if refined with a category which doesn't refine any of its parent categories
          *
+         * Receives:
          * annotationUnit: annotationUnit, before any categories were added
          * newCategory: the category object of the category about to be added
          *
