@@ -36,6 +36,7 @@
         var handler = {
           initRestrictionsTables: initRestrictionsTables,
           checkRestrictionsBeforeInsert: checkRestrictionsBeforeInsert,
+          checkRestrictionsBeforeAddingCategory: checkRestrictionsBeforeAddingCategory,
           checkRestrictionsOnFinish: checkRestrictionsOnFinish,
           evaluateFinishAll: evaluateFinishAll,
           evaluateSubmissionRestrictions: evaluateSubmissionRestrictions,
@@ -267,20 +268,26 @@
         }
 
         /**
-         * Checks the restrictions that are applicable before creating a unit:
-         * 1. If the unit is unanalyzable, you cannot create a sub-unit for it
-         * 2. If the unit is unanalyzable, you cannot create it by grouping units
+         * Checks the restrictions that are applicable before creating a unit.
+         *
+         * Receives:
+         * 1. the parent annotation unit: parentAnnotationUnit
+         * 2. unitType: the unitType of the to-be-created unit
+         * 3. the tokens about to be grouped in parentAnnotationUnit (taken from parentAnnotationUnit.tokens): grouped_tokens. If unitType is
+         *    implicit, should be empty.
+         * 4. newCategory, in the case the unit is created  with a category (newCategory should be null otherwise).
+         *
+         * Returns true upon success, false upon failure.
+         *
+         * Checks:
+         * 1. If the parent is unanalyzable, you cannot create a sub-unit for it
+         * 2. If the assigned category unanalyzable, you cannot create it by grouping units only tokens
          * 3. If the unit has one token, you can only create a sub-unit out of it once
          * 4. If grouped tokens are only punctuation, you cannot create a unit just from them.
          */
-        function checkRestrictionsBeforeInsert(parentAnnotationUnit, newAnnotationUnit, newCategory){
+        function checkRestrictionsBeforeInsert(parentAnnotationUnit, unitType, grouped_tokens, newCategory){
 
-            // check if both slots are full in a slotted  unit
-            if(checkSlottedLayerProjectRestriction(newAnnotationUnit)){
-                 showErrorModal(errorMessages['UNIT_FORBID_SLOTTED_LAYER_RULE']); //check
-                 return false;
-            }
-            if (newAnnotationUnit.unitType !== "IMPLICIT" && doesUnitContainsOnlyPunctuation(newAnnotationUnit)) {
+            if (unitType !== "IMPLICIT" && isOnlyPunctuation(grouped_tokens)) {
                showErrorModal(errorMessages['UNIT_CONTAIN_ONLY_PUNCTUATIONS']); //check
                return false;
             }
@@ -293,24 +300,52 @@
             }
 
             //check if child is unanalyzable but has children
-            if (newAnnotationUnit.AnnotationUnits && newAnnotationUnit.AnnotationUnits.length > 0) {
-                var unanalyzableCategory = isUnanalyzableUnit(newAnnotationUnit);
-                if (unanalyzableCategory) {
-                    showErrorModal(getErrorMessage('FORBID_ANY_CHILD',{"%NAME%": unanalyzableCategory.name}));
-                    return false;
+            if (newCategory && restrictionsTablesIds['FORBID_ANY_CHILD'].includes(newCategory.id)) {
+                for (var k=0; k < grouped_tokens.length; k++) {
+                    if (grouped_tokens[k].inChildUnitTreeId) {
+                        showErrorModal(getErrorMessage('FORBID_ANY_CHILD',{"%NAME%": newCategory.name}));
+                        return false;
+                    }
                 }
-                if (newCategory && restrictionsTablesIds['FORBID_ANY_CHILD'].includes(newCategory.id)) {
+            }
+
+            return true;
+        }
+
+
+        /**
+         * Checks the restrictions that are applicable before adding a category:
+         * 1. if both slots are full in a slotted unit, do not allow adding category
+         * 2. if has children, but assigned an unanalyzable category
+         * 3. if refined with a category which doesn't refine any of its parent categories
+         *
+         * annotationUnit: annotationUnit, before any categories were added
+         * newCategory: the category object of the category about to be added
+         *
+         * Returns true if checks passed, false if failed.
+         */
+        function checkRestrictionsBeforeAddingCategory(annotationUnit, newCategory){
+
+            // check if both slots are full in a slotted  unit
+            if(checkSlottedLayerProjectRestriction(annotationUnit)){
+                 showErrorModal(errorMessages['UNIT_FORBID_SLOTTED_LAYER_RULE']); //check
+                 return false;
+            }
+
+            //check if annotationUnit has children, but an unanalyzable category is assigned to it.
+            if (annotationUnit.AnnotationUnits && annotationUnit.AnnotationUnits.length > 0) {
+                if (restrictionsTablesIds['FORBID_ANY_CHILD'].includes(newCategory.id)) {
                     showErrorModal(getErrorMessage('FORBID_ANY_CHILD',{"%NAME%": newCategory.name}));
                     return false;
                 }
             }
 
-             if (newCategory && !newCategory.fromParentLayer && !isUnitRefinable(newAnnotationUnit)) {
+             if (newCategory && !newCategory.fromParentLayer && !isUnitRefinable(annotationUnit)) {
                 showErrorModal(getErrorMessage('NONRELEVANT_UNIT',{})); //check
                 return false;
              }
 
-             var violation = isUnitRefinableWithCategory(newAnnotationUnit, newCategory)
+             var violation = isUnitRefinableWithCategory(annotationUnit, newCategory);
              if (violation) {
                 showErrorModal(getErrorMessage('NONRELEVANT_PARENT_CATEGORY',{"%NAME_1%": violation.category1.name, "%NAME_2%": violation.category2.join(', ')}));
                 return false;
@@ -318,6 +353,9 @@
 
              return true;
         }
+
+
+
 
 
         /**
@@ -365,8 +403,8 @@
             return false;
         }
 
-        function doesUnitContainsOnlyPunctuation(newAnnotationUnit){
-            return newAnnotationUnit.children_tokens.every(function(token){
+        function isOnlyPunctuation(tokens){
+            return tokens.every(function(token){
                 return !token.static.require_annotation;
             });
         }
