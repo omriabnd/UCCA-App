@@ -406,8 +406,9 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
 
 
     def submit(self,instance):
+        if instance.type == Constants.TASK_TYPES_JSON['TOKENIZATION']:
+            self.save_tokenization_task(instance)
         instance.status = 'SUBMITTED'
-        print('submit')
         instance.save(update_fields=['status'])
 
     def check_if_parent_task_ok_or_exception(self,instance):
