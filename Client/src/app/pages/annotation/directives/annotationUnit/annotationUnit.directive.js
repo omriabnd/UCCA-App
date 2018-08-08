@@ -725,7 +725,7 @@
 
         function toggleMouseUpDown(event){
             trace("annotationUnitDirective - toggleMouseUpDown");
-            HotKeysManager.updatePressedHotKeys({combo:'shift'},!shiftPressed);
+            HotKeysManager.updatePressedHotKeys({combo:'shift'},!shiftPressed); // Mark shift as pressed anyway
             var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed("shift");
             var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed("ctrl");
             !shiftPressed && !ctrlPressed ? selectionHandlerService.clearTokenList() : '';
