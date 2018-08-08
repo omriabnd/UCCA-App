@@ -10,6 +10,7 @@
     function selectionHandlerService(DataService, $rootScope,$q,Core, AssertionService, restrictionsValidatorService) {
         trace("selectionHandlerService is here");
         var selectedTokenList = [];
+        var keyboardSelectedTokens = [];
         var selectedUnit = "0";
         var selectedToken = null;
         var tokenClicked = false;
@@ -22,6 +23,7 @@
 
         var _handler = {
             selectedTokenList: selectedTokenList,
+            keyboardSelectedTokens: keyboardSelectedTokens,
             selectedUnit:selectedUnit,
             selectionDirection:selectionDirection,
             unitToAddRemotes:unitToAddRemotes,
@@ -226,6 +228,7 @@
                 }
 
                 this.selectedTokenList = [];
+                this.keyboardSelectedTokens = [];
             },
 
 
@@ -245,11 +248,142 @@
                 // AssertionService.checkTree(DataService.tree, DataService.serverData);
             },
 
+            findElementPosition(tokenList, token) {
+                if (token)
+                    return tokenList.map(function(x) {return x.static.id; }).indexOf(token.static.id);
+            },
+
+
+            calcTokenClosure(tokenList) {
+                if(!tokenList || tokenList.length === 0)
+                    return [];
+
+                var closure = [];
+                var unit = DataService.getUnitById(tokenList[0].unitTreeId);
+
+                tokenList.forEach(function(token) {
+                    var pos = _handler.findElementPosition(closure, token);
+                    if(pos !== -1) {
+                        return;
+                    }
+
+                    // Add token to closure
+                    closure.push(token);
+                    if(token.inChildUnitTreeId) {
+                        // We know that this is the first time we've encountered any token of this child unit.
+                        // After we encounter the first token, we add the entire child unit, so all other tokens are
+                        // already in the closure
+                        unit.tokens.forEach(function(siblingToken) {
+                            if(siblingToken !== token && siblingToken.inChildUnitTreeId === token.inChildUnitTreeId) {
+                                closure.push(siblingToken);
+                            }
+                        })
+                    }
+                });
+
+                return closure;
+            },
+
+            /*
+             * Keyboard Selection is a bit elaborate, because we need to handle multiple cases.
+             *
+             * We maintain two lists: keyboardSelectedTokens and selectedTokenList.
+             * keyboardSelectedTokens are the tokens that were actually selected with the keyboard (by shift-right or
+             * shift-left). selectedTokenList are the tokens that are shown as selected.
+             *
+             * The two lists are not identical because of discontiguous units. Consider for example the following
+             * tokens:
+             *
+             * 1 A 2 3 B 4 5
+             *
+             * A and B are of the same unit.
+             * When the user selects A with the keyboard, we want to select B as well, so in this case
+             *    keyboardSelectedTokens will be A, and selectedTokenList will be A B
+             *
+             * In this example, if the user selects A 2 3 B, both lists will be the same. If the user then unselects
+             * B, keyboardSelectedTokens will be A 2 3 but selectedTokenList will still be A 2 3 B, since B has to be
+             * selected with A.
+             *
+             * We need to handle contiguous units specifically, consider the following:
+             * 1 A B 2  -  A B are in the same unit
+             *
+             * The cursor is between 1 and A and the user selects to the left. We will be called with A as the token,
+             * keyboardSelectedTokens will be A and selectedTokenList will be A B. The cursor will be between B and 2.
+             *
+             * Now the user unselects B from the right. We will be called with B as the token. We want to remove A
+             * from both lists, so we need to treat all B calls as A calls. So we normalize tokens - each token is
+             * normalized to the first token in the contiguous part of its unit.
+             *
+             * So normalized B above is actually A.
+             */
+
+            normalizeToken: function(token) {
+                // If the token is not in a child unit, it is normalized.
+                // If it is, find the first contiguous token in this child unit that is to the left of token.
+                //
+                // 1 2 3 A B C 4 5 E F 6 7
+                // ABCEF are the same unit
+                //
+                // normalized(number) = number
+                // normalized(A) = A
+                // normalized(B) and normalized(C) = A
+                // normalized(E) = E
+                // normalized(F) = E
+
+                if (!token.inChildUnitTreeId || token.indexInUnit===0) {
+                    return token;
+                }
+
+                var unit = DataService.getUnitById(token.unitTreeId);
+                var index = token.indexInUnit;
+                while(index > 0 && unit.tokens[index-1].inChildUnitTreeId === token.inChildUnitTreeId) {
+                    index--;
+                }
+
+                return unit.tokens[index];
+            },
+
+            keyboardToggleTokenSelection: function(token) {
+                token = _handler.normalizeToken(token);
+
+                // Normalize the token - find the first contigi
+                // if token is not exist in keyboardSelectedTokens list- add it, else- remove it
+                var elementPos = _handler.findElementPosition(this.keyboardSelectedTokens, token);
+                if(elementPos === -1){
+                    this.keyboardSelectedTokens.push(token);
+                } else {
+                    this.keyboardSelectedTokens.splice(elementPos,1);
+                }
+
+                // this.clearTokenList();
+                // TODO: Build a list of all tokens - in all the units of tikens in keyboardSelectedTokens
+                var shouldBeSelected = _handler.calcTokenClosure(this.keyboardSelectedTokens);
+                var currentlySelected = angular.copy(_handler.selectedTokenList);
+
+                // We need to make sure _handler.selectedTokenList is the same as shouldBeSelected.
+                // All tokens that are in shouldBeSelected and not in currentlySelected are clicked so they can be
+                // selected.
+                // All tokens that are in currentlySelected but not in shouldBeSelected are unselected;
+                // First loop - select all the tokens that need to be selected
+
+                shouldBeSelected.forEach(function(token) {
+                    _handler.addTokenToList(token, token.unitTreeId); // addTokenToList already handles tokens already in the list
+                });
+                currentlySelected.forEach(function(token) {
+                    // If token is not in shouldBeSelected, remove selection from token
+                    var elementPos = _handler.findElementPosition(shouldBeSelected, token);
+                    if (elementPos === -1) {
+                        _handler.removeTokenFromList(token.static.id);
+                    }
+                });
+            },
+
             getSelectedUnitId: function(){
                 trace("selectionHandlerService - getSelectedUnitId");
                 return this.selectedUnit;
             },
 
+            // TODO: Remove this function, the mouseDown variable and getMouseMode
             toggleMouseUpDown: function(){
                 trace("selectionHandlerService - toggleMouseUpDown");
                 this.mouseDown = !this.mouseDown;
@@ -444,7 +578,6 @@
                     _handler.updateSelectedUnit("0",false);
 
                     // Check tree in AssertionService at the end of init tree
-                    console.log("Check tree after selectionService.initTree");
                     AssertionService.checkTree(DataService.tree, DataService.serverData);
                     return resolve({status: 'InitTreeFinished'});
                 })
@@ -492,7 +625,7 @@
                  */
                 trace("selectionHandlerService - toggleCategory");
                 return $q(function(resolve, reject) {
-                    console.log("toggle category!!!!!!!!!!!!!, handler.selectedTokenList= " , _handler.selectedTokenList)
+                    // console.log("toggle category!!!!!!!!!!!!!, handler.selectedTokenList= " , _handler.selectedTokenList)
                     if(_handler.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(_handler.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(_handler.selectedTokenList,inInitStage)){
                         return
                     }

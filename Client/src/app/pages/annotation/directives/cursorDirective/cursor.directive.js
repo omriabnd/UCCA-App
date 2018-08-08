@@ -65,7 +65,11 @@
             $scope.$on('tokenIsClicked', function(event, args) {
                 // var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 // var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
-                // debugger
+
+                if(args.holdCursor) {
+                    // Don't move the cursor
+                    return;
+                }
 
                 if(args.token && args.unitTreeId.toString() === $scope.vm.unitId.toString() ){
                     var unitTokens = getUnitTokens($scope);
@@ -76,7 +80,6 @@
                         !args.moveLeft ? $(elem).insertAfter( unitTokens[elementPos] ) : $(elem).insertBefore( unitTokens[elementPos] );
                         !args.moveLeft ? setCursorPosition($scope, elementPos + 1) : setCursorPosition($scope, elementPos);
                     }
-
                 }
             });
 
@@ -91,13 +94,13 @@
                             return;
                         }
                         var token = $scope.vm.cursorLocation == tokenUnit.tokens.length ? tokenUnit.tokens[$scope.vm.cursorLocation - 1] : tokenUnit.tokens[$scope.vm.cursorLocation];
-                        if(shiftPressed){
-                            $rootScope.$broadcast('tokenIsClicked',{token: token, unitTreeId: $scope.vm.unitId, moveLeft: false});
+                         if(shiftPressed){
+                             selectionHandlerService.keyboardToggleTokenSelection(token);
                         }else{
                             $(elem).insertAfter( unitTokens[$scope.vm.cursorLocation] );
-                            setCursorPosition($scope, $scope.vm.cursorLocation + 1);
                             !ctrlPressed ? selectionHandlerService.clearTokenList() : $scope.vm.cursorUpdated = true;
                         }
+                        setCursorPosition($scope, $scope.vm.cursorLocation + 1);
 
                         var nextToken = undefined;
 
@@ -135,62 +138,11 @@
                             }
                         }
 
-                        $scope.vm.cursorLocation === unitTokens.length ? $(elem).insertAfter( unitTokens[unitTokens.length - 1] ) : $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
-
-
-                        var unit = DataService.getUnitById(nextToken.inChildUnitTreeId);
-                        if(token.inChildUnitTreeId === nextToken.inChildUnitTreeId && unit !== null && unit.tree_id !== "0") {
-                            if (shiftPressed) {
-                                unit.tokens.forEach(function (curr_token) {
-                                    $rootScope.$broadcast('tokenIsClicked', {
-                                        token: curr_token,
-                                        unitTreeId: $scope.vm.unitId,
-                                        moveLeft: false,
-                                        doNotRemoveExistingToken: true
-                                    });
-                                })
-                            }
+                        if($scope.vm.cursorLocation === unitTokens.length) {
+                            $(elem).insertAfter( unitTokens[unitTokens.length - 1] )
+                        } else {
+                            $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
                         }
-
-                        /*
-                        // Old code
-                        var unit = DataService.getUnitById(nextToken.inChildUnitTreeId);
-                         // unitTokens = DataService.getUnitById(token.inChildUnitTreeId).tokens;
-                         // if(unitTokens.length > 1){
-                         //     var tokenPosition = unitTokens.map(function(x) {return x.id; }).indexOf(token.id);
-                         //     if(tokenPosition !== unitTokens.length - 1){
-                         //         nextToken = unitTokens[tokenPosition];
-                         //     }
-                         // }
-
-                         if(token.inChildUnitTreeId === nextToken.inChildUnitTreeId && unit !== null && unit.tree_id !== "0"){
-                             if(shiftPressed){
-                                 unit.tokens.forEach(function(curr_token){
-                                     $rootScope.$broadcast('tokenIsClicked',{token: curr_token, unitTreeId: $scope.vm.unitId, moveLeft: false,doNotRemoveExistingToken: true});
-                                 })
-                             }
-                             var tokenPosition = unit.tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
-                             var sliceTokenArray = angular.copy(unit.tokens);
-                             sliceTokenArray = sliceTokenArray.splice(tokenPosition,sliceTokenArray.length);
-                             var elementPos = sliceTokenArray.map(function(x) {return DataService.positionInUnit(unit, x); }).indexOf("Last");
-
-                             if(elementPos === -1){
-                                 var firstAndLastPosition = 0;
-                                 for(var i=0; i<sliceTokenArray.length; i++){
-                                     var current_token = sliceTokenArray[i];
-                                     if(DataService.positionInUnit(unit, current_token) == "FirstAndLast"){
-                                         firstAndLastPosition = i;
-                                     }
-                                 }
-                                 elementPos = firstAndLastPosition;
-                             }
-
-                             var parentUnit = DataService.getParentUnit(unit.tree_id);
-                             elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(sliceTokenArray[elementPos].static.id);
-
-                             setCursorPosition($scope, elementPos+1);
-                             $scope.vm.cursorLocation === unitTokens.length ? $(elem).insertAfter( unitTokens[unitTokens.length - 1] ) : $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
-                         }*/
                     }
                 }else if($scope.vm.cursorUpdated){
                     $scope.vm.cursorUpdated = false;
@@ -212,11 +164,12 @@
                         }
                         var token = $scope.vm.cursorLocation == tokenUnit.tokens.length ? tokenUnit.tokens[$scope.vm.cursorLocation -1] : tokenUnit.tokens[$scope.vm.cursorLocation];
                         if(shiftPressed){
-                            $rootScope.$broadcast('tokenIsClicked',{token: token, unitTreeId: $scope.vm.unitId, moveLeft: true});
+                            selectionHandlerService.keyboardToggleTokenSelection(token);
                         }else{
                             $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
                             !ctrlPressed ? selectionHandlerService.clearTokenList() : $scope.vm.cursorUpdated = true;
                         }
+
                         var unitToCheckIn = DataService.getUnitById(args.unitId);
 
                         var sameParentTokens = unitToCheckIn.tokens.filter(function(element,index,array){
@@ -259,60 +212,6 @@
 
                         $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
 
-                         var unit = DataService.getUnitById(prevToken.inChildUnitTreeId);
-                        if(token.inChildUnitTreeId === prevToken.inChildUnitTreeId && unit !== null && unit.tree_id !== "0") {
-                            if (shiftPressed) {
-                                unit.tokens.forEach(function (curr_token, index) {
-                                    $rootScope.$broadcast('tokenIsClicked', {
-                                        token: curr_token,
-                                        unitTreeId: $scope.vm.unitId,
-                                        moveLeft: false,
-                                        doNotRemoveExistingToken: false
-                                    });
-                                })
-                                $rootScope.$broadcast('tokenIsClicked', {
-                                    token: token,
-                                    unitTreeId: $scope.vm.unitId,
-                                    moveLeft: false,
-                                    doNotRemoveExistingToken: false
-                                });
-                            }
-                        }
-
-                        /* // old code
-                        var unit = DataService.getUnitById(prevToken.inChildUnitTreeId);
-                        if(token.inChildUnitTreeId === prevToken.inChildUnitTreeId && unit !== null && unit.tree_id !== "0"){
-                            if(shiftPressed){
-                                unit.tokens.forEach(function(curr_token,index){
-                                    $rootScope.$broadcast('tokenIsClicked',{token: curr_token, unitTreeId: $scope.vm.unitId, moveLeft: false,doNotRemoveExistingToken: false});
-                                })
-                                $rootScope.$broadcast('tokenIsClicked',{token: token, unitTreeId: $scope.vm.unitId, moveLeft: false,doNotRemoveExistingToken: false});
-                            }
-
-                            var tokenPosition = unit.tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
-                            var sliceTokenArray = angular.copy(unit.tokens);
-                            sliceTokenArray = sliceTokenArray.splice(0,tokenPosition);
-                            sliceTokenArray = sliceTokenArray.reverse();
-
-                            var elementPos = sliceTokenArray.map(function(x) {return DataService.positionInUnit(unit, x); }).indexOf("First");
-
-                            if(elementPos === -1){
-                                var firstAndLastPosition = 0;
-                                for(var i=sliceTokenArray.length-1; i>=0; i--){
-                                    var current_token = sliceTokenArray[i];
-                                    if(DataService.positionInUnit(unit, current_token) == "FirstAndLast"){
-                                        firstAndLastPosition = i;
-                                    }
-                                }
-                                elementPos = firstAndLastPosition;
-                            }
-
-                            var parentUnit = DataService.getParentUnit(unit.tree_id);
-                            elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(sliceTokenArray[elementPos].static.id);
-
-                            setCursorPosition($scope, elementPos);
-                            $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
-                        }*/
                     }
                 }else if($scope.vm.cursorUpdated){
                     $scope.vm.cursorUpdated = false;
@@ -388,7 +287,8 @@
                                 $rootScope.$broadcast('tokenIsClicked',{token: curr_token, unitTreeId: $scope.vm.unitId, moveLeft: false, selectAllTokenInUnit: true});
                             });
 
-                            $scope.vm.cursorLocation = unitToCheckIn.tokens.map(function(x) {return x.static.id; }).indexOf(unit.tokens[unit.tokens.length-1].static.id) + 1;
+                            var nextLocation = unitToCheckIn.tokens.map(function(x) {return x.static.id; }).indexOf(unit.tokens[unit.tokens.length-1].static.id) + 1;
+                            setCursorPosition($scope, nextLocation);
                             $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
                         }
 
