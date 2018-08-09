@@ -248,13 +248,13 @@
                 // AssertionService.checkTree(DataService.tree, DataService.serverData);
             },
 
-            findElementPosition(tokenList, token) {
+            findElementPosition: function(tokenList, token) {
                 if (token)
                     return tokenList.map(function(x) {return x.static.id; }).indexOf(token.static.id);
             },
 
 
-            calcTokenClosure(tokenList) {
+            calcTokenClosure: function(tokenList) {
                 if(!tokenList || tokenList.length === 0)
                     return [];
 
