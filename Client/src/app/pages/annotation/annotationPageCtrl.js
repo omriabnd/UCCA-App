@@ -256,7 +256,6 @@
                     var unitId = selectionList[0].inChildUnitTreeId;
                     var currentUnit = DataService.getUnitById(unitId);
 
-
                     if(currentUnit.cloned_to_tree_ids){
                         vm.dataBlock = currentUnit;
                         open('app/pages/annotation/templates/deleteAllRemoteModal.html','md', currentUnit.cloned_to_tree_ids.length, vm);

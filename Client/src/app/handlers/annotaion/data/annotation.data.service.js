@@ -683,7 +683,9 @@
                     // When deleting a unit, first delete her remote and implicit sons, and then move the regular sons to be children of her parent.
                     for (var i = 0; i < unit.AnnotationUnits.length; i++) {
                         if (unit.AnnotationUnits[i].unitType !== 'REGULAR') {
-                            deleteRemoteUnit(unit.AnnotationUnits[i]);
+                            if (unit.AnnotationUnits[i].unitType === 'REMOTE') {
+                                deleteRemoteUnit(unit.AnnotationUnits[i]);
+                            }
                             unit.AnnotationUnits.splice(i, 1);
                             i = i-1;
                         }
