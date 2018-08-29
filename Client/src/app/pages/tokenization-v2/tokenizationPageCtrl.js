@@ -50,7 +50,6 @@
        */
       $scope.$watch("tokenizedText", function(tokenizedText){
           console.log('watch tokenizedText');
-          debugger
           if(tokenizedText) {
               $scope.savedTokens = uccaFactory.getTokensFromText(tokenizedText);
               console.log("watch",$scope.savedTokens);
@@ -79,12 +78,10 @@
       }
 
       function submitTask(){
-        return saveChanges().then(function(){
           return saveChanges("submit").then(function(res){
             $timeout(function(){$rootScope.$hideSideBar = false;})
             goToMainMenu(res) 
           })
-        })
       }
 
       function saveChanges(mode){

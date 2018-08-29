@@ -248,13 +248,13 @@
                 // AssertionService.checkTree(DataService.tree, DataService.serverData);
             },
 
-            findElementPosition(tokenList, token) {
+            findElementPosition: function(tokenList, token) {
                 if (token)
                     return tokenList.map(function(x) {return x.static.id; }).indexOf(token.static.id);
             },
 
 
-            calcTokenClosure(tokenList) {
+            calcTokenClosure: function(tokenList) {
                 if(!tokenList || tokenList.length === 0)
                     return [];
 
@@ -442,7 +442,7 @@
 
                 function initRemoteUnit(unit, index) {
                     console.log("Init tree, unit is remote copy", unit);
-
+d
                     DataService.unitType = 'REMOTE';
                     unit["tokens"] = [];
                     unit.unitType = "REMOTE";
@@ -604,6 +604,17 @@
             //     }
             //     return tokens;
             // },
+
+
+            checkRestrictionsForImplicit: function(parentUnit) {
+                return restrictionsValidatorService.checkRestrictionsBeforeInsert(parentUnit, "IMPLICIT", []);
+            },
+
+            checkRestrictionsForRemote: function(parentUnit, category) {
+                return restrictionsValidatorService.checkRestrictionsBeforeInsert(parentUnit, "REMOTE", [], category);
+            },
+
+
 
             checkRestrictions: function(category, unit) {
                 // First decide whether we are adding a new unit or not
