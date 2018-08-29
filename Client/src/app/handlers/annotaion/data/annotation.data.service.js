@@ -609,10 +609,12 @@
                 // Check tree in AssertionService after add unit
                 if (!inInitStage) {
                     // Add indexInUnit attribute to tree.tokens, its needed in the assertion
-                    if (!DataService.tree.tokens[1].indexInUnit) {
-                        DataService.tree.tokens.forEach(function (token, index) {
-                            token.indexInUnit = index;
-                        });
+                    if (DataService.tree.tokens.length) {
+                        if (!DataService.tree.tokens[1].indexInUnit) {
+                            DataService.tree.tokens.forEach(function (token, index) {
+                                token.indexInUnit = index;
+                            });
+                        }
                     }
                     AssertionService.checkTree(DataService.tree, DataService.serverData);
                 }
@@ -752,9 +754,11 @@
                 }
             })
 
-            unit.AnnotationUnits.forEach(function(child_unit){
-                updateInUnitIdsForTokens(child_unit);
-            })
+            if (unit.AnnotationUnits) {
+                unit.AnnotationUnits.forEach(function (child_unit) {
+                    updateInUnitIdsForTokens(child_unit);
+                })
+            }
 
         }
 

@@ -401,7 +401,6 @@
              */
             initTree: function(data){
                 function initImplicitUnit(unit, index) {
-
                     var objToPush = {
                         rowId : '',
                         text : '<span>IMPLICIT UNIT</span>',
@@ -432,7 +431,8 @@
                     /**
                      * insertToTree for implicit units
                      */
-                    var newRowId = DataService.insertToTree(objToPush,unit.parent_tree_id,index != DataService.serverData.annotation_units.length -1);
+                    var newRowId = DataService.insertToTree(objToPush,unit.parent_tree_id, true);
+                    // var newRowId = DataService.insertToTree(objToPush,unit.parent_tree_id,index != DataService.serverData.annotation_units.length -1);
 
                     unit.categories.forEach(function(category,index){
                         _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id,null,null,true);
