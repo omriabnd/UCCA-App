@@ -310,7 +310,7 @@
                 //if the category isn't assigned to that unit yet - add it
                 if(elementPos === -1) {
                     if (!inInitStage && !restrictionsValidatorService.checkRestrictionsBeforeAddingCategory(unit,category)){
-                         return reject("Failed") ;
+                        return reject("Failed") ;
                     }
                     unit.children_tokens = unit.tokens;
 
@@ -412,6 +412,8 @@
          * @returns {*} - resolve insert success
          */
         function insertToTree(newObject, level, inInitStage){
+            // level is actually the parentTreeId
+
             trace("DataService - insertToTree");
             console.log("In insertToTree, newObject=", newObject);
 
@@ -431,6 +433,7 @@
                 newObject.parent_tree_id = parentUnit.tree_id;
 
                 if (!newObject.tree_id) {
+                    // Set the initial treeId, which will be the last child of the parent.
                     if (level.toString() === "0") {
                         //Passage unit or it children units.
                         newObject.tree_id = parseInt(parentUnit.AnnotationUnits.length + 1).toString();
@@ -444,9 +447,10 @@
                 newObject.cluster = newObject.cluster || "";
 
 
-                var units = [];
+                var units = []; // All sibling units that should become child units
 
                 if (newObject.unitType != "REMOTE") {
+                    // Fill the inChildUnitTreeId of the tokens in the parent
                     newObject.tokens.forEach(function (token) {
                         if (token.
                             inChildUnitTreeId !== null && token.inChildUnitTreeId !== undefined) {
@@ -478,7 +482,7 @@
                 newObject.unitType = newObject.unitType ? newObject.unitType : "REGULAR";
 
 
-                //Adding children to new unit
+                //Convert siblings into children to new unit
                 if (units.length > 1) {
 
                     units.forEach(function (unit) {
@@ -498,7 +502,7 @@
 
                 newObject.children_tokens = newObject.tokens;
 
-                //Removing children unit from parent unit
+                //Removing children units from parent unit
                 if (units.length > 1) {
                     units.forEach(function (unit) {
                         var parentUnitId = getParentUnitId(unit.id);
@@ -522,7 +526,7 @@
                  * This part computes index_int, which is the index where the unit will be inserted into the list
                  * of children for the current parent unit.
                  */
-                var indexToInsert = newObject.tree_id.split("-");
+                var indexToInsert = newObject.tree_id.split("-");  // "5-4-3" becomes 3
                 var index_int = parseInt(indexToInsert[indexToInsert.length - 1]);
 
 
@@ -538,7 +542,8 @@
                 if (newObject.is_remote_copy) {
                     index_int = (parentUnit.AnnotationUnits.length + 1).toString();
                     for (var i = 0; i < parentUnit.AnnotationUnits.length; i++) {
-                        if (parentUnit.AnnotationUnits[i] == undefined) {
+                        if (parentUnit.AnnotationUnits[i].tree_id.split("-").pop() !== (i + 1).toString()) {
+                            parentUnit.AnnotationUnits.splice(i, 0, newObject); // add item newObject to the list in place i, delete 0 items
                             index_int = i + 1;
                             break;
                         }
@@ -548,7 +553,7 @@
                      * For remote units, the annotation_unit_tree_id is that of the unit it was cloned from. Therefore,
                      * we need to update it and this is done in the following line.
                      */
-                    newObject.tree_id = newObject.parent_tree_id + "-" + index_int.toString();
+                    newObject.tree_id = newObject.parent_tree_id + "-" + index_int.toString(); // Set the tree ID based on the actual location
 
                     addRemoteUnit(newObject);
                 }
@@ -564,12 +569,16 @@
                     } else return 0
                 })
 
-                index_int - 1 > parentUnit.AnnotationUnits.length ? index_int = parentUnit.AnnotationUnits.length + 1 : '';
+                if (index_int > parentUnit.AnnotationUnits.length + 1) {
+                    index_int = parentUnit.AnnotationUnits.length + 1;
+                }
 
                 //Update slots information
                 newObject = updateUnitSlots(newObject);
 
-                !inInitStage ? Core.openAllUnits(newObject) : "";
+                if(!inInitStage) {
+                    Core.openAllUnits(newObject);
+                }
 
                 parentUnit.AnnotationUnits[index_int - 1] = newObject;
 
@@ -594,11 +603,10 @@
 
                 updateInUnitIdsForTokens(DataService.tree);
 
-                // tODO- update indexInUnit in unit 0 (to tree.tokens) -- maybe in another place  ???
+                // update indexInUnit in unit 0 (to tree.tokens) -- maybe in another place  ???
                 // DataService.tree.tokens.forEach(function (token, index) {
                 //     token.indexInUnit = index;
                 // });
-
 
                 newObject.unitType !== "REMOTE" ? $rootScope.$broadcast("InsertSuccess", {
                     dataBlock: {
