@@ -126,7 +126,7 @@
             },
             setSelectionDirection: function(mode){
                 trace("selectionHandlerService - setSelectionDirection");
-              this.selectionDirection = mode;
+                this.selectionDirection = mode;
             },
             getSelectionDirection: function(mode){
                 trace("selectionHandlerService - getSelectionDirection");
@@ -517,7 +517,7 @@
                                     if(index === 0){
                                         // _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],false,false,unit.gui_status);
                                     }else{
-                                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id,false);
+                                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id,false, unit);
                                     }
                                     _handler.clearTokenList();
                                 });
@@ -584,10 +584,10 @@
             },
 
             /***
-               When copying to the child unit we delete leftBorder and rightBorder properties
-               as there are no borders in the child unit. However, we still need to know whether to show an ellipsis.
-               Ellipses are shown at discontinuities, which are right before leftBorder is true (except for before
-               the first token in the unit).
+             When copying to the child unit we delete leftBorder and rightBorder properties
+             as there are no borders in the child unit. However, we still need to know whether to show an ellipsis.
+             Ellipses are shown at discontinuities, which are right before leftBorder is true (except for before
+             the first token in the unit).
              */
             // Commented because we removed showEllipsis field from token
             // copyTokensToSubUnit: function(selectedTokenList) {
@@ -626,7 +626,11 @@
                 }
                 else {
                     // We're toggling a category for a unit (which apparently is only called when a category is *added*
-                    return restrictionsValidatorService.checkRestrictionsBeforeAddingCategory(selectedUnit, category);
+                    var unitToRest = unit;
+                    if (!unitToRest) {
+                        unitToRest = selectedUnit;
+                    }
+                    return restrictionsValidatorService.checkRestrictionsBeforeAddingCategory(unitToRest, category);
                 }
             },
 
@@ -642,7 +646,7 @@
                     }
 
                     // Check the restrictions for the new unit here, before making any modifications to the data in the DataService
-			         if(!inInitStage && !_handler.checkRestrictions(category, unit)) {
+                    if(!inInitStage && !_handler.checkRestrictions(category, unit)) {
                         return reject("Failed");
                     }
 
@@ -939,17 +943,17 @@
                 }
             })
         }
-        
+
         function getTreeLastId(currentUnit){
             trace("selectionHandlerService - getTreeLastId");
             if(currentUnit.AnnotationUnits.length == 0){
-               return currentUnit.tree_id;
+                return currentUnit.tree_id;
             }
-            
+
             var lastChild =  currentUnit.AnnotationUnits[ currentUnit.AnnotationUnits.length - 1 ];
             return getTreeLastId(lastChild);
         }
-        
+
         return _handler;
     }
 
