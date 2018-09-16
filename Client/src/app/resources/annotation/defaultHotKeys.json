@@ -55,8 +55,20 @@
       "callbackFunction":"moveRightWithCtrl"
     },
     {
+      "combo": "command+right",
+      "description": "move Right With Cmd",
+      "action": "keydown",
+      "callbackFunction":"moveRightWithCtrl"
+    },
+    {
       "combo": "ctrl+left",
       "description": "move Left With Ctrl",
+      "action": "keydown",
+      "callbackFunction":"moveLeftWithCtrl"
+    },
+     {
+      "combo": "command+left",
+      "description": "move Left With Cmd",
       "action": "keydown",
       "callbackFunction":"moveLeftWithCtrl"
     },
@@ -104,6 +116,11 @@
     }
   ],
   "DefaultHotKeysWithClick":[
+    {
+      "combo": "command",
+      "description": "Select multiple words to mac",
+      "callbackFunction": "addWordToGlobal"
+    },
     {
       "combo": "ctrl",
       "description": "Select multiple words",

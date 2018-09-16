@@ -14,6 +14,7 @@
             addHotKey:addHotKey,
             updatePressedHotKeys:updatePressedHotKeys,
             executeOperation:executeOperation,
+            checkIfCtrlOrCmdPressed: checkIfCtrlOrCmdPressed,
             checkIfHotKeyIsPressed:checkIfHotKeyIsPressed,
             getFocusedUnit: getFocusedUnit,
             setFocusedUnit: setFocusedUnit,
@@ -33,7 +34,16 @@
         }
 
         function updatePressedHotKeys(hotKey,mode){
+            // console.log('hotKeys[', hotKey.combo, ']["pressed"]=', mode);
             HotKeysManager.hotKeys[hotKey.combo]['pressed'] = mode;
+        }
+
+        function checkIfCtrlOrCmdPressed() { // On Windows check control, on Mac check Command
+            // console.log("checkIfCtrlOrCmdPressed", window.navigator.platform )
+            if (window.navigator.platform === 'MacIntel') {
+                return this.checkIfHotKeyIsPressed('command');
+            }
+            return this.checkIfHotKeyIsPressed('ctrl'); // If window platform is 'windows'
         }
 
         function checkIfHotKeyIsPressed(hotKey){

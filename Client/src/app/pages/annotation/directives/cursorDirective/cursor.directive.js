@@ -84,7 +84,8 @@
             });
 
             $scope.$on('moveRight', function(event, args) {
-                var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
+                // var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
+                var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
                 if(args.unitId === $scope.vm.unitId.toString()  && !$scope.vm.cursorUpdated){
                     var unitTokens = getUnitTokens($scope);
@@ -150,7 +151,8 @@
             });
 
             $scope.$on('moveLeft', function(event, args) {
-                var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
+                // var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
+                var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
                 if(args.unitId === $scope.vm.unitId.toString() &&  !$scope.vm.cursorUpdated){
                     var unitTokens = getUnitTokens($scope);

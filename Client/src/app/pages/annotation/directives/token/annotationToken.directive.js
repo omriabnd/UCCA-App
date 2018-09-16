@@ -31,7 +31,8 @@
             $scope.vm.tokenInSelectionList = tokenInSelectionList;
 
             $scope.$on('tokenIsClicked', function(event, args) {
-                var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
+                var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
+                // var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
 
                 if(args.token && args.token.static.id !== $scope.vm.token.static.id ){
@@ -183,7 +184,8 @@
 
             var tokenInUnit = DataService.getUnitById(vm.token.inChildUnitTreeId);
             if(vm.token.inChildUnitTreeId !== null && tokenInUnit){
-                var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
+                var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
+                // var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 !ctrlPressed ? selectionHandlerService.clearTokenList() : '';
                 var parentUnit = DataService.getUnitById(vm.token.unitTreeId);
                 var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inChildUnitTreeId === vm.token.inChildUnitTreeId; });
