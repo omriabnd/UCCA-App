@@ -434,10 +434,28 @@
                     var newRowId = DataService.insertToTree(objToPush,unit.parent_tree_id, true);
                     // var newRowId = DataService.insertToTree(objToPush,unit.parent_tree_id,index != DataService.serverData.annotation_units.length -1);
 
-                    unit.categories.forEach(function(category,index){
-                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id,null,null,true);
-                        _handler.clearTokenList();
-                    });
+                    // unit.categories.forEach(function(category,index){
+                    //     debugger
+                    //     _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id,null,objToPush,true);
+                    //     _handler.clearTokenList();
+                    // });
+
+                    if(unit.categories.length === 0){
+                        _handler.toggleCategory(null,false,unit.is_remote_copy,unit,true);
+                    }else{
+                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[unit.categories[0].id],false,false,objToPush,true)
+                            .then(function(){
+                                unit.categories.forEach(function(category,index){
+                                    if(index === 0){
+                                    }else{
+                                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id,false, objToPush, true);
+                                    }
+                                    _handler.clearTokenList();
+                                });
+                            });
+                    }
+
+                    _handler.clearTokenList();
                 }
 
                 function initRemoteUnit(unit, index) {
@@ -644,6 +662,7 @@
                     if(_handler.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(_handler.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(_handler.selectedTokenList,inInitStage)){
                         return
                     }
+                    debugger
 
                     // Check the restrictions for the new unit here, before making any modifications to the data in the DataService
                     if(!inInitStage && !_handler.checkRestrictions(category, unit)) {
@@ -668,7 +687,7 @@
                         }
 
                         var newUnit = {
-                            tokens : angular.copy(_handler.selectedTokenList),
+                            tokens : _handler.selectedTokenList.length? angular.copy(_handler.selectedTokenList) : unit.tokens,
                             categories:[],
                             gui_status:unit ? unit.gui_status : "OPEN",
                             comment: unit ? unit.comment : '',
@@ -677,8 +696,10 @@
                             parent_tree_id: unit && unit.parent_tree_id ? unit.parent_tree_id : null,
                             is_remote_copy: unit && unit.is_remote_copy ? unit.is_remote_copy : false,
                             is_finished: unit && unit.is_finished ? unit.finished: false,
-                            cloned_from_tree_id: unit && unit.cloned_from_tree_id ? unit.cloned_from_tree_id : null
+                            cloned_from_tree_id: unit && unit.cloned_from_tree_id ? unit.cloned_from_tree_id : null,
+                            unitType: unit && unit.unitType ? unit.unitType : 'REGULAR',
                         };
+
 
                         for (var index = 0; index < newUnit.tokens.length; index++) {
                             newUnit.tokens[index].unit = newUnit;
