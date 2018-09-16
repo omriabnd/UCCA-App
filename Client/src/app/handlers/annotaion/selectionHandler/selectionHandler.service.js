@@ -431,33 +431,13 @@
                     /**
                      * insertToTree for implicit units
                      */
-                    var newRowId = DataService.insertToTree(objToPush,unit.parent_tree_id, true);
-                    // var newRowId = DataService.insertToTree(objToPush,unit.parent_tree_id,index != DataService.serverData.annotation_units.length -1);
+                    var newRowId = DataService.insertToTree(objToPush,unit.parent_tree_id,index != DataService.serverData.annotation_units.length -1);
 
-                    // unit.categories.forEach(function(category,index){
-                    //     debugger
-                    //     _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id,null,objToPush,true);
-                    //     _handler.clearTokenList();
-                    // });
-
-                    if(unit.categories.length === 0){
-                        _handler.toggleCategory(null,false,unit.is_remote_copy,unit,true);
-                    }else{
-                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[unit.categories[0].id],false,false,objToPush,true)
-                            .then(function(){
-                                unit.categories.forEach(function(category,index){
-                                    if(index === 0){
-                                    }else{
-                                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id,false, objToPush, true);
-                                    }
-                                    _handler.clearTokenList();
-                                });
-                            });
-                    }
-
-                    _handler.clearTokenList();
+                    unit.categories.forEach(function(category,index){
+                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id);
+                        _handler.clearTokenList();
+                    });
                 }
-
                 function initRemoteUnit(unit, index) {
                     console.log("Init tree, unit is remote copy", unit);
 
@@ -662,9 +642,7 @@
                     if(_handler.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(_handler.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(_handler.selectedTokenList,inInitStage)){
                         return
                     }
-                    debugger
-
-                    // Check the restrictions for the new unit here, before making any modifications to the data in the DataService
+                     // Check the restrictions for the new unit here, before making any modifications to the data in the DataService
                     if(!inInitStage && !_handler.checkRestrictions(category, unit)) {
                         return reject("Failed");
                     }
@@ -687,7 +665,7 @@
                         }
 
                         var newUnit = {
-                            tokens : _handler.selectedTokenList.length? angular.copy(_handler.selectedTokenList) : unit.tokens,
+                            tokens : angular.copy(_handler.selectedTokenList),
                             categories:[],
                             gui_status:unit ? unit.gui_status : "OPEN",
                             comment: unit ? unit.comment : '',
@@ -696,10 +674,8 @@
                             parent_tree_id: unit && unit.parent_tree_id ? unit.parent_tree_id : null,
                             is_remote_copy: unit && unit.is_remote_copy ? unit.is_remote_copy : false,
                             is_finished: unit && unit.is_finished ? unit.finished: false,
-                            cloned_from_tree_id: unit && unit.cloned_from_tree_id ? unit.cloned_from_tree_id : null,
-                            unitType: unit && unit.unitType ? unit.unitType : 'REGULAR',
+                            cloned_from_tree_id: unit && unit.cloned_from_tree_id ? unit.cloned_from_tree_id : null
                         };
-
 
                         for (var index = 0; index < newUnit.tokens.length; index++) {
                             newUnit.tokens[index].unit = newUnit;
@@ -737,8 +713,7 @@
                         }
                         //Toggle the category for existing unit
                         if(_handler.selectedUnit.toString() !== "0"){
-
-                            return DataService.toggleCategoryForUnit(_handler.selectedUnit,category,inInitStage).then(function(res){
+                            return DataService.toggleCategoryForUnit(_handler.selectedUnit,category).then(function(res){
                                 if(res.status === "ToggleSuccess"){
                                     _handler.updateSelectedUnit(res.id);
                                     _handler.clearTokenList();
