@@ -23,6 +23,7 @@
         vm.saveTask = saveTask;
         vm.setFontSize = setFontSize;
         vm.submitTask = submitTask;
+        vm.unitsIdsList = [];
         vm.finishAll = finishAll;
         vm.checkSubmissionRestrictions = checkSubmissionRestrictions;
         vm.goToMainMenu = goToMainMenu;
@@ -222,6 +223,22 @@
             return false;
         }
 
+        function buildUnitsIdList(treeId, annotationUnits) {
+            vm.unitsIdsList.push(treeId);
+            for (var i = 0; i < annotationUnits.length; i++) {
+                if (annotationUnits[i].AnnotationUnits) {
+                    buildUnitsIdList(annotationUnits[i].tree_id, annotationUnits[i].AnnotationUnits);
+                }
+            }
+        }
+
+        function collapseTree() {
+            // Collapse all units i the tree after 'FinishAll'
+            buildUnitsIdList(DataService.tree.tree_id, DataService.tree.AnnotationUnits);
+            for (var i = 0; i < vm.unitsIdsList.length; i++) {
+                DataService.getUnitById(vm.unitsIdsList[i]).gui_status = "HIDDEN";
+            }
+        }
 
         function finishAll(){
             var rootUnit = DataService.getUnitById("0");
@@ -230,6 +247,7 @@
             if (finishAllResult){
                 selectionHandlerService.updateSelectedUnit(0);
                 Core.showNotification('success','Finish All was successful');
+                collapseTree();
                 return true;
             } else{
                 return false;
