@@ -619,7 +619,7 @@
                 if (!inInitStage) {
                     // Add indexInUnit attribute to tree.tokens, its needed in the assertion
                     if (DataService.tree.tokens.length) {
-                        if (!DataService.tree.tokens[1].indexInUnit) {
+                        if (DataService.tree.tokens[0].indexInUnit === null || DataService.tree.tokens[0].indexInUnit === undefined) {
                             DataService.tree.tokens.forEach(function (token, index) {
                                 token.indexInUnit = index;
                             });
