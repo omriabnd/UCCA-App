@@ -667,6 +667,12 @@
                 }
             }
 
+            if (unit.unitType !== 'REMOTE') {
+                if (unit.cloned_from_tree_id) {
+                    throw "Unit " + unit.tree_id + " is " + unit.unitType +" unit, but it has a cloned from tree id = " + unit.cloned_from_tree_id;
+                }
+            }
+
             for (var i = 0; i < unit.AnnotationUnits.length; i++) {
                 checkRemoteUnits(unit.AnnotationUnits[i]);
             }
