@@ -637,6 +637,7 @@
                  * toggleCategory is also responsible for creating new units which are assigned a category.
                  */
                 trace("selectionHandlerService - toggleCategory");
+                //console.log("category "+category.name+"   unit "+unit.tree_id);
                 return $q(function(resolve, reject) {
                     // console.log("toggle category!!!!!!!!!!!!!, handler.selectedTokenList= " , _handler.selectedTokenList)
                     if(_handler.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(_handler.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(_handler.selectedTokenList,inInitStage)){

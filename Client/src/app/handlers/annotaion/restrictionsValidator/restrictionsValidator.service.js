@@ -328,8 +328,8 @@
 
             // check if both slots are full in a slotted  unit
             if(checkSlottedLayerProjectRestriction(annotationUnit)){
-                 showErrorModal(errorMessages['UNIT_FORBID_SLOTTED_LAYER_RULE']); //check
-                 return false;
+                showErrorModal(errorMessages['UNIT_FORBID_SLOTTED_LAYER_RULE']); //check
+                return false;
             }
 
             //check if annotationUnit has children, but an unanalyzable category is assigned to it.
@@ -340,7 +340,9 @@
                 }
             }
 
+
              if (newCategory && !newCategory.fromParentLayer && !isUnitRefinable(annotationUnit)) {
+
                 showErrorModal(getErrorMessage('NONRELEVANT_UNIT',{})); //check
                 return false;
              }
@@ -462,6 +464,7 @@
                 return false;
             }
 
+            debugger
             return {rcode: "NOT_COMPLETE"}
         }
 
@@ -507,6 +510,7 @@
             for (var i=0; i < annotationUnit.tokens.length; i++) {
                 var token = annotationUnit.tokens[i];
                 if (!token.inChildUnitTreeId && token.static.require_annotation) {
+                    debugger
                     return false;
                 }
             }

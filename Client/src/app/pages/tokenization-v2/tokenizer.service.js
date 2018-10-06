@@ -120,7 +120,7 @@
 
 
             function isRequiredAnnotation(str) {
-                var punct_regexp = /[^\'-\/;\:!\?\(\)\[\]\"\{\}\+&<>—“”\.,]/;
+                var punct_regexp = /[^\'-\/;\:!\?\(\)\[\]\"\{\}\+&<>—“”\.,\n\s]/;
                 //var temp = /^([^\u0400-\u04FF0-9A-Z%&a-zA]+)$/;
                 return punct_regexp.test(str);
             }
