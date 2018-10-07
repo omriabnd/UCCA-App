@@ -603,7 +603,7 @@
 
                                 var prevSibling = DataService.getPrevSibling(selectedUnitId);
 
-                                while(prevSibling.gui_status === "HIDDEN"){
+                                while(prevSibling.gui_status === "HIDDEN" && prevSibling.tree_id !== '0'){
                                     if(prevSibling.tree_id == "1"){
                                         prevSibling = DataService.getUnitById("0")
                                     }else{
@@ -612,7 +612,7 @@
                                 }
 
                                 while(prevSibling.tree_id != "0" && prevSibling.gui_status !== "COLLAPSE" && prevSibling.AnnotationUnits.length > 0){
-                                    prevSibling = prevSibling.AnnotationUnits[prevSibling.AnnotationUnits.length - 1];
+                                     prevSibling = prevSibling.AnnotationUnits[prevSibling.AnnotationUnits.length - 1];
                                 }
 
 
@@ -643,8 +643,6 @@
                                 break;
                             }
                             case 'deleteFromTree':{
-                                debugger
-                                debugger
                                 var selectedUnitId = selectionHandlerService.getSelectedUnitId();
                                 var currentUnit = DataService.getUnitById(selectedUnitId);
                                 if(DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
