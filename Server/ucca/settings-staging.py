@@ -43,6 +43,12 @@ LOGGING = {
         },
     },
     'handlers': {
+        'django_log': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'django.log'),
+            'formatter': 'verbose',
+        },
         'error_log': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
@@ -57,16 +63,25 @@ LOGGING = {
         },
     },
     'loggers': {
+        'django': {
+            'handlers': ['django_log'],
+            'level': 'INFO',
+            },
+        'django.server': {
+            'handlers': ['django_log'],
+            'level': 'INFO',
+            'propagate': False,
+            },
         'ucca.api': {
             'handlers': ['api_log'],
             'level': 'DEBUG',
             'propagate': True,
-        },
+            },
         'root': {
             'level': 'ERROR',
             'handlers': ['error_log'],
-        },
+            },
+        }
     }
-}
 
 
