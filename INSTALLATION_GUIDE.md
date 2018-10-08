@@ -108,7 +108,16 @@ python manage.py loaddata roles
 python manage.py loaddata roles_tabs
 python manage.py loaddata permissions
 python manage.py loaddata groups_permissions_admin
+python manage.py loaddata groups_permissions_guest
+python manage.py loaddata groups_permissions_project_manager
+python manage.py loaddata groups_permissions_annotator
+```
+
+For loading some pseudo data execute:
+```
 python manage.py loaddata categories
+python manage.py loaddata layers
+python manage.py loaddata layers_categories
 python manage.py loaddata sources
 python manage.py loaddata passages
 ```
