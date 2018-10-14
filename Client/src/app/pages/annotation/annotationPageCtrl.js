@@ -234,6 +234,7 @@
 
         function collapseTree() {
             // Collapse all units i the tree after 'FinishAll'
+            vm.unitsIdsList = [];
             buildUnitsIdList(DataService.tree.tree_id, DataService.tree.AnnotationUnits);
             for (var i = 0; i < vm.unitsIdsList.length; i++) {
                 DataService.getUnitById(vm.unitsIdsList[i]).gui_status = "HIDDEN";

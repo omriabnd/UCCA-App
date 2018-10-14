@@ -79,6 +79,15 @@
             vm.currntToken = null;
         }
 
+        function openUnits(annotationUnits) {
+            for (var u = 0 ; u < annotationUnits.length; u++) {
+                annotationUnits[u].gui_status = "OPEN";
+                if (annotationUnits[u].AnnotationUnits) {
+                    openUnits(annotationUnits[u].AnnotationUnits);
+                }
+            }
+        }
+
         function tokenDbClick(vm){
             selectionHandlerService.clearTokenList();
             if(vm.token.inChildUnitTreeId !== null && vm.token.inChildUnitTreeId !== undefined){
@@ -87,7 +96,9 @@
                   return;
                 }
                 unit.gui_status = "OPEN";
-                DataService.getUnitById(DataService.getParentUnitId(vm.token.inChildUnitTreeId)).gui_status = "OPEN";
+                // Open all children (annotation units)
+                openUnits(unit.AnnotationUnits);
+                // DataService.getUnitById(DataService.getParentUnitId(vm.token.inChildUnitTreeId)).gui_status = "OPEN";
                 selectionHandlerService.updateSelectedUnit(vm.token.inChildUnitTreeId);
 
                 Core.scrollToUnit(vm.token.inChildUnitTreeId);
