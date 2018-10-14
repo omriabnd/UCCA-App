@@ -450,14 +450,14 @@
 
                     var unitCategory = unit.categories[0] ? DataService.hashTables.categoriesHashTable[ unit.categories[0].id] : null;
                     _handler.toggleCategory(unitCategory,null,unit,unit,index != DataService.serverData.annotation_units.length -1,true).then(function(res){
-                        unit.categories.forEach(function(category,index){
-                            if(index === 0){
-
-                            }else{
-                                _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],res.id,null,null,true);
-                            }
-                            _handler.clearTokenList();
-                        });
+                        // unit.categories.forEach(function(category,index){
+                        //     if(index === 0){
+                        //
+                        //     }else{
+                        //         _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],res.id,null,null,true);
+                        //     }
+                        //     _handler.clearTokenList();
+                        // });
                     });
 
 
@@ -683,10 +683,12 @@
 
                         if(remote){
                             newUnit = angular.copy(remote);
-                            var tempCat = angular.copy(newUnit.categories[0]);
                             newUnit.categories = [];
-                            tempCat !== undefined ? newUnit.categories.push(DataService.hashTables.categoriesHashTable[tempCat.id]) : '';
 
+                            for (var i = 0; i < remote.categories.length; i++) {
+                                var tempCat = angular.copy(remote.categories[i]);
+                                tempCat !== undefined ? newUnit.categories.push(DataService.hashTables.categoriesHashTable[tempCat.id]) : '';
+                            }
                             _handler.selectedUnit = newUnit.parent_tree_id;
 
                         }
