@@ -25,7 +25,7 @@
     "id": 2,
     "name": "Implicit",
     "description": "",
-    "tooltip": "adds an implicit unit (active only in remote-unit selection mode).",
+    "tooltip": "Alt+i: adds an implicit unit (active only in remote-unit selection mode).",
     "wasDefault": false,
     "shape": "",
     "shortKey": "",
