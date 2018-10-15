@@ -464,7 +464,6 @@
                 return false;
             }
 
-            debugger
             return {rcode: "NOT_COMPLETE"}
         }
 
@@ -507,10 +506,12 @@
          * @returns {boolean}
          */
         function checkIfAllTokenThatRequireAnnotationIsInUnit(annotationUnit){
+            if (annotationUnit.unitType !== 'REGULAR') {
+                return true;
+            }
             for (var i=0; i < annotationUnit.tokens.length; i++) {
                 var token = annotationUnit.tokens[i];
                 if (!token.inChildUnitTreeId && token.static.require_annotation) {
-                    debugger
                     return false;
                 }
             }
