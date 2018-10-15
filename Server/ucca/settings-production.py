@@ -1,12 +1,10 @@
 import os
 
+# Place settings relevant to the prodcution environment
+
 ALLOWED_HOSTS = [
-       'ucca.staging',
-       'ucca.staging.cs.huji.ac.il',
-       'ucca.cs.huji.ac.il',
-       'caledonian',
-       'e-webprojects.cs.huji.ac.il',
-       'e-webprojects'
+	'ucca-demo',
+	'ucca-demo.cs.huji.ac.il',
 ]
 
 DATABASES = {
@@ -15,7 +13,7 @@ DATABASES = {
         'OPTIONS': {
             'options': '-c search_path=ucca'
         },
-        'NAME': 'ucca_staging',
+        'NAME': 'ucca_production',
         #'USER': 'pr_ucca',
         #'PASSWORD': '',
         'HOST': 'pgserver',
@@ -23,13 +21,11 @@ DATABASES = {
     }
 }
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Place for log files. This is a sensible default, you can hard code the actual directory if you want, as this is a
 # settings file
 # Also, make sure the directory actually exists with the proper permissions - pr_ucca should have write permissions.
-LOG_DIR = '/cs/labs/oabend/webserver/ucca-zigit/staging/Server/logs'
-#os.path.join(BASE_DIR, 'logs')  # Make sure this is the right folder, hard-code the right log folder if not
+LOG_DIR = '/cs/labs/oabend/webserver/ucca-zigit/production/Server/logs'
 
 LOGGING = {
     'version': 1,
@@ -43,12 +39,6 @@ LOGGING = {
         },
     },
     'handlers': {
-        'django_log': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_DIR, 'django.log'),
-            'formatter': 'verbose',
-        },
         'error_log': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
@@ -63,25 +53,24 @@ LOGGING = {
         },
     },
     'loggers': {
-        'django': {
-            'handlers': ['django_log'],
-            'level': 'INFO',
-            },
-        'django.server': {
-            'handlers': ['django_log'],
-            'level': 'INFO',
-            'propagate': False,
-            },
+	'django': {
+		'handlers': ['error_log'],
+		'level': 'INFO',
+	},
+	'django.server': {
+		'handlers': ['error_log'],
+		'level': 'INFO',
+		'propagate': False,
+	},
         'ucca.api': {
             'handlers': ['api_log'],
             'level': 'DEBUG',
             'propagate': True,
-            },
+        },
         'root': {
             'level': 'ERROR',
             'handlers': ['error_log'],
-            },
-        }
+        },
     }
-
+}
 
