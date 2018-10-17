@@ -434,7 +434,11 @@
                     var newRowId = DataService.insertToTree(objToPush,unit.parent_tree_id,index != DataService.serverData.annotation_units.length -1);
 
                     unit.categories.forEach(function(category,index){
-                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id);
+                        var cat = DataService.hashTables.categoriesHashTable[category.id];
+                        if (category.slot) {
+                            cat.slot = category.slot; // Add slot field to category, it needed in the assertion
+                        }
+                        _handler.toggleCategory(cat,unit.tree_id);
                         _handler.clearTokenList();
                     });
                 }
@@ -509,13 +513,21 @@
                     if(unit.categories.length === 0){
                         _handler.toggleCategory(null,false,unit.is_remote_copy,unit,true);
                     }else{
-                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[unit.categories[0].id],false,false,unit,true)
+                        var cat = DataService.hashTables.categoriesHashTable[unit.categories[0].id];
+                        if (unit.categories[0].slot) {
+                            cat.slot = unit.categories[0].slot;
+                        }
+                        _handler.toggleCategory(cat,false,false,unit,true)
                             .then(function(){
                                 unit.categories.forEach(function(category,index){
                                     if(index === 0){
                                         // _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],false,false,unit.gui_status);
                                     }else{
-                                        _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],unit.tree_id,false, unit);
+                                        var cat = DataService.hashTables.categoriesHashTable[category.id];
+                                        if (category.slot) {
+                                            cat.slot = category.slot;
+                                        }
+                                        _handler.toggleCategory(cat,unit.tree_id,false, unit);
                                     }
                                     _handler.clearTokenList();
                                 });
@@ -627,6 +639,12 @@
                     var unitToRest = unit;
                     if (!unitToRest) {
                         unitToRest = selectedUnit;
+                    }
+                    //update unitToRest.categories with all fields from hashTables
+                    for (var c in unitToRest.categories) {
+                        if (unitToRest.categories[c].id) {
+                            unitToRest.categories[c] = DataService.hashTables.categoriesHashTable[unitToRest.categories[c].id];
+                        }
                     }
                     return restrictionsValidatorService.checkRestrictionsBeforeAddingCategory(unitToRest, category);
                 }

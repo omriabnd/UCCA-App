@@ -70,7 +70,8 @@
                 if(!!currentLayer.parent){
                     // this is how we will know to style this category in derived layer
                     allCategories.forEach(function(cat){
-                    	cat.refinementCategory = true;
+                    	cat.refinedCategory = true;
+                    	// cat.refinementCategory = true;
                     	})
                 }
 
@@ -185,7 +186,7 @@
                            
 //                           currentUnit.gui_status = "OPEN";
 //                           restrictionsValidatorService.checkRestrictionsOnFinish(currentUnit,DataService.getUnitById(currentUnit.parent),DataService.hashTables);
-                           
+
                            currentUnit.categories.sort(function(a,b){
                                if(a.slot > 2 || b.slot > 2){
                                    return 1;

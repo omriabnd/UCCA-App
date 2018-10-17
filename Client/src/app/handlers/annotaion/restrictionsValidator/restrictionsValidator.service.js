@@ -34,16 +34,16 @@
         var restrictionsTablesIds;
         var allCategoriesTable;
         var handler = {
-          initRestrictionsTables: initRestrictionsTables,
-          checkRestrictionsBeforeInsert: checkRestrictionsBeforeInsert,
-          checkRestrictionsBeforeAddingCategory: checkRestrictionsBeforeAddingCategory,
-          checkRestrictionsOnFinish: checkRestrictionsOnFinish,
-          evaluateFinishAll: evaluateFinishAll,
-          evaluateSubmissionRestrictions: evaluateSubmissionRestrictions,
-          getTables: getTables
+            initRestrictionsTables: initRestrictionsTables,
+            checkRestrictionsBeforeInsert: checkRestrictionsBeforeInsert,
+            checkRestrictionsBeforeAddingCategory: checkRestrictionsBeforeAddingCategory,
+            checkRestrictionsOnFinish: checkRestrictionsOnFinish,
+            evaluateFinishAll: evaluateFinishAll,
+            evaluateSubmissionRestrictions: evaluateSubmissionRestrictions,
+            getTables: getTables
         };
         return handler;
-        
+
         function getTables(){
             return restrictionsTablesIds;
         }
@@ -57,7 +57,7 @@
                 REQUIRE_SIBLING:[]
             };
         }
-        
+
 
         function initRestrictionsTables(layer_restrictions,selectionHandlerService,categoriesArray){
 
@@ -207,8 +207,8 @@
                     if (cur_parent_category_id in restrictionsTablesIds['FORBID_CHILD']) {
                         var conflicting_category_ids = Core.intersectArrays(restrictionsTablesIds['FORBID_CHILD'][cur_parent_category_id], children_category_ids);
                         if (conflicting_category_ids.length > 0) {
-                        return {rcode: 'FORBID_CHILD', category1: allCategoriesTable[cur_parent_category_id].name,
-                            category2: allCategoriesTable[conflicting_category_ids[0]].name};
+                            return {rcode: 'FORBID_CHILD', category1: allCategoriesTable[cur_parent_category_id].name,
+                                category2: allCategoriesTable[conflicting_category_ids[0]].name};
                         }
                     }
 
@@ -287,8 +287,8 @@
          */
         function checkRestrictionsBeforeInsert(parentAnnotationUnit, unitType, grouped_tokens, newCategory){
             if (unitType === "REGULAR" && isOnlyPunctuation(grouped_tokens)) {
-               showErrorModal(errorMessages['UNIT_CONTAIN_ONLY_PUNCTUATIONS']); //check
-               return false;
+                showErrorModal(errorMessages['UNIT_CONTAIN_ONLY_PUNCTUATIONS']); //check
+                return false;
             }
 
             //check if parent is unanalyzable
@@ -325,9 +325,8 @@
          * Returns true if checks passed, false if failed.
          */
         function checkRestrictionsBeforeAddingCategory(annotationUnit, newCategory){
-
             // check if both slots are full in a slotted  unit
-            if(checkSlottedLayerProjectRestriction(annotationUnit)){
+            if(checkSlottedLayerProjectRestriction(annotationUnit, newCategory)){
                 showErrorModal(errorMessages['UNIT_FORBID_SLOTTED_LAYER_RULE']); //check
                 return false;
             }
@@ -341,19 +340,19 @@
             }
 
 
-             if (newCategory && !newCategory.fromParentLayer && !isUnitRefinable(annotationUnit)) {
+            if (newCategory && !newCategory.fromParentLayer && !isUnitRefinable(annotationUnit)) {
 
                 showErrorModal(getErrorMessage('NONRELEVANT_UNIT',{})); //check
                 return false;
-             }
+            }
 
-             var violation = isUnitRefinableWithCategory(annotationUnit, newCategory);
-             if (violation) {
+            var violation = isUnitRefinableWithCategory(annotationUnit, newCategory);
+            if (violation) {
                 showErrorModal(getErrorMessage('NONRELEVANT_PARENT_CATEGORY',{"%NAME_1%": violation.category1.name, "%NAME_2%": violation.category2.join(', ')}));
                 return false;
-             }
+            }
 
-             return true;
+            return true;
         }
 
 
@@ -371,9 +370,16 @@
             if (!$rootScope.isRefinementLayerProject) {
                 return true;
             }
+
             return unit.categories.some(function(category) {
                 return category.refinedCategory;
             });
+            // for (var i = 0; i < unit.categories.length; i++) {
+            //     if (unit.categories[i].refinedCategory) {// || unit.categories[i].refinementCategory) {
+            //         return true
+            //     }
+            // }
+            // return false
         }
 
         /**
@@ -385,22 +391,30 @@
          * @returns {*}
          */
         function isUnitRefinableWithCategory(unit, newCategory){
+
             if (!$rootScope.isRefinementLayerProject || !newCategory || newCategory.fromParentLayer) {
                 return null;
             }
             var unitCategoryIds = unit.categories.map(function getId(cat) {return cat.id;});
             if (!unitCategoryIds.includes(newCategory.parent.id)){
-        		var unitCategoryNames = unit.categories.map(function getName(cat) {return cat.name;});
+                var unitCategoryNames = unit.categories.map(function getName(cat) {return cat.name;});
                 return {"category1": newCategory, "category2": unitCategoryNames};
-        	}
-        	return null;
+            }
+            return null;
         }
-        
-        function checkSlottedLayerProjectRestriction(unit){
+
+        // return true if slot categories contain two categories, and can't add more categories
+        function checkSlottedLayerProjectRestriction(unit, cat){
             if( $rootScope.isSlottedLayerProject ){
-               if(unit.slotOne && unit.slotTwo){
-                  return true;
-               }
+                // check if cat exist in unit.categories, and then remove it from unit.categories
+                for (var c = 0; c < unit.categories.length; c++) {
+                    if (unit.categories[c].id === cat.id) {
+                        return false; // Remove this category.
+                    }
+                }
+                if(unit.slotOne && unit.slotTwo){
+                    return true;
+                }
             }
             return false;
         }
@@ -549,7 +563,7 @@
             });
 
         }
-        
+
         function scrollToViolationUnit(selectionHandlerServiceProvider,violationUnit){
             selectionHandlerServiceProvider.updateSelectedUnit(violationUnit.tree_id);
             Core.scrollToUnit(violationUnit.tree_id);
