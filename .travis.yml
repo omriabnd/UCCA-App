@@ -1,16 +1,19 @@
 dist: trusty
 jobs:
   include:
-    - language: python
+    - env: TEST=server
+      language: python
       python: 3.6
       services:
         - postgresql
       install:
         - cd Server
-        - pip install django djangorestframework django-filter==1.0.4 djangorestframework-filters django-rest-auth django-allauth psycopg2
+        - pip install -r requirements.txt
       before_script:
-        - psql -c 'create database "ucca-a";' -U postgres
-        - mv ucca/settings.demo.py ucca/settings.py
+        - mv ucca/settings-test.py ucca/local_settings.py
+        - psql -c 'CREATE DATABASE ucca_test;' -U postgres
+        - psql -c 'CREATE SCHEMA ucca;' -U postgres -d ucca_test
+        - psql -c 'CREATE USER pr_ucca SUPERUSER CREATEDB CREATEROLE LOGIN;' -U postgres -d ucca_test
         - python manage.py makemigrations
         - python manage.py migrate
         - python manage.py loaddata tabs
@@ -23,15 +26,14 @@ jobs:
         - python manage.py loaddata passages
         - python manage.py loaddata superuser
       script:
-        - python manage.py test
-    - language: node_js
+        - python manage.py runserver &
+    - env: TEST=client
+      language: node_js
       node_js: 8.6
       install:
         - cd Client
         - npm install bower
         - npm install
-      before_script:
-        - mv release/settings.demo.json release/settings.json
       script:
         - gulp inject
         - gulp serve:dist
