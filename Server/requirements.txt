@@ -8,7 +8,7 @@ djangorestframework==3.5.3
 djangorestframework-filters==0.9.1
 oauthlib==2.0.1
 packaging==16.8
-psycopg2==2.6.2
+psycopg2==2.7.5
 pyparsing==2.2.0
 python3-openid==3.0.10
 requests==2.12.5
