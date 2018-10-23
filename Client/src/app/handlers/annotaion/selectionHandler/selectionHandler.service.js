@@ -433,6 +433,7 @@
                      */
                     var newRowId = DataService.insertToTree(objToPush,unit.parent_tree_id,index != DataService.serverData.annotation_units.length -1);
 
+                    unit.categories.sort(compareSlot);
                     unit.categories.forEach(function(category,index){
                         var cat = DataService.hashTables.categoriesHashTable[category.id];
                         if (category.slot) {
@@ -452,6 +453,7 @@
                         unit["tokens"].push(_handler.copyTokenToStaticFormat(DataService.hashTables.tokensHashTable[token.id]));
                     });
 
+                    unit.categories.sort(compareSlot);
                     var unitCategory = unit.categories[0] ? DataService.hashTables.categoriesHashTable[ unit.categories[0].id] : null;
                     _handler.toggleCategory(unitCategory,null,unit,unit,index != DataService.serverData.annotation_units.length -1,true).then(function(res){
                         // unit.categories.forEach(function(category,index){
