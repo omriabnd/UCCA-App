@@ -504,6 +504,14 @@
                     $('.annotation-page-container').toggleClass('crosshair-cursor');
                 }
 
+                function compareSlot(a,b) {
+                  if (a.slot > b.slot)
+                    return -1;
+                  if (a.slot < b.slot)
+                    return 1;
+                  return 0;
+                }
+
                 function initRegularUnit(unit) {
                     unit.children_tokens.forEach(function(token){
                         var parentId = unit.tree_id.indexOf('-') === -1 ? "0" : unit.tree_id.split("-").slice(0,unit.tree_id.split("-").length-1).join("-");
@@ -513,6 +521,9 @@
                     if(unit.categories.length === 0){
                         _handler.toggleCategory(null,false,unit.is_remote_copy,unit,true);
                     }else{
+                        // Sort categories according to slot: slot 3 and bigger in the beginning anf after - slot 1 or 2
+                        unit.categories.sort(compareSlot);
+
                         var cat = DataService.hashTables.categoriesHashTable[unit.categories[0].id];
                         if (unit.categories[0].slot) {
                             cat.slot = unit.categories[0].slot;
