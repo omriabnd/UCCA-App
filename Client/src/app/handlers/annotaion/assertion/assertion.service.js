@@ -186,7 +186,7 @@
             }
         }
 
-         /**
+        /**
          * Finding out how many times an array element appears
          * @private
          */
@@ -288,9 +288,9 @@
             for (var i = 0; i < annotationUnits.length; i++) {
                 if (annotationUnits[i].parent_tree_id === parentId) {
                     for (var j = 0; j < annotationUnits[i].children_tokens.length; j++) {
-                       if (annotationUnits[i].children_tokens[j].id === tokenId) {
-                           return true;
-                       }
+                        if (annotationUnits[i].children_tokens[j].id === tokenId) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -519,7 +519,7 @@
                 }
 
                 /*** Check unitTreeId ***/
-                // unitTreeId: the same as the tree_id of the unit the token is in
+                    // unitTreeId: the same as the tree_id of the unit the token is in
                 var unitTreeId = tokens[t].unitTreeId;
                 if (unitTreeId !== unit.tree_id) {
                     throw "unitTreeId should be the same as the tree_id of the unit the token is in";
@@ -552,7 +552,7 @@
                 // If it's an implicit unit don't check it because implicit unit doesn't have children_tokens
                 if (serverData.annotation_units[i].type === 'IMPLICIT') {
                     if (serverData.annotation_units[i].children_tokens && serverData.annotation_units[i].children_tokens.length) {
-                       throw "Annotation unit "+ i + " is an implicit unit, it should not have children tokens";
+                        throw "Annotation unit "+ i + " is an implicit unit, it should not have children tokens";
                     }
                     return;
                 }
@@ -678,6 +678,57 @@
             }
         }
 
+        function checkSlotLayer(tree) {
+            for (var i = 0; i < tree.AnnotationUnits.length; i++) {
+                for (var c = 0; c < tree.AnnotationUnits[i].categories.length; c++) {
+                    var slotFlag1 = false;
+                    var slotFlag2 = false;
+
+                    // Check if there is a category with slot one or two => slotOne or slotTwo is true
+                    if (tree.AnnotationUnits[i].categories[c].slot === 1) {
+                        if (slotFlag1) {
+                            throw "There are few categories with slot 1 in unit " + tree.AnnotationUnits[i].tree_id;
+                        } else {
+                            var slotFlag1 = true;
+                            if (!tree.AnnotationUnits[i].slotOne) {
+                                throw "Unit " + tree.AnnotationUnits[i].tree_id + " has no 'slotOne=true'";
+                            }
+                        }
+                    }
+                    if (tree.AnnotationUnits[i].categories[c].slot === 2) {
+                        if (slotFlag2) {
+                            throw "There are few categories with slot 2 in unit " + tree.AnnotationUnits[i].tree_id;
+                        } else {
+                            var slotFlag2 = true;
+                            if (!tree.AnnotationUnits[i].slotTwo) {
+                                throw "Unit " + tree.AnnotationUnits[i].tree_id + " has no 'slotTwo=true'";
+                            }
+                        }
+                    }
+                }
+
+                // Check if slotOne or slotTwo is true => there is a category with slot one or two
+                var slot1Exist = false;
+                var slot2Exist = false;
+                if (tree.AnnotationUnits[i].slotOne || tree.AnnotationUnits[i].slotTwo) {
+                    for (c = 0; c < tree.AnnotationUnits[i].categories.length; c++) {
+                        if (tree.AnnotationUnits[i].categories[c].slot === 1) {
+                            slot1Exist = true;
+                        }
+                        if (tree.AnnotationUnits[i].categories[c].slot === 2) {
+                            slot2Exist = true;
+                        }
+                    }
+                    if (tree.AnnotationUnits[i].slotOne && !slot1Exist) {
+                        throw "slotOne is true in unit " + tree.AnnotationUnits[i].tree_id + ", but there is no a category with this slot.";
+                    }
+                    if (tree.AnnotationUnits[i].slotTwo && !slot2Exist) {
+                        throw "slotTwo is true in unit " + tree.AnnotationUnits[i].tree_id + ", but there is no a category with this slot.";
+                    }
+                }
+            }
+        }
+
         /**
          * Main function, checkTree- sends to check tree ids, annotations units and children tokens
          * @param tree (DataService.tree)- to check the ids and annotations units
@@ -715,6 +766,9 @@
                 checkTokensOrder(tree);
 
                 checkRemoteUnits(tree);
+
+                // Need to check it only if the tree is slot layer?
+                checkSlotLayer(tree)
             } catch(e) {
                 console.error(e);
             }

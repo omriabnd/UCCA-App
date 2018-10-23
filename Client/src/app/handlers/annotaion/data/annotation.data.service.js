@@ -415,7 +415,7 @@
             // level is actually the parentTreeId
 
             trace("DataService - insertToTree");
-            console.log("In insertToTree, newObject=", newObject);
+            // console.log("In insertToTree, newObject=", newObject);
 
             return $q(function(resolve, reject) {
 
