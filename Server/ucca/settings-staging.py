@@ -61,6 +61,12 @@ LOGGING = {
             'filename': os.path.join(LOG_DIR, 'api.log'),
             'formatter': 'verbose',
         },
+        'db_log': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'db.log'),
+            'formatter': 'verbose',
+        }
     },
     'loggers': {
         'django': {
@@ -77,6 +83,11 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
             },
+        'django.db.backends': {
+            'handlers': ['db_log'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
         'root': {
             'level': 'ERROR',
             'handlers': ['error_log'],
