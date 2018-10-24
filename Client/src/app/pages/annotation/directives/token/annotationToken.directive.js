@@ -246,6 +246,7 @@
                         var parentUnit = DataService.getParentUnit(tokenUnit.tokens[0].unitTreeId);
                         var elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(tokenUnit.tokens[0].static.id);
                         if(parentUnit.tokens[elementPos].static.start_index < vm.token.static.start_index && direction === "DOWN"){
+                            selectionHandlerService.keyboardToggleTokenSelection(token);
                             $rootScope.$broadcast('moveCursor', {
                                 token: parentUnit.tokens[elementPos],
                                 unitTreeId: DataService.getParentUnitId(tokenUnit.tokens[0].unitTreeId) || "0"
@@ -256,6 +257,7 @@
                 if(index === tokenListLength - 1){
                     var parentUnit = selectedTokenArray[selectedTokenArray.length - 1].unitTreeId ? DataService.getUnitById(selectedTokenArray[selectedTokenArray.length - 1].unitTreeId) :  DataService.getParentUnit("0");
                     var elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(selectedTokenArray[selectedTokenArray.length - 1].static.id);
+                    selectionHandlerService.keyboardToggleTokenSelection(token);
                     $rootScope.$broadcast('moveCursor', {
                         token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : null,
                         // token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : parentUnit.tokens[elementPos] //old code
