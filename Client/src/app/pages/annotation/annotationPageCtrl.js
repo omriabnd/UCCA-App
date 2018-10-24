@@ -37,6 +37,8 @@
         vm.defaultCategoryHotkeys = ENV_CONST.DEFAULT_CATEGORY_HOTKEYS;
 //      $scope.toggleParents = DataService.toggleParents;
 //      toggleParents = DataService.toggleParents;
+        vm.savingTask = false;
+        vm.submittingTask = false;
 
         try{
             vm.categoryReorderings = JSON.parse(DataService.currentTask.project.layer.category_reorderings);
@@ -202,8 +204,10 @@
         function submitTask(){
             var finishAllResult = vm.checkSubmissionRestrictions();
             if(finishAllResult){
+                vm.submittingTask = true;
                 return DataService.saveTask().then(function(){
                     return DataService.submitTask().then(function(res){
+                        vm.submittingTask = false;
                         Core.showNotification('success','Annotation Task Submitted.');
                         goToMainMenu(res)
                     });
@@ -354,7 +358,9 @@
         }
 
         function saveTask(){
+            vm.savingTask = true;
             return DataService.saveTask().then(function(res){
+                vm.savingTask = false;
                 Core.showNotification('success','Annotation Task Saved.');
             });
         }
