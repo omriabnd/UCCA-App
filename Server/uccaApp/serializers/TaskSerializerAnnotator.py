@@ -230,6 +230,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
 
     def save_annotation_task(self,instance):
         print('save_annotation_task - start')
+        logger.info('save_annotation_task - start')
 
         # mainly saving an annotations units array
         self.check_if_parent_task_ok_or_exception(instance)
@@ -324,6 +325,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             self.save_remote_annotation_categories(remote_unit,annotation_unit.remote_categories)
 
         print('save_annotation_task - end')
+        logger.info('save_annotation_task - end')
 
 
     def save_remote_annotation_categories(self,remote_annotation_unit,categories):
