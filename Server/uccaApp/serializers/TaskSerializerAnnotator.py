@@ -190,7 +190,6 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         else:
             self.reset_current_task(instance)
         instance.save()
-        
 
     def save_draft(self,instance):
         instance.status = 'ONGOING'
@@ -265,11 +264,14 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
 
         all_tree_ids = [] # a list of all tree_ids by their order in the input
 
+        annotation_unit_map = {}  # tree_id -> annotation_unit object
+
         for au in self.initial_data['annotation_units']:
             annotation_unit = Annotation_Units()
             if is_correct_format_tree_id(au['tree_id']):
                 annotation_unit.tree_id = au['tree_id']
                 all_tree_ids.append(au['tree_id'])
+                annotation_unit_map[annotation_unit.tree_id] = annotation_unit
             else:
                 raise TreeIdInvalid("tree_id is in an incorrect format; fix unit " + str(annotation_unit.tree_id))
 
@@ -291,7 +293,8 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
                 if not is_correct_format_tree_id_child(au['parent_tree_id'],au['tree_id']):
                     raise TreeIdInvalid("parent_tree_id and tree_id do not match in format; fix unit " + str(annotation_unit.tree_id))
 
-                parent_id = get_object_or_404(Annotation_Units, tree_id=au['parent_tree_id'],task_id=instance.id)
+                # parent_id = get_object_or_404(Annotation_Units, tree_id=au['parent_tree_id'],task_id=instance.id)
+                parent_id = annotation_unit_map[au['parent_tree_id']]
             else:
                if annotation_unit.tree_id != '0':
                    raise TreeIdInvalid("All annotation units but unit 0 must have a valid, non-null tree_id; fix unit "+str(annotation_unit.tree_id))
@@ -375,27 +378,34 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
     def save_children_tokens(self,annotation_unit,tokens,id_to_start_index):
         if tokens != None:
             print('save_children_tokens - start')
-            for t in tokens:
-                annotation_units_token = Annotation_Units_Tokens()
-                annotation_units_token.unit_id = annotation_unit
-                annotation_units_token.token_id = Tokens.objects.get(id=t['id'])
-                annotation_units_token.save()
+            annotation_units = [Annotation_Units_Tokens(unit_id=annotation_unit, token_id_id = t['id']) for t in tokens]
+            Annotation_Units_Tokens.objects.bulk_create(annotation_units)
+            # for t in tokens:
+            #     annotation_units_token = Annotation_Units_Tokens()
+            #     annotation_units_token.unit_id = annotation_unit
+            #     # annotation_units_token.token_id = Tokens.objects.get(id=t['id'])
+            #     annotation_units_token.token_id_id = t['id']
+            #     annotation_units_token.save()
             print('save_children_tokens - end')
 
 
 
     def save_annotation_categories(self,annotation_unit,categories):
         print('save_annotation_categories - start')
+        unit_categories = []
         for cat in categories:
             unit_category = Annotation_Units_Categories()
             unit_category.unit_id = annotation_unit
-            unit_category.category_id = Categories.objects.get(id=cat['id'])
+            # unit_category.category_id = Categories.objects.get(id=cat['id'])
+            unit_category.category_id_id = cat['id']
             if 'slot' in cat:    # Omri TODO: disallow the option not to specify a slot
                 unit_category.slot = cat['slot']
             else:
                 unit_category.slot = 1
             unit_category.remote_parent_id = None
-            unit_category.save()
+            unit_categories.append(unit_category)
+            # unit_category.save()
+        Annotation_Units_Categories.objects.bulk_create(unit_categories)
         print('save_annotation_categories - end')
 
 
