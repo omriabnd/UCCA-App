@@ -49,4 +49,6 @@ class AnnotatorTasksViewSet(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
         return self.context
-    
+
+    def retrieve(self, *args, **kwargs):
+        return super().retrieve(*args, **kwargs)
