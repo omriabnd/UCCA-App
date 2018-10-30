@@ -1,6 +1,5 @@
 from uccaApp.models.Categories import *
 from rest_framework import serializers
-
 from uccaApp.serializers.UsersSerializer import UsersSerializer_Simplify, DjangoUserSerializer_Simplify
 
 
