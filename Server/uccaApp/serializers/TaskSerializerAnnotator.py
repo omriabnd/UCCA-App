@@ -87,6 +87,8 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             orig_obj = obj
             obj = obj.parent_task
             annotation_units = Annotation_Units.objects.all().filter(task_id=obj.id)
+
+        annotation_units = annotation_units.select_related('parent_id')
         # handle new refinement or extention layer taks - get the parent annotation units - end
 
 
@@ -97,10 +99,10 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             au.is_remote_copy = False
 
             # check if i have a remote units
-            remote_units = Annotation_Remote_Units_Annotation_Units.objects.all().filter(unit_id=au)
+            remote_units = Annotation_Remote_Units_Annotation_Units.objects.filter(unit_id=au).select_related('remote_unit_id')
             for ru in remote_units:
                 # retrieve its original unit
-                remote_original_unit = Annotation_Units.objects.get(id = ru.remote_unit_id.id, task_id=obj.id)
+                remote_original_unit = ru.remote_unit_id # Annotation_Units.objects.get(id = ru.remote_unit_id.id, task_id=obj.id)
                 # set the remote is_remote_copy = true
                 remote_original_unit.is_remote_copy = True
                 # set the parent_id to be the remote's one
