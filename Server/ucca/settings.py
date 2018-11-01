@@ -33,6 +33,8 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
 ]
 
+# Make sure everything is done inside database transactions
+ATOMIC_TRANSACTIONS = True
 
 # Application definition
 

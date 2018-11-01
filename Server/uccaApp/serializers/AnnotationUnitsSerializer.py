@@ -42,26 +42,24 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
 
 
     def get_categories(self, obj):
-        categories_json = []
 
         if hasattr(obj, 'is_remote_copy') == False or obj.is_remote_copy == False:
-            categories = Annotation_Units_Categories.objects.all().filter(unit_id=obj.id,remote_parent_id=None )
+            categories = Annotation_Units_Categories.objects.all().filter(unit_id=obj.id,remote_parent_id=None ).order_by('slot')
         else:
-            categories = Annotation_Units_Categories.objects.all().filter(unit_id=obj.id, remote_parent_id=obj.parent_id)
-        
+            categories = Annotation_Units_Categories.objects.all().filter(unit_id=obj.id, remote_parent_id=obj.parent_id).order_by('slot')
+
+        #omri: the following commandd was supposed to replace the json below, but it seems we need the full object
+        #categories_json = [dict(id=cat.id) for cat in categories]
+        categories_json = []
         for cat in categories:
             categories_json.append(CategoryInUnitSerializer(cat).data)
-
-        if categories:
-            pass
-
         return categories_json
 
     def get_children_tokens(self, obj):
         tokens = Annotation_Units_Tokens.objects.all().filter(unit_id=obj.id).order_by('token_id__start_index')
-        tokens_json = []
-        for t in tokens:
-            tokens_json.append(TokensSerializer_Simplify(t.token_id).data)   
+        tokens_json = [dict(id=token.token_id_id) for token in tokens]
+#        for t in tokens:
+#            tokens_json.append(TokensSerializer_Simplify(t.token_id).data)
         return tokens_json
 
 
