@@ -691,6 +691,7 @@
                         } else {
                             var slotFlag1 = true;
                             if (!tree.AnnotationUnits[i].slotOne) {
+                                // debugger
                                 throw "Unit " + tree.AnnotationUnits[i].tree_id + " has no 'slotOne=true'";
                             }
                         }
@@ -723,6 +724,7 @@
                         throw "slotOne is true in unit " + tree.AnnotationUnits[i].tree_id + ", but there is no a category with this slot.";
                     }
                     if (tree.AnnotationUnits[i].slotTwo && !slot2Exist) {
+                        // debugger
                         throw "slotTwo is true in unit " + tree.AnnotationUnits[i].tree_id + ", but there is no a category with this slot.";
                     }
                 }
