@@ -434,6 +434,8 @@
                     var newRowId = DataService.insertToTree(objToPush,unit.parent_tree_id,index != DataService.serverData.annotation_units.length -1);
 
                     unit.categories.sort(compareSlot);
+                    changeSlots(unit.categories);
+
                     unit.categories.forEach(function(category,index){
                         var cat = DataService.hashTables.categoriesHashTable[category.id];
                         if (category.slot) {
@@ -454,6 +456,7 @@
                     });
 
                     unit.categories.sort(compareSlot);
+                    changeSlots(unit.categories);
                     var unitCategory = unit.categories[0] ? DataService.hashTables.categoriesHashTable[ unit.categories[0].id] : null;
                     _handler.toggleCategory(unitCategory,null,unit,unit,index != DataService.serverData.annotation_units.length -1,true).then(function(res){
                         // unit.categories.forEach(function(category,index){
@@ -514,6 +517,15 @@
                   return 0;
                 }
 
+                //categories array should be: [slot:3, slot:4, ..., slot:1, slot:2]
+                function changeSlots(categories) {
+                    if (categories[categories.length-1].slot === 1 && categories[categories.length-2].slot === 2) {
+                        var tmp = categories[categories.length-1];
+                        categories[categories.length-1] = categories[categories.length-2];
+                        categories[categories.length-2] = tmp;
+                    }
+                }
+
                 function initRegularUnit(unit) {
                     unit.children_tokens.forEach(function(token){
                         var parentId = unit.tree_id.indexOf('-') === -1 ? "0" : unit.tree_id.split("-").slice(0,unit.tree_id.split("-").length-1).join("-");
@@ -523,8 +535,11 @@
                     if(unit.categories.length === 0){
                         _handler.toggleCategory(null,false,unit.is_remote_copy,unit,true);
                     }else{
+
                         // Sort categories according to slot: slot 3 and bigger in the beginning anf after - slot 1 or 2
                         unit.categories.sort(compareSlot);
+                        changeSlots(unit.categories);
+                        var slotCategories = angular.copy(unit.categories);
 
                         var cat = DataService.hashTables.categoriesHashTable[unit.categories[0].id];
                         if (unit.categories[0].slot) {
@@ -533,18 +548,29 @@
                         _handler.toggleCategory(cat,false,false,unit,true)
                             .then(function(){
                                 unit.categories.forEach(function(category,index){
+                                    // if (unit.tree_id=="14")
+                                        // debugger
                                     if(index === 0){
                                         // _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],false,false,unit.gui_status);
                                     }else{
+                                        var  slot = category.slot
                                         var cat = DataService.hashTables.categoriesHashTable[category.id];
-                                        if (category.slot) {
-                                            cat.slot = category.slot;
+                                        if (slot) {
+                                            cat.slot = slot;
                                         }
                                         _handler.toggleCategory(cat,unit.tree_id,false, unit);
                                     }
                                     _handler.clearTokenList();
                                 });
+
+                                for (var i = 0; i < slotCategories.length; i++) {
+                                    if (slotCategories[i].slot !== unit.categories[i].slot) {
+                                        unit.categories[i].slot = slotCategories[i].slot;
+                                    }
+                                }
                             });
+
+
                     }
 
                     _handler.clearTokenList();
@@ -653,10 +679,14 @@
                     if (!unitToRest) {
                         unitToRest = selectedUnit;
                     }
-                    //update unitToRest.categories with all fields from hashTables
+                    //update unitToRest.categories with all fields from hashTables, add slot field
                     for (var c in unitToRest.categories) {
                         if (unitToRest.categories[c].id) {
+                            var slot = unitToRest.categories[c].slot;
                             unitToRest.categories[c] = DataService.hashTables.categoriesHashTable[unitToRest.categories[c].id];
+                            if (slot) {
+                                unitToRest.categories[c].slot = slot;
+                            }
                         }
                     }
                     return restrictionsValidatorService.checkRestrictionsBeforeAddingCategory(unitToRest, category);
@@ -671,10 +701,15 @@
                 //console.log("category "+category.name+"   unit "+unit.tree_id);
                 return $q(function(resolve, reject) {
                     // console.log("toggle category!!!!!!!!!!!!!, handler.selectedTokenList= " , _handler.selectedTokenList)
+
+                    if (unit.tree_id == "14") {
+                        // debugger
+                    }
                     if(_handler.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(_handler.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(_handler.selectedTokenList,inInitStage)){
                         return
                     }
-                     // Check the restrictions for the new unit here, before making any modifications to the data in the DataService
+
+                    // Check the restrictions for the new unit here, before making any modifications to the data in the DataService
                     if(!inInitStage && !_handler.checkRestrictions(category, unit)) {
                         return reject("Failed");
                     }
