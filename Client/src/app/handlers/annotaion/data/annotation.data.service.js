@@ -941,9 +941,9 @@
                         firstSlotIndex++;
                     }
                 }
-                if (treeNode.tree_id=="11"||treeNode.tree_id=="14"){
-                    // debugger
-                }
+//                if (treeNode.tree_id=="11"||treeNode.tree_id=="14"){
+//                    // debugger
+//                }
                 if(treeNode.slotOne) {
                     console.log("In unit " , unit.tree_id, " , slot one is true");
                     unit.categories[firstSlotIndex]['slot'] = 1;
