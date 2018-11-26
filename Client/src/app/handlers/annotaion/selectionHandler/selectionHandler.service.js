@@ -519,7 +519,8 @@
 
                 //categories array should be: [slot:3, slot:4, ..., slot:1, slot:2]
                 function changeSlots(categories) {
-                    if (categories[categories.length-1].slot === 1 && categories[categories.length-2].slot === 2) {
+                    if (categories.length >= 2 &&
+                        categories[categories.length-1].slot === 1 && categories[categories.length-2].slot === 2) {
                         var tmp = categories[categories.length-1];
                         categories[categories.length-1] = categories[categories.length-2];
                         categories[categories.length-2] = tmp;
