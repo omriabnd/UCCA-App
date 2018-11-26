@@ -703,9 +703,9 @@
                 return $q(function(resolve, reject) {
                     // console.log("toggle category!!!!!!!!!!!!!, handler.selectedTokenList= " , _handler.selectedTokenList)
 
-                    if (unit.tree_id == "14") {
-                        // debugger
-                    }
+//                    if (unit.tree_id == "14") {
+//                        // debugger
+//                    }
                     if(_handler.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(_handler.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(_handler.selectedTokenList,inInitStage)){
                         return
                     }
