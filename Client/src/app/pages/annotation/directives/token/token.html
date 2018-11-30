@@ -1,5 +1,5 @@
 <span class="token-wrapper"
-      ng-class="{'clicked': vm.tokenInSelectionList(vm) && vm.tokenUnitIsSelected(vm)}"
+      ng-class="{'clicked': vm.tokenInSelectionList(vm) && vm.tokenUnitIsSelected(vm), 'unitSelected': vm.tokenUnitIsSelected(vm), 'not-relevant': vm.notRelevant(vm) && !showParents, 'finished': vm.unitIsFinished(vm)}"
       border-paint style="{{ vm.token.borderStyle }}"
       ng-init="vm.initToken(vm,$index)"
       ng-dblclick="vm.tokenDbClick(vm)">
