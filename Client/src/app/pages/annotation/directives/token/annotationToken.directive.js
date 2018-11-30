@@ -29,9 +29,10 @@
             $scope.vm = $scope.dirCtrl;
             $scope.vm.token['indexInUnit'] = !$scope.vm.token['indexInUnit'] ? $scope.$parent.$index : $scope.vm.token['indexInUnit'];
             $scope.vm.tokenInSelectionList = tokenInSelectionList;
-            $scope.vm.notRelevant = notRelevant;
+            $scope.vm.relevant = relevant;
             $scope.vm.unitIsFinished = unitIsFinished;
             $scope.vm.tokenUnitIsSelected = tokenUnitIsSelected;
+            $scope.vm.highlightToken = highlightToken;
 
             $scope.$on('tokenIsClicked', function(event, args) {
                 var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
@@ -298,20 +299,31 @@
             return token.static.index_in_task + 1 !== token.unit.tokens[index + 1].static.index_in_task;
         }
 
-        function notRelevant(vm){
-            var unit = DataService.getUnitById(vm.token.unit);
-            if(!!unit && unit.categories !== undefined && unit.categories.length > 0){
-                var cat0 = unit.categories[0];
-                return cat0.fromParentLayer && !cat0.refinedCategory;
-            }else{
-                return false;
+        function relevant(vm){
+            debugger;
+            var hasParentCategories = false;
+            for (var i = 0; i < token.unit.categories.length; i++) {
+                var cat = vm.token.unit.categories[i];
+                if (cat.fromParentLayer) {
+                    hasParentCategories = true;
+                    if (cat.refinedCategory) {
+                        return true;
+                    }
+                }
             }
+            return !hasParentCategories;
         }
 
         function unitIsFinished(vm){
-            var unit = DataService.getUnitById(vm.token.unit);
-            return !!unit && !notRelevant(vm) && !!unit.finished;
+            debugger;
+            return !!vm.token.unit && relevant(vm) && !!vm.token.unit.finished;
         }
+
+        function highlightToken(vm){
+            debugger;
+            return tokenUnitIsSelected(vm) && selectionHandlerService.getSelectedUnitId() != "0";
+        }
+
     }
 
 })();
