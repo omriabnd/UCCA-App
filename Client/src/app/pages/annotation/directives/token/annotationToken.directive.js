@@ -299,7 +299,7 @@
         }
 
         function notRelevant(vm){
-            var unit = DataService.getUnitById(vm.token.inUnit);
+            var unit = DataService.getUnitById(vm.token.unit);
             if(!!unit && unit.categories !== undefined && unit.categories.length > 0){
                 var cat0 = unit.categories[0];
                 return cat0.fromParentLayer && !cat0.refinedCategory;
@@ -309,8 +309,8 @@
         }
 
         function unitIsFinished(vm){
-            var unit = DataService.getUnitById(vm.token.inUnit);
-            return !!unit && !notRelevant(vm.token) && !!unit.finished;
+            var unit = DataService.getUnitById(vm.token.unit);
+            return !!unit && !notRelevant(vm) && !!unit.finished;
         }
     }
 
