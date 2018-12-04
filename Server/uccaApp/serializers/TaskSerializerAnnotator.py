@@ -74,10 +74,15 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         return tokens_json
 
     def get_annotation_units(self, obj):
+        # TODO: See of obj.annotation_json is not None - and return the stored json
+        # TODO: If not, create the json using the internal function below and store it in the database
+
         logger.info("get_annotation_units accessed")
         # **********************************
         #           AS ARRAY
         # **********************************
+
+        # TODO: Place all this in an internal function
         orig_obj = None
         annotation_units = Annotation_Units.objects.all().filter(task_id=obj.id)
 
@@ -173,6 +178,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         if instance.status == 'SUBMITTED':
             raise CantChangeSubmittedTaskExeption
 
+        # TODO: Clear instance.annotation_json and save instance
         save_type = self.context['save_type']
         if(save_type  == 'draft'):
             self.save_draft(instance)
