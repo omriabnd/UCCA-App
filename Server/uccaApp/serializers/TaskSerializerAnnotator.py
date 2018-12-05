@@ -1,3 +1,4 @@
+import json
 import logging
 logger = logging.getLogger("ucca.api")
 
@@ -8,7 +9,7 @@ from rest_framework import serializers
 from uccaApp.util.exceptions import SaveTaskTypeDeniedException, CantChangeSubmittedTaskExeption, GetForInactiveTaskException, TreeIdInvalid, TokensInvalid, UnallowedValueError
 from uccaApp.util.functions import get_value_or_none, active_obj_or_raise_exeption
 from uccaApp.util.tokenizer import isPunct
-from uccaApp.models import Annotation_Remote_Units_Annotation_Units
+from uccaApp.models import Annotation_Remote_Units_Annotation_Units, Annotation_Json
 from uccaApp.models import Annotation_Units_Tokens
 from uccaApp.models import Categories
 from uccaApp.models import Tokens, Annotation_Units
@@ -23,6 +24,7 @@ from uccaApp.serializers.ProjectSerializerForAnnotator import ProjectSerializerF
 from uccaApp.serializers.TokenSerializer import TokensSerializer
 from uccaApp.serializers.UsersSerializer import DjangoUserSerializer_Simplify
 import operator, pdb
+
 
 class TaskSerializerAnnotator(serializers.ModelSerializer):
     created_by = DjangoUserSerializer_Simplify(many=False, read_only=True)
@@ -74,63 +76,73 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         return tokens_json
 
     def get_annotation_units(self, obj):
-        # TODO: See of obj.annotation_json is not None - and return the stored json
-        # TODO: If not, create the json using the internal function below and store it in the database
-
         logger.info("get_annotation_units accessed")
         # **********************************
         #           AS ARRAY
         # **********************************
 
-        # TODO: Place all this in an internal function
-        orig_obj = None
-        annotation_units = Annotation_Units.objects.all().filter(task_id=obj.id)
-
-        # handle new refinement or extention layer taks - get the parent annotation units - start
-        if( len(annotation_units) == 0  and obj.parent_task is not None): # TODO: check if coarsening task is ok with that
-            # get the parent task annotation units
-            orig_obj = obj
-            obj = obj.parent_task
+        def create_annotation(obj):
+            # TODO: Place all this in an internal function
+            orig_obj = None
             annotation_units = Annotation_Units.objects.all().filter(task_id=obj.id)
 
-        annotation_units = annotation_units.select_related('parent_id')
-        # handle new refinement or extention layer taks - get the parent annotation units - end
+            # handle new refinement or extention layer taks - get the parent annotation units - start
+            if (len(
+                    annotation_units) == 0 and obj.parent_task is not None):  # TODO: check if coarsening task is ok with that
+                # get the parent task annotation units
+                orig_obj = obj
+                obj = obj.parent_task
+                annotation_units = Annotation_Units.objects.all().filter(task_id=obj.id)
 
+            annotation_units = annotation_units.select_related('parent_id')
+            # handle new refinement or extention layer taks - get the parent annotation units - end
 
-        annotation_units_json = []
-        remote_annotation_unit_array = []
-        for au in annotation_units:
-            # set as default is_remote_copy = False
-            au.is_remote_copy = False
+            annotation_units_json = []
+            remote_annotation_unit_array = []
+            for au in annotation_units:
+                # set as default is_remote_copy = False
+                au.is_remote_copy = False
 
-            # check if i have a remote units
-            remote_units = Annotation_Remote_Units_Annotation_Units.objects.filter(unit_id=au).select_related('remote_unit_id')
-            for ru in remote_units:
-                # retrieve its original unit
-                remote_original_unit = ru.remote_unit_id # Annotation_Units.objects.get(id = ru.remote_unit_id.id, task_id=obj.id)
-                # set the remote is_remote_copy = true
-                remote_original_unit.is_remote_copy = True
-                # set the parent_id to be the remote's one
-                remote_original_unit.parent_id = ru.unit_id
-                # setting the cloned_from tree_id
-                cloned_from_tree_id = remote_original_unit.tree_id
-                # set the tree_id to be that of the remote unit
-                remote_original_unit.tree_id = ru.remote_unit_tree_id
-                # add the remote original unit to the json output
-                annotation_units_json.append(Annotation_UnitsSerializer(remote_original_unit,context={'cloned_from_tree_id': cloned_from_tree_id}).data)
+                # check if i have a remote units
+                remote_units = Annotation_Remote_Units_Annotation_Units.objects.filter(unit_id=au).select_related(
+                    'remote_unit_id')
+                for ru in remote_units:
+                    # retrieve its original unit
+                    remote_original_unit = ru.remote_unit_id  # Annotation_Units.objects.get(id = ru.remote_unit_id.id, task_id=obj.id)
+                    # set the remote is_remote_copy = true
+                    remote_original_unit.is_remote_copy = True
+                    # set the parent_id to be the remote's one
+                    remote_original_unit.parent_id = ru.unit_id
+                    # setting the cloned_from tree_id
+                    cloned_from_tree_id = remote_original_unit.tree_id
+                    # set the tree_id to be that of the remote unit
+                    remote_original_unit.tree_id = ru.remote_unit_tree_id
+                    # add the remote original unit to the json output
+                    annotation_units_json.append(Annotation_UnitsSerializer(remote_original_unit, context={
+                        'cloned_from_tree_id': cloned_from_tree_id}).data)
 
-            au_data = Annotation_UnitsSerializer(au).data
+                au_data = Annotation_UnitsSerializer(au).data
 
-            if (orig_obj and orig_obj.project.layer.type != Constants.LAYER_TYPES_JSON['ROOT']):
-                # take Annotation_UnitsSerializer(au).data, and alter slot to be 3+
-                for index,cat in enumerate(au_data['categories']):
-                    au_data['categories'][index]['slot'] = 3 + index
-            annotation_units_json.append(au_data)
-            
-        # return all array sorted with all the remote units in the end
+                if (orig_obj and orig_obj.project.layer.type != Constants.LAYER_TYPES_JSON['ROOT']):
+                    # take Annotation_UnitsSerializer(au).data, and alter slot to be 3+
+                    for index, cat in enumerate(au_data['categories']):
+                        au_data['categories'][index]['slot'] = 3 + index
+                annotation_units_json.append(au_data)
 
-        annotation_units_json.sort(key=lambda x: tuple([int(a) for a in x['tree_id'].split('-')]))
-        return annotation_units_json
+            # return all array sorted with all the remote units in the end
+
+            annotation_units_json.sort(key=lambda x: tuple([int(a) for a in x['tree_id'].split('-')]))
+            return annotation_units_json
+
+        if obj.annotation_json:
+            data = json.loads(obj.annotation_json.annotation_json)
+        else:
+            data = create_annotation(obj)
+            data_json = json.dumps(data)
+            aj = Annotation_Json.objects.create(task=obj, annotation_json=data_json)
+            obj.annotation_json = aj
+            obj.save()
+        return data
 
         #return sorted(annotation_units_json, key=operator.itemgetter('is_remote_copy'), reverse=False)
 
@@ -143,14 +155,11 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         #     au = None
         # return Annotation_UnitsSerializer(au).data
 
-
-
     def get_root_task(self,task_instance):
         root_task = task_instance
         while (root_task.parent_task != None ):
             root_task = root_task.parent_task
         return root_task.id
-
 
     class Meta:
         model = Tasks
@@ -173,12 +182,12 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             'updated_at'
         )
 
-
     def update(self, instance, validated_data):
         if instance.status == 'SUBMITTED':
             raise CantChangeSubmittedTaskExeption
 
         # TODO: Clear instance.annotation_json and save instance
+        instance.annotation_json = None
         save_type = self.context['save_type']
         if(save_type  == 'draft'):
             self.save_draft(instance)
@@ -188,7 +197,6 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             self.reset(instance)
     
         return instance
-
 
     def reset(self,instance):
         instance.status = Constants.TASK_STATUS_JSON['NOT_STARTED']
@@ -209,7 +217,6 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         elif (instance.type == Constants.TASK_TYPES_JSON['REVIEW']):
             self.save_review_task(instance)
         instance.save()
-
 
     def reset_tokenization_task(self,instance):
         self.check_if_parent_task_ok_or_exception(instance)
@@ -232,8 +239,6 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             newToken.end_index = token['end_index']
             instance.tokens_set.add(newToken,bulk=False)
         print('save_tokenization_task - end')
-
-
 
     def save_annotation_task(self,instance):
         print('save_annotation_task - start')
@@ -338,7 +343,6 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         print('save_annotation_task - end')
         logger.info('save_annotation_task - end')
 
-
     def save_remote_annotation_categories(self,remote_annotation_unit,categories):
         print('save_remote_annotation_categories - start')
         for cat in categories:
@@ -365,7 +369,6 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         # reset annotaion_units
         task_instance.annotation_units_set.all().delete()
         print('reset_current_task - end')
-
 
     def save_annotation_remote_unit(self,annotation_unit):
         remote_unit = Annotation_Remote_Units_Annotation_Units()
@@ -396,8 +399,6 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             #     annotation_units_token.save()
             print('save_children_tokens - end')
 
-
-
     def save_annotation_categories(self,annotation_unit,categories):
         print('save_annotation_categories - start')
         unit_categories = []
@@ -416,14 +417,11 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         Annotation_Units_Categories.objects.bulk_create(unit_categories)
         print('save_annotation_categories - end')
 
-
-
     def save_review_task(self,instance):
         # TODO: CHECK IF OK !!!!
         print('save_review_task - start')
         self.save_annotation_task(instance)
         print('save_review_task - end')
-
 
     def submit(self,instance):
         if instance.type == Constants.TASK_TYPES_JSON['TOKENIZATION']:
