@@ -798,6 +798,8 @@
 
         function switchToRemoteMode(vm,event){
             trace("annotationUnitDirective - switchToRemoteMode");
+            // Change focus to the unit where '+' was clicked.
+            selectionHandlerService.setSelectedUnitId(vm.treeId);
             addAsRemoteUnit(vm);
         }
 
