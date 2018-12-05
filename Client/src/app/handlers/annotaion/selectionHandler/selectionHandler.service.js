@@ -378,11 +378,6 @@
                 });
             },
 
-            setSelectedUnitId: function(unit){
-                trace("selectionHandlerService - setSelectedUnitId");
-                this.selectedUnit = unit;
-            },
-
             getSelectedUnitId: function(){
                 trace("selectionHandlerService - getSelectedUnitId");
                 return this.selectedUnit;
@@ -524,10 +519,8 @@
 
                 //categories array should be: [slot:3, slot:4, ..., slot:1, slot:2]
                 function changeSlots(categories) {
-                    if (categories.length < 2) {
-                        return;
-                    }
-                    if (categories[categories.length-1].slot === 1 && categories[categories.length-2].slot === 2) {
+                    if (categories.length >= 2 &&
+                        categories[categories.length-1].slot === 1 && categories[categories.length-2].slot === 2) {
                         var tmp = categories[categories.length-1];
                         categories[categories.length-1] = categories[categories.length-2];
                         categories[categories.length-2] = tmp;
