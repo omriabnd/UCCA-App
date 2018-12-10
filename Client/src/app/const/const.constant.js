@@ -100,14 +100,14 @@
 			{color: "white", backgroundColor: "#AACC55"},
 			{color: "white", backgroundColor: "#db3937"},
 			{color: "white", backgroundColor: "#9302d9"},
-			{color: "white", backgroundColor: "#ef86af"},
+			{color: "white", backgroundColor: "#efaaaf"},
 			{color: "white", backgroundColor: "#ff7b23"},
 			{color: "white", backgroundColor: "#3f32fe"},
 			{color: "white", backgroundColor: "#cb9d02"},
 			{color: "white", backgroundColor: "#935754"},
 			{color: "white", backgroundColor: "#4099b7"},
 			{color: "black", backgroundColor: "#66CDAA"},
-			{color: "white", backgroundColor: "#DC143C"}
+			{color: "white", backgroundColor: "#FF00FF"}
 		],
 		NAV_BAR_ITEMS:[
 			{

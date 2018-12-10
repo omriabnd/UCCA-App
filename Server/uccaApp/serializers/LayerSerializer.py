@@ -135,7 +135,7 @@ class LayerSerializer(serializers.ModelSerializer):
             if newLayer is not None:
                 if newLayer.type ==  Constants.LAYER_TYPES_JSON['EXTENSION']:
                     self.save_layer_categories(newLayer, categories)
-                elif newLayersavee ==  Constants.LAYER_TYPES_JSON['REFINEMENT']:
+                elif newLayer.type ==  Constants.LAYER_TYPES_JSON['REFINEMENT']:
                     self.save_layer_categories(newLayer, categories)
                     self.save_derived_categories(newLayer, categories)
                 elif newLayer.type == Constants.LAYER_TYPES_JSON['COARSENING']:
