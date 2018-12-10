@@ -383,6 +383,11 @@
                 return this.selectedUnit;
             },
 
+            setSelectedUnitId: function(unit){
+                trace("selectionHandlerService - setSelectedUnitId");
+                this.selectedUnit = unit;
+            },
+
             // TODO: Remove this function, the mouseDown variable and getMouseMode
             toggleMouseUpDown: function(){
                 trace("selectionHandlerService - toggleMouseUpDown");

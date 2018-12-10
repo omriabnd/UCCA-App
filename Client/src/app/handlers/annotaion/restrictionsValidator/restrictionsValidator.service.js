@@ -17,7 +17,7 @@
         */
         var errorMessages ={
             FORBID_ANY_CHILD : 'Category %NAME% cannot have any children.',
-            FORBID_ANY_CHILD_ADD_CATEGORY: 'Category %NAME% cannot have any children.',
+            // FORBID_ANY_CHILD_ADD_CATEGORY: 'Category %NAME% cannot have any children.',
             FORBID_CHILD : 'Category %NAME_1% cannot have child with category %NAME_2%.',
             FORBID_SIBLING: 'Category %NAME_1% cannot have sibling with category %NAME_2%.',
             REQUIRE_SIBLING: 'Category %NAME_1% requires one of the following categories : [%NAME_2%] as a sibling.',
@@ -334,6 +334,7 @@
             //check if annotationUnit has children, but an unanalyzable category is assigned to it.
             if (annotationUnit.AnnotationUnits && annotationUnit.AnnotationUnits.length > 0) {
                 if (restrictionsTablesIds['FORBID_ANY_CHILD'].includes(newCategory.id)) {
+                    debugger
                     showErrorModal(getErrorMessage('FORBID_ANY_CHILD',{"%NAME%": newCategory.name}));
                     return false;
                 }
@@ -488,6 +489,7 @@
          * @param annotationUnit
          */
         function isUnanalyzableUnit(annotationUnit) {
+            debugger
             if (annotationUnit.tree_id === '0') {
                 return false;
             }

@@ -89,6 +89,7 @@
         }
 
         function tokenDbClick(vm){
+            // debugger
             selectionHandlerService.clearTokenList();
             if(vm.token.inChildUnitTreeId !== null && vm.token.inChildUnitTreeId !== undefined){
                 var unit = DataService.getUnitById(vm.token.inChildUnitTreeId);
