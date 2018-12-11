@@ -716,7 +716,12 @@
                     }
 
                     // Check the restrictions for the new unit here, before making any modifications to the data in the DataService
-                    if(!inInitStage && !_handler.checkRestrictions(category, unit)) {
+                    // declare unitTOCheck, if unit is undefined, take it according to justToggle (unit id)
+                    var unitToCheck = unit;
+                    if (!unit && justToggle) {
+                        unitToCheck = DataService.getUnitById(justToggle);
+                    }
+                    if(!inInitStage && !_handler.checkRestrictions(category, unitToCheck)) {
                         return reject("Failed");
                     }
 
