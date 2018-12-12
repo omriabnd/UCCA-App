@@ -435,8 +435,8 @@
             trace("annotationUnitDirective - colorUnit");
             colorUnitTokens(unit);
 
-            unit.AnnotationUnits.forEach(function(unit) {
-                colorUnit(unit);
+            unit.AnnotationUnits.forEach(function (u) {
+                colorUnit(u);
             });
         }
 

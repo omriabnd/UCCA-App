@@ -230,9 +230,8 @@
                     return selectionHandlerService.initTree().then(function(){
                         selectionHandlerService.updateSelectedUnit("0",false);
                         
-                        var lastUnitId = selectionHandlerService.getTreeLastId(DataService.tree);
-                        
-                        var lastUnitText = $('#unit-'+lastUnitId);
+                        // var lastUnitId = selectionHandlerService.getTreeLastId(DataService.tree);
+                        // var lastUnitText = $('#unit-'+lastUnitId);
                         
                         return{
                             Task:taskResponse,

@@ -107,7 +107,8 @@
 			{color: "white", backgroundColor: "#935754"},
 			{color: "white", backgroundColor: "#4099b7"},
 			{color: "black", backgroundColor: "#66CDAA"},
-			{color: "white", backgroundColor: "#FF00FF"}
+			{color: "white", backgroundColor: "#FF00FF"},
+			{color: "white", backgroundColor: "#A1A1A1"}
 		],
 		NAV_BAR_ITEMS:[
 			{
