@@ -53,6 +53,11 @@
 
                 var currentLayer = taskResponse.project.layer;
                 var allCategories = currentLayer.categories;
+
+                // Omri: I commented out the below block which sorts the categories alphabetically.
+                // This is a bug, since we want the categories to be ordered the same way as in the layer
+                // admin screen.
+                /*
                 allCategories.sort(function(a, b) {
                 	  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
                 	  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
@@ -65,7 +70,7 @@
 
                 	  // names must be equal
                 	  return 0;
-                	});
+                	});*/
 
                 if(!!currentLayer.parent){
                     // this is how we will know to style this category in derived layer
