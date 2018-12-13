@@ -54,6 +54,7 @@
             vm.dataBlock.tree_id !== "0" ? updateStartEndIndexForTokens(vm.dataBlock.tokens) : '';
 
             vm.dataBlock.categoriesTooltip = categoriesTooltip(vm);
+            vm.showClusterButton = $rootScope.isSlottedLayerProject;
         }
 
         function annotationUnitDirectiveLink($scope, elem, attrs,$rootScope) {
