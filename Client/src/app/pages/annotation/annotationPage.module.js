@@ -158,7 +158,7 @@
                 // it back to the Server or for working in the client.**/
                 DataService.serverData = taskResponse;
 
-                restrictionsValidatorService.initRestrictionsTables(taskResponse.project.layer.restrictions,selectionHandlerService,allCategories);
+                restrictionsValidatorService.initRestrictionsTables(taskResponse.project.layer.restrictions,selectionHandlerService, DataService, allCategories);
 
                 setCategoriesColor(AnnotationTextService,allCategories);
                 setCategoriesAbbreviation(AnnotationTextService,allCategories);
