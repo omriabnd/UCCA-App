@@ -572,7 +572,7 @@
         function scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, violationUnit){
             // If Finish All fails, it should open and place focus on the violating unit.
             selectionHandlerServiceProvider.updateSelectedUnit(violationUnit.tree_id);
-            const parentUnit = dataServiceProvider.getUnitById(violationUnit.parent_tree_id);
+            var parentUnit = dataServiceProvider.getUnitById(violationUnit.parent_tree_id);
             if (parentUnit.gui_status === 'COLLAPSE') {
                 parentUnit.gui_status = 'OPEN';
             }
