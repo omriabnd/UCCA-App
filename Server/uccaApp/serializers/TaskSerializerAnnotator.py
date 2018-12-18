@@ -351,6 +351,80 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         print('save_annotation_task - end')
         logger.info('save_annotation_task - end')
 
+    def validate_annotation_task(self, instance):
+        # TODO: Split into validate_annotation_task and save_annotation_task
+        # validate_annotation_task only validates the initial_data without reading or writing to the database
+        # self.initial_data is the JSON received from the frontend
+        print('validate_annotation_task - start')
+        logger.info('validate_annotation_task - start')
+
+        # mainly saving an annotations units array
+        self.check_if_parent_task_ok_or_exception(instance)  # Validation
+
+        # validating tokens
+        tokens = self.initial_data['tokens']
+        if not strictly_increasing([x['start_index'] for x in tokens]):
+            raise TokensInvalid("tokens should be ordered by their start_index")
+        tokens_id_to_startindex = dict([(x['id'], x['start_index']) for x in tokens])
+        children_tokens_list_for_validation = []
+        for au in self.initial_data['annotation_units']:
+            cur_children_tokens = au.get('children_tokens')
+            try:
+                if cur_children_tokens:
+                    cur_children_tokens_start_indices = [tokens_id_to_startindex[x['id']] for x in cur_children_tokens]
+                else:
+                    if au['type'] == 'IMPLICIT' or au['tree_id'] == '0':
+                        cur_children_tokens_start_indices = None
+                    else:
+                        raise TokensInvalid("Only implicit units may not have a children_tokens field")
+            except KeyError:
+                raise TokensInvalid("children_tokens contains a token which is not in the task's tokens list.")
+            children_tokens_list_for_validation.append(
+                (au['tree_id'], (au['parent_tree_id'], au['is_remote_copy'], cur_children_tokens_start_indices)))
+
+        print("children_tokens_list_for_validation: " + str(cur_children_tokens_start_indices))
+        if not check_children_tokens(children_tokens_list_for_validation):
+            raise TokensInvalid("Inconsistency in children_tokens detected.")
+
+        all_tree_ids = []  # a list of all tree_ids by their order in the input
+
+        for au in self.initial_data['annotation_units']:
+            if not is_correct_format_tree_id(au['tree_id']):
+                raise TreeIdInvalid("tree_id is in an incorrect format; fix unit " + str(au['tree_id']))
+
+            if not au['type'] in [x[0] for x in Constants.ANNOTATION_UNIT_TYPES]:
+                raise UnallowedValueError("An annotation unit is given an unallowed type: " + au['type'])
+
+            if au['parent_tree_id']:
+                if not is_correct_format_tree_id(au['parent_tree_id']):
+                    raise TreeIdInvalid(
+                        "parent_tree_id is in an incorrect format; fix unit " + str(au['tree_id']))
+                if not is_correct_format_tree_id_child(au['parent_tree_id'], au['tree_id']):
+                    raise TreeIdInvalid(
+                        "parent_tree_id and tree_id do not match in format; fix unit " + str(au['tree_id']))
+            else:
+                if au['tree_id'] != '0':
+                    raise TreeIdInvalid(
+                        "All annotation units but unit 0 must have a valid, non-null tree_id; fix unit " + str(
+                            au['tree_id']))
+
+            if au['is_remote_copy']:
+                if au['cloned_from_tree_id']:
+                    if not is_correct_format_tree_id(au['cloned_from_tree_id']):
+                        raise TreeIdInvalid("cloned_from_tree_id is in an incorrect format; fix unit " + str(
+                            au['tree_id']))
+                else:
+                    raise TreeIdInvalid("cloned_from_tree_id should be defined for all remote units")
+            else:  # not a remote unit
+                if au['cloned_from_tree_id']:
+                    raise TreeIdInvalid("cloned_from_tree_id should not be defined for non-remote units")
+
+        if not is_tree_ids_uniq_and_consecutive(all_tree_ids):
+            raise TreeIdInvalid("tree_ids within a unit should be unique and consecutive")
+
+        print('validate_annotation_task - end')
+        logger.info('validate_annotation_task - end')
+
     def save_remote_annotation_categories(self,remote_annotation_unit,categories):
         print('save_remote_annotation_categories - start')
         for cat in categories:
