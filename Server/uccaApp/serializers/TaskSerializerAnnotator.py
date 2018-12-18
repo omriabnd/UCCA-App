@@ -199,6 +199,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         return instance
 
     def reset(self,instance):
+        # TODO: Clear instance.annotation_json
         instance.status = Constants.TASK_STATUS_JSON['NOT_STARTED']
         instance.user_comment = ''
         if (instance.type == Constants.TASK_TYPES_JSON['TOKENIZATION']):
@@ -213,8 +214,10 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         if (instance.type == Constants.TASK_TYPES_JSON['TOKENIZATION']):
             self.save_tokenization_task(instance)
         elif (instance.type == Constants.TASK_TYPES_JSON['ANNOTATION']):
+            # TODO: Validate and then just save the json
             self.save_annotation_task(instance)
         elif (instance.type == Constants.TASK_TYPES_JSON['REVIEW']):
+            # TODO: Validate and then just save the json
             self.save_review_task(instance)
         instance.save()
 
@@ -240,15 +243,18 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             instance.tokens_set.add(newToken,bulk=False)
         print('save_tokenization_task - end')
 
-    def save_annotation_task(self,instance):
+    def save_annotation_task(self, instance):
+        # TODO: Split into validate_annotation_task and save_annotation_task
+        # validate_annotation_task only validates the initial_data without reading or writing to the database
+        # self.initial_data is the JSON received from the frontend
         print('save_annotation_task - start')
         logger.info('save_annotation_task - start')
 
         # mainly saving an annotations units array
-        self.check_if_parent_task_ok_or_exception(instance)
-        self.reset_current_task(instance)
+        self.check_if_parent_task_ok_or_exception(instance)  # Validation
+        self.reset_current_task(instance)  # DB
         remote_units_array = []
-        instance.user_comment = self.initial_data['user_comment']
+        instance.user_comment = self.initial_data['user_comment']  # DB
 
         # validating tokens
         tokens = self.initial_data['tokens']
@@ -330,6 +336,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
                 if au['cloned_from_tree_id']:
                     raise TreeIdInvalid("cloned_from_tree_id should not be defined for non-remote units")
                 instance.annotation_units_set.add(annotation_unit,bulk=False)
+                # The following two functions just save data and do not validate anything
                 self.save_children_tokens(annotation_unit, get_value_or_none('children_tokens', au),tokens_id_to_startindex)
                 self.save_annotation_categories(annotation_unit, get_value_or_none('categories', au))
 
@@ -337,6 +344,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             raise TreeIdInvalid("tree_ids within a unit should be unique and consecutive")
 
         for annotation_unit in remote_units_array:
+            # TODO: Check if these functions do any validation
             remote_unit = self.save_annotation_remote_unit(annotation_unit)
             self.save_remote_annotation_categories(remote_unit,annotation_unit.remote_categories)
 
@@ -426,6 +434,14 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
     def submit(self,instance):
         if instance.type == Constants.TASK_TYPES_JSON['TOKENIZATION']:
             self.save_tokenization_task(instance)
+        # TODO: Call save_annotation_task and save_review_task, too.
+        # elif (instance.type == Constants.TASK_TYPES_JSON['ANNOTATION']):
+        #    self.save_annotation_task(instance)
+        #elif (instance.type == Constants.TASK_TYPES_JSON['REVIEW']):
+        #    self.save_review_task(instance)
+        #
+
+
         instance.status = 'SUBMITTED'
         instance.save(update_fields=['status'])
 
