@@ -214,7 +214,9 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             self.save_tokenization_task(instance)
         elif (instance.type == Constants.TASK_TYPES_JSON['ANNOTATION']):
             self.validate_annotation_task(instance)
-            instance.annotation_json = self.initial_data['annotation_units']
+            data_json = json.dumps(self.initial_data['annotation_units'])
+            aj = Annotation_Json.objects.create(task=instance, annotation_json=data_json)
+            instance.annotation_json = aj
         elif (instance.type == Constants.TASK_TYPES_JSON['REVIEW']):
             # TODO: Validate and then just save the json
             self.save_review_task(instance)
@@ -441,7 +443,9 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         all_tree_ids = []  # a list of all tree_ids by their order in the input
 
         for au in self.initial_data['annotation_units']:
-            if not is_correct_format_tree_id(au['tree_id']):
+            if is_correct_format_tree_id(au['tree_id']):
+                all_tree_ids.append(au['tree_id'])
+            else:
                 raise TreeIdInvalid("tree_id is in an incorrect format; fix unit " + str(au['tree_id']))
 
             if not au['type'] in [x[0] for x in Constants.ANNOTATION_UNIT_TYPES]:
