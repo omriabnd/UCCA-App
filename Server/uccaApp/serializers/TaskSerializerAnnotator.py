@@ -6,7 +6,9 @@ logger = logging.getLogger("ucca.api")
 from rest_framework.generics import get_object_or_404
 from rest_framework import serializers
 
-from uccaApp.util.exceptions import SaveTaskTypeDeniedException, CantChangeSubmittedTaskExeption, GetForInactiveTaskException, TreeIdInvalid, TokensInvalid, UnallowedValueError
+from uccaApp.util.exceptions import SaveTaskTypeDeniedException, CantChangeSubmittedTaskExeption, \
+    GetForInactiveTaskException, TreeIdInvalid, TokensInvalid, UnallowedValueError, \
+    DiscrepancyBetweenTaskIdsException
 from uccaApp.util.functions import get_value_or_none, active_obj_or_raise_exeption
 from uccaApp.util.tokenizer import isPunct
 from uccaApp.models import Annotation_Remote_Units_Annotation_Units, Annotation_Json
@@ -413,6 +415,9 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         print('validate_annotation_task - start')
         logger.info('validate_annotation_task - start')
 
+        if not self.initial_data['id'] == instance.id:
+            raise DiscrepancyBetweenTaskIdsException('Task id must me the same, of the instance and of the initial data')
+
         self.check_if_parent_task_ok_or_exception(instance)
 
         # validating tokens
@@ -436,21 +441,6 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             children_tokens_list_for_validation.append(
                 (au['tree_id'], (au['parent_tree_id'], au['is_remote_copy'], cur_children_tokens_start_indices)))
 
-        print("children_tokens_list_for_validation: " + str(cur_children_tokens_start_indices))
-        if not check_children_tokens(children_tokens_list_for_validation):
-            raise TokensInvalid("Inconsistency in children_tokens detected.")
-
-        all_tree_ids = []  # a list of all tree_ids by their order in the input
-
-        for au in self.initial_data['annotation_units']:
-            if is_correct_format_tree_id(au['tree_id']):
-                all_tree_ids.append(au['tree_id'])
-            else:
-                raise TreeIdInvalid("tree_id is in an incorrect format; fix unit " + str(au['tree_id']))
-
-            if not au['type'] in [x[0] for x in Constants.ANNOTATION_UNIT_TYPES]:
-                raise UnallowedValueError("An annotation unit is given an unallowed type: " + au['type'])
-
             if au['parent_tree_id']:
                 if not is_correct_format_tree_id(au['parent_tree_id']):
                     raise TreeIdInvalid(
@@ -463,6 +453,21 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
                     raise TreeIdInvalid(
                         "All annotation units but unit 0 must have a valid, non-null tree_id; fix unit " + str(
                             au['tree_id']))
+
+        print("children_tokens_list_for_validation: " + str(cur_children_tokens_start_indices))
+        if not check_children_tokens(children_tokens_list_for_validation):  # will never happens
+            raise TokensInvalid("Inconsistency in children_tokens detected.")
+
+        all_tree_ids = []  # a list of all tree_ids by their order in the input
+
+        for au in self.initial_data['annotation_units']:
+            if is_correct_format_tree_id(au['tree_id']):
+                all_tree_ids.append(au['tree_id'])
+            else:
+                raise TreeIdInvalid("tree_id is in an incorrect format; fix unit " + str(au['tree_id']))
+
+            if not (au['type'] in [x[0] for x in Constants.ANNOTATION_UNIT_TYPES]):
+                raise UnallowedValueError("An annotation unit is given an unallowed type: " + au['type'])
 
             if au['is_remote_copy']:
                 if au['cloned_from_tree_id']:
