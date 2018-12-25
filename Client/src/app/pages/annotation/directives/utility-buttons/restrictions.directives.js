@@ -33,7 +33,7 @@
     }
 
     /** @ngInject */
-    function DefinitionsController($scope,$rootScope, DataService, $timeout, $compile,selectionHandlerService) {
+    function DefinitionsController($scope,$rootScope, DataService, $timeout, $compile,selectionHandlerService, Core) {
         // Injecting $scope just for comparison
         var defCtrl = this;
 
@@ -52,57 +52,64 @@
             var selectedUnitId = selectionHandlerService.getSelectedUnitId();
             var selectedUnit = DataService.getUnitById(selectedUnitId);
 
-            if(DataService.unitType === 'REGULAR' && selectedUnit.unitType !== "REMOTE" && selectedUnit.unitType !== "IMPLICIT"){
+            if(DataService.unitType === 'REGULAR' && selectedUnit.unitType !== "REMOTE" && selectedUnit.unitType !== "IMPLICIT") {
                 var objToPush = {
-                    rowId : '',
-                    text : '<span>IMPLICIT UNIT</span>',
+                    rowId: '',
+                    text: '<span>IMPLICIT UNIT</span>',
                     numOfAnnotationUnits: 0,
-                    categories:[], // {color:defCtrl.definitionDetails.backgroundColor}
-                    comment:"",
-                    cluster:"",
-                    rowShape:'',
-                    unitType:'IMPLICIT',
+                    categories: [], // {color:defCtrl.definitionDetails.backgroundColor}
+                    comment: "",
+                    cluster: "",
+                    rowShape: '',
+                    unitType: 'IMPLICIT',
                     orderNumber: '-1',
-                    gui_status:'OPEN',
-                    usedAsRemote:[],
-                    children_tokens:[],
+                    gui_status: 'OPEN',
+                    usedAsRemote: [],
+                    children_tokens: [],
                     containsAllParentUnits: false,
-                    tokens:[{
+                    tokens: [{
                         static: {
                             "text": "IMPLICIT UNIT",
                         },
-                        "unitTreeId":selectionHandlerService.getSelectedUnitId(),
-                        "inChildUnitTreeId":null
+                        "unitTreeId": selectionHandlerService.getSelectedUnitId(),
+                        "inChildUnitTreeId": null
                     }],
-                    AnnotationUnits : [
-
-                    ]
+                    AnnotationUnits: []
                 };
 
-                debugger
-                // OMRI ADDED 30/7
+                // // OMRI ADDED 30/7
+                // if (selectionHandlerService.checkRestrictionsForImplicit(selectedUnit)) {
+                //     var newRowId = DataService.insertToTree(objToPush,selectionHandlerService.getSelectedUnitId());
+                // }
+
+                // 25/12: Focus should change to implicit unit when it is added
                 if (selectionHandlerService.checkRestrictionsForImplicit(selectedUnit)) {
-                    var newRowId = DataService.insertToTree(objToPush,selectionHandlerService.getSelectedUnitId());
+                    DataService.insertToTree(objToPush, selectionHandlerService.getSelectedUnitId()).then(function (res) {
+                        if (res.status === "InsertSuccess") {
+                            selectionHandlerService.updateSelectedUnit(res.id, true);
+                            Core.scrollToUnit(res.id);
+                        }
+                    });
                 }
 
 
-                // DataService.getUnitById($rootScope.clckedLine).usedAsRemote.push(newRowId);
+                    // DataService.getUnitById($rootScope.clckedLine).usedAsRemote.push(newRowId);
 
-                // $timeout(function(){
-                //     $scope.$apply();
-                //     DataService.unitType = 'REGULAR';
-                //     // $('#'+$rootScope.clickedUnit).toggleClass('highlight-unit');
-                //     $("[unit-wrapper-id="+$rootScope.clickedUnit+"]").toggleClass('highlight-unit');
-                //     $('.annotation-page-container').toggleClass('crosshair-cursor');
-                //     $( ".unit-wrapper" ).attr('mousedown','').unbind('mousedown');
-                //     $( ".selectable-word" ).attr('mousedown','').unbind('mousedown');
-                //     $( ".selectable-word" ).on('mousedown',$rootScope.tokenClicked);
-                //     $( ".directive-info-data-container" ).attr('mousedown','').unbind('mousedown');
-                //     $( ".directive-info-data-container" ).on('mousedown',$rootScope.focusUnit);
-                // },0);
-                //
-                // console.log(newRowId);
-                // $compile($('.text-wrapper'))($rootScope);
+                    // $timeout(function(){
+                    //     $scope.$apply();
+                    //     DataService.unitType = 'REGULAR';
+                    //     // $('#'+$rootScope.clickedUnit).toggleClass('highlight-unit');
+                    //     $("[unit-wrapper-id="+$rootScope.clickedUnit+"]").toggleClass('highlight-unit');
+                    //     $('.annotation-page-container').toggleClass('crosshair-cursor');
+                    //     $( ".unit-wrapper" ).attr('mousedown','').unbind('mousedown');
+                    //     $( ".selectable-word" ).attr('mousedown','').unbind('mousedown');
+                    //     $( ".selectable-word" ).on('mousedown',$rootScope.tokenClicked);
+                    //     $( ".directive-info-data-container" ).attr('mousedown','').unbind('mousedown');
+                    //     $( ".directive-info-data-container" ).on('mousedown',$rootScope.focusUnit);
+                    // },0);
+                    //
+                    // console.log(newRowId);
+                    // $compile($('.text-wrapper'))($rootScope);
             }
         }
 
