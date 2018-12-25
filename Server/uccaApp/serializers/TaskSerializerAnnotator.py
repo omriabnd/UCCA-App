@@ -220,9 +220,10 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             aj = Annotation_Json.objects.create(task=instance, annotation_json=data_json)
             instance.annotation_json = aj
         elif (instance.type == Constants.TASK_TYPES_JSON['REVIEW']):
-            # TODO: Validate and then just save the json
-            self.save_review_task(instance)
-            instance.annotation_json = self.initial_data['annotation_units']
+            self.validate_annotation_task(instance)
+            data_json = json.dumps(self.initial_data['annotation_units'])
+            aj = Annotation_Json.objects.create(task=instance, annotation_json=data_json)
+            instance.annotation_json = aj
         instance.save()
 
     def reset_tokenization_task(self,instance):
@@ -426,16 +427,19 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             raise TokensInvalid("tokens should be ordered by their start_index")
         tokens_id_to_startindex = dict([(x['id'], x['start_index']) for x in tokens])
         children_tokens_list_for_validation = []
+        largest_start_index = self.initial_data['tokens'][-1]['start_index']
         for au in self.initial_data['annotation_units']:
             cur_children_tokens = au.get('children_tokens')
             try:
                 if cur_children_tokens:
                     cur_children_tokens_start_indices = [tokens_id_to_startindex[x['id']] for x in cur_children_tokens]
+                    if any(start_index > largest_start_index for start_index in cur_children_tokens_start_indices):
+                        raise TokensInvalid("Invalid start index, large then the biggest token")
                 else:
-                    if au['type'] == 'IMPLICIT' or au['tree_id'] == '0':
+                    if au['type'] == 'IMPLICIT':
                         cur_children_tokens_start_indices = None
                     else:
-                        raise TokensInvalid("Only implicit units may not have a children_tokens field")
+                        raise TokensInvalid("Only implicit units may not have a children_tokens field. Annotation unit %s does not contain children_tokens" %au['tree_id'])
             except KeyError:
                 raise TokensInvalid("children_tokens contains a token which is not in the task's tokens list.")
             children_tokens_list_for_validation.append(
@@ -569,13 +573,12 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
     def submit(self,instance):
         if instance.type == Constants.TASK_TYPES_JSON['TOKENIZATION']:
             self.save_tokenization_task(instance)
-        # TODO: Call save_annotation_task and save_review_task, too.
-        # elif (instance.type == Constants.TASK_TYPES_JSON['ANNOTATION']):
-        #    self.save_annotation_task(instance)
-        #elif (instance.type == Constants.TASK_TYPES_JSON['REVIEW']):
-        #    self.save_review_task(instance)
-        #
-
+        elif (instance.type == Constants.TASK_TYPES_JSON['ANNOTATION']):
+            self.validate_annotation_task(instance)
+            self.save_annotation_task(instance)
+        elif (instance.type == Constants.TASK_TYPES_JSON['REVIEW']):
+            self.validate_annotation_task(instance)
+            self.save_review_task(instance)
 
         instance.status = 'SUBMITTED'
         instance.save(update_fields=['status'])
