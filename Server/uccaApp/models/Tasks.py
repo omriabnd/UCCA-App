@@ -31,6 +31,8 @@ class Tasks(models.Model):
     out_of_date = models.BooleanField(default=False)
     obsoleted_by = models.IntegerField(null=True,default=None)
     parent_obsoleted_by = models.IntegerField(null=True,default=None)
+
+    annotation_json = models.ForeignKey("Annotation_Json", null=True)
     
     """
     def get_out_of_date(self):
