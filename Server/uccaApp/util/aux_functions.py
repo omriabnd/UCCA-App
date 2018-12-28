@@ -58,9 +58,9 @@ def strictly_increasing(L):
 
 def check_children_tokens(children_tokens_items_list):
     """
-    Receives a list of pairs: a unit ID and a pair of (parent_tree_id, is_remote_copy, children_tokens).
+    Receives a list of pairs: a unit ID and a tuple of (parent_tree_id, is_remote_copy, children_tokens).
     children_tokens is a list of start_index values of the tokens.
-    Implcit units have None instead of children_tokens
+    Implicit units have None instead of children_tokens
     Returns True iff it's valid
     """
     children_tokens_dict = dict(children_tokens_items_list)
@@ -68,11 +68,11 @@ def check_children_tokens(children_tokens_items_list):
         parent_tree_id = entry[0]
         is_remote_copy = entry[1]
         children_tokens = entry[2]
-        if children_tokens and annotation_unit != '0':
+        if children_tokens:
             if not strictly_increasing(children_tokens):
                 print(children_tokens)
                 raise TokensInvalid("children_tokens is not properly ordered by start_index")
-            if not is_remote_copy and parent_tree_id != '0' and not set(children_tokens).issubset(set(children_tokens_dict[parent_tree_id][2])):
+            if annotation_unit != '0' and not is_remote_copy and not set(children_tokens).issubset(set(children_tokens_dict[parent_tree_id][2])):
                 raise TokensInvalid("children_tokens is not a sub-set of its parent's children_tokens")
 
         # validating that:
