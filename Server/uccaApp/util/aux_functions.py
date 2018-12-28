@@ -73,7 +73,6 @@ def check_children_tokens(children_tokens_items_list):
                 print(children_tokens)
                 raise TokensInvalid("children_tokens is not properly ordered by start_index")
             if annotation_unit != '0' and not is_remote_copy and not set(children_tokens).issubset(set(children_tokens_dict[parent_tree_id][2])):
-            # if annotation_unit != '0' and not is_remote_copy and parent_tree_id != '0' and not set(children_tokens).issubset(set(children_tokens_dict[parent_tree_id][2])):
                 raise TokensInvalid("children_tokens is not a sub-set of its parent's children_tokens")
 
         # validating that:
