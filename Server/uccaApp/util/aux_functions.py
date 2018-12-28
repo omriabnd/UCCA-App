@@ -58,9 +58,9 @@ def strictly_increasing(L):
 
 def check_children_tokens(children_tokens_items_list):
     """
-    Receives a list of pairs: a unit ID and a pair of (parent_tree_id, is_remote_copy, children_tokens).
+    Receives a list of pairs: a unit ID and a tuple of (parent_tree_id, is_remote_copy, children_tokens).
     children_tokens is a list of start_index values of the tokens.
-    Implcit units have None instead of children_tokens
+    Implicit units have None instead of children_tokens
     Returns True iff it's valid
     """
     children_tokens_dict = dict(children_tokens_items_list)
