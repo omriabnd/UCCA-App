@@ -31,6 +31,7 @@
             SLOT_ONE_RESTRICTION_VIOLATION: "All units in a slotted layer must have a category in their slot #1"
         };
         var selectionHandlerServiceProvider;
+        var dataServiceProvider;
         var restrictionsTablesIds;
         var allCategoriesTable;
         var handler = {
@@ -59,7 +60,7 @@
         }
 
 
-        function initRestrictionsTables(layer_restrictions,selectionHandlerService,categoriesArray){
+        function initRestrictionsTables(layer_restrictions,selectionHandlerService, dataService, categoriesArray){
 
             allCategoriesTable = {};
             for (var i=0; i < categoriesArray.length; i++) {
@@ -71,6 +72,7 @@
                 addRestrictionToTable(restriction);
             });
             selectionHandlerServiceProvider = selectionHandlerService;
+            dataServiceProvider = dataService;
         }
 
         function addRestrictionToTable(restriction){
@@ -123,21 +125,21 @@
                 violation = unitViolatesSlotOneRestriction(annotationUnit);
                 if (violation) {
                     showErrorModal(errorMessages[violation.rcode] + ' (failed in unit ' + annotationUnit.tree_id + ')');
-                    scrollToViolationUnit(selectionHandlerServiceProvider,annotationUnit);
+                    scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, annotationUnit);
                     return false;
                 }
 
                 violation = unitHasNonDefaultCategory(annotationUnit);
                 if (violation) {
                     showErrorModal(errorMessages[violation.rcode] + ' (failed in unit ' + annotationUnit.tree_id + ')');
-                    scrollToViolationUnit(selectionHandlerServiceProvider,annotationUnit);
+                    scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, annotationUnit);
                     return false;
                 }
 
                 violation = checkIfVoilateEachTokenInUnit(annotationUnit);
                 if (violation) {
                     showErrorModal(errorMessages[violation.rcode]+' (failed in unit '+annotationUnit.tree_id+')');
-                    scrollToViolationUnit(selectionHandlerServiceProvider,annotationUnit);
+                    scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, annotationUnit);
                     return false;
                 }
             }
@@ -146,7 +148,7 @@
             violation = unitViolatesSiblingAndChildrenRestrictions(annotationUnit);
             if (violation) {
                 showErrorModal(getErrorMessage(violation.rcode,{'%NAME_1%': violation.category1, '%NAME_2%': violation.category2},annotationUnit.tree_id));
-                scrollToViolationUnit(selectionHandlerServiceProvider,annotationUnit);
+                scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, annotationUnit);
                 return false;
             }
 
@@ -567,8 +569,13 @@
 
         }
 
-        function scrollToViolationUnit(selectionHandlerServiceProvider,violationUnit){
+        function scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, violationUnit){
+            // If Finish All fails, it should open and place focus on the violating unit.
             selectionHandlerServiceProvider.updateSelectedUnit(violationUnit.tree_id);
+            var parentUnit = dataServiceProvider.getUnitById(violationUnit.parent_tree_id);
+            if (parentUnit.gui_status === 'COLLAPSE') {
+                parentUnit.gui_status = 'OPEN';
+            }
             Core.scrollToUnit(violationUnit.tree_id);
         }
 

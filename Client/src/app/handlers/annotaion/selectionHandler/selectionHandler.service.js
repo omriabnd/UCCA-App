@@ -369,13 +369,14 @@
                 shouldBeSelected.forEach(function(token) {
                     _handler.addTokenToList(token, token.unitTreeId); // addTokenToList already handles tokens already in the list
                 });
-                currentlySelected.forEach(function(token) {
-                    // If token is not in shouldBeSelected, remove selection from token
-                    var elementPos = _handler.findElementPosition(shouldBeSelected, token);
-                    if (elementPos === -1) {
-                        _handler.removeTokenFromList(token.static.id);
-                    }
-                });
+                // Comment it- because it causes to bug: Can't continue a selection with the arrows which was first made by the mouse.
+                // currentlySelected.forEach(function(token) {
+                //     // If token is not in shouldBeSelected, remove selection from token
+                //     var elementPos = _handler.findElementPosition(shouldBeSelected, token);
+                //     if (elementPos === -1) {
+                //         _handler.removeTokenFromList(token.static.id);
+                //     }
+                // });
             },
 
             getSelectedUnitId: function(){
