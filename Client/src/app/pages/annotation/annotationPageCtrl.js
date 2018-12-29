@@ -47,6 +47,8 @@
         }
 
         vm.fontSizes = [
+            // this sets the different font sizes in the annotation page
+            {preview:"AAAA",name:"Big",size:1.2},
             {preview:"AAA",name:"big",size:1},
             {preview:"AA",name:"normal",size:0.9},
             {preview:"A",name:"small",size:0.8}
