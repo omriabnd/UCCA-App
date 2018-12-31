@@ -209,6 +209,7 @@
                 // console.log("Token list cleared");
 
                 if(!afterInsert){
+                    // This code apparently handles tokens whose child unit has been deleted
                     _handler.getSelectedTokenList().forEach(function(token){
                         if(token.unitTreeId === undefined){
                             token.unitTreeId = "0";
