@@ -11,7 +11,7 @@
     function utilityButtonsDirective() {
         var directive = {
             restrict:'E',
-            templateUrl:'app/pages/annotation/directives/utility-buttons/restrictions.html',
+            templateUrl:'app/pages/annotation/directives/utility-buttons/utilityButtons.html',
             scope:{
                 definitionDetails: '=',
                 definitionId: '='
@@ -77,15 +77,11 @@
                     AnnotationUnits: []
                 };
 
-                // // OMRI ADDED 30/7
-                // if (selectionHandlerService.checkRestrictionsForImplicit(selectedUnit)) {
-                //     var newRowId = DataService.insertToTree(objToPush,selectionHandlerService.getSelectedUnitId());
-                // }
-
-                // 25/12: Focus should change to implicit unit when it is added
+                // TODO: move check restrictions into DataService.insertToTree()
                 if (selectionHandlerService.checkRestrictionsForImplicit(selectedUnit)) {
                     DataService.insertToTree(objToPush, selectionHandlerService.getSelectedUnitId()).then(function (res) {
                         if (res.status === "InsertSuccess") {
+                            // Focus should change to implicit unit when it is added
                             selectionHandlerService.updateSelectedUnit(res.id, true);
                             Core.scrollToUnit(res.id);
                         }
