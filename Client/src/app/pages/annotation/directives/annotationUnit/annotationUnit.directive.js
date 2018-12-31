@@ -775,9 +775,8 @@
 
             var currentUnit = DataService.getUnitById(unitId);
 
-
             // if(DataService.unitsUsedAsRemote[unitId] !==  undefined && !Core.isEmptyObject(DataService.unitsUsedAsRemote[unitId])){
-            if(currentUnit.cloned_to_tree_ids){
+            if(currentUnit.cloned_to_tree_ids && currentUnit.cloned_to_tree_ids.length){
                 // open('app/pages/annotation/templates/deleteAllRemoteModal.html','md',Object.keys(DataService.unitsUsedAsRemote[unitId]).length,vm);
                 open('app/pages/annotation/templates/deleteAllRemoteModal.html','md', currentUnit.cloned_to_tree_ids.length,vm);
             }else{
