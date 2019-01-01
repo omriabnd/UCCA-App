@@ -67,6 +67,7 @@ class PassageSerializer(serializers.ModelSerializer):
 
         instance.type = validated_data.get('type', instance.type)
         instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.external_id = validated_data.get('external_id', instance.is_active)
         instance.save()
         return instance
 
