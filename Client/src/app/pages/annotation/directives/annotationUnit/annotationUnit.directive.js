@@ -849,6 +849,11 @@
                     open('app/pages/annotation/templates/errorModal.html','sm','Cannot add remote unit as remote.',vm);
                     return;
                 }
+                if(DataService.getUnitById(index).unitType === "IMPLICIT"){
+                    $('.annotation-page-container').removeClass('crosshair-cursor');
+                    open('app/pages/annotation/templates/errorModal.html','sm','Cannot add implicit unit as remote.',vm);
+                    return;
+                }
                 // selectionHandlerService.disableTokenClicked();
                 DataService.unitType = 'REMOTE';
                 // var clickedUnit  = selectionHandlerService.getUnitToAddRemotes();
