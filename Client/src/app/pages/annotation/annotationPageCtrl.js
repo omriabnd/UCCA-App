@@ -532,6 +532,9 @@
                                 break;
                             }
                             case 'moveRightWithShift':{
+                                if (DataService.getUnitById(selectedUnitId).unitType === 'REMOTE' || DataService.getUnitById(selectedUnitId).unitType === 'IMPLICIT') {
+                                    return
+                                }
                                 // DataService.getUnitById(selectedUnitId).cursorLocation++;
                                 $rootScope.$broadcast("moveRight",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
                                 break;
@@ -546,6 +549,9 @@
                                 break;
                             }
                             case 'moveLeftWithShift':{
+                                if (DataService.getUnitById(selectedUnitId).unitType === 'REMOTE' || DataService.getUnitById(selectedUnitId).unitType === 'IMPLICIT') {
+                                    return
+                                }
                                 // DataService.getUnitById(selectedUnitId).cursorLocation--;
                                 $rootScope.$broadcast("moveLeft",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
                                 break;
