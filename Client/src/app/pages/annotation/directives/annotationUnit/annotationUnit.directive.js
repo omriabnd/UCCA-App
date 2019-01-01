@@ -775,9 +775,8 @@
 
             var currentUnit = DataService.getUnitById(unitId);
 
-
             // if(DataService.unitsUsedAsRemote[unitId] !==  undefined && !Core.isEmptyObject(DataService.unitsUsedAsRemote[unitId])){
-            if(currentUnit.cloned_to_tree_ids){
+            if(currentUnit.cloned_to_tree_ids && currentUnit.cloned_to_tree_ids.length){
                 // open('app/pages/annotation/templates/deleteAllRemoteModal.html','md',Object.keys(DataService.unitsUsedAsRemote[unitId]).length,vm);
                 open('app/pages/annotation/templates/deleteAllRemoteModal.html','md', currentUnit.cloned_to_tree_ids.length,vm);
             }else{
@@ -848,6 +847,12 @@
                     selectionHandlerService.setUnitToAddRemotes("0");
                     $('.annotation-page-container').removeClass('crosshair-cursor');
                     open('app/pages/annotation/templates/errorModal.html','sm','Cannot add remote unit as remote.',vm);
+                    return;
+                }
+                if(DataService.getUnitById(index).unitType === "IMPLICIT"){
+                    selectionHandlerService.setUnitToAddRemotes("0");
+                    $('.annotation-page-container').removeClass('crosshair-cursor');
+                    open('app/pages/annotation/templates/errorModal.html','sm','Cannot add implicit unit as remote.',vm);
                     return;
                 }
                 // selectionHandlerService.disableTokenClicked();

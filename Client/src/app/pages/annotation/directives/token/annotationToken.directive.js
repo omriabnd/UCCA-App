@@ -48,15 +48,15 @@
                 }
             });
 
-            /*
+/*
             // TODO: Only catch this event if this token is in unit 0
-            // TODO: Highlight using a CSS class and not a style
+            // Highlight using a CSS class and not a style
             $scope.$on('highlightTokens', function(event, args) {
-                $scope.vm.token.highlightStyle = ''; // reset pre highlight
+                $scope.vm.token.highlightStyle = undefined; // reset pre highlight
                 for (var i=0; i<args.tokens.length;i++)
                 {
                     if ($scope.vm.token.id === args.tokens[i].id) {
-                        $scope.vm.token.highlightStyle = "font-weight: bold;";
+                        $scope.vm.token.highlightStyle = true;
                     }
                 }
             })
@@ -89,8 +89,7 @@
         }
 
         function tokenDbClick(vm){
-            // debugger
-            selectionHandlerService.clearTokenList();
+            selectionHandlerService.clearTokenList(true);
             if(vm.token.inChildUnitTreeId !== null && vm.token.inChildUnitTreeId !== undefined){
                 var unit = DataService.getUnitById(vm.token.inChildUnitTreeId);
                 if(!unit){
@@ -223,6 +222,8 @@
             return elementPos > -1;
         }
 
+        // this function took a few seconds, it causes to the bug:
+        // Select existing units in the main passage (seems to respond slowly to longer units)
         function mouseUpFromToken(vm){
             var selectedTokenArray = selectionHandlerService.getSelectedTokenList();
             var direction = "UP"
