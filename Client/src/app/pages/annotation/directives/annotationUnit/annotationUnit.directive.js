@@ -850,6 +850,7 @@
                     return;
                 }
                 if(DataService.getUnitById(index).unitType === "IMPLICIT"){
+                    selectionHandlerService.setUnitToAddRemotes("0");
                     $('.annotation-page-container').removeClass('crosshair-cursor');
                     open('app/pages/annotation/templates/errorModal.html','sm','Cannot add implicit unit as remote.',vm);
                     return;
