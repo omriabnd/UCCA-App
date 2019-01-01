@@ -24,6 +24,7 @@
             REQUIRE_CHILD: 'Category %NAME_1% requires one of the following categories : [%NAME_2%] as a child.',
             NONRELEVANT_PARENT_CATEGORY: "Category %NAME_1% is not a valid refinement of category %NAME_2%.",
             UNIT_CONTAIN_ONLY_PUNCTUATIONS : 'You cannot create annotation unit from only punctuation tokens',
+            FORBID_SUB_REMOTE_UNIT: "You cannot create unit from remote unit",
             NOT_COMPLETE : "All non-punctuation tokens must either be in a unit of their own or in an unanalyzable unit.",
             UNIT_FORBID_SLOTTED_LAYER_RULE: "Both slots are already occupied.",
             NONRELEVANT_UNIT: "None of the categories of the unit are being refined in this layer.",
@@ -288,8 +289,13 @@
          * 4. If grouped tokens are only punctuation, you cannot create a unit just from them.
          */
         function checkRestrictionsBeforeInsert(parentAnnotationUnit, unitType, grouped_tokens, newCategory){
+            if (parentAnnotationUnit.is_remote_copy) { // Check if the parent is remote unit
+                showErrorModal(errorMessages['FORBID_SUB_REMOTE_UNIT']);
+                return false;
+            }
+
             if (unitType === "REGULAR" && isOnlyPunctuation(grouped_tokens)) {
-                showErrorModal(errorMessages['UNIT_CONTAIN_ONLY_PUNCTUATIONS']); //check
+                showErrorModal(errorMessages['UNIT_CONTAIN_ONLY_PUNCTUATIONS']);
                 return false;
             }
 
