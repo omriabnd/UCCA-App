@@ -847,7 +847,13 @@
                     open('app/pages/annotation/templates/errorModal.html','sm','Unit already exists as remote.',vm);
                     return;
                 }
-                if(DataService.getUnitById(index).unitType === "REMOTE" || selectionHandlerService.getUnitToAddRemotes().startsWith(index) || index.startsWith(selectionHandlerService.getUnitToAddRemotes())){
+                if(selectionHandlerService.getUnitToAddRemotes().startsWith(index) || index.startsWith(selectionHandlerService.getUnitToAddRemotes())){
+                    selectionHandlerService.setUnitToAddRemotes("0");
+                    $('.annotation-page-container').removeClass('crosshair-cursor');
+                    open('app/pages/annotation/templates/errorModal.html','sm','Cannot add a descendant or ancestor as a remote unit.',vm);
+                    return;
+                }
+                if(DataService.getUnitById(index).unitType === "REMOTE"){
                     selectionHandlerService.setUnitToAddRemotes("0");
                     $('.annotation-page-container').removeClass('crosshair-cursor');
                     open('app/pages/annotation/templates/errorModal.html','sm','Cannot add remote unit as remote.',vm);
@@ -859,6 +865,7 @@
                     open('app/pages/annotation/templates/errorModal.html','sm','Cannot add implicit unit as remote.',vm);
                     return;
                 }
+
                 // selectionHandlerService.disableTokenClicked();
                 DataService.unitType = 'REMOTE';
                 // var clickedUnit  = selectionHandlerService.getUnitToAddRemotes();
