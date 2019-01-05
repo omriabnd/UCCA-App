@@ -89,7 +89,7 @@
         $scope.tokenizationTask.passage.text = $scope.tokenizedText;
         mode = mode ? mode : 'draft';
         return uccaFactory.saveTask(mode,$scope.tokenizationTask).then(function(response){
-          Core.showNotification("success","Task Saved");
+          Core.showNotification("success", mode == "submit" ? "Submitted" : "Task Saved");
           return response;
         })
       }

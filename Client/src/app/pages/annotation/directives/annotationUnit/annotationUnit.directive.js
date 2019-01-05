@@ -250,6 +250,9 @@
                         console.log('now');
                     }
 
+                    $scope.forceDeleteUnit = function(){
+                        DataService.deleteUnit($scope.vm.dataBlock.tree_id);
+                    }
 
                     var remoteOriginalTreeId = remoteOriginalId;
                     $scope.deleteAllRemoteInstanceOfThisUnit = function(){
@@ -775,11 +778,12 @@
 
             var currentUnit = DataService.getUnitById(unitId);
 
-            // if(DataService.unitsUsedAsRemote[unitId] !==  undefined && !Core.isEmptyObject(DataService.unitsUsedAsRemote[unitId])){
-            if(currentUnit.cloned_to_tree_ids && currentUnit.cloned_to_tree_ids.length){
-                // open('app/pages/annotation/templates/deleteAllRemoteModal.html','md',Object.keys(DataService.unitsUsedAsRemote[unitId]).length,vm);
+            if (vm.dataBlock.comment) {
+                open('app/pages/annotation/templates/deleteUnitWithComment.html','md', '',vm);
+            }
+            else if(currentUnit.cloned_to_tree_ids && currentUnit.cloned_to_tree_ids.length){
                 open('app/pages/annotation/templates/deleteAllRemoteModal.html','md', currentUnit.cloned_to_tree_ids.length,vm);
-            }else{
+            } else{
                 if(currentUnit.unitType === "REMOTE"){
                     //UpdateUsedAsRemote
                     var remoteUnit = DataService.getUnitById(currentUnit.cloned_from_tree_id);
