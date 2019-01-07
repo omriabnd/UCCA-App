@@ -1,5 +1,8 @@
 import json
 import logging
+
+from django.db import transaction
+
 logger = logging.getLogger("ucca.api")
 
 
@@ -184,6 +187,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             'updated_at'
         )
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         if instance.status == 'SUBMITTED':
             raise CantChangeSubmittedTaskExeption
@@ -427,14 +431,17 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             raise TokensInvalid("tokens should be ordered by their start_index")
         tokens_id_to_startindex = dict([(x['id'], x['start_index']) for x in tokens])
         children_tokens_list_for_validation = []
-        largest_start_index = self.initial_data['tokens'][-1]['start_index']
+        largest_index_in_task_tokens = self.initial_data['tokens'][-1]['index_in_task']
         for au in self.initial_data['annotation_units']:
             cur_children_tokens = au.get('children_tokens')
             try:
                 if cur_children_tokens:
+                    start_indices = [children_token['index_in_task'] for children_token in cur_children_tokens]
+                    if any(start_index > largest_index_in_task_tokens for start_index in start_indices):
+                        raise TokensInvalid("Invalid start index in unit %s, larger then the biggest token" % au['tree_id'])
+                    if len(start_indices) > len(set(start_indices)):
+                        raise TokensInvalid("Duplicate start index in children tokens in unit %s" % au['tree_id'])
                     cur_children_tokens_start_indices = [tokens_id_to_startindex[x['id']] for x in cur_children_tokens]
-                    if any(start_index > largest_start_index for start_index in cur_children_tokens_start_indices):
-                        raise TokensInvalid("Invalid start index, large then the biggest token")
                 else:
                     if au['type'] == 'IMPLICIT':
                         cur_children_tokens_start_indices = None
