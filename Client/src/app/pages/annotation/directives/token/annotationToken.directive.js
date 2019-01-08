@@ -225,6 +225,7 @@
         // this function took a few seconds, it causes to the bug:
         // Select existing units in the main passage (seems to respond slowly to longer units)
         function mouseUpFromToken(vm){
+            // debugger
             var selectedTokenArray = selectionHandlerService.getSelectedTokenList();
             var direction = "UP"
             if(selectionHandlerService.getLastInsertedToken() !== null && selectionHandlerService.getLastInsertedToken().static.start_index > vm.token.static.start_index){
@@ -232,7 +233,8 @@
             }
             var tokenListLength = angular.copy(selectedTokenArray.length);
 
-            selectedTokenArray.forEach(function(token,index){
+            // selectedTokenArray.forEach(function(token,index){
+            var token = selectedTokenArray[0];
                 if(token.inChildUnitTreeId){
                     var tokenUnit = DataService.getUnitById(token.inChildUnitTreeId);
                     if(tokenUnit && tokenUnit.tree_id !== '0'){
@@ -256,21 +258,22 @@
                         }
                     }
                 }
-                if(index === tokenListLength - 1){
-                    var parentUnit = selectedTokenArray[selectedTokenArray.length - 1].unitTreeId ? DataService.getUnitById(selectedTokenArray[selectedTokenArray.length - 1].unitTreeId) :  DataService.getParentUnit("0");
-                    var elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(selectedTokenArray[selectedTokenArray.length - 1].static.id);
-                    selectionHandlerService.keyboardToggleTokenSelection(token);
-                    $rootScope.$broadcast('moveCursor', {
-                        token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : null,
-                        // token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : parentUnit.tokens[elementPos] //old code
-                        unitTreeId: selectionHandlerService.getSelectedUnitId() || "0"
-                    });
-                }
+                // if(index === tokenListLength - 1){
+                //     var parentUnit = selectedTokenArray[selectedTokenArray.length - 1].unitTreeId ? DataService.getUnitById(selectedTokenArray[selectedTokenArray.length - 1].unitTreeId) :  DataService.getParentUnit("0");
+                //     var elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(selectedTokenArray[selectedTokenArray.length - 1].static.id);
+                //     selectionHandlerService.keyboardToggleTokenSelection(token);
+                //     $rootScope.$broadcast('moveCursor', {
+                //         token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : null,
+                //         // token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : parentUnit.tokens[elementPos] //old code
+                //         unitTreeId: selectionHandlerService.getSelectedUnitId() || "0"
+                //     });
+                // }
+
                 // $rootScope.$broadcast('moveCursor', {
                 //     token: vm.token,
                 //     unitTreeId: vm.token.unitTreeId || "0"
                 // });
-            })
+            // })
 
         }
 
