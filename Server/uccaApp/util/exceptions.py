@@ -64,7 +64,7 @@ class CreateCoarseningAnnotationTaskDeniedException(APIException):
 
 class CantChangeSubmittedTaskExeption(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = ('Cant change a submitted task')
+    default_detail = ("Can't change a submitted task")
     default_code = 'error'
 
 class OnlyActiveIfParentIsActiveException(APIException):
