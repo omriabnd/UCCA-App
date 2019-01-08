@@ -8,6 +8,7 @@ class Passages(models.Model):
     text = models.CharField(max_length=Constants.PASSAGES_TEXT_MAX_LENGTH)
     type = models.CharField(max_length=50, choices=Constants.PASSAGE_TYPES)
     source = models.ForeignKey(Sources,null=False,blank=False,db_column='source_id',on_delete=models.PROTECT)
+    text_direction = models.CharField(max_length=3, default=dict(Constants.TEXT_DIR_TYPES)['LTR'], choices=Constants.TEXT_DIR_TYPES)
     external_id = models.CharField(max_length=100,blank=True)
     
     created_by = models.ForeignKey(User, null=True, blank=True)

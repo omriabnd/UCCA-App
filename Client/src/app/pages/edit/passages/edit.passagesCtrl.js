@@ -31,10 +31,14 @@
 
     function edit(obj){
       var postData = angular.copy(vm.smartTableStructure);
-      var selectedSource = editPassagesService.Data.source
+      var selectedSource = editPassagesService.Data.source;
+
       postData.map(function(obj){
         if(obj.key == 'type'){
           obj.value = obj.value.label
+        }
+        else if (obj.key == 'text_direction'){
+            obj.value = obj.value.value;
         }
         else if(obj.key == 'source'){
           obj.value = selectedSource
