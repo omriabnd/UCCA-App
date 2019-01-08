@@ -243,7 +243,12 @@
             vm.unitsIdsList = [];
             buildUnitsIdList(DataService.tree.tree_id, DataService.tree.AnnotationUnits);
             for (var i = 0; i < vm.unitsIdsList.length; i++) {
-                DataService.getUnitById(vm.unitsIdsList[i]).gui_status = "HIDDEN";
+                // Check if unit immediately below unit 0
+                if (vm.unitsIdsList[i].indexOf('-') === -1) {
+                    DataService.getUnitById(vm.unitsIdsList[i]).gui_status = "HIDDEN";
+                } else if (DataService.getUnitById(vm.unitsIdsList[i]).unitType === 'REGULAR') {
+                    DataService.getUnitById(vm.unitsIdsList[i]).gui_status = "COLLAPSE";
+                }
             }
         }
 
