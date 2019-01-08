@@ -142,6 +142,26 @@
             }
         }
 
+        /***
+         * Check gui_status:
+         * status should be HIDDEN only if the unit is immediately below unit 0,
+         * and in remote and implicit unit, status should be OPEN
+         * @param unit
+         */
+        function checkGuiStatus(unit) {
+            if (unit.gui_status === 'HIDDEN') {
+                if (unit.tree_id.indexOf('-') > -1) {
+                    throw "Unit " + unit.tree_id + " cannot be HIDDEN status, since it is not immediately below unit 0";
+                }
+            }
+
+            if (unit.unitType === 'IMPLICIT' || unit.unitType === 'REMOTE') {
+                if (unit.gui_status !== 'OPEN') {
+                    throw "Unit " + unit.tree_id + " is " + unit.unitType + " unit, status should be OPEN";
+                }
+            }
+        }
+
         /**
          * Check if tokens exist
          * need to check here if tokenMap and tokens are contain the same tokens?
@@ -163,6 +183,7 @@
                 checkTreeId(annotationUnits[i].tree_id);
                 checkParentTreeId(annotationUnits[i].parent_tree_id, annotationUnits[i].tree_id);
                 checkClonedId(annotationUnits[i]);
+                checkGuiStatus(annotationUnits[i]);
 
                 // Check tokenMap and tokens
                 checkIfTokensExist(annotationUnits[i]);
