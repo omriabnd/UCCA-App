@@ -67,7 +67,7 @@
   {
     "key":"tasks",
     "name":"Tasks",
-    "order":8,
+    "order":7,
     "filter":false,
     "search":false,
     "type":"button",
@@ -92,10 +92,24 @@
     "class":"btn-default",
     "functionName":"viewProjects"
   },
+    {
+    "key":"text_direction",
+    "name":"Text Direction",
+    "order":8,
+    "filter":true,
+    "search":true,
+    "type":"select",
+    "placeholder":"Text Direction...",
+    "showInTable":true,
+    "options":[
+      { "value": "LTR", "label": "Left to Right", "name": "Left to Right", "id": 1 },
+      { "value": "RTL", "label": "Right to Left", "name": "Right to Left", "id": 2 }
+    ]
+  },
   {
     "key":"is_active",
     "name":"Is Active",
-    "order":7,
+    "order":9,
     "filter":true,
     "search":true,
     "type":"checkbox",

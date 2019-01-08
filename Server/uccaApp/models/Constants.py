@@ -1,3 +1,7 @@
+TEXT_DIR_TYPES = [
+    ('RTL','RTL'),
+    ('LTR','LTR')
+]
 
 ROLE_NAMES_ENUM = {
     "ADMIN":"Admin",
