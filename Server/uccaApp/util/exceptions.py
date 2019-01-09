@@ -82,3 +82,9 @@ class DiscrepancyBetweenTaskIdsException(APIException):
     default_detail = ('Task id must me the same, of the instance and of the initial data')
     default_code = 'error'
 
+class RemoteIsNotOpen(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = ('remote or implicit unit should have OPEN gui status')
+    default_code = 'error'
+
+

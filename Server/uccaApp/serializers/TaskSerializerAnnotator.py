@@ -11,7 +11,7 @@ from rest_framework import serializers
 
 from uccaApp.util.exceptions import SaveTaskTypeDeniedException, CantChangeSubmittedTaskExeption, \
     GetForInactiveTaskException, TreeIdInvalid, TokensInvalid, UnallowedValueError, \
-    DiscrepancyBetweenTaskIdsException
+    DiscrepancyBetweenTaskIdsException, RemoteIsNotOpen
 from uccaApp.util.functions import get_value_or_none, active_obj_or_raise_exeption
 from uccaApp.util.tokenizer import isPunct
 from uccaApp.models import Annotation_Remote_Units_Annotation_Units, Annotation_Json
@@ -187,7 +187,6 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             'updated_at'
         )
 
-    @transaction.atomic
     def update(self, instance, validated_data):
         if instance.status == 'SUBMITTED':
             raise CantChangeSubmittedTaskExeption
@@ -490,6 +489,13 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             else:  # not a remote unit
                 if au['cloned_from_tree_id']:
                     raise TreeIdInvalid("cloned_from_tree_id should not be defined for non-remote units")
+
+            if au['gui_status'] == 'HIDDEN' and '-' in au['tree_id']:
+                raise TreeIdInvalid("annotation unit " + str(au['tree_id']) + " has HIDDEN gui status, should not be an internal unit")
+
+            if au['is_remote_copy'] or au['type'] == 'IMPLICIT':
+                if au['gui_status'] != 'OPEN':
+                    raise RemoteIsNotOpen('remote or implicit unit ' + str(au['tree_id']) + ' should have an OPEN gui status')
 
         if not is_tree_ids_uniq_and_consecutive(all_tree_ids):
             raise TreeIdInvalid("tree_ids within a unit should be unique and consecutive")
