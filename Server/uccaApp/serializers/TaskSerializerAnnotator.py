@@ -479,7 +479,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             if not (au['type'] in [x[0] for x in Constants.ANNOTATION_UNIT_TYPES]):
                 raise UnallowedValueError("An annotation unit is given an unallowed type: " + au['type'])
 
-            # if au['type'] == 'IMPLICIT' or au['gui_status'] != "OPEN":
+            # if au['type'] == 'IMPLICIT' and au['gui_status'] != "OPEN":
             #     raise UnallowedValueError("Remotes and implicit units must have a gui_status OPEN")
 
             if au['is_remote_copy']:
