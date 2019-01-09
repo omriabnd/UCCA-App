@@ -453,8 +453,6 @@
                     });
                 }
                 function initRemoteUnit(unit, index) {
-                    console.log("Init tree, unit is remote copy", unit);
-
                     DataService.unitType = 'REMOTE';
                     unit["tokens"] = [];
                     unit.unitType = "REMOTE";

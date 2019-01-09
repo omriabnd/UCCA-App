@@ -790,8 +790,10 @@
 
                 checkRemoteUnits(tree);
 
-                // Need to check it only if the tree is slot layer?
-                checkSlotLayer(tree)
+                // Checking only if the tree is slot layer
+                if (serverData.project.layer.slotted) {
+                    checkSlotLayer(tree)
+                }
             } catch(e) {
                 console.error(e);
             }
