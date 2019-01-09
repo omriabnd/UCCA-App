@@ -34,7 +34,8 @@ ALLOWED_HOSTS = [
 ]
 
 # Make sure everything is done inside database transactions
-ATOMIC_TRANSACTIONS = True
+ATOMIC_REQUESTS = True
+# ATOMIC_TRANSACTIONS = True
 
 # Application definition
 

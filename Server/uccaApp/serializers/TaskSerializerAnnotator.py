@@ -1,5 +1,8 @@
 import json
 import logging
+
+from django.db import transaction
+
 logger = logging.getLogger("ucca.api")
 
 
@@ -8,7 +11,7 @@ from rest_framework import serializers
 
 from uccaApp.util.exceptions import SaveTaskTypeDeniedException, CantChangeSubmittedTaskExeption, \
     GetForInactiveTaskException, TreeIdInvalid, TokensInvalid, UnallowedValueError, \
-    DiscrepancyBetweenTaskIdsException
+    DiscrepancyBetweenTaskIdsException, RemoteIsNotOpen
 from uccaApp.util.functions import get_value_or_none, active_obj_or_raise_exeption
 from uccaApp.util.tokenizer import isPunct
 from uccaApp.models import Annotation_Remote_Units_Annotation_Units, Annotation_Json
@@ -427,14 +430,17 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             raise TokensInvalid("tokens should be ordered by their start_index")
         tokens_id_to_startindex = dict([(x['id'], x['start_index']) for x in tokens])
         children_tokens_list_for_validation = []
-        largest_start_index = self.initial_data['tokens'][-1]['start_index']
+        largest_index_in_task_tokens = self.initial_data['tokens'][-1]['index_in_task']
         for au in self.initial_data['annotation_units']:
             cur_children_tokens = au.get('children_tokens')
             try:
                 if cur_children_tokens:
+                    start_indices = [children_token['index_in_task'] for children_token in cur_children_tokens]
+                    if any(start_index > largest_index_in_task_tokens for start_index in start_indices):
+                        raise TokensInvalid("Invalid start index in unit %s, larger then the biggest token" % au['tree_id'])
+                    if len(start_indices) > len(set(start_indices)):
+                        raise TokensInvalid("Duplicate start index in children tokens in unit %s" % au['tree_id'])
                     cur_children_tokens_start_indices = [tokens_id_to_startindex[x['id']] for x in cur_children_tokens]
-                    if any(start_index > largest_start_index for start_index in cur_children_tokens_start_indices):
-                        raise TokensInvalid("Invalid start index, large then the biggest token")
                 else:
                     if au['type'] == 'IMPLICIT':
                         cur_children_tokens_start_indices = None
@@ -486,6 +492,13 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             else:  # not a remote unit
                 if au['cloned_from_tree_id']:
                     raise TreeIdInvalid("cloned_from_tree_id should not be defined for non-remote units")
+
+            if au['gui_status'] == 'HIDDEN' and '-' in au['tree_id']:
+                raise TreeIdInvalid("annotation unit " + str(au['tree_id']) + " has HIDDEN gui status, should not be an internal unit")
+
+            if au['is_remote_copy'] or au['type'] == 'IMPLICIT':
+                if au['gui_status'] != 'OPEN':
+                    raise RemoteIsNotOpen('remote or implicit unit ' + str(au['tree_id']) + ' should have an OPEN gui status')
 
         if not is_tree_ids_uniq_and_consecutive(all_tree_ids):
             raise TreeIdInvalid("tree_ids within a unit should be unique and consecutive")
