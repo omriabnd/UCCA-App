@@ -366,7 +366,7 @@
                         unit.categories = [];
                     }
                 }
-                DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
+                // DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
                 DataService.getUnitById(unit.tree_id).gui_status = "OPEN";
 
                 // Comment -  because the tree has not yet been built in its entirety, and token.inChildUnit field is missing during the building.

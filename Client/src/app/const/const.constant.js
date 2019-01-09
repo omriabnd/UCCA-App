@@ -125,24 +125,30 @@
 			},
 			{
 				id:3,
+				name:"Open All",
+				tooltip:"Alt+e: Open All",
+				executeFunction:"openAll"
+			},
+			{
+				id:4,
 				name:"Save",
 				tooltip:"Alt+s: Save",
 				executeFunction:"saveTask"
 			},
 			{
-				id:4,
+				id:5,
 				name:"Submit",
 				tooltip:"Alt+b: Submit (unit will be considered completed)",
 				executeFunction:"submitTask"
 			},
 			{
-				id:5,
+				id:6,
 				name:"Reset",
 				tooltip:"Alt+x: Reset annotation",
 				executeFunction:"resetAllAnnotations"
 			},
 			{
-				id:6,
+				id:7,
 				name:"Settings",
 				tooltip:"Alt+t: Settings",
 				executeFunction:"openSettings"

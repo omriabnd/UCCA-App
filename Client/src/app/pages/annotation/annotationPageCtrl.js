@@ -25,6 +25,7 @@
         vm.submitTask = submitTask;
         vm.unitsIdsList = [];
         vm.finishAll = finishAll;
+        vm.openAll = openAll;
         vm.checkSubmissionRestrictions = checkSubmissionRestrictions;
         vm.goToMainMenu = goToMainMenu;
         vm.resetAllAnnotations = resetAllAnnotations;
@@ -264,6 +265,16 @@
             } else{
                 return false;
             }
+        }
+
+        function openAll(unit) {
+            if (!unit) {
+                unit = DataService.tree;
+            }
+            unit.gui_status = 'OPEN';
+            unit.AnnotationUnits.forEach(function(u) {
+                openAll(u);
+            })
         }
 
 
