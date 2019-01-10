@@ -175,7 +175,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 EMAIL_HOST = "mailhost.cs.huji.ac.il"
 EMAIL_PORT = 25
-REGISTRATION_LINK = "http://ucca.staging.cs.huji.ac.il/#/reg"
 
 try:
 	from .local_settings import *
