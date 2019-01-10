@@ -9,7 +9,8 @@
 	    	<table width="100%">
 	        	<col style="width: 10%" />
 	        	<col />
-	        	<tr ng-repeat="category in vm.categories | filter: notFromParentLayer"> <!-- | orderBy: sortByPrototypes as sortedCategories track by vm.categories.indexOf(category)" -->
+			<!-- the "orderBy: ... as sortedCategories" is needed for the number keys to work, as the number key will select an index from sortedCategories -->
+	        	<tr ng-repeat="category in vm.categories | filter: notFromParentLayer | orderBy: sortByPrototypes as sortedCategories track by vm.categories.indexOf(category)">
 		        	<td>
 		        		<span class="text" ng-show="!category.fromParentLayer && $index <= 8">{{$index+1}}: </span>
 		        	</td>

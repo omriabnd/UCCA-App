@@ -29,6 +29,10 @@
             $scope.vm = $scope.dirCtrl;
             $scope.vm.token['indexInUnit'] = !$scope.vm.token['indexInUnit'] ? $scope.$parent.$index : $scope.vm.token['indexInUnit'];
             $scope.vm.tokenInSelectionList = tokenInSelectionList;
+	    $scope.vm.relevant = relevant;
+            $scope.vm.unitIsFinished = unitIsFinished;
+            $scope.vm.tokenUnitIsSelected = tokenUnitIsSelected;
+            $scope.vm.highlightToken = highlightToken;
 
             $scope.$on('tokenIsClicked', function(event, args) {
                 var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
@@ -46,6 +50,10 @@
                     }
                     // $scope.vm.tokenIsClicked = true;
                 }
+            });
+
+	    $scope.$on('ToggleParents', function(event, args) {
+                $scope.showParents = !$scope.showParents;
             });
 
 /*
@@ -295,6 +303,32 @@
             }
             return token.static.index_in_task + 1 !== token.unit.tokens[index + 1].static.index_in_task;
         }
+
+	function relevant(token){
+            var unit = DataService.getUnitById(token.inChildUnitTreeId);
+            if (unit === undefined || unit.categories === undefined) { return false; }
+            var hasParentCategories = false;
+            for (var i = 0; i < unit.categories.length; i++) {
+                var cat = unit.categories[i];
+                if (cat.fromParentLayer) {
+                    hasParentCategories = true;
+                    if (cat.refinedCategory) {
+                        return true;
+                    }
+                }
+            }
+            return !hasParentCategories;
+        }
+
+        function unitIsFinished(token){
+            var unit = DataService.getUnitById(token.inChildUnitTreeId);
+            return !!unit && relevant(token) && !!unit.is_finished;
+        }
+
+        function highlightToken(token){
+            return selectionHandlerService.getSelectedUnitId() == token.inChildUnitTreeId;
+        }
+	
     }
 
 })();
