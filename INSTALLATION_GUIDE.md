@@ -11,7 +11,7 @@ All the Clients’ files are in the /Client directory.
 In order to install the fully functional system, there is a need to clone the git, install the Django and then update the settings files according to the system’s settings.
 
 ##Libraries and Versions
-- Python: 3.4.2
+- Python: >= 3.4.2
 - Django: 1.10.1
 - PostgreSql:  >= 9.3
 - AngularJS: 1.4.12
