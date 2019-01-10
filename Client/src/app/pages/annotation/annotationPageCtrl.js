@@ -33,19 +33,16 @@
         vm.addUserComment = addUserComment;
         vm.viewUserManual = viewUserManual;
         vm.toggleParents = toggleParents;
-//      vm.showParents = $scope.showParents;
         vm.sceneFunctionRoles = ENV_CONST.SCENE_FUNCTION_ROLES;
         vm.defaultCategoryHotkeys = ENV_CONST.DEFAULT_CATEGORY_HOTKEYS;
-//      $scope.toggleParents = DataService.toggleParents;
-//      toggleParents = DataService.toggleParents;
         vm.savingTask = false;
         vm.submittingTask = false;
 
-        //try{
-        vm.categoryReorderings = JSON.parse(TaskMetaData.Task.project.layer.category_reorderings);
-        //}catch(SyntaxError){
-        //    vm.categoryReorderings = {};
-        //}
+        try{
+            vm.categoryReorderings = JSON.parse(TaskMetaData.Task.project.layer.category_reorderings);
+        catch(SyntaxError){
+            vm.categoryReorderings = {};
+        }
 
         vm.fontSizes = [
             // this sets the different font sizes in the annotation page
