@@ -40,7 +40,7 @@
 
         try{
             vm.categoryReorderings = JSON.parse(TaskMetaData.Task.project.layer.category_reorderings);
-        catch(SyntaxError){
+        } catch(SyntaxError){
             vm.categoryReorderings = {};
         }
 
