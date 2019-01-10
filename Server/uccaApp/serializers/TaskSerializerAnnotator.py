@@ -496,9 +496,10 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             if au['gui_status'] == 'HIDDEN' and '-' in au['tree_id']:
                 raise TreeIdInvalid("annotation unit " + str(au['tree_id']) + " has HIDDEN gui status, should not be an internal unit")
 
-            if au['is_remote_copy'] or au['type'] == 'IMPLICIT':
-                if au['gui_status'] != 'OPEN':
-                    raise RemoteIsNotOpen('remote or implicit unit ' + str(au['tree_id']) + ' should have an OPEN gui status')
+            # OMRI: buggy
+            #if au['is_remote_copy'] or au['type'] == 'IMPLICIT':
+            #    if au['gui_status'] != 'OPEN':
+            #        raise RemoteIsNotOpen('remote or implicit unit ' + str(au['tree_id']) + ' should have an OPEN gui status')
 
         if not is_tree_ids_uniq_and_consecutive(all_tree_ids):
             raise TreeIdInvalid("tree_ids within a unit should be unique and consecutive")
