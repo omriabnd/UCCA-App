@@ -493,10 +493,10 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
                 if au['cloned_from_tree_id']:
                     raise TreeIdInvalid("cloned_from_tree_id should not be defined for non-remote units")
 
-            if au['gui_status'] == 'HIDDEN' and '-' in au['tree_id']:
-                raise TreeIdInvalid("annotation unit " + str(au['tree_id']) + " has HIDDEN gui status, should not be an internal unit")
-
             # OMRI: buggy
+            #if au['gui_status'] == 'HIDDEN' and '-' in au['tree_id']:
+            #    raise TreeIdInvalid("annotation unit " + str(au['tree_id']) + " has HIDDEN gui status, should not be an internal unit")
+
             #if au['is_remote_copy'] or au['type'] == 'IMPLICIT':
             #    if au['gui_status'] != 'OPEN':
             #        raise RemoteIsNotOpen('remote or implicit unit ' + str(au['tree_id']) + ' should have an OPEN gui status')
