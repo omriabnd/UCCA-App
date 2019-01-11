@@ -1,5 +1,7 @@
 import os
 
+REGISTRATION_LINK = "http://ucca.staging.cs.huji.ac.il/#/reg"
+
 ALLOWED_HOSTS = [
        'ucca.staging',
        'ucca.staging.cs.huji.ac.il',
