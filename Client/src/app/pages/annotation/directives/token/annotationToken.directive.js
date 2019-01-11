@@ -326,7 +326,9 @@
         }
 
         function highlightToken(token){
-            return selectionHandlerService.getSelectedUnitId() == token.inChildUnitTreeId;
+	    var selectedUnitId = selectionHandlerService.getSelectedUnitId();
+	    var selectedUnit_token_ids = DataService.getUnitById(selectedUnitId).tokens.map(function(x) {return x.static.id;});
+	    return selectedUnitId != "0" && selectedUnit_token_ids.includes(token.static.id) && selectedUnit_token_ids.length <= DataService.getUnitById(token.unitTreeId).tokens.length;
         }
 	
     }
