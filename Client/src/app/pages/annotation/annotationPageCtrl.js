@@ -33,17 +33,14 @@
         vm.addUserComment = addUserComment;
         vm.viewUserManual = viewUserManual;
         vm.toggleParents = toggleParents;
-//      vm.showParents = $scope.showParents;
         vm.sceneFunctionRoles = ENV_CONST.SCENE_FUNCTION_ROLES;
         vm.defaultCategoryHotkeys = ENV_CONST.DEFAULT_CATEGORY_HOTKEYS;
-//      $scope.toggleParents = DataService.toggleParents;
-//      toggleParents = DataService.toggleParents;
         vm.savingTask = false;
         vm.submittingTask = false;
 
         try{
-            vm.categoryReorderings = JSON.parse(DataService.currentTask.project.layer.category_reorderings);
-        }catch(SyntaxError){
+            vm.categoryReorderings = JSON.parse(TaskMetaData.Task.project.layer.category_reorderings);
+        } catch(SyntaxError){
             vm.categoryReorderings = {};
         }
 
@@ -69,7 +66,7 @@
             return null;
         }
 
-        $scope.sortByPrototypes = function(category){
+        $scope.sortByPrototypes = function(category){	    
             if (Core.isEmptyObject(vm.categoryReorderings)) {
                 return;
             }
@@ -78,48 +75,62 @@
             var selectedUnit = DataService.getUnitById(selectedUnitId);
 
             var selectedTokenList = selectionHandlerService.getSelectedTokenList();
-            if(selectedTokenList != undefined && selectedTokenList.length > 0){
-                selectedUnit = DataService.getUnitById(selectedTokenList[0].inUnit);
-            }else if(selectedUnitId != undefined && selectedUnitId != 0){
-                selectedTokenList = selectedUnit.tokenCopy;
-            }else{
-                selectedTokenList = [];
-            }
+
+	    if (selectedTokenList != undefined && selectedTokenList.length > 0) {
+		selectedUnit = DataService.getUnitById(selectedTokenList[0].inChildUnitTreeId);
+	    } else if (selectedUnitId != undefined && selectedUnitId != 0) {
+		selectedTokenList = selectedUnit.tokens;
+	    }
+	    
+
+	    if (selectedTokenList === undefined) {
+		selectedTokenList = [];
+	    }
 
             var selectedTokens = selectedTokenList.map(function (token) {
-                return token.text;
+                return token.static.text.toLowerCase();
             }).join("_");
 
-            var selectedUnit
-            if(!!selectedTokens){
+	    console.log(selectedTokens);
+
+	    
+            if (!!selectedTokens){
+		
                 var parentCategoryName = "";
                 var sceneRole;
 
-                if(!!selectedUnit){
+                if (!!selectedUnit){
                     var parentCategory = getParentCategory(selectedUnit);
                     parentCategoryName = !!parentCategory ? parentCategory.name : "";
                     var unitCategories = selectedUnit.categories;
 
                     for (var i=0; i<unitCategories.length; i++) {
                         var cat = unitCategories[i];
-                        if(cat.name === category.name) {
+                        if (cat.name === category.name) {
                             return -1;
                         }
-                        if(!cat.fromParentLayer && !!cat.name && sceneRole == undefined) {
+                        if (!cat.fromParentLayer && !!cat.name && sceneRole == undefined) {
                             sceneRole = cat;
                         }
                     }
                 }
 
-                console.log(vm.categoryReorderings);
-                var reOrderings = vm.categoryReorderings[parentCategoryName][selectedTokens];
-                if(!reOrderings){
-                    reOrderings = vm.categoryReorderings[parentCategoryName][""];
-                }
+		
+                var reOrderings;
+		if (vm.categoryReorderings[parentCategoryName] != undefined) {
+		    reOrderings = vm.categoryReorderings[parentCategoryName][selectedTokens];
+		    if (!reOrderings) {
+			reOrderings = vm.categoryReorderings[parentCategoryName][""];
+		    }
+		} else {
+		    return 1;
+		}
+		
+                
 
-                if(!!sceneRole){
+                if (!!sceneRole) {
                     var functionRoles = reOrderings[sceneRole.name];
-                    if(!!functionRoles){
+                    if( !!functionRoles){
                         var index = functionRoles.indexOf(category.name);
                         return index > -1 ? index : vm.categories.length;
                     }

@@ -62,8 +62,27 @@
     }
   }
 
-  span.token-wrapper.clicked {
-    background: #337ab7;
+  span.token-wrapper {
+
+      &.clicked {
+        background: #337ab7;
+      }
+
+      &.highlightToken {
+        background: #FFFF00;
+      }
+
+      &.not-relevant {
+        border-top: none !important;
+        border-bottom: none !important;
+        border-left: none !important;
+        border-right: none !important;
+      }
+
+      &.finished {
+        border-width: 2px !important;
+        border-style: dotted !important;
+      }
   }
 
   .remote-unit .token-wrapper {

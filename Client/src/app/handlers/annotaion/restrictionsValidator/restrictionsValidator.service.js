@@ -153,6 +153,7 @@
                 return false;
             }
 
+	    annotationUnit.is_finished = true;
             return true;
         }
 
