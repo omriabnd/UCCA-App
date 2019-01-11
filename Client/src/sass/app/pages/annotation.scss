@@ -69,7 +69,10 @@
       }
 
       &.highlightToken {
-        background: #FFFF00;
+        /* background: #FFFF00; */
+	color: #000000 !important;
+	font-weight: bold;
+	font-style: italic;
       }
 
       &.not-relevant {
@@ -80,6 +83,7 @@
       }
 
       &.finished {
+        border-color: transparent;
         border-width: 2px !important;
         border-style: dotted !important;
       }
@@ -104,7 +108,6 @@
   .selected-unit {
     box-shadow: 1px 3px 5px black;
     border-width: 4px;
-
   }
 
   .category-square {
