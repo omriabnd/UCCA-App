@@ -1,6 +1,7 @@
 import os
 
 # Place settings relevant to the prodcution environment
+REGISTRATION_LINK = "http://ucca-demo.cs.huji.ac.il/#/reg"
 
 ALLOWED_HOSTS = [
 	'ucca-demo',

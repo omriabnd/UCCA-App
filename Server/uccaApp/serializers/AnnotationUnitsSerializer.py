@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from uccaApp.models import Annotation_Remote_Units_Annotation_Units
+from uccaApp.models import Annotation_Remote_Units_Annotation_Units, Constants
 from uccaApp.models import Annotation_Units_Categories
 from uccaApp.models import Annotation_Units_Tokens
 from uccaApp.models.Annotation_Units import Annotation_Units
@@ -23,8 +23,16 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
     children_tokens = serializers.SerializerMethodField()
     #tree_id = serializers.SerializerMethodField()
     #children = serializers.SerializerMethodField()
+    gui_status = serializers.SerializerMethodField()
     parent_tree_id = serializers.SerializerMethodField()
     cloned_from_tree_id = serializers.SerializerMethodField()
+
+    def get_gui_status(self,obj):
+        # if it's a remote unit, the gui_status should be OPEN
+        if self.context.get("cloned_from_tree_id"):
+            return dict(Constants.ANNOTATION_GUI_STATUS)["OPEN"]
+        else:
+            return obj.gui_status
 
     def get_cloned_from_tree_id(self,obj):
         return self.context.get("cloned_from_tree_id")

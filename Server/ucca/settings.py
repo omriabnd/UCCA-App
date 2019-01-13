@@ -34,7 +34,8 @@ ALLOWED_HOSTS = [
 ]
 
 # Make sure everything is done inside database transactions
-ATOMIC_TRANSACTIONS = True
+ATOMIC_REQUESTS = True
+# ATOMIC_TRANSACTIONS = True
 
 # Application definition
 
@@ -174,7 +175,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 EMAIL_HOST = "mailhost.cs.huji.ac.il"
 EMAIL_PORT = 25
-REGISTRATION_LINK = "http://ucca.staging.cs.huji.ac.il/api/vi/register"
+REGISTRATION_LINK = "/"
+
 
 try:
 	from .local_settings import *

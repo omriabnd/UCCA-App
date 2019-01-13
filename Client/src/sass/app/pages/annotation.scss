@@ -26,6 +26,7 @@
   span.token.ng-binding.bold {
     font-weight: bold;
     color: red;
+    //background-color: yellow;
   }
 
   .unit-cursor{
@@ -61,8 +62,31 @@
     }
   }
 
-  span.token-wrapper.clicked {
-    background: #337ab7;
+  span.token-wrapper {
+
+      &.clicked {
+        background: #337ab7;
+      }
+
+      &.highlightToken {
+        /* background: #FFFF00; */
+	color: #000000 !important;
+	font-weight: bold;
+	font-style: italic;
+      }
+
+      &.not-relevant {
+        border-top: none !important;
+        border-bottom: none !important;
+        border-left: none !important;
+        border-right: none !important;
+      }
+
+      &.finished {
+        border-color: transparent;
+        border-width: 2px !important;
+        border-style: dotted !important;
+      }
   }
 
   .remote-unit .token-wrapper {
@@ -83,7 +107,7 @@
 
   .selected-unit {
     box-shadow: 1px 3px 5px black;
-
+    border-width: 4px;
   }
 
   .category-square {

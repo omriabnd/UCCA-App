@@ -29,6 +29,10 @@
             $scope.vm = $scope.dirCtrl;
             $scope.vm.token['indexInUnit'] = !$scope.vm.token['indexInUnit'] ? $scope.$parent.$index : $scope.vm.token['indexInUnit'];
             $scope.vm.tokenInSelectionList = tokenInSelectionList;
+	    $scope.vm.relevant = relevant;
+            $scope.vm.unitIsFinished = unitIsFinished;
+            $scope.vm.tokenUnitIsSelected = tokenUnitIsSelected;
+            $scope.vm.highlightToken = highlightToken;
 
             $scope.$on('tokenIsClicked', function(event, args) {
                 var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
@@ -48,15 +52,19 @@
                 }
             });
 
-            /*
+	    $scope.$on('ToggleParents', function(event, args) {
+                $scope.showParents = !$scope.showParents;
+            });
+
+/*
             // TODO: Only catch this event if this token is in unit 0
-            // TODO: Highlight using a CSS class and not a style
+            // Highlight using a CSS class and not a style
             $scope.$on('highlightTokens', function(event, args) {
-                $scope.vm.token.highlightStyle = ''; // reset pre highlight
+                $scope.vm.token.highlightStyle = undefined; // reset pre highlight
                 for (var i=0; i<args.tokens.length;i++)
                 {
                     if ($scope.vm.token.id === args.tokens[i].id) {
-                        $scope.vm.token.highlightStyle = "font-weight: bold;";
+                        $scope.vm.token.highlightStyle = true;
                     }
                 }
             })
@@ -89,7 +97,7 @@
         }
 
         function tokenDbClick(vm){
-            selectionHandlerService.clearTokenList();
+            selectionHandlerService.clearTokenList(true);
             if(vm.token.inChildUnitTreeId !== null && vm.token.inChildUnitTreeId !== undefined){
                 var unit = DataService.getUnitById(vm.token.inChildUnitTreeId);
                 if(!unit){
@@ -222,7 +230,10 @@
             return elementPos > -1;
         }
 
+        // this function took a few seconds, it causes to the bug:
+        // Select existing units in the main passage (seems to respond slowly to longer units)
         function mouseUpFromToken(vm){
+            // debugger
             var selectedTokenArray = selectionHandlerService.getSelectedTokenList();
             var direction = "UP"
             if(selectionHandlerService.getLastInsertedToken() !== null && selectionHandlerService.getLastInsertedToken().static.start_index > vm.token.static.start_index){
@@ -230,7 +241,8 @@
             }
             var tokenListLength = angular.copy(selectedTokenArray.length);
 
-            selectedTokenArray.forEach(function(token,index){
+            // selectedTokenArray.forEach(function(token,index){
+            var token = selectedTokenArray[0];
                 if(token.inChildUnitTreeId){
                     var tokenUnit = DataService.getUnitById(token.inChildUnitTreeId);
                     if(tokenUnit && tokenUnit.tree_id !== '0'){
@@ -254,21 +266,22 @@
                         }
                     }
                 }
-                if(index === tokenListLength - 1){
-                    var parentUnit = selectedTokenArray[selectedTokenArray.length - 1].unitTreeId ? DataService.getUnitById(selectedTokenArray[selectedTokenArray.length - 1].unitTreeId) :  DataService.getParentUnit("0");
-                    var elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(selectedTokenArray[selectedTokenArray.length - 1].static.id);
-                    selectionHandlerService.keyboardToggleTokenSelection(token);
-                    $rootScope.$broadcast('moveCursor', {
-                        token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : null,
-                        // token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : parentUnit.tokens[elementPos] //old code
-                        unitTreeId: selectionHandlerService.getSelectedUnitId() || "0"
-                    });
-                }
+                // if(index === tokenListLength - 1){
+                //     var parentUnit = selectedTokenArray[selectedTokenArray.length - 1].unitTreeId ? DataService.getUnitById(selectedTokenArray[selectedTokenArray.length - 1].unitTreeId) :  DataService.getParentUnit("0");
+                //     var elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(selectedTokenArray[selectedTokenArray.length - 1].static.id);
+                //     selectionHandlerService.keyboardToggleTokenSelection(token);
+                //     $rootScope.$broadcast('moveCursor', {
+                //         token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : null,
+                //         // token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : parentUnit.tokens[elementPos] //old code
+                //         unitTreeId: selectionHandlerService.getSelectedUnitId() || "0"
+                //     });
+                // }
+
                 // $rootScope.$broadcast('moveCursor', {
                 //     token: vm.token,
                 //     unitTreeId: vm.token.unitTreeId || "0"
                 // });
-            })
+            // })
 
         }
 
@@ -290,6 +303,34 @@
             }
             return token.static.index_in_task + 1 !== token.unit.tokens[index + 1].static.index_in_task;
         }
+
+	function relevant(token){
+            var unit = DataService.getUnitById(token.inChildUnitTreeId);
+            if (unit === undefined || unit.categories === undefined) { return false; }
+            var hasParentCategories = false;
+            for (var i = 0; i < unit.categories.length; i++) {
+                var cat = unit.categories[i];
+                if (cat.fromParentLayer) {
+                    hasParentCategories = true;
+                    if (cat.refinedCategory) {
+                        return true;
+                    }
+                }
+            }
+            return !hasParentCategories;
+        }
+
+        function unitIsFinished(token){
+            var unit = DataService.getUnitById(token.inChildUnitTreeId);
+            return !!unit && relevant(token) && !!unit.is_finished;
+        }
+
+        function highlightToken(token){
+	    var selectedUnitId = selectionHandlerService.getSelectedUnitId();
+	    var selectedUnit_token_ids = DataService.getUnitById(selectedUnitId).tokens.map(function(x) {return x.static.id;});
+	    return selectedUnitId != "0" && selectedUnit_token_ids.includes(token.static.id) && selectedUnit_token_ids.length <= DataService.getUnitById(token.unitTreeId).tokens.length;
+        }
+	
     }
 
 })();

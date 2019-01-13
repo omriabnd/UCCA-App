@@ -42,7 +42,6 @@ class SaveTypeDeniedException(APIException):
     default_detail = ('The save type is not available')
     default_code = 'error'
 
-
 class SaveTaskTypeDeniedException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = ('You cant save tokenization task with parent task. Only tokenization task can be the root task.')
@@ -65,7 +64,7 @@ class CreateCoarseningAnnotationTaskDeniedException(APIException):
 
 class CantChangeSubmittedTaskExeption(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = ('Cant change a submitted task')
+    default_detail = ("Can't change a submitted task")
     default_code = 'error'
 
 class OnlyActiveIfParentIsActiveException(APIException):
@@ -77,4 +76,15 @@ class GetForInactiveTaskException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = ('Task must be active to edit or view')
     default_code = 'error'
-    
+
+class DiscrepancyBetweenTaskIdsException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = ('Task id must me the same, of the instance and of the initial data')
+    default_code = 'error'
+
+class RemoteIsNotOpen(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = ('remote or implicit unit should have OPEN gui status')
+    default_code = 'error'
+
+

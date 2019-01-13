@@ -32,6 +32,7 @@ class PassageSerializer(serializers.ModelSerializer):
             'text',
             'type',
             'source',
+            'text_direction',
             'external_id',
             'is_active',
             'created_by',
@@ -58,6 +59,7 @@ class PassageSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         validated_data.pop('source')
+        print(validated_data)
 
         # prevent update asset that used in another asset
         if self.is_used_in_a_task(instance) == False:
@@ -65,8 +67,10 @@ class PassageSerializer(serializers.ModelSerializer):
             instance.source = validated_data.get('source', updated_source)
             instance.text = validated_data.get('text', instance.text)
 
+        instance.text_direction = validated_data.get('text_direction', instance.text_direction)
         instance.type = validated_data.get('type', instance.type)
         instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.external_id = validated_data.get('external_id', instance.is_active)
         instance.save()
         return instance
 

@@ -209,6 +209,7 @@
                 // console.log("Token list cleared");
 
                 if(!afterInsert){
+                    // This code apparently handles tokens whose child unit has been deleted
                     _handler.getSelectedTokenList().forEach(function(token){
                         if(token.unitTreeId === undefined){
                             token.unitTreeId = "0";
@@ -369,18 +370,24 @@
                 shouldBeSelected.forEach(function(token) {
                     _handler.addTokenToList(token, token.unitTreeId); // addTokenToList already handles tokens already in the list
                 });
-                currentlySelected.forEach(function(token) {
-                    // If token is not in shouldBeSelected, remove selection from token
-                    var elementPos = _handler.findElementPosition(shouldBeSelected, token);
-                    if (elementPos === -1) {
-                        _handler.removeTokenFromList(token.static.id);
-                    }
-                });
+                // Comment it- because it causes to bug: Can't continue a selection with the arrows which was first made by the mouse.
+                // currentlySelected.forEach(function(token) {
+                //     // If token is not in shouldBeSelected, remove selection from token
+                //     var elementPos = _handler.findElementPosition(shouldBeSelected, token);
+                //     if (elementPos === -1) {
+                //         _handler.removeTokenFromList(token.static.id);
+                //     }
+                // });
             },
 
             getSelectedUnitId: function(){
                 trace("selectionHandlerService - getSelectedUnitId");
                 return this.selectedUnit;
+            },
+
+            setSelectedUnitId: function(unit){
+                trace("selectionHandlerService - setSelectedUnitId");
+                this.selectedUnit = unit;
             },
 
             // TODO: Remove this function, the mouseDown variable and getMouseMode
@@ -446,8 +453,6 @@
                     });
                 }
                 function initRemoteUnit(unit, index) {
-                    console.log("Init tree, unit is remote copy", unit);
-
                     DataService.unitType = 'REMOTE';
                     unit["tokens"] = [];
                     unit.unitType = "REMOTE";
@@ -711,7 +716,12 @@
                     }
 
                     // Check the restrictions for the new unit here, before making any modifications to the data in the DataService
-                    if(!inInitStage && !_handler.checkRestrictions(category, unit)) {
+                    // declare unitTOCheck, if unit is undefined, take it according to justToggle (unit id)
+                    var unitToCheck = unit;
+                    if (!unit && justToggle) {
+                        unitToCheck = DataService.getUnitById(justToggle);
+                    }
+                    if(!inInitStage && !_handler.checkRestrictions(category, unitToCheck)) {
                         return reject("Failed");
                     }
 

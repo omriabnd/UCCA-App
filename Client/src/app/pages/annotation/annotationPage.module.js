@@ -53,6 +53,11 @@
 
                 var currentLayer = taskResponse.project.layer;
                 var allCategories = currentLayer.categories;
+
+                // Omri: I commented out the below block which sorts the categories alphabetically.
+                // This is a bug, since we want the categories to be ordered the same way as in the layer
+                // admin screen.
+                /*
                 allCategories.sort(function(a, b) {
                 	  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
                 	  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
@@ -65,7 +70,7 @@
 
                 	  // names must be equal
                 	  return 0;
-                	});
+                	});*/
 
                 if(!!currentLayer.parent){
                     // this is how we will know to style this category in derived layer
@@ -153,7 +158,7 @@
                 // it back to the Server or for working in the client.**/
                 DataService.serverData = taskResponse;
 
-                restrictionsValidatorService.initRestrictionsTables(taskResponse.project.layer.restrictions,selectionHandlerService,allCategories);
+                restrictionsValidatorService.initRestrictionsTables(taskResponse.project.layer.restrictions,selectionHandlerService, DataService, allCategories);
 
                 setCategoriesColor(AnnotationTextService,allCategories);
                 setCategoriesAbbreviation(AnnotationTextService,allCategories);
@@ -230,9 +235,8 @@
                     return selectionHandlerService.initTree().then(function(){
                         selectionHandlerService.updateSelectedUnit("0",false);
                         
-                        var lastUnitId = selectionHandlerService.getTreeLastId(DataService.tree);
-                        
-                        var lastUnitText = $('#unit-'+lastUnitId);
+                        // var lastUnitId = selectionHandlerService.getTreeLastId(DataService.tree);
+                        // var lastUnitText = $('#unit-'+lastUnitId);
                         
                         return{
                             Task:taskResponse,

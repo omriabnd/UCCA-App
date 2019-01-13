@@ -54,6 +54,7 @@
             vm.dataBlock.tree_id !== "0" ? updateStartEndIndexForTokens(vm.dataBlock.tokens) : '';
 
             vm.dataBlock.categoriesTooltip = categoriesTooltip(vm);
+            vm.showClusterButton = $rootScope.isSlottedLayerProject;
         }
 
         function annotationUnitDirectiveLink($scope, elem, attrs,$rootScope) {
@@ -249,6 +250,9 @@
                         console.log('now');
                     }
 
+                    $scope.forceDeleteUnit = function(){
+                        DataService.deleteUnit($scope.vm.dataBlock.tree_id);
+                    }
 
                     var remoteOriginalTreeId = remoteOriginalId;
                     $scope.deleteAllRemoteInstanceOfThisUnit = function(){
@@ -435,8 +439,8 @@
             trace("annotationUnitDirective - colorUnit");
             colorUnitTokens(unit);
 
-            unit.AnnotationUnits.forEach(function(unit) {
-                colorUnit(unit);
+            unit.AnnotationUnits.forEach(function (u) {
+                colorUnit(u);
             });
         }
 
@@ -774,12 +778,12 @@
 
             var currentUnit = DataService.getUnitById(unitId);
 
-
-            // if(DataService.unitsUsedAsRemote[unitId] !==  undefined && !Core.isEmptyObject(DataService.unitsUsedAsRemote[unitId])){
-            if(currentUnit.cloned_to_tree_ids){
-                // open('app/pages/annotation/templates/deleteAllRemoteModal.html','md',Object.keys(DataService.unitsUsedAsRemote[unitId]).length,vm);
+            if (vm.dataBlock.comment) {
+                open('app/pages/annotation/templates/deleteUnitWithComment.html','md', '',vm);
+            }
+            else if(currentUnit.cloned_to_tree_ids && currentUnit.cloned_to_tree_ids.length){
                 open('app/pages/annotation/templates/deleteAllRemoteModal.html','md', currentUnit.cloned_to_tree_ids.length,vm);
-            }else{
+            } else{
                 if(currentUnit.unitType === "REMOTE"){
                     //UpdateUsedAsRemote
                     var remoteUnit = DataService.getUnitById(currentUnit.cloned_from_tree_id);
@@ -798,6 +802,8 @@
 
         function switchToRemoteMode(vm,event){
             trace("annotationUnitDirective - switchToRemoteMode");
+            // Change focus to the unit where '+' was clicked.
+            selectionHandlerService.setSelectedUnitId(vm.treeId);
             addAsRemoteUnit(vm);
         }
 
@@ -841,12 +847,25 @@
                     open('app/pages/annotation/templates/errorModal.html','sm','Unit already exists as remote.',vm);
                     return;
                 }
-                if(DataService.getUnitById(index).unitType === "REMOTE" || selectionHandlerService.getUnitToAddRemotes().startsWith(index) || index.startsWith(selectionHandlerService.getUnitToAddRemotes())){
+                if(selectionHandlerService.getUnitToAddRemotes().startsWith(index) || index.startsWith(selectionHandlerService.getUnitToAddRemotes())){
+                    selectionHandlerService.setUnitToAddRemotes("0");
+                    $('.annotation-page-container').removeClass('crosshair-cursor');
+                    open('app/pages/annotation/templates/errorModal.html','sm','Cannot add a descendant or ancestor as a remote unit.',vm);
+                    return;
+                }
+                if(DataService.getUnitById(index).unitType === "REMOTE"){
                     selectionHandlerService.setUnitToAddRemotes("0");
                     $('.annotation-page-container').removeClass('crosshair-cursor');
                     open('app/pages/annotation/templates/errorModal.html','sm','Cannot add remote unit as remote.',vm);
                     return;
                 }
+                if(DataService.getUnitById(index).unitType === "IMPLICIT"){
+                    selectionHandlerService.setUnitToAddRemotes("0");
+                    $('.annotation-page-container').removeClass('crosshair-cursor');
+                    open('app/pages/annotation/templates/errorModal.html','sm','Cannot add implicit unit as remote.',vm);
+                    return;
+                }
+
                 // selectionHandlerService.disableTokenClicked();
                 DataService.unitType = 'REMOTE';
                 // var clickedUnit  = selectionHandlerService.getUnitToAddRemotes();

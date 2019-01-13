@@ -17,13 +17,14 @@
         */
         var errorMessages ={
             FORBID_ANY_CHILD : 'Category %NAME% cannot have any children.',
-            FORBID_ANY_CHILD_ADD_CATEGORY: 'Category %NAME% cannot have any children.',
+            // FORBID_ANY_CHILD_ADD_CATEGORY: 'Category %NAME% cannot have any children.',
             FORBID_CHILD : 'Category %NAME_1% cannot have child with category %NAME_2%.',
             FORBID_SIBLING: 'Category %NAME_1% cannot have sibling with category %NAME_2%.',
             REQUIRE_SIBLING: 'Category %NAME_1% requires one of the following categories : [%NAME_2%] as a sibling.',
             REQUIRE_CHILD: 'Category %NAME_1% requires one of the following categories : [%NAME_2%] as a child.',
             NONRELEVANT_PARENT_CATEGORY: "Category %NAME_1% is not a valid refinement of category %NAME_2%.",
             UNIT_CONTAIN_ONLY_PUNCTUATIONS : 'You cannot create annotation unit from only punctuation tokens',
+            FORBID_SUB_REMOTE_UNIT: "You cannot create unit from remote unit",
             NOT_COMPLETE : "All non-punctuation tokens must either be in a unit of their own or in an unanalyzable unit.",
             UNIT_FORBID_SLOTTED_LAYER_RULE: "Both slots are already occupied.",
             NONRELEVANT_UNIT: "None of the categories of the unit are being refined in this layer.",
@@ -31,6 +32,7 @@
             SLOT_ONE_RESTRICTION_VIOLATION: "All units in a slotted layer must have a category in their slot #1"
         };
         var selectionHandlerServiceProvider;
+        var dataServiceProvider;
         var restrictionsTablesIds;
         var allCategoriesTable;
         var handler = {
@@ -59,7 +61,7 @@
         }
 
 
-        function initRestrictionsTables(layer_restrictions,selectionHandlerService,categoriesArray){
+        function initRestrictionsTables(layer_restrictions,selectionHandlerService, dataService, categoriesArray){
 
             allCategoriesTable = {};
             for (var i=0; i < categoriesArray.length; i++) {
@@ -71,6 +73,7 @@
                 addRestrictionToTable(restriction);
             });
             selectionHandlerServiceProvider = selectionHandlerService;
+            dataServiceProvider = dataService;
         }
 
         function addRestrictionToTable(restriction){
@@ -123,21 +126,21 @@
                 violation = unitViolatesSlotOneRestriction(annotationUnit);
                 if (violation) {
                     showErrorModal(errorMessages[violation.rcode] + ' (failed in unit ' + annotationUnit.tree_id + ')');
-                    scrollToViolationUnit(selectionHandlerServiceProvider,annotationUnit);
+                    scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, annotationUnit);
                     return false;
                 }
 
                 violation = unitHasNonDefaultCategory(annotationUnit);
                 if (violation) {
                     showErrorModal(errorMessages[violation.rcode] + ' (failed in unit ' + annotationUnit.tree_id + ')');
-                    scrollToViolationUnit(selectionHandlerServiceProvider,annotationUnit);
+                    scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, annotationUnit);
                     return false;
                 }
 
                 violation = checkIfVoilateEachTokenInUnit(annotationUnit);
                 if (violation) {
                     showErrorModal(errorMessages[violation.rcode]+' (failed in unit '+annotationUnit.tree_id+')');
-                    scrollToViolationUnit(selectionHandlerServiceProvider,annotationUnit);
+                    scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, annotationUnit);
                     return false;
                 }
             }
@@ -146,10 +149,11 @@
             violation = unitViolatesSiblingAndChildrenRestrictions(annotationUnit);
             if (violation) {
                 showErrorModal(getErrorMessage(violation.rcode,{'%NAME_1%': violation.category1, '%NAME_2%': violation.category2},annotationUnit.tree_id));
-                scrollToViolationUnit(selectionHandlerServiceProvider,annotationUnit);
+                scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, annotationUnit);
                 return false;
             }
 
+	    annotationUnit.is_finished = true;
             return true;
         }
 
@@ -286,8 +290,13 @@
          * 4. If grouped tokens are only punctuation, you cannot create a unit just from them.
          */
         function checkRestrictionsBeforeInsert(parentAnnotationUnit, unitType, grouped_tokens, newCategory){
+            if (parentAnnotationUnit.is_remote_copy) { // Check if the parent is remote unit
+                showErrorModal(errorMessages['FORBID_SUB_REMOTE_UNIT']);
+                return false;
+            }
+
             if (unitType === "REGULAR" && isOnlyPunctuation(grouped_tokens)) {
-                showErrorModal(errorMessages['UNIT_CONTAIN_ONLY_PUNCTUATIONS']); //check
+                showErrorModal(errorMessages['UNIT_CONTAIN_ONLY_PUNCTUATIONS']);
                 return false;
             }
 
@@ -565,8 +574,13 @@
 
         }
 
-        function scrollToViolationUnit(selectionHandlerServiceProvider,violationUnit){
+        function scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, violationUnit){
+            // If Finish All fails, it should open and place focus on the violating unit.
             selectionHandlerServiceProvider.updateSelectedUnit(violationUnit.tree_id);
+            var parentUnit = dataServiceProvider.getUnitById(violationUnit.parent_tree_id);
+            if (parentUnit.gui_status === 'COLLAPSE') {
+                parentUnit.gui_status = 'OPEN';
+            }
             Core.scrollToUnit(violationUnit.tree_id);
         }
 

@@ -1,3 +1,7 @@
+TEXT_DIR_TYPES = [
+    ('RTL','RTL'),
+    ('LTR','LTR')
+]
 
 ROLE_NAMES_ENUM = {
     "ADMIN":"Admin",
@@ -84,7 +88,7 @@ ANNOTATION_GUI_STATUS = [
     ("COLLAPSE","Collapse")
 ]
 
-TOKEN_MAX_LENGTH = 50
+TOKEN_MAX_LENGTH = 500
 
 ANNOTATION_UNIT_ID_MAXLENGTH = 200
 

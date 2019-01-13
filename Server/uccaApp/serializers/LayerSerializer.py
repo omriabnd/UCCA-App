@@ -56,11 +56,11 @@ class LayerSerializer(serializers.ModelSerializer):
     def get_categories(self, obj):
         lc_json = []
         if obj.type ==  Constants.LAYER_TYPES_JSON["ROOT"] or obj.type ==  Constants.LAYER_TYPES_JSON["EXTENSION"]:
-            lc_list = Layers_Categories.objects.all().filter(layer_id=obj.id)
+            lc_list = Layers_Categories.objects.all().filter(layer_id=obj.id).order_by('id')
         if obj.type ==  Constants.LAYER_TYPES_JSON["REFINEMENT"] or obj.type ==  Constants.LAYER_TYPES_JSON["COARSENING"]:
             lc_list = []
-            dlcc_list = Derived_Layers_Categories_Categories.objects.all().filter(layer_id=obj.id)
-            dlcc_lc_list = Layers_Categories.objects.all().filter(layer_id=obj.id)
+            dlcc_list = Derived_Layers_Categories_Categories.objects.all().filter(layer_id=obj.id).order_by('id')
+            #dlcc_lc_list = Layers_Categories.objects.all().filter(layer_id=obj.id)
             for lc in dlcc_list:
                 cat = Layers_Categories()
                 cat.id = lc.category_id.id
@@ -170,7 +170,7 @@ class LayerSerializer(serializers.ModelSerializer):
 
             if instance.type == Constants.LAYER_TYPES_JSON['ROOT'] or instance.type == Constants.LAYER_TYPES_JSON['EXTENSION']:
                 if categories is not None:
-                    # insert the new layer)categories
+                    # insert the new layer_categories
                     self.save_layer_categories(instance, categories)
                 # remove its current layer_restrictions
                 Layers_Categories_Restrictions.objects.filter(layer_id=instance.id).delete()

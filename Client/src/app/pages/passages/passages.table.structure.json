@@ -16,7 +16,7 @@
     "order":"2",
     "filter":true,
     "search":true,
-    "showInTable":false,
+    "showInTable":true,
     "type":"select",
     "placeholder":"Enter Content...",
     "value":"",
@@ -57,6 +57,21 @@
     "type":"text",
     "placeholder":"Enter Content...",
     "value":""
+  },
+  {
+    "key":"text_direction",
+    "name":"LTR/RTL",
+    "order":"6",
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "type":"select",
+    "placeholder":"Enter Content...",
+    "value":"",
+    "options":[
+      { "label": "RTL", "id": 1 },
+      { "label": "LTR", "id": 2 }
+    ]
   },
   {
     "key":"is_active",

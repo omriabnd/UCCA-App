@@ -329,11 +329,11 @@
                         }else if(!unit.slotTwo){
                             unit.categories[firstSlotIndex+1] = category;
                         }
+                        unit = updateUnitSlots(unit);
                     }else{
                         unit.categories.push(category);
                     }
-                    unit = updateUnitSlots(unit);
-
+                    // unit = updateUnitSlots(unit);
                 }
                 //if the category is already assigned to a unit, remove it
                 else{
@@ -366,7 +366,7 @@
                         unit.categories = [];
                     }
                 }
-                DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
+                // DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
                 DataService.getUnitById(unit.tree_id).gui_status = "OPEN";
 
                 // Comment -  because the tree has not yet been built in its entirety, and token.inChildUnit field is missing during the building.
@@ -573,8 +573,10 @@
                     index_int = parentUnit.AnnotationUnits.length + 1;
                 }
 
-                //Update slots information
-                newObject = updateUnitSlots(newObject);
+                // Update slots information
+                if ($rootScope.isSlottedLayerProject) {
+                    newObject = updateUnitSlots(newObject);
+                }
 
                 if(!inInitStage) {
                     Core.openAllUnits(newObject);

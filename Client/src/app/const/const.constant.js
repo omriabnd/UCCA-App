@@ -5,8 +5,8 @@
   angular.module('zAdmin.const')
 	.constant('ENV_CONST', {
 		IS_DEV:true,
-		TEST_URL:"/api/v1",
-		PROD_URL:"/api/v1",
+		TEST_URL:"http://ucca.development.cs.huji.ac.il/api/v1",
+		PROD_URL:"http://ucca.development.cs.huji.ac.il/api/v1",
 		LOCAL_RESOURCES: "app/resources",
 		TASK_TYPE:{
 			ANNOTATION:"ANNOTATION",
@@ -107,7 +107,8 @@
 			{color: "white", backgroundColor: "#935754"},
 			{color: "white", backgroundColor: "#4099b7"},
 			{color: "black", backgroundColor: "#66CDAA"},
-			{color: "white", backgroundColor: "#FF00FF"}
+			{color: "white", backgroundColor: "#FF00FF"},
+			{color: "white", backgroundColor: "#A1A1A1"}
 		],
 		NAV_BAR_ITEMS:[
 			{
@@ -124,24 +125,30 @@
 			},
 			{
 				id:3,
+				name:"Open All",
+				tooltip:"Alt+e: Open All",
+				executeFunction:"openAll"
+			},
+			{
+				id:4,
 				name:"Save",
 				tooltip:"Alt+s: Save",
 				executeFunction:"saveTask"
 			},
 			{
-				id:4,
+				id:5,
 				name:"Submit",
 				tooltip:"Alt+b: Submit (unit will be considered completed)",
 				executeFunction:"submitTask"
 			},
 			{
-				id:5,
+				id:6,
 				name:"Reset",
 				tooltip:"Alt+x: Reset annotation",
 				executeFunction:"resetAllAnnotations"
 			},
 			{
-				id:6,
+				id:7,
 				name:"Settings",
 				tooltip:"Alt+t: Settings",
 				executeFunction:"openSettings"
