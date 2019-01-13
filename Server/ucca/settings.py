@@ -175,6 +175,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 EMAIL_HOST = "mailhost.cs.huji.ac.il"
 EMAIL_PORT = 25
+REGISTRATION_LINK = "/"
+
 
 try:
 	from .local_settings import *
