@@ -430,12 +430,13 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             raise TokensInvalid("tokens should be ordered by their start_index")
         tokens_id_to_startindex = dict([(x['id'], x['start_index']) for x in tokens])
         children_tokens_list_for_validation = []
-        largest_index_in_task_tokens = self.initial_data['tokens'][-1]['index_in_task']
+        largest_index_in_task_tokens = self.initial_data['tokens'][-1]['start_index']
         for au in self.initial_data['annotation_units']:
             cur_children_tokens = au.get('children_tokens')
             try:
                 if cur_children_tokens:
-                    start_indices = [children_token['index_in_task'] for children_token in cur_children_tokens]
+                    start_indices = \
+                        [tokens_id_to_startindex[children_token['id']] for children_token in cur_children_tokens]
                     if any(start_index > largest_index_in_task_tokens for start_index in start_indices):
                         raise TokensInvalid("Invalid start index in unit %s, larger then the biggest token" % au['tree_id'])
                     if len(start_indices) > len(set(start_indices)):
