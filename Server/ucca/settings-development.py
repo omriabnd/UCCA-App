@@ -1,4 +1,6 @@
 # Place settings relevant to the development environment
+REGISTRATION_LINK = 'http://ucca.development.cs.huji.ac.il/'
+
 ALLOWED_HOSTS = [
        'ucca.development',
        'ucca.development.cs.huji.ac.il',
