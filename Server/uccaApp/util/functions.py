@@ -32,11 +32,13 @@ def send_invite_email(inviterName,toEmail,password):
     body = "<div>"+inviterName+" has invited you to take part in an annotation project<br>\
                 carried out through the UCCA web-site.<br>\
                 <br>\
-                Please complete your registration through this URL:<br>\
+                Please login through this URL:<br>\
                 "+REGISTRATION_LINK+"<br>\
                 <br>\
                 Username: "+toEmail+"<br>\
                 Temporary password: "+password+"<br>\
+                <br>\
+                Once logged in, you may edit your profile and password by pressing the icon at the top right corner.<br>\
                 <br>\
                 Please feel free to contact me with any questions.<br>\
             </div>"
