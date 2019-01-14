@@ -4,7 +4,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         #'NAME': 'ucca_development',
-        'NAME': 'ucca_staging_oct6',
+        'NAME': 'ucca_prod2',
         'USER': 'postgres',
         'PASSWORD': 'flamingo1980',
         'HOST': '127.0.0.1',
