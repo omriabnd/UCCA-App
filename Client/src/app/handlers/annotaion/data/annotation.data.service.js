@@ -366,8 +366,9 @@
                         unit.categories = [];
                     }
                 }
+                // debugger
                 // DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
-                DataService.getUnitById(unit.tree_id).gui_status = "OPEN";
+                // DataService.getUnitById(unit.tree_id).gui_status = "OPEN";
 
                 // Comment -  because the tree has not yet been built in its entirety, and token.inChildUnit field is missing during the building.
                 // AssertionService.checkTree(DataService.tree, DataService.serverData);
@@ -418,7 +419,6 @@
             // console.log("In insertToTree, newObject=", newObject);
 
             return $q(function(resolve, reject) {
-
                 if (!inInitStage && DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT) {
                     Core.showAlert("Cant create annotation units in refinement layer")
                     console.log('ALERT - insertToTree -  prevent insert to tree when refinement layer');
