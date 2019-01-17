@@ -3,7 +3,7 @@
           'clicked': vm.tokenInSelectionList(vm) && vm.tokenUnitIsSelected(vm), 
           'highlightToken': vm.highlightToken(vm.token), 
           'not-relevant': !vm.relevant(vm.token) && !showParents, 
-          'finished': vm.unitIsFinished(vm.token)
+          <!--'finished': vm.unitIsFinished(vm.token)-->
     }"
     border-paint style="{{ vm.token.borderStyle }}"
     ng-init="vm.initToken(vm,$index)"

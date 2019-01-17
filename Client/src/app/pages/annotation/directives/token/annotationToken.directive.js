@@ -29,7 +29,7 @@
             $scope.vm = $scope.dirCtrl;
             $scope.vm.token['indexInUnit'] = !$scope.vm.token['indexInUnit'] ? $scope.$parent.$index : $scope.vm.token['indexInUnit'];
             $scope.vm.tokenInSelectionList = tokenInSelectionList;
-	    $scope.vm.relevant = relevant;
+	        $scope.vm.relevant = relevant;
             $scope.vm.unitIsFinished = unitIsFinished;
             $scope.vm.tokenUnitIsSelected = tokenUnitIsSelected;
             $scope.vm.highlightToken = highlightToken;
