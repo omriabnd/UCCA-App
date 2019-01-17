@@ -224,7 +224,7 @@
                         vm.submittingTask = false;
                         Core.showNotification('success','Annotation Task Submitted.');
                         goToMainMenu(res)
-                    }, () => {
+                    }, function() {
                         vm.submittingTask = false;
                     });
                 })
@@ -393,7 +393,7 @@
             return DataService.saveTask().then(function(res){
                 vm.savingTask = false;
                 Core.showNotification('success','Annotation Task Saved.');
-            }, () =>{
+            }, function() {
                 vm.savingTask = false;
             });
         }
