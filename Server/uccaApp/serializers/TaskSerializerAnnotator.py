@@ -41,6 +41,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
     tokens = serializers.SerializerMethodField()
     annotation_units = serializers.SerializerMethodField() 
     is_active = serializers.SerializerMethodField()
+    user_comment = serializers.SerializerMethodField()
     
     def get_is_active(self,obj):
         if not obj.is_active:
@@ -63,6 +64,11 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             children_json.append(TaskInChartSerializer(cl).data)
         return children_json
 
+    def get_user_comment(self, obj):
+        if (obj.status == Constants.TASK_STATUS_JSON['NOT_STARTED'] and obj.type == Constants.TASK_TYPES_JSON['REVIEW']):
+            return obj.parent_task.user_comment
+        else:
+            return obj.user_comment
 
     def get_tokens(self, obj):
         if (obj.type == Constants.TASK_TYPES_JSON['TOKENIZATION']):
@@ -92,8 +98,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             annotation_units = Annotation_Units.objects.all().filter(task_id=obj.id)
 
             # handle new refinement or extention layer taks - get the parent annotation units - start
-            if (len(
-                    annotation_units) == 0 and obj.parent_task is not None):  # TODO: check if coarsening task is ok with that
+            if (len(annotation_units) == 0 and obj.parent_task is not None):  # TODO: check if coarsening task is ok with that
                 # get the parent task annotation units
                 orig_obj = obj
                 obj = obj.parent_task
@@ -222,11 +227,13 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             data_json = json.dumps(self.initial_data['annotation_units'])
             aj = Annotation_Json.objects.create(task=instance, annotation_json=data_json)
             instance.annotation_json = aj
+            instance.user_comment = self.initial_data['user_comment']
         elif (instance.type == Constants.TASK_TYPES_JSON['REVIEW']):
             self.validate_annotation_task(instance)
             data_json = json.dumps(self.initial_data['annotation_units'])
             aj = Annotation_Json.objects.create(task=instance, annotation_json=data_json)
             instance.annotation_json = aj
+            instance.user_comment = self.initial_data['user_comment']
         instance.save()
 
     def reset_tokenization_task(self,instance):
@@ -410,6 +417,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             remote_unit = self.save_annotation_remote_unit(annotation_unit)
             self.save_remote_annotation_categories(remote_unit, annotation_unit.remote_categories)
 
+        instance.save()
         print('save_annotation_task - end')
         logger.info('save_annotation_task - end')
 
