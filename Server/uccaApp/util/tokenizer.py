@@ -4,13 +4,13 @@ import pdb
 from itertools import count
 
 APOSTROPHE_CHARS = [u"'", u"’"]
-
+NON_ALPHANUM_REQUIRING_ANNOTATION = ['$', u'£', u'€', u'₪']
 
 def isPunct(s):
   """
   Returns whether s is a punctuation or not.
   """
-  return all([not c.isalnum() for c in s])
+  return all([not (c.isalnum() or c in NON_ALPHANUM_REQUIRING_ANNOTATION) for c in s])
 
 
 def tokenize(t):
