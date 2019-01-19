@@ -1111,7 +1111,14 @@
                     delete category.description;
                     delete category.tooltip;
                     delete category.callbackFunction;
-                })
+                    delete category.abbreviation;
+                    delete category.backgroundColor;
+                    delete category.color;
+                    delete category.fromParentLayer;
+                    delete category.is_metacategory;
+                    delete category.name;
+                    delete category.index;
+                });
             }
             return categories;
 
