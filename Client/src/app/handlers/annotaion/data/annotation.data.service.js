@@ -34,6 +34,7 @@
             lastInsertedUnitIndex: lastInsertedUnitIndex,
             unitType:unitType,
             serverData:null,
+            tokensWithComments: new Set(),
             baseTokenData: ['id', 'start_index', 'end_index', 'index_in_task', 'require_annotation', 'text', 'tokenization_task_id', 'splitByTokenization'],
             hashTables: hashTables,
             categories: [],
@@ -616,6 +617,13 @@
                         AnnotationUnits: getUnitById(level).AnnotationUnits
                     }, newUnitId: newObject.tree_id
                 }) : '';
+
+                if (newObject.comment) {
+                    newObject.tokens.forEach(function (token) {
+                        DataService.tokensWithComments.add(token.static.id);
+                    });
+                    console.log(DataService.tokensWithComments);
+                }
 
                 // Check tree in AssertionService after add unit
                 if (!inInitStage) {

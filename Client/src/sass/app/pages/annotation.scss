@@ -23,6 +23,7 @@
       overflow: hidden;
   }
 
+
   span.token.ng-binding.bold {
     font-weight: bold;
     color: red;
@@ -70,10 +71,13 @@
 
       &.highlightToken {
         /* background: #FFFF00; */
-	color: #000000 !important;
-	font-weight: bold;
-	font-style: italic;
+	color: red !important;
       }
+
+    &.token-different-color {
+        color: blue;
+      }
+
 
       &.not-relevant {
         border-top: none !important;

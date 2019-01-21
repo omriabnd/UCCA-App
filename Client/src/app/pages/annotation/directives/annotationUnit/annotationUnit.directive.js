@@ -243,6 +243,11 @@
 
                     $scope.saveComment = function(){
                         $scope.vm.dataBlock.comment = $scope.comment;
+                        if ($scope.comment != '') {
+                            $scope.vm.dataBlock.tokens.forEach(function (token) {
+                                DataService.tokensWithComments.add(token.static.id);
+                            });
+                        }
                     }
                     
                     $scope.saveCluster = function(){

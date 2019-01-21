@@ -33,6 +33,7 @@
             $scope.vm.unitIsFinished = unitIsFinished;
             $scope.vm.tokenUnitIsSelected = tokenUnitIsSelected;
             $scope.vm.highlightToken = highlightToken;
+            $scope.vm.hasChangeTextColorProperty = hasChangeTextColorProperty;
 
             $scope.$on('tokenIsClicked', function(event, args) {
                 var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
@@ -326,9 +327,16 @@
         }
 
         function highlightToken(token){
-	    var selectedUnitId = selectionHandlerService.getSelectedUnitId();
-	    var selectedUnit_token_ids = DataService.getUnitById(selectedUnitId).tokens.map(function(x) {return x.static.id;});
-	    return selectedUnitId != "0" && selectedUnit_token_ids.includes(token.static.id) && selectedUnit_token_ids.length <= DataService.getUnitById(token.unitTreeId).tokens.length;
+            var selectedUnitId = selectionHandlerService.getSelectedUnitId();
+            var selectedUnit_token_ids = DataService.getUnitById(selectedUnitId).tokens.map(function(x) {return x.static.id;});
+            return selectedUnitId != "0" && selectedUnit_token_ids.includes(token.static.id) && selectedUnit_token_ids.length <= DataService.getUnitById(token.unitTreeId).tokens.length;
+        }
+
+        /*
+         * Examines whether the token has a property which means it should change its text color.
+         */
+        function hasChangeTextColorProperty(token) {
+            return token.unitTreeId == '0' && DataService.tokensWithComments.has(token.static.id);
         }
 	
     }
