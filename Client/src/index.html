@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="zAdmin">
+<html lang="en" ng-app="zAdmin" style="height: 100%; position: relative;">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -25,18 +25,18 @@
     <!-- endbuild -->
 
 </head>
-<body>
+<body style="height: 100%; position: relative;">
 <div class="body-bg"></div>
-<main ng-if="$pageFinishedLoading || $connected" ng-class="{ 'menu-collapsed': $baSidebarService.isMenuCollapsed() || $hideSideBar }">
+<main ng-if="$pageFinishedLoading || $connected" ng-class="{ 'menu-collapsed': $baSidebarService.isMenuCollapsed() || $hideSideBar }" style="height: 100%; position: relative;">
     <div ng-if='$connected'>
         <ba-sidebar ng-if='!$hideSideBar'></ba-sidebar>
         <page-top></page-top>
     </div>
 
-    <div class="al-main" ng-class="{'noMarginLeft':$hideSideBar}">
-        <div class="al-content">
+    <div class="al-main" ng-class="{'noMarginLeft':$hideSideBar}" style="height: 100%; position: relative;">
+        <div class="al-content" style="height: 100%; position: relative;">
             <content-top ng-if='$connected && !$hideSideBar'></content-top>
-            <div ui-view></div>
+            <div ui-view style="height: 100%; position: relative;"></div>
         </div>
     </div>
 

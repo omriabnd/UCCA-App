@@ -1,5 +1,5 @@
-<div class="annotation-page-container">
-    <div class="col-xs-2 side-bar" keep-on-top ng-class="{'no-events': vm.inRemoteMode()}">
+<div class="annotation-page-container" style="display:flex; height: 100%; position: relative;">
+    <div ng-class="{'no-events': vm.inRemoteMode()}" style="width:17%; overflow: auto; height: 100%; padding-bottom: 15px;">
 	    <div class="categories-container">
         	<div ng-repeat="parentCategory in vm.categories | filter: fromParentLayer  track by vm.categories.indexOf(parentCategory)">
             	<categories-directive  ng-show="showParents" definition-details="parentCategory" definition-id="vm.categories.indexOf(parentCategory)"></categories-directive>
@@ -24,7 +24,7 @@
             <utility-buttons-directive ng-repeat="definition in vm.definitions track by $index" definition-details="definition" definition-id="$index"></utility-buttons-directive>
         </div>
     </div>
-    <div class="col-xs-10 main-body">
+    <div style="width:100%; overflow: auto; height: 100%; padding-left: 15px; padding-right: 10px;">
         <div class="nav-bar-container">
             <nav-bar-item ng-repeat="item in vm.navBarItems track by $index" tool-tip="item.tooltip" item-object="item"></nav-bar-item>
             <div class="available-font-sizes">
