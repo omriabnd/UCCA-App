@@ -144,9 +144,15 @@
     overflow: hidden;
   }
 
-  .child-unit  {
+  .child-unit-ltr  {
     width: 99%;
     float: right;
+    position: relative;
+  }
+
+  .child-unit-rtl  {
+    width: 99%;
+    float: left;
     position: relative;
   }
 
@@ -453,6 +459,8 @@
       left: -4px;
     }
     .minus-round,.plus-round {
+      //float: left;
+      //direction: ltr;
         cursor: pointer;
         background-size: cover;
         background-repeat: no-repeat;
@@ -625,6 +633,10 @@
     cursor: pointer;
   }
 
+  .aaa-ltr{
+  //float: right; direction:ltr
+    background-color: yellow;
+  }
 
 }
 textarea.unit-comment-text {

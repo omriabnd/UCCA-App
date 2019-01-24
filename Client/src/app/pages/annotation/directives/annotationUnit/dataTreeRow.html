@@ -1,7 +1,12 @@
 <div ng-repeat="unit in vm.dataBlock.AnnotationUnits">
     <annotation-unit
             class="has-elements"
-            ng-class="{'hidden-unit':vm.isUnitHidden(unit),'unit-collapse':vm.isUnitCollapsed(vm),'child-unit' :unit != '0'}"
+            ng-class="{
+            'hidden-unit':vm.isUnitHidden(unit),
+            'unit-collapse':vm.isUnitCollapsed(vm),
+            'child-unit-ltr': unit != '0' && dirCtrl.direction==='ltr',
+            'child-unit-rtl' :unit != '0' && dirCtrl.direction==='rtl'
+            }"
             unit="unit"
             tokens="unit.tokens"
             tree-id="unit.tree_id">
