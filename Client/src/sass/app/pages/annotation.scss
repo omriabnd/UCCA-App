@@ -439,7 +439,8 @@
 
   .expand-btn {
     position: absolute;
-    left: -20px;
+    margin-right: -35px;
+    margin-left: -32px;
     top: 5px;
     color: #f00;
     background-color: transparent;
@@ -459,8 +460,6 @@
       left: -4px;
     }
     .minus-round,.plus-round {
-      //float: left;
-      //direction: ltr;
         cursor: pointer;
         background-size: cover;
         background-repeat: no-repeat;
