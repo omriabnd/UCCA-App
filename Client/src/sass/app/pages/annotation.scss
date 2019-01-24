@@ -500,11 +500,19 @@
     display: inline-block;
     width: 100%;
 
-    .control-buttons-container {
-          float: right;
-          direction: rtl;
-          margin-right: 0;
+    .ltr {
+      float: right;
+      direction: rtl;
+      margin-right: 0;
+    }
 
+    .rtl {
+      float: left;
+      direction: ltr;
+      margin-left: 0;
+    }
+
+    .control-buttons-container {
       .unit-buttons {
           padding: 2px;
           cursor: pointer;
@@ -516,7 +524,6 @@
         top: 0px;
       }
     }
-
   }
 
   .directive-info-data-container.selected-row .text-wrapper .text .cursor{

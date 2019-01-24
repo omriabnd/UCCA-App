@@ -24,7 +24,8 @@
             <utility-buttons-directive ng-repeat="definition in vm.definitions track by $index" definition-details="definition" definition-id="$index"></utility-buttons-directive>
         </div>
     </div>
-    <div style="width:100%; overflow: auto; height: 100%; padding-left: 15px; padding-right: 10px;" class="main-body">
+
+    <div style="width:100%; overflow: auto; height: 100%; padding-left: 15px; padding-right: 10px;" class="main-body" dir="{{ direction }}">
         <div class="nav-bar-container">
             <nav-bar-item ng-repeat="item in vm.navBarItems track by $index" tool-tip="item.tooltip" item-object="item"></nav-bar-item>
             <div class="available-font-sizes">

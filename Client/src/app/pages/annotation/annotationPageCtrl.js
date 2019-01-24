@@ -10,6 +10,7 @@
     function AnnotationPageCtrl(DefaultHotKeys,TaskMetaData,AnnotationTextService,DataService, $rootScope,$scope,hotkeys,HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService,$timeout,$state, selectionHandlerService,$uibModal) {
         var vm = this;
         vm.tokenizationTask = TaskMetaData.Task;
+        $rootScope.direction = TaskMetaData.Task.passage.text_direction.toLowerCase();
         // vm.annotationTokens = tokensInStaticFormat(); // vm.tokenizationTask.tokens;
         vm.annotationTokens = DataService.tree.tokens;
         vm.categories = TaskMetaData.Categories;
@@ -546,6 +547,14 @@
                     callback: function(e) {
                         var functionToExecute = HotKeysManager.executeOperation(hotKeyObj);
                         var selectedUnitId = selectionHandlerService.getSelectedUnitId();
+                        // If direction is rtl- opposite right and left
+                        if ($rootScope.direction === 'rtl') {
+                            if (functionToExecute.includes('Right')) {
+                                functionToExecute = functionToExecute.replace("Right", "Left");
+                            } else {
+                                functionToExecute = functionToExecute.replace("Left", "Right");
+                            }
+                        }
                         switch(functionToExecute){
                             case 'abortRemoteMode':{
                                 selectionHandlerService.setUnitToAddRemotes("0");
@@ -555,7 +564,7 @@
                             case 'moveRight':{
                                 // DataService.getUnitById(selectedUnitId).cursorLocation++;
 
-                                $rootScope.$broadcast("moveRight",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
+                                $rootScope.$broadcast("moveRight",{unitId: selectedUnitId, unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
                                 break;
                             }
                             case 'moveToNextRelevant':{

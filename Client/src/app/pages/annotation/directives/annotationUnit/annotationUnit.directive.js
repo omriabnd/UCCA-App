@@ -55,6 +55,7 @@
 
             vm.dataBlock.categoriesTooltip = categoriesTooltip(vm);
             vm.showClusterButton = $rootScope.isSlottedLayerProject;
+            vm.direction = $rootScope.direction;
         }
 
         function annotationUnitDirectiveLink($scope, elem, attrs,$rootScope) {
@@ -372,6 +373,17 @@
 
         function borderTokens(borderColors) {
             trace("annotationUnitDirective - borderTokens");
+            if ($rootScope.direction === 'rtl') {
+                // chane left and right borders;
+                if (borderColors.left && !borderColors.right) {
+                    borderColors.right = borderColors.left;
+                    delete borderColors.left;
+                } else if (borderColors.right && !borderColors.left) {
+                    borderColors.left = borderColors.right;
+                    delete borderColors.right;
+                }
+            }
+
             if (borderColors.left && borderColors.right) {
                 return "border-top : 3px solid "+ borderColors.top +"; border-bottom : 3px solid "+ borderColors.bottom +"; border-left : 3px solid " +
                     borderColors.left + ";border-right : 3px solid "+ borderColors.right + "; margin-left: 3px;";
