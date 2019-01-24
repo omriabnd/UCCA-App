@@ -228,8 +228,50 @@
             }
             var tokenListLength = angular.copy(selectedTokenArray.length);
 
-            // selectedTokenArray.forEach(function(token,index){
-            var token = selectedTokenArray[0];
+            var unitIds = [...new Set(selectedTokenArray.map(function(token) {return token.inChildUnitTreeId;}))];
+            var index = 0;
+
+            unitIds.forEach(function(unitId) {
+                var tokenUnit = DataService.getUnitById(unitId);
+                if(tokenUnit && tokenUnit.tree_id !== '0'){
+                    var parentID = DataService.getParentUnitId(tokenUnit.tree_id);
+                    for(var i=0; i<tokenUnit.tokens.length; i++, index++) {
+                        $rootScope.$broadcast('tokenIsClicked', {
+                            token: tokenUnit.tokens[i],
+                            unitTreeId: parentID || "0",
+                            selectAllTokenInUnit: true,
+                            doNotRemoveExistingToken: true
+                        });
+                    }
+
+                    var parentUnit = DataService.getParentUnit(tokenUnit.tokens[0].unitTreeId);
+                    var elementPos = parentUnit.tokens.map(function (x) {
+                        return x.static.id;
+                    }).indexOf(tokenUnit.tokens[0].static.id);
+                    if (parentUnit.tokens[elementPos].static.start_index < vm.token.static.start_index && direction === "DOWN") {
+                        selectionHandlerService.keyboardToggleTokenSelection(tokenUnit.tokens[i]);
+                        // console.log("move cursor", parentUnit.tokens[elementPos])
+                        $rootScope.$broadcast('moveCursor', {
+                            token: parentUnit.tokens[elementPos],
+                            unitTreeId: DataService.getParentUnitId(tokenUnit.tokens[0].unitTreeId) || "0"
+                        });
+                    }
+                }
+            });
+
+            if(index === tokenListLength){
+                var parentUnit = selectedTokenArray[selectedTokenArray.length - 1].unitTreeId ? DataService.getUnitById(selectedTokenArray[selectedTokenArray.length - 1].unitTreeId) :  DataService.getParentUnit("0");
+                var elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(selectedTokenArray[selectedTokenArray.length - 1].static.id);
+                selectionHandlerService.keyboardToggleTokenSelection(selectedTokenArray[tokenListLength-1]);
+                $rootScope.$broadcast('moveCursor', {
+                    token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : null,
+                    unitTreeId: selectionHandlerService.getSelectedUnitId() || "0"
+                });
+            }
+            /*
+            // Old Code
+            selectedTokenArray.forEach(function(token,index){
+            // var token = selectedTokenArray[0];
                 if(token.inChildUnitTreeId){
                     var tokenUnit = DataService.getUnitById(token.inChildUnitTreeId);
                     if(tokenUnit && tokenUnit.tree_id !== '0'){
@@ -253,23 +295,22 @@
                         }
                     }
                 }
-                // if(index === tokenListLength - 1){
-                //     var parentUnit = selectedTokenArray[selectedTokenArray.length - 1].unitTreeId ? DataService.getUnitById(selectedTokenArray[selectedTokenArray.length - 1].unitTreeId) :  DataService.getParentUnit("0");
-                //     var elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(selectedTokenArray[selectedTokenArray.length - 1].static.id);
-                //     selectionHandlerService.keyboardToggleTokenSelection(token);
-                //     $rootScope.$broadcast('moveCursor', {
-                //         token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : null,
-                //         // token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : parentUnit.tokens[elementPos] //old code
-                //         unitTreeId: selectionHandlerService.getSelectedUnitId() || "0"
-                //     });
-                // }
+                if(index === tokenListLength - 1){
+                    var parentUnit = selectedTokenArray[selectedTokenArray.length - 1].unitTreeId ? DataService.getUnitById(selectedTokenArray[selectedTokenArray.length - 1].unitTreeId) :  DataService.getParentUnit("0");
+                    var elementPos = parentUnit.tokens.map(function(x) {return x.static.id; }).indexOf(selectedTokenArray[selectedTokenArray.length - 1].static.id);
+                    selectionHandlerService.keyboardToggleTokenSelection(token);
+                    $rootScope.$broadcast('moveCursor', {
+                        token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : null,
+                        // token: elementPos <= parentUnit.tokens.length - 2 ? parentUnit.tokens[elementPos + 1] : parentUnit.tokens[elementPos] //old code
+                        unitTreeId: selectionHandlerService.getSelectedUnitId() || "0"
+                    });
+                }
 
                 // $rootScope.$broadcast('moveCursor', {
                 //     token: vm.token,
                 //     unitTreeId: vm.token.unitTreeId || "0"
                 // });
-            // })
-
+             })*/
         }
 
         function showEllipsis(token) {
