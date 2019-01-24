@@ -24,7 +24,7 @@
             <utility-buttons-directive ng-repeat="definition in vm.definitions track by $index" definition-details="definition" definition-id="$index"></utility-buttons-directive>
         </div>
     </div>
-    <div class="col-xs-10 main-body">
+    <div class="col-xs-10 main-body" dir="{{ direction }}">
         <div class="nav-bar-container">
             <nav-bar-item ng-repeat="item in vm.navBarItems track by $index" tool-tip="item.tooltip" item-object="item"></nav-bar-item>
             <div class="available-font-sizes">
@@ -47,7 +47,6 @@
 
         <!-- passage -->
         <annotation-unit
-                dir="{{ direction }}"
                 class="has-elements"
                 unit="vm.dataTree"
                 tokens="vm.annotationTokens"
