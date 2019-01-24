@@ -5,7 +5,7 @@
         .directive('annotationUnit',annotationUnitDirective);
 
     /** @ngInject */
-    function annotationUnitDirective($rootScope,DataService,selectionHandlerService,HotKeysManager,hotkeys,DefinitionsService, $timeout, $compile, $uibModal,restrictionsValidatorService, ENV_CONST, Core,$document) {
+    function annotationUnitDirective($rootScope,DataService,selectionHandlerService,HotKeysManager,hotkeys,DefinitionsService, $timeout, $compile, $uibModal,restrictionsValidatorService, ENV_CONST, Core, $window) {
         trace("annotationUnitDirective is here");
 
         var directive = {
@@ -47,7 +47,6 @@
             vm.isUnitCollapsed = isUnitCollapsed;
             vm.isUnitHidden = isUnitHidden;
             vm.toggleMouseUp = toggleMouseUp;
-            vm.highlightTokensInUnit0 = highlightTokensInUnit0;
             vm.dataBlock = DataService.getUnitById(vm.unit.tree_id);
 
             vm.dataBlock['cursorLocation'] = 0;
@@ -191,26 +190,7 @@
             if(selectionHandlerService.getSelectedUnitId() === vm.dataBlock.tree_id){
                 $rootScope.currentVm = vm;
             }
-            var unitIsSelect = selectionHandlerService.getSelectedUnitId() === vm.dataBlock.tree_id;
-            if (selectionHandlerService.getSelectedUnitId() == 0) {
-                highlightTokensInUnit0([]);
-            }
-            if (unitIsSelect) {
-                highlightTokensInUnit0(vm.tokens);
-            }
-            return unitIsSelect;
-        }
-
-        function highlightTokensInUnit0(tokens) {
-            // TODO: Send a dictionary of tokens ids to true instead of a list to speed up lookups
-            // { tokens: {
-            //      1: true,
-            //      2: true,
-            //      4: true
-            // }
-            // }
-            trace("annotationUnitDirective - highlightTokensInUnit0");
-            $rootScope.$broadcast('highlightTokens',{tokens: tokens});
+            return selectionHandlerService.getSelectedUnitId() === vm.dataBlock.tree_id;
         }
 
         function addCommentToUnit(unitId,vm){
@@ -235,6 +215,12 @@
                 size: size,
                 controller: function($scope){
                     $scope.vm = viewModal;
+
+                    // debugger
+                    // var comm = $window.document.getElementById('comment');
+                    // if (comm)
+                    //     comm.focus();
+
                     if(vm.dataBlock){
                         $scope.comment = $scope.vm.dataBlock.comment;
                         $scope.cluster = $scope.vm.dataBlock.cluster;

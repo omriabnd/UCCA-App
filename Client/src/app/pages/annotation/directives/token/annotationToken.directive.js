@@ -56,20 +56,6 @@
 	    $scope.$on('ToggleParents', function(event, args) {
                 $scope.showParents = !$scope.showParents;
             });
-
-/*
-            // TODO: Only catch this event if this token is in unit 0
-            // Highlight using a CSS class and not a style
-            $scope.$on('highlightTokens', function(event, args) {
-                $scope.vm.token.highlightStyle = undefined; // reset pre highlight
-                for (var i=0; i<args.tokens.length;i++)
-                {
-                    if ($scope.vm.token.id === args.tokens[i].id) {
-                        $scope.vm.token.highlightStyle = true;
-                    }
-                }
-            })
-            */
         }
 
 
