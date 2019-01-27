@@ -11,12 +11,14 @@ services:
     volumes:
       - ucca-volume:/var/lib/postgresql/data
 
-  # ucca-backend:
-  #  image: ../Server
-  #  expose:
-  #    - "8000"
-  #  depends_on:
-  #    - ucca-db  
+  ucca-backend:
+    build: ../Server
+    expose:
+      - "8000"
+    ports:
+      - "8085:8000"
+    depends_on:
+      - ucca-db  
         
 volumes:
   ucca-volume:
