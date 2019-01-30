@@ -314,7 +314,9 @@
                     if(currentUnit.cloned_to_tree_ids){
                         vm.dataBlock = currentUnit;
                         open('app/pages/annotation/templates/deleteAllRemoteModal.html','md', currentUnit.cloned_to_tree_ids.length, vm);
-                    }else{
+                    }
+                    else
+                        {
                         if(currentUnit.unitType === "REMOTE"){
                             var remoteUnit = DataService.getUnitById(currentUnit.cloned_from_tree_id);
                             DataService.deleteRemoteUnit(currentUnit);

@@ -767,7 +767,7 @@
         }
 
         function deleteUnit(unitId,vm){
-            trace("annotationUnitDirective - deleteUnit");
+            trace("annotationUnitDirective - `");
             if(DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
                 Core.showAlert("Cant delete annotation units from refinement layer")
                 console.log('ALERT - deleteFromTree -  prevent delete from tree when refinement layer');
