@@ -272,14 +272,13 @@
             var rootUnit = DataService.getUnitById("0");
             var hashTables = DataService.hashTables;
             var finishAllResult = restrictionsValidatorService.evaluateFinishAll(rootUnit,hashTables);
-            if (finishAllResult){
+            if (finishAllResult) {
                 selectionHandlerService.updateSelectedUnit(0);
-                Core.showNotification('success','Finish All was successful');
+                Core.showNotification('success', 'Finish All was successful');
                 collapseTree();
-                return true;
-            } else{
-                return false;
             }
+            saveTask();
+            return finishAllResult;
         }
 
         function openAll(unit) {

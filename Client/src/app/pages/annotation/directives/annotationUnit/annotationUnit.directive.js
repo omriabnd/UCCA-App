@@ -216,11 +216,6 @@
                 controller: function($scope){
                     $scope.vm = viewModal;
 
-                    // debugger
-                    // var comm = $window.document.getElementById('comment');
-                    // if (comm)
-                    //     comm.focus();
-
                     if(vm.dataBlock){
                         $scope.comment = $scope.vm.dataBlock.comment;
                         $scope.cluster = $scope.vm.dataBlock.cluster;
@@ -901,7 +896,7 @@
                 if (selectionHandlerService.checkRestrictionsForRemote(parentUnit)) {
                     var newRowId = DataService.insertToTree(objToPush, selectionHandlerService.getUnitToAddRemotes()).then(function (res) {
                         DataService.unitType = 'REGULAR';
-
+                        Core.scrollToUnit(selectionHandlerService.getUnitToAddRemotes());
                         selectionHandlerService.setUnitToAddRemotes("0");
                         $('.annotation-page-container').toggleClass('crosshair-cursor');
                     });
