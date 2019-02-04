@@ -196,7 +196,13 @@
         function addCommentToUnit(unitId,vm){
             trace("annotationUnitDirective - addCommentToUnit");
             selectionHandlerService.updateSelectedUnit(unitId);
-            open('app/pages/annotation/templates/commentOnUnitModal.html','sm','',vm)
+            open('app/pages/annotation/templates/commentOnUnitModal.html','sm','',vm);
+
+            $timeout( function(){
+                var comm = $window.document.getElementById('comment');
+                if (comm)
+                    comm.focus();
+            }, 100 );
         }
 
         function addClusterToUnit(unitId,vm){
@@ -215,11 +221,6 @@
                 size: size,
                 controller: function($scope){
                     $scope.vm = viewModal;
-
-                    // debugger
-                    // var comm = $window.document.getElementById('comment');
-                    // if (comm)
-                    //     comm.focus();
 
                     if(vm.dataBlock){
                         $scope.comment = $scope.vm.dataBlock.comment;
@@ -243,6 +244,7 @@
                     }
 
                     $scope.forceDeleteUnit = function(){
+                        $scope.vm.dataBlock.comment = undefined;
                         DataService.deleteUnit($scope.vm.dataBlock.tree_id);
                     }
 
@@ -827,8 +829,12 @@
 
             }
             //If a unit (not i the main passage) is selected switch to addRemoteUnit Mode
-            if(clickedUnit !== '0'){
-                $('.annotation-page-container').toggleClass('crosshair-cursor');
+            if (selectionHandlerService.getUnitToAddRemotes() === clickedUnit) {
+                selectionHandlerService.setUnitToAddRemotes("0");
+                $('.annotation-page-container').removeClass('crosshair-cursor');
+            }
+            else if(clickedUnit !== '0'){
+                $('.annotation-page-container').addClass('crosshair-cursor');
                 selectionHandlerService.setUnitToAddRemotes(clickedUnit);
             }
         }

@@ -4,7 +4,7 @@
     angular.module('zAdmin.annotation.data')
         .factory('DataService',DataService);
 
-    function DataService($q,$http,apiService,$rootScope,restrictionsValidatorService,ENV_CONST,Core, AssertionService) {
+    function DataService($q,$http,apiService,$rootScope,restrictionsValidatorService,ENV_CONST,Core, AssertionService, $uibModal) {
         trace("DataService is here");
 
         var lastInsertedUnitIndex = 0;
@@ -696,68 +696,91 @@
                 var parentUnit = getUnitById(getParentUnitId(unitId));
                 var splitUnitId = unit.tree_id.split('-');
                 var unitPositionInParentAnnotationUnits = parseInt(splitUnitId[splitUnitId.length-1])-1;
-                $rootScope.$broadcast("RemoveBorder",{id: unit.tree_id});
-                if(!unit.AnnotationUnits || unit.AnnotationUnits.length === 0){
-                    // Remove unit from parent and that's it - there are no child units to handle
-                    parentUnit.AnnotationUnits.splice(unitPositionInParentAnnotationUnits,1);
-                }else{
-                    // When deleting a unit, first delete her remote and implicit sons, and then move the regular sons to be children of her parent.
-                    for (var i = 0; i < unit.AnnotationUnits.length; i++) {
-                        if (unit.AnnotationUnits[i].unitType !== 'REGULAR') {
-                            if (unit.AnnotationUnits[i].unitType === 'REMOTE') {
-                                deleteRemoteUnit(unit.AnnotationUnits[i]);
-                            }
-                            unit.AnnotationUnits.splice(i, 1);
-                            i = i-1;
-                        }
-                    }
 
-                    // Move child to parent, so if X->Y->Z and Y is deleted, we get X->Z
-                    var preArray = parentUnit.AnnotationUnits.slice(0,unitPositionInParentAnnotationUnits); // Parent units up to us
-                    var afterArray = parentUnit.AnnotationUnits.slice(unitPositionInParentAnnotationUnits+1,parentUnit.AnnotationUnits.length); // Parent units from us
-                    parentUnit.AnnotationUnits = preArray.concat(unit.AnnotationUnits).concat(afterArray); // Move child units instead of us
+                 if (unit.comment) {
+                    open('app/pages/annotation/templates/deleteUnitWithComment.html','md', unit);
+                } else {
+                     $rootScope.$broadcast("RemoveBorder", {id: unit.tree_id});
+                     if (!unit.AnnotationUnits || unit.AnnotationUnits.length === 0) {
+                         // Remove unit from parent and that's it - there are no child units to handle
+                         parentUnit.AnnotationUnits.splice(unitPositionInParentAnnotationUnits, 1);
+                     } else {
+                         // When deleting a unit, first delete her remote and implicit sons, and then move the regular sons to be children of her parent.
+                         for (var i = 0; i < unit.AnnotationUnits.length; i++) {
+                             if (unit.AnnotationUnits[i].unitType !== 'REGULAR') {
+                                 if (unit.AnnotationUnits[i].unitType === 'REMOTE') {
+                                     deleteRemoteUnit(unit.AnnotationUnits[i]);
+                                 }
+                                 unit.AnnotationUnits.splice(i, 1);
+                                 i = i - 1;
+                             }
+                         }
 
-                    // Old code
-                    // for(i=0; i<parentUnit.AnnotationUnits.length; i++){
-                    //     if(parentUnit.AnnotationUnits[i].unitType !== "REGULAR"){
-                    //         if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id]){
-                    //             if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id][parentUnit.AnnotationUnits[i].tree_id]){
-                    //                 delete DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id][parentUnit.AnnotationUnits[i].tree_id];
-                    //                 parentUnit.AnnotationUnits.splice(i,1);
-                    //                 i--;
-                    //             }
-                    //         }
-                    //         /* This code used to delete implicit units and remote units to other parts of the tree
-                    //         else{
-                    //             parentUnit.AnnotationUnits.splice(i,1);
-                    //             i--;
-                    //         } */
-                    //
-                    //     }
-                    // }
-                }
+                         // Move child to parent, so if X->Y->Z and Y is deleted, we get X->Z
+                         var preArray = parentUnit.AnnotationUnits.slice(0, unitPositionInParentAnnotationUnits); // Parent units up to us
+                         var afterArray = parentUnit.AnnotationUnits.slice(unitPositionInParentAnnotationUnits + 1, parentUnit.AnnotationUnits.length); // Parent units from us
+                         parentUnit.AnnotationUnits = preArray.concat(unit.AnnotationUnits).concat(afterArray); // Move child units instead of us
 
-                sortAndUpdate(true);
-                // updateTreeIdsAndClonedIds();
-                //
-                // sortTree(DataService.tree.AnnotationUnits);
-                //
-                // updateTreeIdsAndClonedIds();
+                         // Old code
+                         // for(i=0; i<parentUnit.AnnotationUnits.length; i++){
+                         //     if(parentUnit.AnnotationUnits[i].unitType !== "REGULAR"){
+                         //         if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id]){
+                         //             if(DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id][parentUnit.AnnotationUnits[i].tree_id]){
+                         //                 delete DataService.unitsUsedAsRemote[parentUnit.AnnotationUnits[i].cloned_from_tree_id][parentUnit.AnnotationUnits[i].tree_id];
+                         //                 parentUnit.AnnotationUnits.splice(i,1);
+                         //                 i--;
+                         //             }
+                         //         }
+                         //         /* This code used to delete implicit units and remote units to other parts of the tree
+                         //         else{
+                         //             parentUnit.AnnotationUnits.splice(i,1);
+                         //             i--;
+                         //         } */
+                         //
+                         //     }
+                         // }
+                     }
 
-                updateInUnitIdsForTokens(DataService.getParentUnit(unit.tree_id));
+                     sortAndUpdate(true);
+                     // updateTreeIdsAndClonedIds();
+                     //
+                     // sortTree(DataService.tree.AnnotationUnits);
+                     //
+                     // updateTreeIdsAndClonedIds();
 
-                $rootScope.$broadcast("resetCursor_"+parentUnit.tree_id,{categories: unit.categories, id: parentUnit.tree_id});
+                     updateInUnitIdsForTokens(DataService.getParentUnit(unit.tree_id));
 
-                $rootScope.$broadcast("DeleteSuccess",{categories: unit.categories, id: unit.tree_id});
+                     $rootScope.$broadcast("resetCursor_" + parentUnit.tree_id, {
+                         categories: unit.categories,
+                         id: parentUnit.tree_id
+                     });
 
-                DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
+                     $rootScope.$broadcast("DeleteSuccess", {categories: unit.categories, id: unit.tree_id});
 
-                // Check tree in AssertionService after delete unit
-                AssertionService.checkTree(DataService.tree, DataService.serverData);
+                     DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
 
-                return resolve('DeleteSuccess');
+                     // Check tree in AssertionService after delete unit
+                     AssertionService.checkTree(DataService.tree, DataService.serverData);
+
+                     return resolve('DeleteSuccess');
+                 }
             });
         }
+
+        function open(page, size, unit) {
+            trace("DataService - open");
+            $uibModal.open({
+                animation: true,
+                templateUrl: page,
+                size: size,
+                controller: function($scope){
+                    $scope.forceDeleteUnit = function(){
+                        unit.comment = undefined;
+                        DataService.deleteUnit(unit.tree_id);
+                    }
+                }
+            });
+        };
 
         function updateInUnitIdsForTokens(unit){
             trace("DataService - updateInUnitIdsForTokens");
