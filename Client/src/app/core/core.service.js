@@ -64,26 +64,37 @@
             return annotationUnit;
         }
 
-            function scrollToTop() {
-                $timeout(function(){
-                    $rootScope.lastScrollPosMain = 0;
-                    $('html, body').scrollTop(0);
-                });
-            }
+        function scrollToTop() {
+        	$timeout(function(){
+        		$rootScope.lastScrollPosMain = 0;
+        		//$('html, body').scrollTop(0);
+				$('.main-body').scrollTop(0);
+        	});
+        }
             
         function scrollToUnit(unitID) {
             $timeout(function(){
                 try{
                     if($('#unit-'+unitID).offset() !== undefined){
-                       var newOffset = Math.round($('#unit-'+unitID).offset().top) - Math.round($(window).height() * 1 / 3);
+                       //
+                       // var rel_position = 0;
+                       // var parent = $('#unit-'+unitID);
+                       // while (parent && !parent.hasClass('main-body')) {
+                       //     rel_position += parent.position().top;
+                       //     parent = parent.offsetParent();
+                       //     console.log(parent);
+                       // }
+                       // console.log(rel_position);
+                       var newOffset = $('#unit-'+unitID).offset().top - $('.main-body').offset().top + $('.main-body').scrollTop()
+                           - $('.main-body').height() * 0.3;
                         if ($rootScope.lastScrollPosMain >= 0 && Math.abs(newOffset - $rootScope.lastScrollPosMain) < 10) {
                                 newOffset = $rootScope.lastScrollPosMain;
                         }
                         else {
                                 $rootScope.lastScrollPosMain = newOffset;
                         }
-
-                        $('html, body').scrollTop(newOffset);
+						$('.main-body').scrollTop(newOffset);
+                        //$('html, body').scrollTop(newOffset);
                     }                    
                 }catch(e){
                     console.log("Scroll to unit failed : ", e);

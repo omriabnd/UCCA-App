@@ -228,7 +228,7 @@
             }
             var tokenListLength = angular.copy(selectedTokenArray.length);
 
-            var unitIds = [...new Set(selectedTokenArray.map(function(token) {return token.inChildUnitTreeId;}))];
+            var unitIds = Array.from(new Set(selectedTokenArray.map(function(token) {return token.inChildUnitTreeId;})));
             var index = 0;
 
             unitIds.forEach(function(unitId) {
