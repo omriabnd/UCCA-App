@@ -272,14 +272,13 @@
             var rootUnit = DataService.getUnitById("0");
             var hashTables = DataService.hashTables;
             var finishAllResult = restrictionsValidatorService.evaluateFinishAll(rootUnit,hashTables);
-            if (finishAllResult){
+            if (finishAllResult) {
                 selectionHandlerService.updateSelectedUnit(0);
-                Core.showNotification('success','Finish All was successful');
+                Core.showNotification('success', 'Finish All was successful');
                 collapseTree();
-                return true;
-            } else{
-                return false;
             }
+            saveTask();
+            return finishAllResult;
         }
 
         function openAll(unit) {
@@ -315,7 +314,9 @@
                     if(currentUnit.cloned_to_tree_ids){
                         vm.dataBlock = currentUnit;
                         open('app/pages/annotation/templates/deleteAllRemoteModal.html','md', currentUnit.cloned_to_tree_ids.length, vm);
-                    }else{
+                    }
+                    else
+                        {
                         if(currentUnit.unitType === "REMOTE"){
                             var remoteUnit = DataService.getUnitById(currentUnit.cloned_from_tree_id);
                             DataService.deleteRemoteUnit(currentUnit);

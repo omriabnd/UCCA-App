@@ -774,7 +774,7 @@
         }
 
         function deleteUnit(unitId,vm){
-            trace("annotationUnitDirective - deleteUnit");
+            trace("annotationUnitDirective - `");
             if(DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
                 Core.showAlert("Cant delete annotation units from refinement layer")
                 console.log('ALERT - deleteFromTree -  prevent delete from tree when refinement layer');
@@ -907,7 +907,7 @@
                 if (selectionHandlerService.checkRestrictionsForRemote(parentUnit)) {
                     var newRowId = DataService.insertToTree(objToPush, selectionHandlerService.getUnitToAddRemotes()).then(function (res) {
                         DataService.unitType = 'REGULAR';
-
+                        Core.scrollToUnit(selectionHandlerService.getUnitToAddRemotes());
                         selectionHandlerService.setUnitToAddRemotes("0");
                         $('.annotation-page-container').toggleClass('crosshair-cursor');
                     });
