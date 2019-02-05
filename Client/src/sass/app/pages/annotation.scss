@@ -43,7 +43,7 @@
       background-color: #337ab7;
     }
 
-    .token.created-by-tokenization::before {
+    .token.split-by-tokenization::before {
       content: "•";
       color:red;
     }                           
