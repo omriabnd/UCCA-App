@@ -1,0 +1,24 @@
+version: '2'
+
+services:
+  ucca-db:
+    build: db
+    # image: postgres:11
+    expose:
+      - "5432"
+    ports:
+      - "15432:5432"
+    volumes:
+      - ucca-volume:/var/lib/postgresql/data
+
+  ucca-backend:
+    build: ../Server
+    expose:
+      - "8000"
+    ports:
+      - "8085:8000"
+    depends_on:
+      - ucca-db  
+        
+volumes:
+  ucca-volume:
