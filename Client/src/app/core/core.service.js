@@ -395,7 +395,7 @@
 
 		function showNotification(notificationType,textToShow){
 			var titles = {
-				error:'Pay Attention!!!',
+				error:'Failed',
 				success: 'Well Done'
 			};
 			toastr[notificationType](textToShow, titles[notificationType], {
