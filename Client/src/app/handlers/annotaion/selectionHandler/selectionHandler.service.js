@@ -241,9 +241,9 @@
                  * @type {string}
                  */
                 this.selectedUnit = index.toString();
-                if(!_handler.isTokenClicked()){
-                    _handler.clearTokenList(afterInsert);
-                }
+                // if(!_handler.isTokenClicked()){
+                //     _handler.clearTokenList(afterInsert);
+                // }
                 _handler.disableTokenClicked();
                 // // Check tree in AssertionService when update focus unit
                 // AssertionService.checkTree(DataService.tree, DataService.serverData);
@@ -554,8 +554,6 @@
                         _handler.toggleCategory(cat,false,false,unit,true)
                             .then(function(){
                                 unit.categories.forEach(function(category,index){
-                                    // if (unit.tree_id=="14")
-                                        // debugger
                                     if(index === 0){
                                         // _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],false,false,unit.gui_status);
                                     }else{
@@ -706,11 +704,7 @@
                 trace("selectionHandlerService - toggleCategory");
                 //console.log("category "+category.name+"   unit "+unit.tree_id);
                 return $q(function(resolve, reject) {
-                    // console.log("toggle category!!!!!!!!!!!!!, handler.selectedTokenList= " , _handler.selectedTokenList)
 
-//                    if (unit.tree_id == "14") {
-//                        // debugger
-//                    }
                     if(_handler.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(_handler.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(_handler.selectedTokenList,inInitStage)){
                         return
                     }
@@ -796,8 +790,7 @@
                             return DataService.toggleCategoryForUnit(_handler.selectedUnit,category).then(function(res){
                                 if(res.status === "ToggleSuccess"){
                                     _handler.updateSelectedUnit(res.id);
-                                    _handler.clearTokenList();
-                                    // return res.id;
+                                    // _handler.clearTokenList();
                                     return resolve({id: res.id});
                                 }
                             })

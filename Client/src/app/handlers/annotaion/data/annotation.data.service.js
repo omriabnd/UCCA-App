@@ -367,7 +367,6 @@
                         unit.categories = [];
                     }
                 }
-                // debugger
                 // DataService.getParentUnit(unit.tree_id).gui_status = "OPEN";
                 // DataService.getUnitById(unit.tree_id).gui_status = "OPEN";
 
@@ -375,7 +374,7 @@
                 // AssertionService.checkTree(DataService.tree, DataService.serverData);
 
                 $rootScope.$broadcast("ToggleSuccess",{categories: unit.categories, id: unit.tree_id});
-                resolve('ToggleSuccess');
+                resolve({status: 'ToggleSuccess', id: unit.parent_tree_id});
             })
 
         }

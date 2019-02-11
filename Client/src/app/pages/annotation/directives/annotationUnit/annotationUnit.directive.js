@@ -119,7 +119,8 @@
                     if($scope.vm.dataBlock.AnnotationUnits.AnnotationUnits){
                         delete $scope.vm.dataBlock.AnnotationUnits.AnnotationUnits;
                     }
-                    selectionHandlerService.updateSelectedUnit($scope.vm.dataBlock.tree_id,true);
+                    // Remove it because it causes selectedTokenList to reset, and the chosen tokens are unselected
+                    // selectionHandlerService.updateSelectedUnit($scope.vm.dataBlock.tree_id,true);
                     // paintTokens($scope.vm.tokens,$scope.vm.dataBlock);
                     colorUnit($scope.vm.dataBlock);
 
