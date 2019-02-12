@@ -7,7 +7,7 @@ from rest_framework import serializers
 
 from uccaApp.serializers.SourceSerializer import SourceSerializer_Simplify
 from uccaApp.serializers.UsersSerializer import DjangoUserSerializer_Simplify
-
+import re
 
 class PassageSerializer_Simplify(serializers.ModelSerializer):
     short_text = serializers.SerializerMethodField('make_short_text')
@@ -52,7 +52,7 @@ class PassageSerializer(serializers.ModelSerializer):
         texts_array = validated_data['text'].split("<DELIMITER>")
 
         for text in texts_array:
-          validated_data['text'] = text
+          validated_data['text'] = re.sub('\n\s+\n','\n\n', text)
           newPassage = Passages.objects.create(**validated_data)
 
         return newPassage
