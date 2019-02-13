@@ -38,6 +38,9 @@
         vm.defaultCategoryHotkeys = ENV_CONST.DEFAULT_CATEGORY_HOTKEYS;
         vm.savingTask = false;
         vm.submittingTask = false;
+        vm.noConnection = false;
+        vm.saveFailed = false;
+        vm.submitFailed = false;
 
         try{
             vm.categoryReorderings = JSON.parse(TaskMetaData.Task.project.layer.category_reorderings);
@@ -223,11 +226,22 @@
                 return DataService.saveTask().then(function(){
                     return DataService.submitTask().then(function(res){
                         vm.submittingTask = false;
+                        vm.submitFailed = false;
                         Core.showNotification('success','Annotation Task Submitted.');
                         goToMainMenu(res)
-                    }, function() {
+                    }, function(error) {
+                        if (error.data === null && error.status === -1 && error.statusText === "") {
+                            vm.noConnection = true;
+                            vm.submitFailed = true;
+                        }
                         vm.submittingTask = false;
                     });
+                    vm.submittingTask = false;
+                }, function(error) {
+                    if (error.data === null && error.status === -1 && error.statusText === "") {
+                        vm.noConnection = true;
+                        vm.submitFailed = true;
+                    }
                     vm.submittingTask = false;
                 });
             }
@@ -392,11 +406,28 @@
         }
 
         function saveTask(){
+            if (navigator.onLine) {
+                console.log("navigator.onLine")
+            } else {
+                console.log(" -- navigator.offLine")
+            }
+
+            window.addEventListener('online',  function(e) { console.log('online'); });
+            window.addEventListener('offline', function(e) { console.log('offline'); });
+
+
             vm.savingTask = true;
             return DataService.saveTask().then(function(res){
                 vm.savingTask = false;
+                vm.noConnection = false;
+                vm.saveFailed = false;
                 Core.showNotification('success','Annotation Task Saved.');
-            }, function() {
+            }, function(error) {
+                console.log("Save task error:", error);
+                if (error.data === null && error.status === -1 && error.statusText === "") {
+                    vm.noConnection = true;
+                    vm.saveFailed = true;
+                }
                 vm.savingTask = false;
             });
             vm.savingTask = false;
