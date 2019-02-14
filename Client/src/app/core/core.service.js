@@ -212,7 +212,9 @@
 			var tableScope = angular.element($('div[st-pagination]')).isolateScope();
 			if (tableScope.currentPage == tableScope.numPages) {
 				var vm = this;
-				vm.currentService.getTableData([{'searchKey':'offset','searchValue': vm.smartTableDataSafe.length}]).then(function (res) {
+				var project = {'searchKey':'project','searchValue': vm.projectId};
+				var offset = {'searchKey':'offset','searchValue': vm.smartTableDataSafe.length};
+				vm.currentService.getTableData([project, offset]).then(function (res) {
 					vm.smartTableDataSafe = vm.smartTableDataSafe.concat(res);
 					$timeout(function(){
 						tableScope.selectPage(currentPage + 1);

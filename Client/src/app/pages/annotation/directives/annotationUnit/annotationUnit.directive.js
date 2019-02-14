@@ -119,7 +119,8 @@
                     if($scope.vm.dataBlock.AnnotationUnits.AnnotationUnits){
                         delete $scope.vm.dataBlock.AnnotationUnits.AnnotationUnits;
                     }
-                    // Remove it because it causes selectedTokenList to reset, and the chosen tokens are unselected
+                    // Remove it because it causes selectedTokenList to reset, and the chosen tokens are unselected.
+                    // When adding a category to an existing unit, focus should not change.
                     // selectionHandlerService.updateSelectedUnit($scope.vm.dataBlock.tree_id,true);
                     // paintTokens($scope.vm.tokens,$scope.vm.dataBlock);
                     colorUnit($scope.vm.dataBlock);

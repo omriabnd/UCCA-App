@@ -220,7 +220,6 @@
         // this function took a few seconds, it causes to the bug:
         // Select existing units in the main passage (seems to respond slowly to longer units)
         function mouseUpFromToken(vm){
-            // debugger
             var selectedTokenArray = selectionHandlerService.getSelectedTokenList();
             var direction = "UP"
             if(selectionHandlerService.getLastInsertedToken() !== null && selectionHandlerService.getLastInsertedToken().static.start_index > vm.token.static.start_index){
@@ -231,6 +230,7 @@
             var unitIds = Array.from(new Set(selectedTokenArray.map(function(token) {return token.inChildUnitTreeId;})));
             var index = 0;
 
+            // In the future: If will be performance problems, it is possible to consolidate the O(n) broadcasts into a O(1).
             unitIds.forEach(function(unitId) {
                 var tokenUnit = DataService.getUnitById(unitId);
                 if(tokenUnit && tokenUnit.tree_id !== '0'){
