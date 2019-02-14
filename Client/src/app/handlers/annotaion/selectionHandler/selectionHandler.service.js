@@ -241,9 +241,9 @@
                  * @type {string}
                  */
                 this.selectedUnit = index.toString();
-                // if(!_handler.isTokenClicked()){
-                //     _handler.clearTokenList(afterInsert);
-                // }
+                if(!_handler.isTokenClicked()){
+                    _handler.clearTokenList(afterInsert);
+                }
                 _handler.disableTokenClicked();
                 // // Check tree in AssertionService when update focus unit
                 // AssertionService.checkTree(DataService.tree, DataService.serverData);
@@ -719,6 +719,10 @@
                         return reject("Failed");
                     }
 
+                    // Saving last selected unit and tokens because aUnitIsSelected changes the selected,
+                    // and we want save selected in the case: when adding a category or creating a unit, the target unit should remain selected.
+                    var lastSelected = { unit: _handler.selectedUnit, tokens:  _handler.selectedTokenList};
+
                     if(!aUnitIsSelected(_handler.selectedTokenList,inInitStage) && (_handler.selectedTokenList.length && !justToggle) || remote || inInitStage){
                         //_handler mean we selected token and now we need to create new unit.
 
@@ -788,9 +792,10 @@
                         //Toggle the category for existing unit
                         if(_handler.selectedUnit.toString() !== "0"){
                             return DataService.toggleCategoryForUnit(_handler.selectedUnit,category).then(function(res){
+                                _handler.selectedUnit = lastSelected.unit; // update selected unit after adding a category to the inner unit
+                                _handler.selectedTokenList = lastSelected.tokens;
                                 if(res.status === "ToggleSuccess"){
                                     _handler.updateSelectedUnit(res.id);
-                                    // _handler.clearTokenList();
                                     return resolve({id: res.id});
                                 }
                             })

@@ -374,7 +374,7 @@
                 // AssertionService.checkTree(DataService.tree, DataService.serverData);
 
                 $rootScope.$broadcast("ToggleSuccess",{categories: unit.categories, id: unit.tree_id});
-                resolve({status: 'ToggleSuccess', id: unit.parent_tree_id});
+                resolve('ToggleSuccess');
             })
 
         }
