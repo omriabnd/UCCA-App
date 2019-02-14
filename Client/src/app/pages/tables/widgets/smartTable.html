@@ -14,25 +14,19 @@
       <th st-sort="{{header.key}}" ng-repeat="header in vm.smartTableStructure track by $index" ng-if="header.showInTable">{{::header.name}}</th>
     </tr>
     <tr>
-      <th ng-repeat="header in vm.smartTableStructure" ng-if="header.filter">
+      <th></th>
+        <th ng-repeat="header in vm.smartTableStructure" ng-if="header.filter">
         <input st-search="{{header.key}}" placeholder="{{header.name}}" class="input-sm form-control search-input" type="search"/>
       </th>
     </tr>
     </thead>
     <tbody>
     <tr ng-repeat="itemRow in vm.smartTableData" id="smart-table-row-{{$index}}" ng-class="{'selected': itemRow.selected}">
-      <td ng-repeat="(key,value) in vm.smartTableStructure track by $index"
-          html-string-to-content elem-value="itemRow[value['key']]"
-          language-align="{{::itemRow[value['key']]}}"
-          ng-class="{'out-of-date':value.key == 'out_of_date' && itemRow[value['key']] != '', 'table-id':$index==0,'table-object': (!!itemRow[value['key']].name || !!itemRow[value['key']][0].name || !!itemRow[value['key']].id || !!itemRow[value['key']][0].id) }"
-          ng-click="(!!itemRow[value['key']].name || !!itemRow[value['key']][0].name || !!itemRow[value['key']].id || !!itemRow[value['key']][0].id) && vm.showMore(itemRow[value['key']]);"
-          ng-if="value.showInTable && value.key != 'actions'">
-          {{::vm.parseSmartTableColumnData(itemRow,value)}}
-      </td>
-      <td ng-if="vm.smartTableStructure[vm.smartTableStructure.length-1].buttons">
-          <span data-ng-switch on="vm.smartTableStructure[vm.smartTableStructure.length-1].buttons.length<3">
+
+      <td ng-if="vm.smartTableStructure[0].buttons">
+          <span data-ng-switch on="vm.smartTableStructure[0].buttons.length<3">
             <button data-ng-switch-when="true" 
-                    ng-repeat="action in vm.smartTableStructure[vm.smartTableStructure.length-1].buttons track by $index"
+                    ng-repeat="action in vm.smartTableStructure[0].buttons track by $index"
                     class="btn editable-table-button btn-xs {{action.class}}"
                     ng-show="::vm.smartTableCanUseAction(action.functionName,action.roles,itemRow.type,action.types,{'status':itemRow.status,'accepteds':action.statuses})"
                     ng-click="vm[action.functionName](itemRow,$parent.$index)">
@@ -48,7 +42,7 @@
                 <ul uib-dropdown-menu>
                   <li>                                            
                     <a  href 
-                        ng-repeat="action in vm.smartTableStructure[vm.smartTableStructure.length-1].buttons track by $index"
+                        ng-repeat="action in vm.smartTableStructure[0].buttons track by $index"
                         ng-show="::vm.smartTableCanUseAction(action.functionName,action.roles,itemRow.type,action.types,{'status':itemRow.status,'accepteds':action.statuses})"
                         ng-click="vm[action.functionName](itemRow,$parent.$index)"
                         ng-class="{'prevent-go-view-only': itemRow.is_active != true && action.order == 3}">
@@ -59,6 +53,14 @@
               </div>
             </div>
           </span>          
+      </td>
+      <td ng-repeat="(key,value) in vm.smartTableStructure track by $index"
+          html-string-to-content elem-value="itemRow[value['key']]"
+          language-align="{{::itemRow[value['key']]}}"
+          ng-class="{'out-of-date':value.key == 'out_of_date' && itemRow[value['key']] != '', 'table-id':$index==0,'table-object': (!!itemRow[value['key']].name || !!itemRow[value['key']][0].name || !!itemRow[value['key']].id || !!itemRow[value['key']][0].id) }"
+          ng-click="(!!itemRow[value['key']].name || !!itemRow[value['key']][0].name || !!itemRow[value['key']].id || !!itemRow[value['key']][0].id) && vm.showMore(itemRow[value['key']]);"
+          ng-if="value.showInTable && value.key != 'actions'">
+          {{::vm.parseSmartTableColumnData(itemRow,value)}}
       </td>
     </tr>
     </tbody>
