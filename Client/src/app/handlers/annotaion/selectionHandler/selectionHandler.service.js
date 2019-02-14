@@ -554,8 +554,6 @@
                         _handler.toggleCategory(cat,false,false,unit,true)
                             .then(function(){
                                 unit.categories.forEach(function(category,index){
-                                    // if (unit.tree_id=="14")
-                                        // debugger
                                     if(index === 0){
                                         // _handler.toggleCategory(DataService.hashTables.categoriesHashTable[category.id],false,false,unit.gui_status);
                                     }else{
@@ -706,11 +704,7 @@
                 trace("selectionHandlerService - toggleCategory");
                 //console.log("category "+category.name+"   unit "+unit.tree_id);
                 return $q(function(resolve, reject) {
-                    // console.log("toggle category!!!!!!!!!!!!!, handler.selectedTokenList= " , _handler.selectedTokenList)
 
-//                    if (unit.tree_id == "14") {
-//                        // debugger
-//                    }
                     if(_handler.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(_handler.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(_handler.selectedTokenList,inInitStage)){
                         return
                     }
@@ -724,6 +718,10 @@
                     if(!inInitStage && !_handler.checkRestrictions(category, unitToCheck)) {
                         return reject("Failed");
                     }
+
+                    // Saving last selected unit and tokens because aUnitIsSelected changes the selected,
+                    // and we want save selected in the case: when adding a category or creating a unit, the target unit should remain selected.
+                    var lastSelected = { unit: _handler.selectedUnit, tokens:  _handler.selectedTokenList};
 
                     if(!aUnitIsSelected(_handler.selectedTokenList,inInitStage) && (_handler.selectedTokenList.length && !justToggle) || remote || inInitStage){
                         //_handler mean we selected token and now we need to create new unit.
@@ -794,10 +792,10 @@
                         //Toggle the category for existing unit
                         if(_handler.selectedUnit.toString() !== "0"){
                             return DataService.toggleCategoryForUnit(_handler.selectedUnit,category).then(function(res){
+                                _handler.selectedUnit = lastSelected.unit; // update selected unit after adding a category to the inner unit
+                                _handler.selectedTokenList = lastSelected.tokens;
                                 if(res.status === "ToggleSuccess"){
                                     _handler.updateSelectedUnit(res.id);
-                                    _handler.clearTokenList();
-                                    // return res.id;
                                     return resolve({id: res.id});
                                 }
                             })
