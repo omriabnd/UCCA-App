@@ -23,7 +23,7 @@
     <tbody>
     <tr ng-repeat="itemRow in vm.smartTableData" id="smart-table-row-{{$index}}" ng-class="{'selected': itemRow.selected}">
 
-      <td ng-if="vm.smartTableStructure[0].buttons">
+      <td ng-if="vm.smartTableStructure[0].buttons" class="narrow">
           <span data-ng-switch on="vm.smartTableStructure[0].buttons.length<3">
             <button data-ng-switch-when="true" 
                     ng-repeat="action in vm.smartTableStructure[0].buttons track by $index"

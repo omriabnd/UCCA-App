@@ -1,5 +1,27 @@
 [
   {
+    "key":"actions",
+    "name":"Actions",
+    "order":"0",
+    "filter":false,
+    "search":false,
+    "showInTable":true,
+    "buttons":[
+      {
+        "name":"Edit",
+        "order":"1",
+        "class":"btn-info",
+        "functionName":"editRow"
+      },
+      {
+        "name":"Remove",
+        "order":"2",
+        "class":"btn-danger",
+        "functionName":"removeRow"
+      }
+    ]
+  },
+  {
     "key":"id",
     "name":"ID",
     "order":"1",
@@ -83,27 +105,5 @@
     "type":"checkbox",
     "placeholder":"Is Active...",
     "value":true
-  },
-  {
-    "key":"actions",
-    "name":"Actions",
-    "order":"10",
-    "filter":false,
-    "search":false,
-    "showInTable":true,
-    "buttons":[
-      {
-        "name":"Edit",
-        "order":"1",
-        "class":"btn-info",
-        "functionName":"editRow"
-      },
-      {
-        "name":"Remove",
-        "order":"2",
-        "class":"btn-danger",
-        "functionName":"removeRow"
-      }
-    ]
   }
 ]

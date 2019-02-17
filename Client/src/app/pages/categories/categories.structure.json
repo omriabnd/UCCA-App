@@ -1,5 +1,29 @@
 [
   {
+    "key":"actions",
+    "name":"Actions",
+    "order":0,
+    "filter":false,
+    "search":false,
+    "showInTable":true,
+    "type":"sele",
+    "buttons":[
+      {
+        "name":"Edit",
+        "order":1,
+        "class":"btn-info",
+        "functionName":"editRow"
+      },
+      {
+        "name":"Remove",
+        "order":2,
+        "class":"btn-danger",
+         "roles":["ADMIN","PROJECT_MANAGER"],
+        "functionName":"removeRow"
+      }
+    ]
+  },
+  {
     "key":"id",
     "name":"Id",
     "order":1,
@@ -117,29 +141,5 @@
     "placeholder":"Is Active...",
     "value":true,
     "showInTable":true
-  },
-  {
-    "key":"actions",
-    "name":"Actions",
-    "order":11,
-    "filter":false,
-    "search":false,
-    "showInTable":true,
-    "type":"sele",
-    "buttons":[
-      {
-        "name":"Edit",
-        "order":1,
-        "class":"btn-info",
-        "functionName":"editRow"
-      },
-      {
-        "name":"Remove",
-        "order":2,
-        "class":"btn-danger",
-         "roles":["ADMIN","PROJECT_MANAGER"],
-        "functionName":"removeRow"
-      }
-    ]
   }
 ]

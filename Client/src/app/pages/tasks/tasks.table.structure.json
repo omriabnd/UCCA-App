@@ -1,5 +1,32 @@
 [
   {
+    "key":"actions",
+    "name":"Actions",
+    "order":0,
+    "filter":false,
+    "search":false,
+    "showInTable":true,
+    "type":"select",
+    "buttons":[
+      {
+        "name":"Go",
+        "order":3,
+        "roles":["ADMIN","PROJECT_MANAGER","ANNOTATOR","GUEST"],
+        "statuses":["NOT_STARTED","ONGOING"],
+        "class":"btn-success",
+        "functionName":"previewTask"
+      },
+      {
+        "name":"View Only",
+        "order":3,
+        "roles":["ADMIN","PROJECT_MANAGER","ANNOTATOR","GUEST"],
+        "statuses":["SUBMITTED","REJECTED"],
+        "class":"btn-success",
+        "functionName":"previewTask"
+      }
+    ]
+  },
+  {
     "key":"id",
     "name":"Id",
     "order":1,
@@ -175,32 +202,5 @@
     "placeholder":"Is Demo...",
     "value":"",
     "showInTable":true
-  },
-  {
-    "key":"actions",
-    "name":"Actions",
-    "order":14,
-    "filter":false,
-    "search":false,
-    "showInTable":true,
-    "type":"select",
-    "buttons":[
-      {
-        "name":"Go",
-        "order":3,
-        "roles":["ADMIN","PROJECT_MANAGER","ANNOTATOR","GUEST"],
-        "statuses":["NOT_STARTED","ONGOING"],
-        "class":"btn-success",
-        "functionName":"previewTask"
-      },
-      {
-        "name":"View Only",
-        "order":3,
-        "roles":["ADMIN","PROJECT_MANAGER","ANNOTATOR","GUEST"],
-        "statuses":["SUBMITTED","REJECTED"],
-        "class":"btn-success",
-        "functionName":"previewTask"
-      }
-    ]
   }
 ]

@@ -1,5 +1,45 @@
 [
   {
+    "key":"actions",
+    "name":"Actions",
+    "order":0,
+    "filter":false,
+    "search":false,
+    "showInTable":true,
+    "type":"sele",
+    "buttons":[
+      {
+        "name":"Remove",
+        "order":1,
+        "roles":["ADMIN","PROJECT_MANAGER"],
+        "functionName":"removeRow"
+      },
+      {
+        "name":"Edit",
+        "order":2,
+        "functionName":"editRow"
+      },
+      {
+        "name":"New extension Layer",
+        "order":4,
+        "roles":["ADMIN","PROJECT_MANAGER"],
+        "functionName":"createExtensionLayer"
+      },
+      {
+        "name":"New refinement Layer",
+        "order":5,
+        "roles":["ADMIN","PROJECT_MANAGER"],
+        "functionName":"createRefinementLayer"
+      },
+      {
+        "name":"New coarsening Layer",
+        "order":6,
+        "roles":["ADMIN","PROJECT_MANAGER"],
+        "functionName":"createCoarseningLayer"
+      }
+    ]
+  },
+  {
     "key":"id",
     "name":"Id",
     "order":1,
@@ -167,45 +207,5 @@
     "placeholder":"Enter Description...",
     "value":"",
     "showInTable":false
-  },
-  {
-    "key":"actions",
-    "name":"Actions",
-    "order":14,
-    "filter":false,
-    "search":false,
-    "showInTable":true,
-    "type":"sele",
-    "buttons":[
-      {
-        "name":"Remove",
-        "order":1,
-        "roles":["ADMIN","PROJECT_MANAGER"],
-        "functionName":"removeRow"
-      },
-      {
-        "name":"Edit",
-        "order":2,
-        "functionName":"editRow"
-      },
-      {
-        "name":"New extension Layer",
-        "order":4,
-        "roles":["ADMIN","PROJECT_MANAGER"],
-        "functionName":"createExtensionLayer"
-      },
-      {
-        "name":"New refinement Layer",
-        "order":5,
-        "roles":["ADMIN","PROJECT_MANAGER"],
-        "functionName":"createRefinementLayer"
-      },
-      {
-        "name":"New coarsening Layer",
-        "order":6,
-        "roles":["ADMIN","PROJECT_MANAGER"],
-        "functionName":"createCoarseningLayer"
-      }
-    ]
   }
 ]
