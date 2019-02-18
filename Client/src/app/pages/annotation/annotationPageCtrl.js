@@ -38,9 +38,10 @@
         vm.defaultCategoryHotkeys = ENV_CONST.DEFAULT_CATEGORY_HOTKEYS;
         vm.savingTask = false;
         vm.submittingTask = false;
-        vm.noConnection = false;
+        // vm.noConnection = false;
         vm.saveFailed = false;
         vm.submitFailed = false;
+        vm.loadModalFailed = false;
 
         try{
             vm.categoryReorderings = JSON.parse(TaskMetaData.Task.project.layer.category_reorderings);
@@ -196,6 +197,10 @@
                 bindReceivedDefaultHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService && !hotkeys.fromParentLayer);
             });
 
+            $scope.$on('FailedToLoadTemplate', function(event, args) {
+                vm.loadModalFailed = true;
+            });
+
             $timeout(function(){$rootScope.$hideSideBar = true;});
             bindCategoriesHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService);
             bindReceivedDefaultHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService && !hotkeys.fromParentLayer);
@@ -220,6 +225,7 @@
         }
 
         function submitTask(){
+            vm.loadModalFailed = false;
             var finishAllResult = vm.checkSubmissionRestrictions();
             if(finishAllResult){
                 vm.submittingTask = true;
@@ -231,7 +237,7 @@
                         goToMainMenu(res)
                     }, function(error) {
                         if (error.data === null && error.status === -1 && error.statusText === "") {
-                            vm.noConnection = true;
+                            // vm.noConnection = true;
                             vm.submitFailed = true;
                         }
                         vm.submittingTask = false;
@@ -239,7 +245,7 @@
                     vm.submittingTask = false;
                 }, function(error) {
                     if (error.data === null && error.status === -1 && error.statusText === "") {
-                        vm.noConnection = true;
+                        // vm.noConnection = true;
                         vm.submitFailed = true;
                     }
                     vm.submittingTask = false;
@@ -416,16 +422,17 @@
             window.addEventListener('offline', function(e) { console.log('offline'); });
 
 
+            vm.loadModalFailed = false;
             vm.savingTask = true;
             return DataService.saveTask().then(function(res){
                 vm.savingTask = false;
-                vm.noConnection = false;
+                // vm.noConnection = false;
                 vm.saveFailed = false;
                 Core.showNotification('success','Annotation Task Saved.');
             }, function(error) {
                 console.log("Save task error:", error);
                 if (error.data === null && error.status === -1 && error.statusText === "") {
-                    vm.noConnection = true;
+                    // vm.noConnection = true;
                     vm.saveFailed = true;
                 }
                 vm.savingTask = false;

@@ -47,12 +47,15 @@
         </div>
 
         <!--Below message is showing when internet connection is lost. -->
-        <div class="alert alert-danger" ng-if="vm.noConnection===true" style="color: black">
+        <div class="alert alert-danger" style="color: black">
             <div ng-if="vm.saveFailed">
                 <label>You have lost your internet connection. Check your internet connection and save your task again.</label><button ng-click="vm.saveTask()">Save</button>
             </div>
             <div ng-if="vm.submitFailed">
                 <label>You have lost your internet connection. Check your internet connection and submit your task again.</label><button ng-click="vm.submitTask()">Submit</button>
+            </div>
+            <div ng-if="vm.loadModalFailed">
+                <label>Failed to load template, you have lost your internet connection. Check your internet connection and try again.</label>
             </div>
         </div>
 

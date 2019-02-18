@@ -148,7 +148,8 @@
 						}
 					}).toString().split(",").join(", ")
 				}else{
-					return (itemRow[value['key']].name || itemRow[value['key']].short_text || itemRow[value['key']].id || itemRow[value['key']] )
+					return (itemRow[value['key']].name || itemRow[value['key']].short_text || itemRow[value['key']].id )//||
+					// return ( itemRow[value['key']] )
 				}
 			}else{
 				return "";
@@ -253,6 +254,7 @@
 		function showMore(obj, pagelink, size, hideJson) {
 			var pagelink = angular.isString(pagelink) ? pagelink || 'app/pages/ui/modals/modalTemplates/largeModal.html' : 'app/pages/ui/modals/modalTemplates/largeModal.html';
 			var size = size || 'lg';
+			debugger
 			$uibModal.open({
 				animation: true,
 				templateUrl: pagelink,
