@@ -67,7 +67,8 @@
     "showInTable":true,
     "type":"text",
     "placeholder":"Enter Source Name...",
-    "value":""
+    "value":"",
+    "searchValue":"name"
   },
   {
     "key":"external_id",

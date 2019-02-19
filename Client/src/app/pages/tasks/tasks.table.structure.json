@@ -108,7 +108,8 @@
     "type":"text",
     "placeholder":"Project...",
     "value":"",
-    "showInTable":true
+    "showInTable":true,
+    "searchValue":"name"
   },
   {
     "key":"user",
@@ -119,7 +120,8 @@
     "type":"text",
     "placeholder":"Enter User...",
     "value":"",
-    "showInTable":true
+    "showInTable":true,
+    "searchValue":"name"
   },
   {
     "key":"passage",
@@ -130,7 +132,8 @@
     "type":"text",
     "placeholder":"Enter Passage...",
     "value":"",
-    "showInTable":true
+    "showInTable":true,
+    "searchValue":"short_text"
   },
   {
     "key":"parent",
@@ -141,7 +144,8 @@
     "type":"text",
     "placeholder":"Enter Parent...",
     "value":"",
-    "showInTable":true
+    "showInTable":true,
+    "searchValue":"id"
   },
   {
     "key":"children",

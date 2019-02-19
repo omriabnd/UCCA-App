@@ -100,7 +100,8 @@
       { "label": "PROJECT_MANAGER", "id": 2 },
       { "label": "ANNOTATOR", "id": 3 },
       { "label": "GUEST", "id": 4 }
-    ]
+    ],
+    "searchValue":"name"
   },
   {
     "key":"is_active",

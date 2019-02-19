@@ -36,6 +36,7 @@
 			initCategoriesStringToArray: initCategoriesStringToArray,
 			generateRestrictionObject: generateRestrictionObject,
 			parseSmartTableColumnData:parseSmartTableColumnData,
+			findSearch: findSearch,
 			viewOnlyRuleOk:viewOnlyRuleOk,
 			promptAlert:promptAlert,
                     isEmptyObject:isEmptyObject,
@@ -154,6 +155,12 @@
 				return "";
 			}
 		}
+
+		function findSearch(item) {
+			if (item['searchValue'])
+				return (item['key'] +'.'+ item['searchValue']);
+            return item['key'];
+        }
 
 		function generateRestrictionObject(categoryOneArray,restrictionType,categoryTwoArray){
 		    categoryOneArray = categoryOneArray.map(function(cat){
@@ -492,6 +499,8 @@
 				vm.showMoreWithoutJson = core.showMoreWithoutJson;
 
 				vm.parseSmartTableColumnData = core.parseSmartTableColumnData;
+
+				vm.findSearch = core.findSearch;
 				
 				vm.removeRow = core.removeRow;
 

@@ -80,7 +80,8 @@
     "showInTable":true,
     "type":"text",
     "placeholder":"Enter layer name...",
-    "value":""
+    "value":"",
+    "searchValue":"name"
   },
   {
     "key":"created_by",
@@ -91,7 +92,8 @@
     "showInTable":true,
     "type":"text",
     "placeholderEnter ":"Created By...",
-    "value":""
+    "value":"",
+    "searchValue":"name"
   },
   {
     "key":"is_active",
