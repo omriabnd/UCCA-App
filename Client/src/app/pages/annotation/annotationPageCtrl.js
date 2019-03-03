@@ -782,6 +782,10 @@
                                 $rootScope.addImplicitUnit();
                                 break;
                             }
+                            // case 'dismiss' :{
+                            //     restrictionsValidatorService.closeModal();
+                            //     break;
+                            // }
                             default:{
                                 vm[functionToExecute]();
                                 break;

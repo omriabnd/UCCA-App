@@ -10,7 +10,7 @@
         .service('restrictionsValidatorService', restrictionsValidatorService);
 
     /** @ngInject */
-    function restrictionsValidatorService($timeout,$rootScope,$location,ENV_CONST,$uibModal,Core, $document) {
+    function restrictionsValidatorService($timeout,$rootScope,$location,ENV_CONST,$uibModal,Core, $document, $window) {
         /*
             %NAME%, %NAME_1%, %NAME_2%
             will change to the category name in the alert modal
@@ -44,6 +44,7 @@
             evaluateFinishAll: evaluateFinishAll,
             evaluateSubmissionRestrictions: evaluateSubmissionRestrictions,
             getTables: getTables
+            // closeModal: closeModal
         };
         return handler;
 
@@ -570,6 +571,16 @@
             return null;
         }
 
+        // function closeModal() {
+        //     console.log('close modal!');
+        //     $timeout( function(){
+        //         var btn = $window.document.getElementById('first');
+        //         if (btn) {
+        //             console.log("focused btn=", btn)
+        //             btn.click();
+        //         }
+        //     }, 100 );
+        // }
 
         function showErrorModal(message){
             $uibModal.open({
@@ -578,7 +589,51 @@
                 size: 'md',
                 controller: function ($scope) {
                     $scope.message = message;
-                }
+
+                    $timeout( function(){
+                        var btn = $window.document.getElementById('inputElement');
+                        if (btn) {
+                            // console.log("focused btn=", btn)
+                            btn.focus();
+                        }
+                    }, 100 );
+
+                    $scope.keyUpChanged = function (e) {
+                        var key = e.which;
+                        if (key === 13)
+                            $scope.$dismiss();
+                    };
+
+
+                    // hotkeys.bindTo($scope)
+                    // .add({
+                    //   combo: 'w',
+                    //   description: 'blah blah',
+                    //   callback: function() {
+                    //       console.log('wwwwwwwwwwwwwwwwwwwwwwwwwww')
+                    //   //     var btn = $window.document.getElementById('first');
+                    //   //   if (btn)
+                    //   //       console.log("focused btn=", btn)
+                    //   //       btn.click();
+                    //   }
+                    // })
+                    // .add ({
+                    //   combo: 'q',
+                    //   description: 'blah blah',
+                    //   callback: function() {
+                    //       console.log('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqq')
+                    //   }
+                    // });
+                    //
+
+                    // $timeout( function(){
+                    //     debugger
+                    //     var btn = $window.document.getElementById('first');
+                    //     if (btn)
+                    //         console.log("focused btn=", btn)
+                    //         btn.focus();
+                    // }, 1000 );
+                    }
             }).opened.then(function(a) {
                 return true;
             }, function(error) {
