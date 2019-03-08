@@ -1,5 +1,32 @@
 [
   {
+    "key":"actions",
+    "name":"Actions",
+    "order":0,
+    "filter":false,
+    "search":false,
+    "showInTable":true,
+    "type":"select",
+    "buttons":[
+      {
+        "name":"Go",
+        "order":3,
+        "roles":["ADMIN","PROJECT_MANAGER","ANNOTATOR","GUEST"],
+        "statuses":["NOT_STARTED","ONGOING"],
+        "class":"btn-success",
+        "functionName":"previewTask"
+      },
+      {
+        "name":"View Only",
+        "order":3,
+        "roles":["ADMIN","PROJECT_MANAGER","ANNOTATOR","GUEST"],
+        "statuses":["SUBMITTED","REJECTED"],
+        "class":"btn-success",
+        "functionName":"previewTask"
+      }
+    ]
+  },
+  {
     "key":"id",
     "name":"Id",
     "order":1,
@@ -81,7 +108,8 @@
     "type":"text",
     "placeholder":"Project...",
     "value":"",
-    "showInTable":true
+    "showInTable":true,
+    "searchValue":"name"
   },
   {
     "key":"user",
@@ -92,7 +120,8 @@
     "type":"text",
     "placeholder":"Enter User...",
     "value":"",
-    "showInTable":true
+    "showInTable":true,
+    "searchValue":"name"
   },
   {
     "key":"passage",
@@ -103,7 +132,8 @@
     "type":"text",
     "placeholder":"Enter Passage...",
     "value":"",
-    "showInTable":true
+    "showInTable":true,
+    "searchValue":"short_text"
   },
   {
     "key":"parent",
@@ -114,7 +144,8 @@
     "type":"text",
     "placeholder":"Enter Parent...",
     "value":"",
-    "showInTable":true
+    "showInTable":true,
+    "searchValue":"id"
   },
   {
     "key":"children",
@@ -175,32 +206,5 @@
     "placeholder":"Is Demo...",
     "value":"",
     "showInTable":true
-  },
-  {
-    "key":"actions",
-    "name":"Actions",
-    "order":14,
-    "filter":false,
-    "search":false,
-    "showInTable":true,
-    "type":"select",
-    "buttons":[
-      {
-        "name":"Go",
-        "order":3,
-        "roles":["ADMIN","PROJECT_MANAGER","ANNOTATOR","GUEST"],
-        "statuses":["NOT_STARTED","ONGOING"],
-        "class":"btn-success",
-        "functionName":"previewTask"
-      },
-      {
-        "name":"View Only",
-        "order":3,
-        "roles":["ADMIN","PROJECT_MANAGER","ANNOTATOR","GUEST"],
-        "statuses":["SUBMITTED","REJECTED"],
-        "class":"btn-success",
-        "functionName":"previewTask"
-      }
-    ]
   }
 ]

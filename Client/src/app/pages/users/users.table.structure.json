@@ -1,5 +1,27 @@
 [
   {
+    "key":"actions",
+    "name":"Actions",
+    "order":0,
+    "filter":false,
+    "search":false,
+    "showInTable":true,
+    "buttons":[
+      {
+        "name":"Edit",
+        "order":1,
+        "class":"btn-info",
+        "functionName":"editRow"
+      },
+      {
+        "name":"Remove",
+        "order":"2",
+        "class":"btn-danger",
+        "functionName":"removeRow"
+      }
+    ]
+  },
+  {
     "key":"id",
     "name":"ID",
     "order":1,
@@ -78,7 +100,8 @@
       { "label": "PROJECT_MANAGER", "id": 2 },
       { "label": "ANNOTATOR", "id": 3 },
       { "label": "GUEST", "id": 4 }
-    ]
+    ],
+    "searchValue":"name"
   },
   {
     "key":"is_active",
@@ -90,27 +113,5 @@
     "type":"checkbox",
     "placeholderEnter ":"updated by...",
     "value":true
-  },
-  {
-    "key":"actions",
-    "name":"Actions",
-    "order":9,
-    "filter":false,
-    "search":false,
-    "showInTable":true,
-    "buttons":[
-      {
-        "name":"Edit",
-        "order":1,
-        "class":"btn-info",
-        "functionName":"editRow"
-      },
-      {
-        "name":"Remove",
-        "order":"2",
-        "class":"btn-danger",
-        "functionName":"removeRow"
-      }
-    ]
   }
 ]

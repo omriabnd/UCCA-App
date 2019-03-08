@@ -1,4 +1,34 @@
 [
+   {
+    "key":"actions",
+    "name":"Actions",
+    "order":0,
+    "filter":false,
+    "search":false,
+    "showInTable":true,
+    "buttons":[
+      {
+        "name":"Edit",
+        "order":1,
+        "class":"btn-info",
+        "roles":["ADMIN","PROJECT_MANAGER"],
+        "functionName":"editRow"
+      },
+      {
+        "name":"My tasks",
+        "order":2,
+        "class":"btn-success",
+        "functionName":"myTasks"
+      },
+      {
+        "name":"Remove",
+        "order":3,
+        "class":"btn-danger",
+        "roles":["ADMIN","PROJECT_MANAGER"],
+        "functionName":"removeRow"
+      }
+    ]
+  },
   {
     "key":"id",
     "name":"ID",
@@ -50,7 +80,8 @@
     "showInTable":true,
     "type":"text",
     "placeholder":"Enter layer name...",
-    "value":""
+    "value":"",
+    "searchValue":"name"
   },
   {
     "key":"created_by",
@@ -61,7 +92,8 @@
     "showInTable":true,
     "type":"text",
     "placeholderEnter ":"Created By...",
-    "value":""
+    "value":"",
+    "searchValue":"name"
   },
   {
     "key":"is_active",
@@ -73,35 +105,5 @@
     "type":"checkbox",
     "placeholderEnter ":"Is Active...",
     "value":true
-  },
-  {
-    "key":"actions",
-    "name":"Actions",
-    "order":9,
-    "filter":false,
-    "search":false,
-    "showInTable":true,
-    "buttons":[
-      {
-        "name":"Edit",
-        "order":1,
-        "class":"btn-info",
-        "roles":["ADMIN","PROJECT_MANAGER"],
-        "functionName":"editRow"
-      },
-      {
-        "name":"My tasks",
-        "order":2,
-        "class":"btn-success",
-        "functionName":"myTasks"
-      },
-      {
-        "name":"Remove",
-        "order":3,
-        "class":"btn-danger",
-        "roles":["ADMIN","PROJECT_MANAGER"],
-        "functionName":"removeRow"
-      }
-    ]
   }
 ]

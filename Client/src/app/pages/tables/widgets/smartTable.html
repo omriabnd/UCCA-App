@@ -16,14 +16,14 @@
     <tr>
       <th></th>
         <th ng-repeat="header in vm.smartTableStructure" ng-if="header.filter">
-        <input st-search="{{header.key}}" placeholder="{{header.name}}" class="input-sm form-control search-input" type="search"/>
-      </th>
+            <input st-search="{{ vm.findSearch(header) }}" placeholder="{{header.name}}" class="input-sm form-control search-input" type="search"/>
+        </th>
     </tr>
     </thead>
     <tbody>
     <tr ng-repeat="itemRow in vm.smartTableData" id="smart-table-row-{{$index}}" ng-class="{'selected': itemRow.selected}">
 
-      <td ng-if="vm.smartTableStructure[0].buttons">
+      <td ng-if="vm.smartTableStructure[0].buttons" class="narrow">
           <span data-ng-switch on="vm.smartTableStructure[0].buttons.length<3">
             <button data-ng-switch-when="true" 
                     ng-repeat="action in vm.smartTableStructure[0].buttons track by $index"

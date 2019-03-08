@@ -35,6 +35,7 @@
         var dataServiceProvider;
         var restrictionsTablesIds;
         var allCategoriesTable;
+        // var noConnection = false;
         var handler = {
             initRestrictionsTables: initRestrictionsTables,
             checkRestrictionsBeforeInsert: checkRestrictionsBeforeInsert,
@@ -150,6 +151,14 @@
             if (violation) {
                 showErrorModal(getErrorMessage(violation.rcode,{'%NAME_1%': violation.category1, '%NAME_2%': violation.category2},annotationUnit.tree_id));
                 scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, annotationUnit);
+                // Scroll to violation unit, and then open the modal.
+                // So when there is no connection -> It scrolls to the violation unit and then shows 'no connection message' in the top of task page.
+                // Now- first it scrolls to the violation unit, if there is no connection scrolls to unit 0, and then show the message. Its done in showErrorModal function.
+                // $timeout(function() {
+                //     if (!noConnection) {
+                //         scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, annotationUnit);
+                //     }
+                // }, 2500);
                 return false;
             }
 
@@ -567,11 +576,21 @@
                 animation: true,
                 templateUrl: 'app/pages/annotation/templates/errorModal.html',
                 size: 'md',
-                controller: function($scope){
+                controller: function ($scope) {
                     $scope.message = message;
                 }
+            }).opened.then(function(a) {
+                return true;
+            }, function(error) {
+                if (error.message.includes('Failed to load template')) {
+                    // If load failed, scroll to unit0 so the user should see 'no connection error'.
+                    // Write scroll unit0 here once and not several times in checkRestriction functions.
+                    scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, dataServiceProvider.tree);
+                    $rootScope.$broadcast('FailedToLoadTemplate');
+                    // noConnection = true;
+                }
+                return false;
             });
-
         }
 
         function scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, violationUnit){
