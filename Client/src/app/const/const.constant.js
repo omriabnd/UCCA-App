@@ -112,25 +112,25 @@
 		],
 		NAV_BAR_ITEMS:[
 			{
-				id:1,
+				id:2,
 				name:"Toggle Parent Categories",
 				tooltip:"Toggle Parent Categories",
 				executeFunction:"toggleParents"
 			},
 			{
-				id:2,
+				id:3,
 				name:"Finish All",
 				tooltip:"Alt+a: Finish All",
 				executeFunction:"finishAll"
 			},
 			{
-				id:3,
+				id:4,
 				name:"Open All",
 				tooltip:"Alt+e: Open All",
 				executeFunction:"openAll"
 			},
 			{
-				id:4,
+				id:1,
 				name:"Save",
 				tooltip:"Alt+s: Save",
 				executeFunction:"saveTask"
