@@ -112,6 +112,12 @@
 		],
 		NAV_BAR_ITEMS:[
 			{
+				id:1,
+				name:"Save",
+				tooltip:"Alt+s: Save",
+				executeFunction:"saveTask"
+			},
+			{
 				id:2,
 				name:"Toggle Parent Categories",
 				tooltip:"Toggle Parent Categories",
@@ -128,12 +134,6 @@
 				name:"Open All",
 				tooltip:"Alt+e: Open All",
 				executeFunction:"openAll"
-			},
-			{
-				id:1,
-				name:"Save",
-				tooltip:"Alt+s: Save",
-				executeFunction:"saveTask"
 			},
 			{
 				id:5,
