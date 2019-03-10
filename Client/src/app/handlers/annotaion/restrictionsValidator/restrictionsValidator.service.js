@@ -605,7 +605,6 @@
                     $timeout( function(){
                         var btn = $window.document.getElementById('inputElement');
                         if (btn) {
-                            // console.log("focused btn=", btn)
                             btn.focus();
                         }
                     }, 100 );

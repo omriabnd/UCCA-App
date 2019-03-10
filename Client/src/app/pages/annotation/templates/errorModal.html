@@ -4,7 +4,7 @@
     </div>
     <div class="modal-body text-center">{{message}}</div>
     <div class="modal-footer">
-        <input ng-show="true" ng-keyup="keyUpChanged($event)" id="inputElement" style="{height:1px; width:1px; opacity: 100%; display:none;}">
-        <button type="button" id="first" class="btn btn-danger" ng-click="$dismiss()">OK</button> <!--event.keyCode-->
+        <input ng-keyup="keyUpChanged($event)" id="inputElement">
+        <button type="button" id="first" class="btn btn-danger" ng-click="$dismiss()">OK</button>
     </div>
 </div>
