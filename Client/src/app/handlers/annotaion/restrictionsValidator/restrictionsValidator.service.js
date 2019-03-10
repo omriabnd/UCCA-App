@@ -10,7 +10,7 @@
         .service('restrictionsValidatorService', restrictionsValidatorService);
 
     /** @ngInject */
-    function restrictionsValidatorService($timeout,$rootScope,$location,ENV_CONST,$uibModal,Core, $document) {
+    function restrictionsValidatorService($timeout,$rootScope,$location,ENV_CONST,$uibModal,Core, $document, $window) {
         /*
             %NAME%, %NAME_1%, %NAME_2%
             will change to the category name in the alert modal
@@ -44,6 +44,7 @@
             evaluateFinishAll: evaluateFinishAll,
             evaluateSubmissionRestrictions: evaluateSubmissionRestrictions,
             getTables: getTables
+            // closeModal: closeModal
         };
         return handler;
 
@@ -318,11 +319,23 @@
 
             //check if child is set to be unanalyzable but already has children
             if (newCategory && restrictionsTablesIds['FORBID_ANY_CHILD'].includes(newCategory.id)) {
-                for (var k=0; k < grouped_tokens.length; k++) {
-                    if (grouped_tokens[k].inChildUnitTreeId) {
-                        showErrorModal(getErrorMessage('FORBID_ANY_CHILD',{"%NAME%": newCategory.name}));
+                var inChild = grouped_tokens.filter(t => t.inChildUnitTreeId);
+                if (inChild.length) {
+                    var childUnit = dataServiceProvider.getUnitById(inChild[0].inChildUnitTreeId);
+                    if (childUnit.tokens.length !== grouped_tokens.length) {
+                        showErrorModal(getErrorMessage('FORBID_ANY_CHILD', {"%NAME%": newCategory.name}));
                         return false;
                     }
+
+                    // Check if the two units contain the same tokens, because we want to check the child unit when the *focus unit is the parent*.
+                    // It happens in this case: We took an existing unit, which already has a category, and then selected it (that is, the focus unit was the parent unit),
+                    // and then pressed 'z'. In this case, even if it doesn't have children, it still gives us a modal saying we can't do that.
+                    grouped_tokens.forEach((token, index) => {
+                        if (token.static.id !== childUnit.tokens[index].static.id) {
+                            showErrorModal(getErrorMessage('FORBID_ANY_CHILD', {"%NAME%": newCategory.name}));
+                            return false;
+                        }
+                    });
                 }
             }
 
@@ -570,6 +583,16 @@
             return null;
         }
 
+        // function closeModal() {
+        //     console.log('close modal!');
+        //     $timeout( function(){
+        //         var btn = $window.document.getElementById('first');
+        //         if (btn) {
+        //             console.log("focused btn=", btn)
+        //             btn.click();
+        //         }
+        //     }, 100 );
+        // }
 
         function showErrorModal(message){
             $uibModal.open({
@@ -578,7 +601,50 @@
                 size: 'md',
                 controller: function ($scope) {
                     $scope.message = message;
-                }
+
+                    $timeout( function(){
+                        var btn = $window.document.getElementById('inputElement');
+                        if (btn) {
+                            btn.focus();
+                        }
+                    }, 100 );
+
+                    $scope.keyUpChanged = function (e) {
+                        var key = e.which;
+                        if (key === 13)
+                            $scope.$dismiss();
+                    };
+
+
+                    // hotkeys.bindTo($scope)
+                    // .add({
+                    //   combo: 'w',
+                    //   description: 'blah blah',
+                    //   callback: function() {
+                    //       console.log('wwwwwwwwwwwwwwwwwwwwwwwwwww')
+                    //   //     var btn = $window.document.getElementById('first');
+                    //   //   if (btn)
+                    //   //       console.log("focused btn=", btn)
+                    //   //       btn.click();
+                    //   }
+                    // })
+                    // .add ({
+                    //   combo: 'q',
+                    //   description: 'blah blah',
+                    //   callback: function() {
+                    //       console.log('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqq')
+                    //   }
+                    // });
+                    //
+
+                    // $timeout( function(){
+                    //     debugger
+                    //     var btn = $window.document.getElementById('first');
+                    //     if (btn)
+                    //         console.log("focused btn=", btn)
+                    //         btn.focus();
+                    // }, 1000 );
+                    }
             }).opened.then(function(a) {
                 return true;
             }, function(error) {
