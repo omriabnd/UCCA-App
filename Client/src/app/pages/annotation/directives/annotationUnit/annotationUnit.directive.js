@@ -262,6 +262,19 @@
                         DataService.deleteUnit($scope.vm.dataBlock.tree_id);
                         // selCtrl.updateUI(DataService.getUnitById($("[unit-wrapper-id="+$rootScope.clickedUnit+"]").attr('child-unit-id')));
                     };
+
+                    $timeout( function(){
+                        var btn = $window.document.getElementById('inputElement');
+                        if (btn) {
+                            btn.focus();
+                        }
+                    }, 100 );
+
+                    $scope.keyUpChanged = function (e) {
+                        var key = e.which;
+                        if (key === 13)
+                            $scope.$dismiss();
+                    };
                 }
             }).result.then(function(okRes){
 

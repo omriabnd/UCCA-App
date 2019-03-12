@@ -431,6 +431,19 @@
 		        size: 'sm',
 		        controller: function($scope){
 		            $scope.message = message;
+
+		            $timeout( function(){
+                        var btn = $window.document.getElementById('inputElement');
+                        if (btn) {
+                            btn.focus();
+                        }
+                    }, 100 );
+
+                    $scope.keyUpChanged = function (e) {
+                        var key = e.which;
+                        if (key === 13)
+                            $scope.$dismiss();
+                    };
 		        }
 		    });
 		};
