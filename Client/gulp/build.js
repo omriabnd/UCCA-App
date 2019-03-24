@@ -3,6 +3,7 @@
 var path = require('path');
 var gulp = require('gulp');
 var conf = require('./conf');
+var cleanCSS = require('gulp-clean-css');
 
 var $ = require('gulp-load-plugins')({
   pattern: ['gulp-*', 'main-bower-files', 'uglify-save-license', 'del']
@@ -25,7 +26,8 @@ gulp.task('partials', function () {
     .pipe(gulp.dest(conf.paths.tmp + '/partials/'));
 });
 
-gulp.task('html', ['inject', 'partials'], function () {
+
+gulp.task('html', gulp.series('inject', 'partials', function () {
   var partialsInjectFile = gulp.src(path.join(conf.paths.tmp, '/partials/templateCacheHtml.js'), { read: false });
   var partialsInjectOptions = {
     starttag: '<!-- inject:partials -->',
@@ -51,7 +53,7 @@ gulp.task('html', ['inject', 'partials'], function () {
     .pipe(cssFilter)
     .pipe($.sourcemaps.init())
     .pipe($.replace('../../bower_components/bootstrap-sass/assets/fonts/bootstrap/', '../fonts/'))
-    .pipe($.minifyCss({ processImport: false }))
+    .pipe(cleanCSS({ processImport: false }))  // For some reason $.cleanCSS is undefined
     .pipe($.sourcemaps.write('maps'))
     .pipe(cssFilter.restore)
     .pipe(assets.restore())
@@ -67,7 +69,7 @@ gulp.task('html', ['inject', 'partials'], function () {
     .pipe(htmlFilter.restore)
     .pipe(gulp.dest(path.join(conf.paths.dist, '/')))
     .pipe($.size({ title: path.join(conf.paths.dist, '/'), showFiles: true }));
-  });
+  }));
 
 // Only applies for fonts from bower dependencies
 // Custom fonts are handled by the "other" task
@@ -77,7 +79,7 @@ gulp.task('fonts', function () {
     .pipe(gulp.dest(path.join(conf.paths.dist, '/fonts/')));
 });
 
-gulp.task('other', ['copyVendorImages'], function () {
+gulp.task('other', gulp.series('copyVendorImages', function () {
   var fileFilter = $.filter(function (file) {
     return file.stat.isFile();
   });
@@ -89,10 +91,10 @@ gulp.task('other', ['copyVendorImages'], function () {
   ])
     .pipe(fileFilter)
     .pipe(gulp.dest(path.join(conf.paths.dist, '/')));
-});
+}));
 
 gulp.task('clean', function () {
   return $.del([path.join(conf.paths.dist, '/'), path.join(conf.paths.tmp, '/')]);
 });
 
-gulp.task('build', ['html', 'fonts', 'other']);
+gulp.task('build', gulp.series('html', 'fonts', 'other'));

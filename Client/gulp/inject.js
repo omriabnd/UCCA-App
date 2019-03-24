@@ -11,11 +11,22 @@ var _ = require('lodash');
 
 var browserSync = require('browser-sync');
 
-gulp.task('inject-reload', ['inject'], function () {
-  browserSync.reload();
-});
+gulp.task('injectAuth', gulp.series('stylesAuth', function () {
+  // Not loaded since auth.html nd reg.html do not exist. Gulp4 complains about it (3 let it slide)
+  return injectAlone({
+    css: [path.join('!' + conf.paths.tmp, '/serve/app/vendor.css'), path.join(conf.paths.tmp, '/serve/app/auth.css')],
+    paths: [path.join(conf.paths.src, '/auth.html'), path.join(conf.paths.src, '/reg.html')]
+  })
+}));
 
-gulp.task('inject', ['scripts', 'styles', 'injectAuth', 'inject404', 'copyVendorImages'], function () {
+gulp.task('inject404', gulp.series('styles404', function () {
+  return injectAlone({
+    css: [path.join('!' + conf.paths.tmp, '/serve/app/vendor.css'), path.join(conf.paths.tmp, '/serve/app/404.css')],
+    paths: path.join(conf.paths.src, '/404.html')
+  })
+}));
+
+gulp.task('inject', gulp.series('scripts', 'styles', /* 'injectAuth', */ 'inject404', 'copyVendorImages', function () {
   var injectStyles = gulp.src([
     path.join(conf.paths.tmp, '/serve/app/main.css'),
     path.join('!' + conf.paths.tmp, '/serve/app/vendor.css')
@@ -41,21 +52,11 @@ gulp.task('inject', ['scripts', 'styles', 'injectAuth', 'inject404', 'copyVendor
     .pipe($.inject(injectScripts, injectOptions))
     .pipe(wiredep(_.extend({}, conf.wiredep)))
     .pipe(gulp.dest(path.join(conf.paths.tmp, '/serve')));
-});
+}));
 
-gulp.task('injectAuth', ['stylesAuth'], function () {
-  return injectAlone({
-    css: [path.join('!' + conf.paths.tmp, '/serve/app/vendor.css'), path.join(conf.paths.tmp, '/serve/app/auth.css')],
-    paths: [path.join(conf.paths.src, '/auth.html'), path.join(conf.paths.src, '/reg.html')]
-  })
-});
-
-gulp.task('inject404', ['styles404'], function () {
-  return injectAlone({
-    css: [path.join('!' + conf.paths.tmp, '/serve/app/vendor.css'), path.join(conf.paths.tmp, '/serve/app/404.css')],
-    paths: path.join(conf.paths.src, '/404.html')
-  })
-});
+gulp.task('inject-reload', gulp.series('inject', function () {
+  browserSync.reload();
+}));
 
 var injectAlone = function (options) {
   var injectStyles = gulp.src(
