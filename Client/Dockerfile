@@ -10,4 +10,4 @@ RUN ./node_modules/.bin/gulp serve:dist
 
 FROM nginx
 COPY --from=builder /src/release www
-COPY ucca.conf /etc/nginx/conf.d/default.conf
+COPY docker-helpers/ucca.conf /etc/nginx/conf.d/default.conf
