@@ -319,7 +319,9 @@
 
             //check if child is set to be unanalyzable but already has children
             if (newCategory && restrictionsTablesIds['FORBID_ANY_CHILD'].includes(newCategory.id)) {
-                var inChild = grouped_tokens.filter(t => t.inChildUnitTreeId);
+                var inChild = grouped_tokens.filter(function(t) {
+                    return t.inChildUnitTreeId
+                });
                 if (inChild.length) {
                     var childUnit = dataServiceProvider.getUnitById(inChild[0].inChildUnitTreeId);
                     if (childUnit.tokens.length !== grouped_tokens.length) {
@@ -330,7 +332,7 @@
                     // Check if the two units contain the same tokens, because we want to check the child unit when the *focus unit is the parent*.
                     // It happens in this case: We took an existing unit, which already has a category, and then selected it (that is, the focus unit was the parent unit),
                     // and then pressed 'z'. In this case, even if it doesn't have children, it still gives us a modal saying we can't do that.
-                    grouped_tokens.forEach((token, index) => {
+                    grouped_tokens.forEach(function(token, index) {
                         if (token.static.id !== childUnit.tokens[index].static.id) {
                             showErrorModal(getErrorMessage('FORBID_ANY_CHILD', {"%NAME%": newCategory.name}));
                             return false;
