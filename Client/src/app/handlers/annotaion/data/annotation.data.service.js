@@ -749,10 +749,10 @@
 
                      updateInUnitIdsForTokens(DataService.getParentUnit(unit.tree_id));
 
-                     $rootScope.$broadcast("resetCursor_" + parentUnit.tree_id, {
-                         categories: unit.categories,
-                         id: parentUnit.tree_id
-                     });
+                     // $rootScope.$broadcast("resetCursor_" + parentUnit.tree_id, {
+                     //     categories: unit.categories,
+                     //     id: parentUnit.tree_id
+                     // });
 
                      $rootScope.$broadcast("DeleteSuccess", {categories: unit.categories, id: unit.tree_id});
 
