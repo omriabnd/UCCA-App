@@ -2,8 +2,7 @@ version: '2'
 
 services:
   ucca-db:
-    build: db
-    # image: postgres:11
+    image: uccaproject/ucca-db
     expose:
       - "5432"
     ports:
@@ -12,7 +11,7 @@ services:
       - ucca-volume:/var/lib/postgresql/data
 
   ucca-backend:
-    build: ../Server
+    image: uccaproject/ucca-backend
     expose:
       - "8000"
     ports:
@@ -21,7 +20,7 @@ services:
       - ucca-db  
 
   ucca-webserver:
-    build: frontend
+    image: uccaproject/ucca-frontend
     expose:
       - "80"
     ports:
