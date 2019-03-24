@@ -705,9 +705,10 @@
                 //console.log("category "+category.name+"   unit "+unit.tree_id);
                 return $q(function(resolve, reject) {
 
-                    if(_handler.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(_handler.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(_handler.selectedTokenList,inInitStage)){
-                        return
-                    }
+                    // Omri commented out restriction not to allow double unary restrictions
+                    //if(_handler.selectedTokenList.length > 0 && newUnitContainAllParentTokensTwice(_handler.selectedTokenList) || checkifThereIsPartsOFUnitTokensInsideList(_handler.selectedTokenList,inInitStage)){
+                    //    return
+                    //}
 
                     // Check the restrictions for the new unit here, before making any modifications to the data in the DataService
                     // declare unitTOCheck, if unit is undefined, take it according to justToggle (unit id)
