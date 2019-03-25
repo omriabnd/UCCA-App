@@ -57,27 +57,5 @@
     "type":"checkbox",
     "placeholder":"Is Active...",
     "value":true
-  },
-  {
-    "key":"actions",
-    "name":"Actions",
-    "order":"10",
-    "filter":false,
-    "search":false,
-    "showInTable":true,
-    "buttons":[
-      {
-        "name":"Choose",
-        "order":"1",
-        "class":"btn-success",
-        "functionName":"chooseRow"
-      },
-      {
-        "name":"Info",
-        "order":"2",
-        "class":"btn-info",
-        "functionName":"infoRow"
-      }
-    ]
   }
 ]

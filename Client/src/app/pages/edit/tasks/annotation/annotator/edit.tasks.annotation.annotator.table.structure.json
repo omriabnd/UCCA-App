@@ -1,41 +1,8 @@
 [
   {
-    "key":"id",
-    "name":"ID",
-    "order":"1",
-    "filter":true,
-    "search":true,
-    "showInTable":true,
-    "type":"text",
-    "placeholderEnter ":"Id...",
-    "value":""
-  },
-  {
-    "key":"first_name",
-    "name":"First Name",
-    "order":"2",
-    "filter":true,
-    "search":true,
-    "showInTable":true,
-    "type":"text",
-    "placeholder":"Enter First Name...",
-    "value":""
-  },
-  {
-    "key":"last_name",
-    "name":"Last Name",
-    "order":"3",
-    "filter":true,
-    "search":true,
-    "showInTable":true,
-    "type":"text",
-    "placeholder":"Enter Last Name...",
-    "value":""
-  },
-  {
     "key":"actions",
     "name":"Actions",
-    "order":"4",
+    "order":"1",
     "filter":false,
     "search":false,
     "showInTable":true,
@@ -47,5 +14,38 @@
         "functionName":"chooseRow"
       }
     ]
+  },
+  {
+    "key":"id",
+    "name":"ID",
+    "order":"2",
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "type":"text",
+    "placeholderEnter ":"Id...",
+    "value":""
+  },
+  {
+    "key":"first_name",
+    "name":"First Name",
+    "order":"3",
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "type":"text",
+    "placeholder":"Enter First Name...",
+    "value":""
+  },
+  {
+    "key":"last_name",
+    "name":"Last Name",
+    "order":"4",
+    "filter":true,
+    "search":true,
+    "showInTable":true,
+    "type":"text",
+    "placeholder":"Enter Last Name...",
+    "value":""
   }
 ]
