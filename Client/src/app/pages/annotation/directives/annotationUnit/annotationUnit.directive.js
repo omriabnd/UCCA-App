@@ -720,11 +720,13 @@
             if(isUnitValidated) {
                 if (parentUnit.tree_id === "0") {
                     unitToValidate.gui_status = 'HIDDEN';
-                    // selectionHandlerService.updateSelectedUnit('0');
+                    var nextSibling = DataService.getNextSibling(unit_id);
+                    if (!nextSibling) { // If the unit is the last, get the prev unit
+                        nextSibling = DataService.getPrevUnit(unit_id);
+                    }
+                    selectionHandlerService.updateSelectedUnit(nextSibling.tree_id);
                 } else {
                     unitToValidate.gui_status = 'COLLAPSE';
-                    // selectionHandlerService.updateSelectedUnit(unit_id); // In the past- scroll had done to parentUnit.tree_id
-
                     selectionHandlerService.updateSelectedUnit(parentUnit.tree_id);
                     Core.scrollToUnit(parentUnit.tree_id);
                 }
