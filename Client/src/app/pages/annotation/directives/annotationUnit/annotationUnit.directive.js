@@ -720,10 +720,8 @@
             if(isUnitValidated) {
                 if (parentUnit.tree_id === "0") {
                     unitToValidate.gui_status = 'HIDDEN';
-                    var nextSibling = DataService.getNextSibling(unit_id);
-                    if (!nextSibling) { // If the unit is the last, get the prev unit
-                        nextSibling = DataService.getPrevUnit(unit_id);
-                    }
+                    var nextSibling = getNextOpenSibling(unit_id);
+
                     selectionHandlerService.updateSelectedUnit(nextSibling.tree_id);
                 } else {
                     unitToValidate.gui_status = 'COLLAPSE';
@@ -737,6 +735,18 @@
 
             event ? event.stopPropagation() : '';
 
+        }
+
+        function getNextOpenSibling(unit_id) {
+            var nextSibling = DataService.getNextSibling(unit_id);
+            if (!nextSibling) {
+                // nextSibling = DataService.getPrevUnit(unit_id); // If the unit is the last, get the prev unit
+                nextSibling = DataService.tree;
+            }
+            while (nextSibling.gui_status !== 'OPEN') {
+                nextSibling = getNextOpenSibling(nextSibling.tree_id);
+            }
+            return nextSibling;
         }
 
         function subTreeToCollapse(subtree_root_unit){
