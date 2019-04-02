@@ -20,7 +20,10 @@ class Layers(models.Model):
     tooltip = models.CharField(max_length=Constants.TOOLTIPS_MAX_LENGTH)
     slotted = models.BooleanField(null=False, default=False)
     category_reorderings = models.TextField(default='', null=True)
-    
+
+    disable_remotes = models.BooleanField(null=False, default=False)
+    require_all_tokens_covered = models.BooleanField(null=False, default=False)
+
     created_by = models.ForeignKey(User, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=datetime.now, blank=True)

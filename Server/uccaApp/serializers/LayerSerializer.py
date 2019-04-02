@@ -110,6 +110,8 @@ class LayerSerializer(serializers.ModelSerializer):
             "projects",
             "categories",
             "restrictions",
+            "disable_remotes",
+            "require_all_tokens_covered",
             "is_active",
             "created_by",
             "created_at",
@@ -226,6 +228,9 @@ class LayerSerializer(serializers.ModelSerializer):
         newLayer.description = validated_data['description']
         newLayer.tooltip = validated_data['tooltip']
         newLayer.slotted = validated_data['slotted']
+        newLayer.disable_remotes = validated_data['disable_remotes']
+        newLayer.require_all_tokens_covered = validated_data["require_all_tokens_covered"]
+
         newLayer.category_reorderings = validated_data['category_reorderings']
 
         if self.initial_data['parent'] is not None and self.initial_data['parent'] and newLayer.type !=  Constants.LAYER_TYPES_JSON['ROOT']: # no parent for root layer
