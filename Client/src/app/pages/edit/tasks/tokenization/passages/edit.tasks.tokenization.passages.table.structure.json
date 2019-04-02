@@ -1,8 +1,24 @@
 [
   {
+    "key":"actions",
+    "name":"Actions",
+    "order":"1",
+    "filter":false,
+    "search":false,
+    "showInTable":true,
+    "buttons":[
+      {
+        "name":"Choose",
+        "order":"1",
+        "class":"btn-success",
+        "functionName":"chooseRow"
+      }
+    ]
+  },
+  {
     "key":"id",
     "name":"ID",
-    "order":"1",
+    "order":"2",
     "filter":true,
     "search":true,
     "showInTable":true,
@@ -42,21 +58,5 @@
     "type":"checkbox",
     "placeholder":"Is Active...",
     "value":true
-  },
-  {
-    "key":"actions",
-    "name":"Actions",
-    "order":"10",
-    "filter":false,
-    "search":false,
-    "showInTable":true,
-    "buttons":[
-      {
-        "name":"Choose",
-        "order":"1",
-        "class":"btn-success",
-        "functionName":"chooseRow"
-      }
-    ]
   }
 ]
