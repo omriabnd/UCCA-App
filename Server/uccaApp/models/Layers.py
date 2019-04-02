@@ -22,7 +22,7 @@ class Layers(models.Model):
     category_reorderings = models.TextField(default='', null=True)
 
     disable_remotes = models.BooleanField(null=False, default=False)
-    require_all_tokens_covered = models.BooleanField(null=False, default=False)
+    require_all_tokens_covered = models.BooleanField(null=False, default=True)
 
     created_by = models.ForeignKey(User, null=True, blank=True)
     is_active = models.BooleanField(default=True)
