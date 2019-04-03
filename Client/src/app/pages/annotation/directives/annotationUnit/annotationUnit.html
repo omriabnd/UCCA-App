@@ -30,7 +30,7 @@
                   <span class="comment-notification" ng-if="dirCtrl.dataBlock.cluster !=''">!</span>
                 </a>
             </span>
-            <a data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Add Remote Unit">
+            <a ng-if="!vm.disableRemotes" data-toggle="tooltip" data-placement="top" class="unit-control-btn" title="Add Remote Unit">
                 <i class="ion-plus-round unit-buttons" ng-click="vm.switchToRemoteMode(vm,$event)"></i>
             </a>
         </span>
