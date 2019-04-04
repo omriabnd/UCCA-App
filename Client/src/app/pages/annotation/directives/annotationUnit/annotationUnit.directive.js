@@ -55,6 +55,7 @@
             vm.dataBlock.categoriesTooltip = categoriesTooltip(vm);
             vm.showClusterButton = $rootScope.isSlottedLayerProject;
             vm.direction = $rootScope.direction;
+            vm.disableRemotes = $rootScope.disableRemotes;
         }
 
         function annotationUnitDirectiveLink($scope, elem, attrs,$rootScope) {

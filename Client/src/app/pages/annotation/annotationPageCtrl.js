@@ -11,7 +11,9 @@
         var vm = this;
         vm.tokenizationTask = TaskMetaData.Task;
         $rootScope.direction = TaskMetaData.Task.passage.text_direction.toLowerCase();
-        // vm.annotationTokens = tokensInStaticFormat(); // vm.tokenizationTask.tokens;
+        $rootScope.disableRemotes = TaskMetaData.Layer.disable_remotes;
+        $rootScope.requireAllTokensCovered = TaskMetaData.Layer.require_all_tokens_covered;
+       // vm.annotationTokens = tokensInStaticFormat(); // vm.tokenizationTask.tokens;
         vm.annotationTokens = DataService.tree.tokens;
         vm.categories = TaskMetaData.Categories;
         vm.defaultHotKeys = DefaultHotKeys;
@@ -42,6 +44,11 @@
         vm.saveFailed = false;
         vm.submitFailed = false;
         vm.loadModalFailed = false;
+
+        if ($rootScope.disableRemotes) { // Remove implicit option
+            var index = vm.definitions.findIndex(function(a) {return  a.name === 'Implicit'});
+            vm.definitions.splice(index, 1);
+        }
 
         try{
             vm.categoryReorderings = JSON.parse(TaskMetaData.Task.project.layer.category_reorderings);
