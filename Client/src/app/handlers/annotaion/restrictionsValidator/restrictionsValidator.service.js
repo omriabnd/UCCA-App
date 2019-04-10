@@ -29,7 +29,9 @@
             UNIT_FORBID_SLOTTED_LAYER_RULE: "Both slots are already occupied.",
             NONRELEVANT_UNIT: "None of the categories of the unit are being refined in this layer.",
             NO_VALID_CATEGORY: "All units must have at least one non-default category",
-            SLOT_ONE_RESTRICTION_VIOLATION: "All units in a slotted layer must have a category in their slot #1"
+            SLOT_ONE_RESTRICTION_VIOLATION: "All units in a slotted layer must have a category in their slot #1",
+            UNIQUE_UNDER_PARENT: "Category %NAME% cannot appear more than once under a parent.",
+            NOT_UNARY: "any such category cannot appear as a single non-remote child of a unit."
         };
         var selectionHandlerServiceProvider;
         var dataServiceProvider;
@@ -58,13 +60,14 @@
                 FORBID_CHILD:[],
                 FORBID_SIBLING:[],
                 REQUIRE_CHILD: [],
-                REQUIRE_SIBLING:[]
+                REQUIRE_SIBLING:[],
+                UNIQUE_UNDER_PARENT:[],
+                NOT_UNARY:[]
             };
         }
 
 
         function initRestrictionsTables(layer_restrictions,selectionHandlerService, dataService, categoriesArray){
-
             allCategoriesTable = {};
             for (var i=0; i < categoriesArray.length; i++) {
                 allCategoriesTable[categoriesArray[i].id] = categoriesArray[i];
@@ -81,10 +84,12 @@
         function addRestrictionToTable(restriction){
             var categories_1 = restriction.categories_1[0].id ? restriction.categories_1 : JSON.parse(restriction.categories_1.replace(/'/g,'"'));
             var categories_2 = restriction.categories_2[0] ? restriction.categories_2[0].id ? restriction.categories_2 : JSON.parse(restriction.categories_2.replace(/'/g,'"')) : [];
+
             switch(restriction.type){
+                case 'UNIQUE_UNDER_PARENT':
                 case 'FORBID_ANY_CHILD':
                     categories_1.forEach(function(category_1){
-                        restrictionsTablesIds.FORBID_ANY_CHILD.push(category_1.id);
+                        restrictionsTablesIds[restriction.type].push(category_1.id);
 
                     });
                     break;
@@ -145,6 +150,13 @@
                     scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, annotationUnit);
                     return false;
                 }
+
+                violation = checkIfUniqueUnderParent(annotationUnit);
+                if (violation) {
+                    showErrorModal(getErrorMessage(violation.rcode,{'%NAME%': violation.category}, annotationUnit.tree_id));
+                    scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, annotationUnit);
+                    return false;
+                }
             }
 
 
@@ -165,6 +177,26 @@
 
 	        annotationUnit.is_finished = true;
             return true;
+        }
+
+
+        /**
+         * Restriction: unique among siblings
+         * Any category with this restriction cannot appear more than once under a parent.
+         * @param annotationUnit
+         * @returns violation {{rcode: string, category: *}}
+         */
+        function checkIfUniqueUnderParent(annotationUnit) {
+            var unitCategories = annotationUnit.categories.map(function(c) {return c.id});
+            var children_category_ids = getAllChildrenCategories(annotationUnit, []);
+
+            for (var i=0; i< children_category_ids.length; i++) {
+                var cur_category_id = children_category_ids[i];
+
+                if (unitCategories.indexOf(cur_category_id) > -1 && restrictionsTablesIds['UNIQUE_UNDER_PARENT'].indexOf(cur_category_id) > -1) {
+                    return {rcode: 'UNIQUE_UNDER_PARENT', category: allCategoriesTable[cur_category_id].name};
+                }
+            }
         }
 
 
@@ -244,6 +276,23 @@
             return violation;
         }
 
+        /**
+         * Get all categories of all the children of a unit
+         * @param annotationUnit
+         * @param categoriesList - List the categories so that more categories can be concatenated
+         * @returns {*} - categoriesList with the additional categories
+         */
+        function getAllChildrenCategories(annotationUnit, categoriesList) {
+            for (var i = 0; i < annotationUnit.AnnotationUnits.length; i++) {
+                for (var c = 0; c < annotationUnit.AnnotationUnits[i].categories.length; c++) {
+                    categoriesList.push(annotationUnit.AnnotationUnits[i].categories[c].id);
+                }
+                if (annotationUnit.AnnotationUnits[i]) {
+                    getAllChildrenCategories(annotationUnit.AnnotationUnits[i], categoriesList);
+                }
+            }
+            return categoriesList;
+        }
 
         /**
          * Returns an array of the indices of all categories its children have (regular, remote or implicit)
