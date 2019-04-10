@@ -76,6 +76,16 @@
 				key:'FORBID_ANY_CHILD',
 				name: 'forbid any child',
 				value: 5
+			},
+			{
+				key:'UNIQUE_UNDER_PARENT',
+				name: 'unique under parent',
+				value: 6
+			},
+			{
+				key:'NOT_UNARY',
+				name: 'Cannot be a single non-remote child of a parent',
+				value: 7
 			}
 		],
 		LAYER_TYPE:{

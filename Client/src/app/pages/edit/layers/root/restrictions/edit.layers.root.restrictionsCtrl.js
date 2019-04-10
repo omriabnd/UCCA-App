@@ -97,7 +97,8 @@
         
         function save(){
             if(categoryOneArray.length > 0){
-                if(vm.restrictionType.key == "FORBID_ANY_CHILD" || categoryTwoArray.length > 0){
+                if(vm.restrictionType.key == "FORBID_ANY_CHILD" || vm.restrictionType.key == "UNIQUE_UNDER_PARENT" ||
+                    vm.restrictionType.key == "NOT_UNARY" || categoryTwoArray.length > 0){
                     categoryTwoArray = vm.restrictionType.key == "FORBID_ANY_CHILD" ? [] : categoryTwoArray;
                     var restriction = Core.generateRestrictionObject(categoryOneArray,vm.restrictionType,categoryTwoArray);
 
