@@ -31,7 +31,7 @@
             NO_VALID_CATEGORY: "All units must have at least one non-default category",
             SLOT_ONE_RESTRICTION_VIOLATION: "All units in a slotted layer must have a category in their slot #1",
             UNIQUE_UNDER_PARENT: "Category %NAME% cannot appear more than once under a parent.",
-            NOT_UNARY: "any such category cannot appear as a single non-remote child of a unit."
+            NOT_UNARY: "Category %NAME% cannot appear as a single non-remote child of a unit."
         };
         var selectionHandlerServiceProvider;
         var dataServiceProvider;
@@ -46,7 +46,6 @@
             evaluateFinishAll: evaluateFinishAll,
             evaluateSubmissionRestrictions: evaluateSubmissionRestrictions,
             getTables: getTables
-            // closeModal: closeModal
         };
         return handler;
 
@@ -87,6 +86,7 @@
 
             switch(restriction.type){
                 case 'UNIQUE_UNDER_PARENT':
+                case 'NOT_UNARY':
                 case 'FORBID_ANY_CHILD':
                     categories_1.forEach(function(category_1){
                         restrictionsTablesIds[restriction.type].push(category_1.id);
@@ -157,6 +157,13 @@
                     scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, annotationUnit);
                     return false;
                 }
+
+                violation = checkIfNotUnary(annotationUnit);
+                if (violation) {
+                    showErrorModal(getErrorMessage(violation.rcode,{'%NAME%': violation.category}, annotationUnit.tree_id));
+                    scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, annotationUnit);
+                    return false;
+                }
             }
 
 
@@ -179,6 +186,31 @@
             return true;
         }
 
+        // If a unit U has a category C which has a restriction "NOT_UNARY" in the task's layer,
+        // then U must have at least one non-remote sibling which has at least one category C'
+        // that does not have a category with a "NOT_UNARY" category.
+        function checkIfNotUnary(annotationUnit) {
+            var unitCategories = annotationUnit.categories.map(function(c) {return c.id});
+            for (var i = 0; i < unitCategories.length; i++) {
+                var cur_category_id = unitCategories[i];
+                if (restrictionsTablesIds['NOT_UNARY'].indexOf(unitCategories[i]) > -1) {
+
+                    var parentUnit = dataServiceProvider.getUnitById(annotationUnit.parent_tree_id);
+                    for (var u = 0 ; u < parentUnit.AnnotationUnits.length; u++) {
+                        if (parentUnit.AnnotationUnits[u].tree_id !== annotationUnit.tree_id && parentUnit.AnnotationUnits[u].unitType !== 'REMOTE') {
+                            var categories = parentUnit.AnnotationUnits[u].categories.map(function (c) {return c.id});
+                            for (var c = 0; c < categories.length; c++) {
+                                if (restrictionsTablesIds['NOT_UNARY'].indexOf(categories[c]) < 0) {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                    return {rcode: 'NOT_UNARY', category: allCategoriesTable[cur_category_id].name};
+                }
+            }
+        }
+
 
         /**
          * Restriction: unique among siblings
@@ -190,13 +222,14 @@
             var unitCategories = annotationUnit.categories.map(function(c) {return c.id});
             var children_category_ids = getAllChildrenCategories(annotationUnit, []);
 
-            for (var i=0; i< children_category_ids.length; i++) {
+            for (var i = 0; i < children_category_ids.length; i++) {
                 var cur_category_id = children_category_ids[i];
 
                 if (unitCategories.indexOf(cur_category_id) > -1 && restrictionsTablesIds['UNIQUE_UNDER_PARENT'].indexOf(cur_category_id) > -1) {
                     return {rcode: 'UNIQUE_UNDER_PARENT', category: allCategoriesTable[cur_category_id].name};
                 }
             }
+            return undefined;
         }
 
 
