@@ -3,6 +3,24 @@
 	* {
 		outline: transparent;
 	}
+
+	.rtl {
+		direction: rtl;
+
+		.button-container{
+			display: inline-block;
+	  		float: left;
+		}
+	}
+
+	.ltr {
+		direction: ltr;
+		.button-container{
+			display: inline-block;
+	  		float: right;
+		}
+	}
+
 	.tokenization-text{
 	  height: 100% !important;
 	  resize: none;
@@ -11,11 +29,6 @@
 
 	.tokenization-panel-header{
 	  height:auto !important;
-	}
-
-	.button-container {
-	  display: inline-block;
-	  float: right;
 	}
 
 	.text-container {

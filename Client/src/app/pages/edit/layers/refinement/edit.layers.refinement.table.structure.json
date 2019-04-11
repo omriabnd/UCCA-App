@@ -116,29 +116,9 @@
     "managePageRoute": "categories.manage",
     "tableStructure": [
       {
-        "key": "parent_category",
-        "name": "Parent Category",
-        "order": 1,
-        "type": "text",
-        "filter": true,
-        "search": true,
-        "showInTable": true
-      },
-      {
-        "key": "category",
-        "name": "Refined Categories",
-        "order": 5,
-        "filter": true,
-        "search": true,
-        "type": "text",
-        "placeholder": "Children...",
-        "value": "",
-        "showInTable": true
-      },
-      {
         "key": "actions",
         "name": "Actions",
-        "order": 11,
+        "order": 1,
         "filter": false,
         "search": false,
         "showInTable": true,
@@ -150,6 +130,26 @@
             "functionName": "removeRow"
           }
         ]
+      },
+      {
+        "key": "parent_category",
+        "name": "Parent Category",
+        "order": 2,
+        "type": "text",
+        "filter": true,
+        "search": true,
+        "showInTable": true
+      },
+      {
+        "key": "category",
+        "name": "Refined Categories",
+        "order": 3,
+        "filter": true,
+        "search": true,
+        "type": "text",
+        "placeholder": "Children...",
+        "value": "",
+        "showInTable": true
       }
     ]
   },

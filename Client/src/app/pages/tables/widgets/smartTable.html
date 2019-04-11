@@ -10,15 +10,15 @@
   <table class="table" st-table="vm.smartTableData" st-safe-src="vm.smartTableDataSafe">
 <!--  <table class="table" st-table="vm.smartTableData" st-safe-src="vm.smartTableDataSafe" st-set-filter="customFilter">-->
     <thead>
-    <tr class="sortable ">
-      <th st-sort="{{header.key}}" ng-repeat="header in vm.smartTableStructure track by $index" ng-if="header.showInTable">{{::header.name}}</th>
-    </tr>
-    <tr>
-      <th></th>
-        <th ng-repeat="header in vm.smartTableStructure" ng-if="header.filter">
-            <input st-search="{{ vm.findSearch(header) }}" placeholder="{{header.name}}" class="input-sm form-control search-input" type="search"/>
-        </th>
-    </tr>
+        <tr class="sortable ">
+          <th st-sort="{{header.key}}" ng-repeat="header in vm.smartTableStructure track by $index" ng-if="header.showInTable">{{::header.name}}</th>
+        </tr>
+        <tr>
+          <th></th>
+            <th ng-repeat="header in vm.smartTableStructure" ng-if="header.filter">
+                <input st-search="{{ vm.findSearch(header) }}" placeholder="{{header.name}}" class="input-sm form-control search-input" type="search"/>
+            </th>
+        </tr>
     </thead>
     <tbody>
     <tr ng-repeat="itemRow in vm.smartTableData" id="smart-table-row-{{$index}}" ng-class="{'selected': itemRow.selected}">

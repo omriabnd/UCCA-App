@@ -1,50 +1,8 @@
 [
   {
-    "key":"id",
-    "name":"Id",
-    "order":1,
-    "type":"text",
-    "filter":true,
-    "search":true,
-    "showInTable":true
-  },
-  {
-    "key":"name",
-    "name":"Name",
-    "order":2,
-    "filter":true,
-    "search":true,
-    "type":"text",
-    "placeholder":"Enter Name...",
-    "value":"",
-    "showInTable":true
-  },
-  {
-    "key":"was_default",
-    "name":"was_default",
-    "order":3,
-    "filter":false,
-    "search":false,
-    "type":"text",
-    "placeholder":"Enter Description...",
-    "value":"",
-    "showInTable":false
-  },
-  {
-    "key":"abbreviation",
-    "name":"Abbreviation",
-    "order":5,
-    "filter":true,
-    "search":true,
-    "type":"text",
-    "placeholder":"Children...",
-    "value":"",
-    "showInTable":true
-  },
-  {
     "key":"actions",
     "name":"Actions",
-    "order":11,
+    "order":1,
     "filter":false,
     "search":false,
     "showInTable":true,
@@ -62,5 +20,47 @@
         "functionName":"showCategoryInfo"
       }
     ]
+  },
+  {
+    "key":"id",
+    "name":"Id",
+    "order":2,
+    "type":"text",
+    "filter":true,
+    "search":true,
+    "showInTable":true
+  },
+  {
+    "key":"name",
+    "name":"Name",
+    "order":3,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Enter Name...",
+    "value":"",
+    "showInTable":true
+  },
+  {
+    "key":"was_default",
+    "name":"was_default",
+    "order":4,
+    "filter":false,
+    "search":false,
+    "type":"text",
+    "placeholder":"Enter Description...",
+    "value":"",
+    "showInTable":false
+  },
+  {
+    "key":"abbreviation",
+    "name":"Abbreviation",
+    "order":5,
+    "filter":true,
+    "search":true,
+    "type":"text",
+    "placeholder":"Children...",
+    "value":"",
+    "showInTable":true
   }
 ]

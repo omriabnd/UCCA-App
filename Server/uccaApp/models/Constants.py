@@ -55,14 +55,18 @@ RESTRICTION_TYPES = [
     ('REQUIRE_CHILD','require child'),
     ('FORBID_SIBILIMG','forbid sibilimg'),
     ('FORBID_CHILD','forbid child'),
-    ('FORBID_ANY_CHILD','forbid any child')
+    ('FORBID_ANY_CHILD','forbid any child'),
+    ('UNIQUE_UNDER_PARENT','unique under parent'),
+    ('NOT_UNARY','Cannot be a single non-remote child of a parent')
 ]
 RESTRICTION_TYPES_JSON = {
     'REQUIRE_SIBLING':'REQUIRE_SIBLING',
     'REQUIRE_CHILD':'REQUIRE_CHILD',
     'FORBID_SIBILIMG':'FORBID_SIBILIMG',
     'FORBID_CHILD':'FORBID_CHILD',
-    'FORBID_ANY_CHILD':'FORBID_ANY_CHILD'
+    'FORBID_ANY_CHILD':'FORBID_ANY_CHILD',
+    'UNIQUE_UNDER_PARENT': 'UNIQUE_UNDER_PARENT',
+    'NOT_UNARY': 'NOT_UNARY'
 }
 TASK_STATUS = [
     ('NOT_STARTED','NOT_STARTED'),

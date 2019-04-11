@@ -1,8 +1,30 @@
 [
   {
+    "key":"actions",
+    "name":"Actions",
+    "order":"1",
+    "filter":false,
+    "search":false,
+    "showInTable":true,
+    "buttons":[
+      {
+        "name":"Choose",
+        "order":"1",
+        "class":"btn-success",
+        "functionName":"chooseRow"
+      },
+      {
+        "name":"Info",
+        "order":"2",
+        "class":"btn-info",
+        "functionName":"infoRow"
+      }
+    ]
+  },
+  {
     "key":"id",
     "name":"Id",
-    "order":"1",
+    "order":"2",
     "type":"text",
     "filter":true,
     "search":true,
@@ -11,7 +33,7 @@
   {
     "key":"name",
     "name":"Name",
-    "order":"2",
+    "order":"3",
     "filter":true,
     "search":true,
     "type":"text",
@@ -22,7 +44,7 @@
   {
     "key":"text",
     "name":"Text",
-    "order":"3",
+    "order":"4",
     "filter":true,
     "search":true,
     "type":"text",
@@ -34,7 +56,7 @@
     "key":"created_by",
     "hideInAddNewAssetMode":true,
     "name":"Created by",
-    "order":"4",
+    "order":"5",
     "filter":false,
     "search":true,
     "type":"text",
@@ -45,7 +67,7 @@
   {
     "key":"created_at",
     "name":"Created at",
-    "order":"5",
+    "order":"6",
     "filter":false,
     "search":true,
     "type":"text",
@@ -56,7 +78,7 @@
   {
     "key":"updated_at",
     "name":"Updated At",
-    "order":"6",
+    "order":"87",
     "filter":false,
     "search":true,
     "type":"text",
@@ -67,28 +89,12 @@
   {
     "key":"is_active",
     "name":"Is Active",
-    "order":"7",
+    "order":"8",
     "filter":true,
     "search":true,
     "type":"checkbox",
     "placeholder":"Is Active...",
     "value":true,
     "showInTable":true
-  },
-  {
-    "key":"actions",
-    "name":"Actions",
-    "order":"8",
-    "filter":false,
-    "search":false,
-    "showInTable":true,
-    "buttons":[
-      {
-        "name":"Choose",
-        "order":"1",
-        "class":"btn-info",
-        "functionName":"chooseRow"
-      }
-    ]
   }
 ]
