@@ -84,7 +84,7 @@
 			},
 			{
 				key:'NOT_UNARY',
-				name: 'Cannot be a single non-remote child of a parent',
+				name: 'not unary',
 				value: 7
 			}
 		],

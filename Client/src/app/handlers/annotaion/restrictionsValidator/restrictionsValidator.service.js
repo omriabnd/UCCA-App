@@ -193,14 +193,12 @@
             var unitCategories = annotationUnit.categories.map(function(c) {return c.id});
             for (var i = 0; i < unitCategories.length; i++) {
                 var cur_category_id = unitCategories[i];
-                if (restrictionsTablesIds['NOT_UNARY'].indexOf(unitCategories[i]) > -1) {
-
+                if (restrictionsTablesIds['NOT_UNARY'].indexOf(cur_category_id) > -1) {
                     var parentUnit = dataServiceProvider.getUnitById(annotationUnit.parent_tree_id);
                     for (var u = 0 ; u < parentUnit.AnnotationUnits.length; u++) {
                         if (parentUnit.AnnotationUnits[u].tree_id !== annotationUnit.tree_id && parentUnit.AnnotationUnits[u].unitType !== 'REMOTE') {
-                            var categories = parentUnit.AnnotationUnits[u].categories.map(function (c) {return c.id});
-                            for (var c = 0; c < categories.length; c++) {
-                                if (restrictionsTablesIds['NOT_UNARY'].indexOf(categories[c]) < 0) {
+                            for (var c = 0; c < parentUnit.AnnotationUnits[u].categories.length; c++) {
+                                if (restrictionsTablesIds['NOT_UNARY'].indexOf(parentUnit.AnnotationUnits[u].categories[c].id) < 0) {
                                     return false;
                                 }
                             }
@@ -220,16 +218,32 @@
          */
         function checkIfUniqueUnderParent(annotationUnit) {
             var unitCategories = annotationUnit.categories.map(function(c) {return c.id});
-            var children_category_ids = getAllChildrenCategories(annotationUnit, []);
-
-            for (var i = 0; i < children_category_ids.length; i++) {
-                var cur_category_id = children_category_ids[i];
-
-                if (unitCategories.indexOf(cur_category_id) > -1 && restrictionsTablesIds['UNIQUE_UNDER_PARENT'].indexOf(cur_category_id) > -1) {
-                    return {rcode: 'UNIQUE_UNDER_PARENT', category: allCategoriesTable[cur_category_id].name};
+            for (var i = 0; i < unitCategories.length; i++) {
+                var cur_category_id = unitCategories[i];
+                if (restrictionsTablesIds['UNIQUE_UNDER_PARENT'].indexOf(cur_category_id) > -1) {
+                    var parentUnit = dataServiceProvider.getUnitById(annotationUnit.parent_tree_id);
+                    for (var u = 0 ; u < parentUnit.AnnotationUnits.length; u++) {
+                        if (parentUnit.AnnotationUnits[u].tree_id !== annotationUnit.tree_id) {
+                            for (var c = 0; c < parentUnit.AnnotationUnits[u].categories.length; c++) {
+                                if (parentUnit.AnnotationUnits[u].categories[c].id === cur_category_id) {
+                                    return {rcode: 'UNIQUE_UNDER_PARENT', category: allCategoriesTable[cur_category_id].name};
+                                }
+                            }
+                        }
+                    }
                 }
             }
-            return undefined;
+            // var unitCategories = annotationUnit.categories.map(function(c) {return c.id});
+            // var children_category_ids = getAllChildrenCategories(annotationUnit, []);
+            //
+            // for (var i = 0; i < children_category_ids.length; i++) {
+            //     var cur_category_id = children_category_ids[i];
+            //
+            //     if (unitCategories.indexOf(cur_category_id) > -1 && restrictionsTablesIds['UNIQUE_UNDER_PARENT'].indexOf(cur_category_id) > -1) {
+            //         return {rcode: 'UNIQUE_UNDER_PARENT', category: allCategoriesTable[cur_category_id].name};
+            //     }
+            // }
+            // return undefined;
         }
 
 
