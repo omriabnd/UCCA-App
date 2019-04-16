@@ -590,9 +590,9 @@
         function checkIfVoilateEachTokenInUnit(annotationUnit) {
             // it should not check that all tokens are in a single-token unit or in an
             // unanalyzable unit upon finish
-            if (!$rootScope.requireAllTokensCovered) {
-                return false;
-            }
+            // if ($rootScope.requireAllTokensCovered) {
+            //     return false;
+            // }
 
             var numOfNonPuctuationTokens = annotationUnit.tokens.filter(function (token) {
                 return token.static.require_annotation === false;
@@ -638,7 +638,8 @@
         }
 
         function evaluateSubmissionRestrictions(mainPassage) {
-            if (!$rootScope.requireAllTokensCovered) {
+            debugger
+            if ($rootScope.requireAllTokensCovered) {
                 return false;
             }
 
