@@ -639,7 +639,7 @@
 
         function evaluateSubmissionRestrictions(mainPassage) {
             if (!$rootScope.requireAllTokensCovered) {
-                return false;
+                return true;
             }
 
             if (!evaluateFinishAll(mainPassage)) {
