@@ -7,35 +7,28 @@
         <div class="horizontal-scroll">
             <table class="table" st-table="vm.smartTableData" ng-class="{'table-striped': viewOnly == true}" >
                 <thead>
-                <tr ng-if="!isSortable" class="sortable ">
-                    <th st-sort="{{header.key}}" ng-repeat="header in vm.smartTableStructure track by $index" ng-if="header.showInTable">{{::header.name}}</th>
-                <tr ng-if="isSortable" class="">
+                    <tr ng-if="!isSortable" class="sortable ">
+                        <th st-sort="{{header.key}}" ng-repeat="header in vm.smartTableStructure track by $index" ng-if="header.showInTable">{{::header.name}}</th>
+                    <tr ng-if="isSortable" class="">
                     <th ng-repeat="header in vm.smartTableStructure track by $index" ng-if="header.showInTable">{{::header.name}}</th>
-                </tr>
+                    </tr>
                 </thead>
                 <tbody ui-sortable is-sortable=isSortable ng-model="vm.smartTableData">
                     <tr ng-model="vm.smartTableData" ng-repeat="itemRow in vm.smartTableData">
-                        <td ng-repeat="(key,value) in vm.smartTableStructure track by $index"
-                            language-align="{{::itemRow[value['key']]}}"
-                            ng-class="{'table-id':$index==0,'table-object':itemRow[value['key']].name}"
-                            ng-click="!!itemRow[value['key']].name && vm.runFunction('showMore',itemRow[value['key']]);"
-                            ng-if="value.showInTable && value.key != 'actions'">
-                            {{::vm.runFunction('parseSmartTableColumnData',itemRow,value)}}
-                        </td>
-                        <td ng-if="vm.smartTableStructure[vm.smartTableStructure.length-1].buttons">
-                          <span data-ng-switch on="vm.smartTableStructure[vm.smartTableStructure.length-1].buttons.length<4">
-                            
+                        <td ng-if="vm.smartTableStructure[0].buttons">
+                          <span data-ng-switch on="vm.smartTableStructure[0].buttons.length<4">
+
                                 <span data-ng-switch-when="true">
-                                    <input  ng-repeat="action in vm.smartTableStructure[vm.smartTableStructure.length-1].buttons track by $index"
+                                    <input  ng-repeat="action in vm.smartTableStructure[0].buttons track by $index"
                                             bs-switch
                                             ng-if="action.showAs == 'switch'"
                                             ng-model="itemRow.selected"
                                             switch-size="mini"
                                             ng-change="vm.toggleItem(itemRow,itemRow.selected)"
                                             type="checkbox">
-                                    <button 
+                                    <button
                                             ng-if="::(!action.showAs && vm.viewOnlyRuleOk()===false)"
-                                            ng-repeat="action in vm.smartTableStructure[vm.smartTableStructure.length-1].buttons track by $index"
+                                            ng-repeat="action in vm.smartTableStructure[0].buttons track by $index"
                                             class="btn editable-table-button btn-xs {{action.class}}"
                                             ng-click="vm.runFunction(action.functionName,itemRow,$parent.$parent.$index);">
                                             {{::action.name}}
@@ -60,8 +53,15 @@
                                     </ul>
                                   </div>
                                 </div>
-                                
+
                           </span>
+                        </td>
+                        <td ng-repeat="(key,value) in vm.smartTableStructure track by $index"
+                            language-align="{{::itemRow[value['key']]}}"
+                            ng-class="{'table-id':$index==0,'table-object':itemRow[value['key']].name}"
+                            ng-click="!!itemRow[value['key']].name && vm.runFunction('showMore',itemRow[value['key']]);"
+                            ng-if="value.showInTable && value.key != 'actions'">
+                            {{::vm.runFunction('parseSmartTableColumnData',itemRow,value)}}
                         </td>
                     </tr>
                 </tbody>

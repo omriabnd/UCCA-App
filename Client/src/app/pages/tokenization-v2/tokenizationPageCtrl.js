@@ -17,7 +17,7 @@
       $scope.originalText = TokenizationTask.passage.text;
       // create a copy of the original text for the tokenized text
       var passageFromTokens = createTextFromTokens(TokenizationTask.tokens);
-
+      $scope.direction = TokenizationTask.passage.text_direction;
       console.log("passageFromTokens",TokenizationTask.tokens);
 
       /**

@@ -37,7 +37,6 @@
 
             $scope.$on('tokenIsClicked', function(event, args) {
                 var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
-                // var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
 
                 if(args.token && args.token.static.id !== $scope.vm.token.static.id ){
@@ -129,8 +128,6 @@
                 if(startToken){
                     var tokenArray = [];
                     if(startToken.indexInUnit <= vm.token.indexInUnit){
-                        selectionHandlerService.clearTokenList();
-
                         var selectedUnitId = selectionHandlerService.getSelectedUnitId();
                         var selectedUnit = DataService.getUnitById(selectedUnitId);
 
@@ -141,12 +138,11 @@
                             $rootScope.$broadcast('tokenIsClicked', {
                                 token: selectedUnit.tokens[i],
                                 unitTreeId: selectedUnit.tokens[i].unitTreeId  || "0",
-                                selectAllTokenInUnit: false
+                                selectAllTokenInUnit: false,
+                                doNotRemoveExistingToken: true
                             });
                         }
                     }else{
-                        selectionHandlerService.clearTokenList();
-
                         var selectedUnitId = selectionHandlerService.getSelectedUnitId();
                         var selectedUnit = DataService.getUnitById(selectedUnitId);
 
@@ -157,7 +153,8 @@
                             $rootScope.$broadcast('tokenIsClicked', {
                                 token: selectedUnit.tokens[i],
                                 unitTreeId: selectedUnit.tokens[i].unitTreeId || "0",
-                                selectAllTokenInUnit: false
+                                selectAllTokenInUnit: false,
+                                doNotRemoveExistingToken: true
                             });
                         }
                     }
@@ -173,7 +170,7 @@
         }
 
         function tokenClicked(vm,doNotUpdateSelectedToken){
-            if( vm.token.text === '<br>' ){
+            if( vm.token.static.text === '<br>' ){
                return;
             }
             if(selectionHandlerService.getUnitToAddRemotes() !== "0"){
@@ -191,7 +188,6 @@
             var tokenInUnit = DataService.getUnitById(vm.token.inChildUnitTreeId);
             if(vm.token.inChildUnitTreeId !== null && tokenInUnit){
                 var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
-                // var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
                 !ctrlPressed ? selectionHandlerService.clearTokenList() : '';
                 var parentUnit = DataService.getUnitById(vm.token.unitTreeId);
                 var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inChildUnitTreeId === vm.token.inChildUnitTreeId; });

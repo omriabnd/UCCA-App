@@ -66,6 +66,8 @@
                         "name":""
                     },
                     "is_active": true,
+                    "require_all_tokens_covered": true,
+                    "disable_remotes": false,
                     "created_at": "",
                     "updated_at": ""
                 };

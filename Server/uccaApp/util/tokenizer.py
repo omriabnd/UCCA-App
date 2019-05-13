@@ -4,7 +4,7 @@ import pdb
 from itertools import count
 
 APOSTROPHE_CHARS = [u"'", u"’"]
-NON_ALPHANUM_REQUIRING_ANNOTATION = ['$', '%', u'£', u'€', u'₪']
+NON_ALPHANUM_REQUIRING_ANNOTATION = ['$', '%', u'£', u'€', u'₪', u'&',u'£']
 
 def isPunct(s):
   """

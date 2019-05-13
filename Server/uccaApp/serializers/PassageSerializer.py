@@ -59,7 +59,6 @@ class PassageSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         validated_data.pop('source')
-        print(validated_data)
 
         # prevent update asset that used in another asset
         if self.is_used_in_a_task(instance) == False:

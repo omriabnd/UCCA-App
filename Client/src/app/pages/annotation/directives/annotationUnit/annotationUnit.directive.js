@@ -55,6 +55,7 @@
             vm.dataBlock.categoriesTooltip = categoriesTooltip(vm);
             vm.showClusterButton = $rootScope.isSlottedLayerProject;
             vm.direction = $rootScope.direction;
+            vm.disableRemotes = $rootScope.disableRemotes;
         }
 
         function annotationUnitDirectiveLink($scope, elem, attrs,$rootScope) {
@@ -717,24 +718,36 @@
             var parentUnit = DataService.getUnitById(DataService.getParentUnitId(unitToValidate.tree_id))
             var hashTables = DataService.hashTables;
             var isUnitValidated = restrictionsValidatorService.checkRestrictionsOnFinish(unitToValidate,parentUnit,hashTables);
-            if(isUnitValidated){
-                if(parentUnit.tree_id === "0"){
+            if(isUnitValidated) {
+                if (parentUnit.tree_id === "0") {
                     unitToValidate.gui_status = 'HIDDEN';
-                    selectionHandlerService.updateSelectedUnit('0');
-                }else{
+                    var nextSibling = getNextOpenSibling(unit_id);
+
+                    selectionHandlerService.updateSelectedUnit(nextSibling.tree_id);
+                } else {
                     unitToValidate.gui_status = 'COLLAPSE';
-                    selectionHandlerService.updateSelectedUnit(unit_id); // In the past- scroll had done to parentUnit.tree_id
+                    selectionHandlerService.updateSelectedUnit(parentUnit.tree_id);
+                    Core.scrollToUnit(parentUnit.tree_id);
                 }
 
                 subTreeToCollapse(unitToValidate);
-
-                selectionHandlerService.updateSelectedUnit(parentUnit.tree_id);
-                Core.scrollToUnit(parentUnit.tree_id);  // In the past- scroll had done to parentUnit.tree_id
             }
             //TODO: add here to reset the selection handler if not validated;
 
             event ? event.stopPropagation() : '';
 
+        }
+
+        function getNextOpenSibling(unit_id) {
+            var nextSibling = DataService.getNextSibling(unit_id);
+            if (!nextSibling) {
+                // nextSibling = DataService.getPrevUnit(unit_id); // If the unit is the last, get the prev unit
+                nextSibling = DataService.tree;
+            }
+            while (nextSibling.gui_status !== 'OPEN') {
+                nextSibling = getNextOpenSibling(nextSibling.tree_id);
+            }
+            return nextSibling;
         }
 
         function subTreeToCollapse(subtree_root_unit){
@@ -751,7 +764,6 @@
             trace("annotationUnitDirective - toggleMouseUpDown");
             HotKeysManager.updatePressedHotKeys({combo:'shift'},!shiftPressed); // Mark shift as pressed anyway
             var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed("shift");
-            // var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed("ctrl");
             var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
             !shiftPressed && !ctrlPressed ? selectionHandlerService.clearTokenList() : '';
 

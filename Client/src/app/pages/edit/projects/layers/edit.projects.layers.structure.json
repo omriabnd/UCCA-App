@@ -1,39 +1,8 @@
 [
   {
-    "key": "id",
-    "name": "Id",
-    "order": 1,
-    "type": "text",
-    "filter": false,
-    "search": true,
-    "showInTable": true
-  },
-  {
-    "key": "name",
-    "name": "Name",
-    "order": 2,
-    "filter": false,
-    "search": true,
-    "type": "text",
-    "placeholder": "Enter Name...",
-    "value": "",
-    "showInTable": true
-  },
-  {
-    "key": "type",
-    "name": "Type",
-    "order": 6,
-    "filter": false,
-    "search": true,
-    "type": "text",
-    "placeholder": "Enter Type...",
-    "value": "",
-    "showInTable": true
-  },
-  {
     "key": "actions",
     "name": "Actions",
-    "order": 14,
+    "order": 1,
     "filter": false,
     "search": false,
     "showInTable": true,
@@ -46,5 +15,36 @@
         "functionName": "removeRow"
       }
     ]
+  },
+  {
+    "key": "id",
+    "name": "Id",
+    "order": 2,
+    "type": "text",
+    "filter": false,
+    "search": true,
+    "showInTable": true
+  },
+  {
+    "key": "name",
+    "name": "Name",
+    "order": 3,
+    "filter": false,
+    "search": true,
+    "type": "text",
+    "placeholder": "Enter Name...",
+    "value": "",
+    "showInTable": true
+  },
+  {
+    "key": "type",
+    "name": "Type",
+    "order": 4,
+    "filter": false,
+    "search": true,
+    "type": "text",
+    "placeholder": "Enter Type...",
+    "value": "",
+    "showInTable": true
   }
 ]

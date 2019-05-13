@@ -29,7 +29,9 @@
             UNIT_FORBID_SLOTTED_LAYER_RULE: "Both slots are already occupied.",
             NONRELEVANT_UNIT: "None of the categories of the unit are being refined in this layer.",
             NO_VALID_CATEGORY: "All units must have at least one non-default category",
-            SLOT_ONE_RESTRICTION_VIOLATION: "All units in a slotted layer must have a category in their slot #1"
+            SLOT_ONE_RESTRICTION_VIOLATION: "All units in a slotted layer must have a category in their slot #1",
+            UNIQUE_UNDER_PARENT: "Category %NAME% cannot appear more than once under a parent.",
+            NOT_UNARY: "Category %NAME% cannot appear as a single non-remote child of a unit."
         };
         var selectionHandlerServiceProvider;
         var dataServiceProvider;
@@ -44,7 +46,6 @@
             evaluateFinishAll: evaluateFinishAll,
             evaluateSubmissionRestrictions: evaluateSubmissionRestrictions,
             getTables: getTables
-            // closeModal: closeModal
         };
         return handler;
 
@@ -58,13 +59,14 @@
                 FORBID_CHILD:[],
                 FORBID_SIBLING:[],
                 REQUIRE_CHILD: [],
-                REQUIRE_SIBLING:[]
+                REQUIRE_SIBLING:[],
+                UNIQUE_UNDER_PARENT:[],
+                NOT_UNARY:[]
             };
         }
 
 
         function initRestrictionsTables(layer_restrictions,selectionHandlerService, dataService, categoriesArray){
-
             allCategoriesTable = {};
             for (var i=0; i < categoriesArray.length; i++) {
                 allCategoriesTable[categoriesArray[i].id] = categoriesArray[i];
@@ -81,10 +83,13 @@
         function addRestrictionToTable(restriction){
             var categories_1 = restriction.categories_1[0].id ? restriction.categories_1 : JSON.parse(restriction.categories_1.replace(/'/g,'"'));
             var categories_2 = restriction.categories_2[0] ? restriction.categories_2[0].id ? restriction.categories_2 : JSON.parse(restriction.categories_2.replace(/'/g,'"')) : [];
+
             switch(restriction.type){
+                case 'UNIQUE_UNDER_PARENT':
+                case 'NOT_UNARY':
                 case 'FORBID_ANY_CHILD':
                     categories_1.forEach(function(category_1){
-                        restrictionsTablesIds.FORBID_ANY_CHILD.push(category_1.id);
+                        restrictionsTablesIds[restriction.type].push(category_1.id);
 
                     });
                     break;
@@ -145,6 +150,20 @@
                     scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, annotationUnit);
                     return false;
                 }
+
+                violation = checkIfUniqueUnderParent(annotationUnit);
+                if (violation) {
+                    showErrorModal(getErrorMessage(violation.rcode,{'%NAME%': violation.category}, annotationUnit.tree_id));
+                    scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, annotationUnit);
+                    return false;
+                }
+
+                violation = checkIfNotUnary(annotationUnit);
+                if (violation) {
+                    showErrorModal(getErrorMessage(violation.rcode,{'%NAME%': violation.category}, annotationUnit.tree_id));
+                    scrollToViolationUnit(selectionHandlerServiceProvider, dataServiceProvider, annotationUnit);
+                    return false;
+                }
             }
 
 
@@ -163,8 +182,68 @@
                 return false;
             }
 
-	    annotationUnit.is_finished = true;
+	        annotationUnit.is_finished = true;
             return true;
+        }
+
+        // If a unit U has a category C which has a restriction "NOT_UNARY" in the task's layer,
+        // then U must have at least one non-remote sibling which has at least one category C'
+        // that does not have a category with a "NOT_UNARY" category.
+        function checkIfNotUnary(annotationUnit) {
+            var unitCategories = annotationUnit.categories.map(function(c) {return c.id});
+            for (var i = 0; i < unitCategories.length; i++) {
+                var cur_category_id = unitCategories[i];
+                if (restrictionsTablesIds['NOT_UNARY'].indexOf(cur_category_id) > -1) {
+                    var parentUnit = dataServiceProvider.getUnitById(annotationUnit.parent_tree_id);
+                    for (var u = 0 ; u < parentUnit.AnnotationUnits.length; u++) {
+                        if (parentUnit.AnnotationUnits[u].tree_id !== annotationUnit.tree_id && parentUnit.AnnotationUnits[u].unitType !== 'REMOTE') {
+                            for (var c = 0; c < parentUnit.AnnotationUnits[u].categories.length; c++) {
+                                if (restrictionsTablesIds['NOT_UNARY'].indexOf(parentUnit.AnnotationUnits[u].categories[c].id) < 0) {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                    return {rcode: 'NOT_UNARY', category: allCategoriesTable[cur_category_id].name};
+                }
+            }
+        }
+
+
+        /**
+         * Restriction: unique among siblings
+         * Any category with this restriction cannot appear more than once under a parent.
+         * @param annotationUnit
+         * @returns violation {{rcode: string, category: *}}
+         */
+        function checkIfUniqueUnderParent(annotationUnit) {
+            var unitCategories = annotationUnit.categories.map(function(c) {return c.id});
+            for (var i = 0; i < unitCategories.length; i++) {
+                var cur_category_id = unitCategories[i];
+                if (restrictionsTablesIds['UNIQUE_UNDER_PARENT'].indexOf(cur_category_id) > -1) {
+                    var parentUnit = dataServiceProvider.getUnitById(annotationUnit.parent_tree_id);
+                    for (var u = 0 ; u < parentUnit.AnnotationUnits.length; u++) {
+                        if (parentUnit.AnnotationUnits[u].tree_id !== annotationUnit.tree_id) {
+                            for (var c = 0; c < parentUnit.AnnotationUnits[u].categories.length; c++) {
+                                if (parentUnit.AnnotationUnits[u].categories[c].id === cur_category_id) {
+                                    return {rcode: 'UNIQUE_UNDER_PARENT', category: allCategoriesTable[cur_category_id].name};
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // var unitCategories = annotationUnit.categories.map(function(c) {return c.id});
+            // var children_category_ids = getAllChildrenCategories(annotationUnit, []);
+            //
+            // for (var i = 0; i < children_category_ids.length; i++) {
+            //     var cur_category_id = children_category_ids[i];
+            //
+            //     if (unitCategories.indexOf(cur_category_id) > -1 && restrictionsTablesIds['UNIQUE_UNDER_PARENT'].indexOf(cur_category_id) > -1) {
+            //         return {rcode: 'UNIQUE_UNDER_PARENT', category: allCategoriesTable[cur_category_id].name};
+            //     }
+            // }
+            // return undefined;
         }
 
 
@@ -244,6 +323,23 @@
             return violation;
         }
 
+        /**
+         * Get all categories of all the children of a unit
+         * @param annotationUnit
+         * @param categoriesList - List the categories so that more categories can be concatenated
+         * @returns {*} - categoriesList with the additional categories
+         */
+        function getAllChildrenCategories(annotationUnit, categoriesList) {
+            for (var i = 0; i < annotationUnit.AnnotationUnits.length; i++) {
+                for (var c = 0; c < annotationUnit.AnnotationUnits[i].categories.length; c++) {
+                    categoriesList.push(annotationUnit.AnnotationUnits[i].categories[c].id);
+                }
+                if (annotationUnit.AnnotationUnits[i]) {
+                    getAllChildrenCategories(annotationUnit.AnnotationUnits[i], categoriesList);
+                }
+            }
+            return categoriesList;
+        }
 
         /**
          * Returns an array of the indices of all categories its children have (regular, remote or implicit)
@@ -492,6 +588,11 @@
          * 3. all tokens are in a unit
          */
         function checkIfVoilateEachTokenInUnit(annotationUnit) {
+            // it should not check that all tokens are in a single-token unit or in an
+            // unanalyzable unit upon finish
+            if (!$rootScope.requireAllTokensCovered) {
+                return false;
+            }
 
             var numOfNonPuctuationTokens = annotationUnit.tokens.filter(function (token) {
                 return token.static.require_annotation === false;
@@ -537,6 +638,10 @@
         }
 
         function evaluateSubmissionRestrictions(mainPassage) {
+            if (!$rootScope.requireAllTokensCovered) {
+                return true;
+            }
+
             if (!evaluateFinishAll(mainPassage)) {
                 return false;
             }
