@@ -9,4 +9,7 @@ UCCA (Universal Conceptual Cognitive Annotation) is a cross-linguistically appli
 - All of UCCA's resources, including annotated corpora and software packages, are freely available [here](http://www.cs.huji.ac.il/~oabend/ucca.html).
 - A stable, pilot version of the application can be found [here](http://ucca.cs.huji.ac.il). Sign in with user: guest and password tseug.
 
+# Installation
+For installation instructions, please read the [installation guide](INSTALLATION_GUIDE.md) .
+
 __Important note: UCCA-App is only supported on the Chrome browser.__
