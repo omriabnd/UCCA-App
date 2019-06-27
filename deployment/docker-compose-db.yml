@@ -9,24 +9,6 @@ services:
       - "15432:5432"
     volumes:
       - ucca-volume:/var/lib/postgresql/data
-
-  ucca-backend:
-    image: uccaproject/ucca-backend
-    expose:
-      - "8000"
-    ports:
-      - "8085:8000"
-    depends_on:
-      - ucca-db  
-
-  ucca-webserver:
-    image: uccaproject/ucca-frontend
-    expose:
-      - "80"
-    ports:
-      - "6080:80"
-    depends_on:
-      - ucca-backend
         
 volumes:
   ucca-volume:

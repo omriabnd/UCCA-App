@@ -36,9 +36,17 @@ This will only run Postgres and make it available on port 15432.
 ### Setting up Backend development
 To set up Backend development, once you have the database running, switch to the `./Server` directory. Create a Virtual Environment (with Python 3.5 or higher), activate it and install the requirements in `./Server/requirements.txt` .
 
-The Backend is written in Django, so use the ordinary Django management commands to start the backend.
+The Backend is written in Django, so use the ordinary Django management commands to start the backend:
+
+    python manage.py runserver
+
+If you need to apply migrations use
+
+    python manage.py migrate
 
 The Django settings are in `./Server/ucca` . You can create a `local_settings.py` file to override these settings. The file `./Server/docker-helpers/settings_ucca_docker.py` contains information on how to connect to the Docker based Postgres database.
+
+If you want to modify this file and point it to another database instance, just change the `host` to the computer where Postgres is running, change `name` to the database's name, and `user` and `password` to a user that has the proper credentials in that database.
 
 ## Installation without Docker
 
