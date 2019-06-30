@@ -491,6 +491,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             # if au['type'] == 'IMPLICIT' and au['gui_status'] != "OPEN":
             #     raise UnallowedValueError("Remotes and implicit units must have a gui_status OPEN")
 
+
             if au['is_remote_copy']:
                 if au['cloned_from_tree_id']:
                     if not is_correct_format_tree_id(au['cloned_from_tree_id']):

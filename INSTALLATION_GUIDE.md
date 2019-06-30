@@ -1,128 +1,79 @@
-#UCCA installation Guide (ucca v1.0)
-updated 18.7.2017
+# UCCA installation Guide (UCCA v1.3)
+Updated May 26th, 2019
 
-##Introduction
-The UCCA web application is based on Django framework on the server side and AngularJS on the Client Side.
-The server side provides a fully independent API.
+## Introduction
+This document explains how to install the UCCA system. There are several ways to install UCCA, depending on your needs.
 
-All the Servers’ files are in the /Server directory.
-All the Clients’ files are in the /Client directory.
+## Docker Compose - Installation for Evaluation
+If you just wnat to evaluate UCCA, the easiest way to install it is with Docker Compose. In the `./deployment` folder you will find a `docker-compose.yml` file. To use it simply run
 
-In order to install the fully functional system, there is a need to clone the git, install the Django and then update the settings files according to the system’s settings.
+    cd ./deployment
+    docker-compose up
 
-##Libraries and Versions
-- Python: >= 3.4.2
-- Django: 1.10.1
-- PostgreSql:  >= 9.3
-- AngularJS: 1.4.12
-- JQuery: 2.1.4
-- Bootstrap: 3.3.7
-- Node:  >= 6.2.2 
-- npm: >= v 3.9.5
+After settings everything up you will have a working UCCA system, listening on [`http://localhost:6080`](http://localhost:6080).
 
+## Installation for Frontend Development
+If you want to develop the UCCA Frontend, the easiest way to do it so that have the Backend and Database run in Docker. So, start Docker Compose as explained in the previous section. The backend will be listening on port 8085.
 
-##Clone GIT repository
-from github server:
-https://github.com/omriabnd/UCCA-App
+### Setting up Frontend development
+Once you have the backend running, you can set up your development environment like so:
+
+    cd ./Client
+    yarn install
 
 
-##Create Postgres Database + Schema
-in our example we used:
-- database: ucca_development
-- schema: ucca
+Run `gulp serve` to start the development server.
 
-##Configure Django Application
-there is a demo file of the settings - settings.demo.py
-copy it to settings.py and edit it
+## Installation for Backend Development
 
-edit the file /Server/ucca/settings.py
+To develop the UCCA Backend, it is recommended you use Docker to run the Postgres database, which already comes preloaded with the necessary tables and data. There is a different Docker Compose file for this:
 
-###Example parameters
-update the parameters with as in the following example
-In this example we used the following parameters:
-host: http://ucca.app
-database name: ucca_development
-schema name: ucca
-psql user: pr_ucca
+    cd ./deployment
+    docker-compose --file docker-compose-db.yml up
 
-You may need to comment user, password and host according to how your postgres is configured
+This will only run Postgres and make it available on port 15432.
 
+### Setting up Backend development
+To set up Backend development, once you have the database running, switch to the `./Server` directory. Create a Virtual Environment (with Python 3.5 or higher), activate it and install the requirements in `./Server/requirements.txt` .
 
-~~~~
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'OPTIONS': {
-            'options': '-c search_path=ucca'
-        },
-        'NAME': 'ucca_development',
-        'USER': 'pr_ucca',
-        'PASSWORD': '', 
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-    }
-}
+The Backend is written in Django, so use the ordinary Django management commands to start the backend:
 
+    python manage.py runserver
 
-ALLOWED_HOSTS = [
-    'ucca.app','www.ucca.app',
-    'localhost',
-    '127.0.0.1',
-]
+If you need to apply migrations use
 
-EMAIL_HOST = "mailhost.cs.huji.ac.il"
-EMAIL_PORT = 25
-REGISTRATION_LINK = "http://ucca.app/api/v1/register"
-~~~~
+    python manage.py migrate
 
+The Django settings are in `./Server/ucca` . You can create a `local_settings.py` file to override these settings. The file `./Server/docker-helpers/settings_ucca_docker.py` contains information on how to connect to the Docker based Postgres database.
 
+If you want to modify this file and point it to another database instance, just change the `host` to the computer where Postgres is running, change `name` to the database's name, and `user` and `password` to a user that has the proper credentials in that database.
 
-##Install django dependencies
-If you are running the application via virtualenv make sure to run installation while you are in virtualenv
+## Installation without Docker
 
-execute:
-```
-pip install django
-pip install djangorestframework
-pip install django-rest-auth
-pip install django-allauth
-pip install django psycopg2
-pip install django-filter
-pip install djangorestframework-filters
-```
+If you want to install everything yourself, you should start by installing Postgres and creating a database called `ucca`.
 
-Run migration to create database
-make sure you are in the path /Server
+Set up your backend as explained in the previous section, then run the following management commands:
 
-execute:
-```
-python manage.py makemigrations
-python manage.py migrate
-```
-
-##Load initial Data to database
-execute:
-```
-python manage.py loaddata tabs
-python manage.py loaddata roles
-python manage.py loaddata roles_tabs
-python manage.py loaddata permissions
-python manage.py loaddata groups_permissions_admin
-python manage.py loaddata groups_permissions_guest
-python manage.py loaddata groups_permissions_project_manager
-python manage.py loaddata groups_permissions_annotator
-```
+    python manage.py migrate
+    python manage.py loaddata tabs
+    python manage.py loaddata roles
+    python manage.py loaddata roles_tabs
+    python manage.py loaddata permissions
+    python manage.py loaddata groups_permissions_admin
+    python manage.py loaddata groups_permissions_guest
+    python manage.py loaddata groups_permissions_project_manager
+    python manage.py loaddata groups_permissions_annotator
 
 For loading some pseudo data execute:
-```
-python manage.py loaddata categories
-python manage.py loaddata layers
-python manage.py loaddata layers_categories
-python manage.py loaddata sources
-python manage.py loaddata passages
-```
+    
+    python manage.py loaddata categories
+    python manage.py loaddata layers
+    python manage.py loaddata layers_categories
+    python manage.py loaddata sources
+    python manage.py loaddata passages
 
-##Load Initial superuser to database
+
+### Load Initial superuser to database
 You can edit the user parameters before loading in the file (do not change the initial password!!):
 /Server/uccaApp/fixures/superuser.json
 Make sure to change the password after the installation via the admin GUI
@@ -131,122 +82,7 @@ The initial user is: admin.ucca2@cs.huji.ac.il
 password: adminucca 
 
 execute:
-```
-python manage.py loaddata superuser
-```
 
-##Setup the Client 
+    python manage.py loaddata superuser
 
-The client is already set with the basic js and css scripts in the /Client/release directory
-
-
-go to path /Client
-
-###Add Client settings file
-create the file or copy from settings.demo.json
-Client/release/settings.json
-
-Add the following settings
-You may change the google analytics code according to your personal analytics
-
-```
-{
-    "HOST":"ucca.app",
-    "API_ENDPOINT":"http://ucca.app/api/v1",
-    "GOOGLE_ANALYTICS_ID": "UA-92008127-2"
- }
-```
-
-* * * 
-- - -
-*****
-------
-#By that you've completed the basic installation of the UCCA app.
-------
-*****
-- - -
-* * *
-
-#For Client Side Developers
-
-When changing Client Side files - in order of your changes to take effect
-While in the /Client directory execute:
-
-
-###Install node modules
-```
-npm install
-```
-###Fetch external libraries via bower
-```
-bower install
-```
-
-
-
-
-###Update Client Scripts while developing
-```
-gulp watch
-```
-
-make sure to change the files in the directory /Client/src
-any update in the src files will update the release files which are used by the client
-
-
-###Generate Client release files
-make sure you are in path /Client
-```
-gulp inject
-gulp serve:dist
-```
-
-
-##Appendix A - nginx configuration example
-```
-server {
-    listen 80;
-    server_name ucca.app www.ucca.app;
-
-
-	root /home/vagrant/ucca/Client/release;
-        index index.html;
-    location = /favicon.ico { access_log off; log_not_found off; }
-    location /static/ {
-        root /home/vagrant/ucca;
-    }
-
-    location /api {
-        root /home/vagrant/ucca/Server;
-	include         uwsgi_params;
-        uwsgi_pass      unix:/tmp/ucca.sock;
-    }
-
-	location /static {
-                alias /home/vagrant/Env/ucca/lib/python3.4/site-packages/rest_framework/static;
-                break;
-        }
-
-}
-```
-
-##Appendix B - uwsgi configuration example
-```
-[uwsgi]
-project = ucca
-base = /home/vagrant
-
-chdir = %(base)/%(project)/Server
-home = %(base)/Env/%(project)
-module = %(project).wsgi:application
-
-master = true
-processes = 5
-socket = /tmp/ucca.sock
-#socket = %(base)/%(project)/%(project).sock
-chmod-socket = 666
-vacuum = true
-
-daemonize = /tmp/ucca-uwsgi.log
-```
-
+Then continue by setting up the frontend as explained above.

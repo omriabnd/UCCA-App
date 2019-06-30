@@ -162,7 +162,7 @@
     "key":"type",
     "name":"Type",
     "order":9,
-    "filter":false,
+    "filter":true,
     "search":true,
     "type":"select",
     "placeholder":"Enter Type...",
