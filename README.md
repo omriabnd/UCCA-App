@@ -5,8 +5,8 @@ UCCAApp is an open-source, flexible web-application for syntactic and semantic p
 
 UCCA (Universal Conceptual Cognitive Annotation) is a cross-linguistically applicable semantic representation scheme, building on the Basic Linguistic Theory typological framework and Cognitive Linguistics literature. It was developed in the Hebrew University by Omri Abend and Ari Rappoport and has demonstrated applicability to multiple languages, including English, French, German and Czech, support for rapid annotation, accessibility to non-expert annotators and stability under translation. The scheme has recently proven useful for machine translation evaluation.
 
-- UCCAApp is undergoing final stages of development. A live demo for the current version can be found [here](http://ucca-demo.cs.huji.ac.il).
+- A live demo for the current version can be found [here](http://ucca-demo.cs.huji.ac.il).
 - All of UCCA's resources, including annotated corpora and software packages, are freely available [here](http://www.cs.huji.ac.il/~oabend/ucca.html).
-- A stable, pilot version of the application can be found [here](http://ucca.cs.huji.ac.il). Sign in with user: guest and password tseug.
+- A legacy, pilot version of the application can be found [here](http://ucca.cs.huji.ac.il). Sign in with user: guest and password tseug.
 
 __Important note: UCCA-App is only supported on the Chrome browser.__
