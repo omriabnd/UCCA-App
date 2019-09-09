@@ -603,8 +603,12 @@
                         }
                         switch(functionToExecute){
                             case 'abortRemoteMode':{
-                                selectionHandlerService.setUnitToAddRemotes("0");
-                                $('.annotation-page-container').removeClass('crosshair-cursor');
+                                if (selectionHandlerService.selectedTokenList.length) {
+                                    selectionHandlerService.clearTokenList();
+                                } else {
+                                    selectionHandlerService.setUnitToAddRemotes("0");
+                                    $('.annotation-page-container').removeClass('crosshair-cursor');
+                                }
                                 break;
                             }
                             case 'moveRight':{
