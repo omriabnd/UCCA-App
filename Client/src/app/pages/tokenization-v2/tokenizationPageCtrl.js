@@ -38,6 +38,7 @@
 
       uccaFactory.setOriginalTextNoSpaces();
       uccaFactory.setOriginalTextSpaceMap();
+      uccaFactory.setOriginalTokens(TokenizationTask.tokens);
 
       console.log(uccaFactory.originalText, uccaFactory.originalTextNoSpaces, uccaFactory.originalTextSpaceMap);
 

@@ -6,14 +6,18 @@
      *
      */
     angular.module('zAdmin.pages.tokenization-v2')
-        .directive('tokenizerBehaviour', function($timeout){
+        .directive('tokenizerBehaviour', function($timeout, uccaFactory){
             return {
                 link: link,
                 restrict: 'A',
                 scope: {},
+                controller: tokenizedCtrl,
+                controllerAs: 'tokCtrl',
             }
 
+
             function link(scope, el, attr){
+                scope.vm = scope.tokCtrl;
 
                 console.log('tokenizerBehaviour', el);
                 $(el).on('keydown', function(evt) {
@@ -70,7 +74,14 @@
 
                                 console.log('deleted char isSpace');
 
-                                text = text.slice(cursorLocation-1,1);
+                                var spaceBetweenWords = scope.vm.isNewWord(cursorLocation);
+
+                                // Tokenization task disabled deleting space between words
+                                if (spaceBetweenWords) {
+                                    evt.preventDefault();
+                                } else {
+                                    text = text.slice(cursorLocation-1,1);
+                                }
 
                             }else {
                                 //if not space is deleted - do not allow
@@ -120,6 +131,15 @@
                 }
 
 
+            }
+
+            function tokenizedCtrl() {
+                var vm = this;
+                vm.isNewWord = isNewWord;
+            }
+
+            function isNewWord(cursorLocation){
+                return uccaFactory.isSpaceBetweenWords(cursorLocation);
             }
         
     })

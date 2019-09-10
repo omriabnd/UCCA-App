@@ -18,15 +18,18 @@
             var originalTextSpaceMap = [];
 
             var service = {
+                originalTokens: [],
                 getTokensFromText: getTokensFromText,
                 originalText: originalText,
                 originalTextNoSpaces: originalTextNoSpaces,
                 setOriginalTextNoSpaces: setOriginalTextNoSpaces,
+                setOriginalTokens: setOriginalTokens,
                 originalTextSpaceMap: originalTextSpaceMap,
                 setOriginalTextSpaceMap: setOriginalTextSpaceMap,
                 getTaskData:getTaskData,
                 getTaskPassage:getTaskPassage,
                 saveTask:saveTask,
+                isSpaceBetweenWords:isSpaceBetweenWords,
             };
 
             return service;
@@ -61,6 +64,9 @@
             }
 
 
+            function setOriginalTokens(tokens) {
+                this.originalTokens = tokens;
+            }
 
 
             /**
@@ -145,6 +151,17 @@
 
             function saveTask(mode,taskData){
                 return apiService.tokenization.putTaskData(mode,taskData);
+            }
+
+            function isSpaceBetweenWords(cursorLocation) {
+                // TODO: check if the space is between words, acoording to start and end index in token list
+                console.log("isSpaceBetweenWords, cursorLocation=", cursorLocation);
+                console.log("originaltokens=", this.originalTokens);
+                debugger
+
+                var preToken = this.originalTokens.map(function(token) {return token.start_index < cursorLocation});
+                var nextToken = this.originalTokens.map(function(token) {return token.end_index > cursorLocation});
+                return false;
             }
 
         })
