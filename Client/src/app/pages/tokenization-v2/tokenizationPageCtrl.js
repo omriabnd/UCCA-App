@@ -38,7 +38,6 @@
 
       uccaFactory.setOriginalTextNoSpaces();
       uccaFactory.setOriginalTextSpaceMap();
-      uccaFactory.setOriginalTokens(TokenizationTask.tokens);
 
       console.log(uccaFactory.originalText, uccaFactory.originalTextNoSpaces, uccaFactory.originalTextSpaceMap);
 
@@ -57,6 +56,18 @@
           }
       });
 
+      $scope.$on('receivedCursor', function(event, cursorLoc) {
+          var tmp = $scope.tokenizedText;
+          tmp = tmp.substr(0, cursorLoc) + '*' + tmp.substr(cursorLoc + 1);
+          $scope.tokenizedText = tmp;
+
+
+          var textInput = document.getElementById('tokenizedArea');
+          // debugger
+          textInput.selectionStart = cursorLoc + 1;
+          // textInput.focus();
+      });
+
       /**
        *
        *
@@ -73,8 +84,15 @@
         var tokensArr = tokensArray;
         var output = '';
         tokensArray.forEach(function(token,index){
-          output += (token.text) + (index == tokensArr.length-1 ? '' : ' ');
-        })
+            output += (token.text);
+            if (index === tokensArr.length-1) {
+                return output;
+            } else if (token.end_index+1 === tokensArray[index+1].start_index && token.text !== '\n') {
+                output += '*';
+            } else {
+                output += ' ';
+            }
+        });
         return output;
       }
 

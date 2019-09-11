@@ -6,18 +6,15 @@
      *
      */
     angular.module('zAdmin.pages.tokenization-v2')
-        .directive('tokenizerBehaviour', function($timeout, uccaFactory){
+        .directive('tokenizerBehaviour', function($timeout,$rootScope){
             return {
                 link: link,
                 restrict: 'A',
                 scope: {},
-                controller: tokenizedCtrl,
-                controllerAs: 'tokCtrl',
             }
 
 
             function link(scope, el, attr){
-                scope.vm = scope.tokCtrl;
 
                 console.log('tokenizerBehaviour', el);
                 $(el).on('keydown', function(evt) {
@@ -70,27 +67,21 @@
                         if(cursorLocation){
 
                             console.log('charPrevious', charPrevious);
-                            if(charPrevious != "\n" && charPrevious.trim()==""){
+                            if(charPrevious != "\n" && charPrevious.trim()=="*"){
 
-                                console.log('deleted char isSpace');
+                                console.log('deleted char is *');
 
-                                var spaceBetweenWords = scope.vm.isNewWord(cursorLocation);
-
-                                // Tokenization task disabled deleting space between words
-                                if (spaceBetweenWords) {
-                                    evt.preventDefault();
-                                } else {
-                                    text = text.slice(cursorLocation-1,1);
-                                }
+                                // Delete only * and not space
+                                text = text.slice(cursorLocation-1,1);
 
                             }else {
                                 //if not space is deleted - do not allow
-                                console.log('not space no delete');
+                                console.log('not space * no delete');
                                 evt.preventDefault();
                                 return false;
                             }
                         } else {
-                            console.log('not space no delete');
+                            console.log('not space * no delete');
                             evt.preventDefault();
                             return false;
                         }
@@ -107,7 +98,7 @@
                     if (evt.keyCode == 32){
 
 
-                        if(charPrevious.trim()=="" || charNext.trim()==""){
+                        if(charPrevious.trim()=="" || charNext.trim()=="" || charPrevious.trim()=="*" || charNext.trim()=="*"){
                             evt.preventDefault();
                             return false;
                         }
@@ -115,13 +106,12 @@
 
                         if(text.trim()==""){
                             console.log('empty one');
-                            event.preventDefault();
+                            evt.preventDefault();
                             return false;
                         } else {
 
-
                             $timeout(function(){
-                                scope.$apply();
+                                $rootScope.$apply($rootScope.$broadcast('receivedCursor', cursorLocation));
                             },1);
 
                         }
@@ -133,14 +123,5 @@
 
             }
 
-            function tokenizedCtrl() {
-                var vm = this;
-                vm.isNewWord = isNewWord;
-            }
-
-            function isNewWord(cursorLocation){
-                return uccaFactory.isSpaceBetweenWords(cursorLocation);
-            }
-        
     })
 })();
