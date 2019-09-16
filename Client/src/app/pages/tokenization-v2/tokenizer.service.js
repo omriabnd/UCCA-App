@@ -18,6 +18,7 @@
             var originalTextSpaceMap = [];
 
             var service = {
+                oldCursorLocation: 0,
                 getTokensFromText: getTokensFromText,
                 originalText: originalText,
                 originalTextNoSpaces: originalTextNoSpaces,
@@ -28,6 +29,7 @@
                 getTaskData:getTaskData,
                 getTaskPassage:getTaskPassage,
                 saveTask:saveTask,
+                setCursorLocation:setCursorLocation,
             };
 
             return service;
@@ -64,6 +66,10 @@
 
             function setOriginalTokens(tokens) {
                 this.originalTokens = tokens;
+            }
+
+            function setCursorLocation(cur) {
+                this.oldCursorLocation = cur;
             }
 
 

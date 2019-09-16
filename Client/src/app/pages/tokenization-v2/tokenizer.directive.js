@@ -6,7 +6,7 @@
      *
      */
     angular.module('zAdmin.pages.tokenization-v2')
-        .directive('tokenizerBehaviour', function($timeout,$rootScope){
+        .directive('tokenizerBehaviour', function($timeout,$rootScope, uccaFactory){
             return {
                 link: link,
                 restrict: 'A',
@@ -49,6 +49,7 @@
                     var text = $(el).val();
 
                     var cursorLocation = $(el).prop("selectionStart");
+                    uccaFactory.setCursorLocation(cursorLocation);
                     charPrevious = text.substring((cursorLocation), cursorLocation-1);
                     charNext = text.substring((cursorLocation), cursorLocation+1);
 
@@ -110,14 +111,18 @@
                             return false;
                         } else {
 
-                            $timeout(function(){
+                            var promise = $timeout(function(){
                                 $rootScope.$apply($rootScope.$broadcast('receivedCursor', cursorLocation));
                             },1);
 
+                            promise.then(function() {
+                                el[0].selectionStart = uccaFactory.oldCursorLocation +1;
+                                el[0].selectionEnd = uccaFactory.oldCursorLocation +1;
+                            }, function() {
+                              console.error('Error during the tokenization')
+                            });
                         }
-
                     }
-
                 }
 
 

@@ -7,7 +7,7 @@
       .controller('TokenizationPageCtrl', TokenizationPageCtrl);
 
   /** @ngInject */
-  function TokenizationPageCtrl($scope, uccaFactory, TokenizationTask, Core, $state, $timeout, $rootScope) {
+  function TokenizationPageCtrl($scope, uccaFactory, TokenizationTask, Core, $state, $timeout, $rootScope, $q) {
       $scope.saveChanges = saveChanges;
       $scope.submitTask = submitTask;
 
@@ -57,15 +57,14 @@
       });
 
       $scope.$on('receivedCursor', function(event, cursorLoc) {
-          var tmp = $scope.tokenizedText;
-          tmp = tmp.substr(0, cursorLoc) + '*' + tmp.substr(cursorLoc + 1);
-          $scope.tokenizedText = tmp;
+          return $q(function(resolve, reject) {
+              var tmp = $scope.tokenizedText;
+              tmp = tmp.substr(0, cursorLoc) + '*' + tmp.substr(cursorLoc + 1);
 
+              $scope.tokenizedText = tmp;
 
-          var textInput = document.getElementById('tokenizedArea');
-          // debugger
-          textInput.selectionStart = cursorLoc + 1;
-          // textInput.focus();
+              resolve('success');
+          });
       });
 
       /**
