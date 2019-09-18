@@ -1,7 +1,7 @@
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ucca-omri', #new
+        'NAME': 'ucca-dev',
         'OPTIONS': {
             'options': '-c search_path=django,ucca'
         },
