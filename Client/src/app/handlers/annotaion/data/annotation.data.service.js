@@ -294,6 +294,7 @@
          * @returns {*}
          */
         function toggleCategoryForUnit(unitId, category,inInitStage){
+            console.log("tree=", DataService.tree);
             trace("DataService - toggleCategoryForUnit");
             return $q(function(resolve, reject) {
 

@@ -25,6 +25,7 @@
         selectionHandlerService.spacePressed = spacePressed;
         vm.saveTask = saveTask;
         vm.setFontSize = setFontSize;
+        // vm.checkRetokenizeButton = checkRetokenizeButton
         vm.submitTask = submitTask;
         vm.unitsIdsList = [];
         vm.finishAll = finishAll;
@@ -35,6 +36,7 @@
         vm.inRemoteMode = inRemoteMode;
         vm.addUserComment = addUserComment;
         vm.viewUserManual = viewUserManual;
+        vm.retokenize = retokenize;
         vm.toggleParents = toggleParents;
         vm.sceneFunctionRoles = ENV_CONST.SCENE_FUNCTION_ROLES;
         vm.defaultCategoryHotkeys = ENV_CONST.DEFAULT_CATEGORY_HOTKEYS;
@@ -126,8 +128,6 @@
                         }
                     }
                 }
-
-		
                 var reOrderings;
 		if (vm.categoryReorderings[parentCategoryName] != undefined) {
 		    reOrderings = vm.categoryReorderings[parentCategoryName][selectedTokens];
@@ -174,7 +174,12 @@
             $scope.showParents = !$scope.showParents;
             $rootScope.$broadcast("ToggleParents",{});
         }
-
+        //debo
+        // function checkRetokenizeButton(data){
+        //     if(data.name=='Retokenize'){
+        //         enableRetokenizeButton();
+        //     }
+        // }
 
         function init(){
 
@@ -221,7 +226,11 @@
         function viewUserManual(){
             open('app/pages/annotation/templates/user_manual_v1.html','lg','',vm)
         }
-
+        
+        function retokenize(){
+            // mon code 
+            // 1 verifier in childunittree
+        }
 
         function setFontSize(fontSize){
             $('.main-body').css({'font-size':fontSize.size+'em'})
