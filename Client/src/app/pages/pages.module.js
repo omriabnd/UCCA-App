@@ -53,7 +53,6 @@
   function run(authService,$state,$rootScope, Core, PermissionsService,storageService,$location){
     $rootScope.$connected = authService.isLoggedIn;
     
-
     $rootScope.$hideSideBar = shouldHideSideBar();
     var user_role = storageService.getObjectFromLocalStorage('user_role');
     if(user_role){

@@ -227,10 +227,7 @@
             open('app/pages/annotation/templates/user_manual_v1.html','lg','',vm)
         }
         
-        function retokenize(){
-            // mon code 
-            // 1 verifier in childunittree
-        }
+
 
         function setFontSize(fontSize){
             $('.main-body').css({'font-size':fontSize.size+'em'})
@@ -303,6 +300,31 @@
                 }
             }
         }
+        // test debo
+        function retokenize(){
+            $uibModal.open({
+                animation: true,
+                templateUrl: 'app/pages/retokenize/retokenizeModal.html',
+                size: 'md',
+                controller:function($scope, selectionHandlerService,$q){
+                    var selectedTokenList = selectionHandlerService.getSelectedTokenList();
+                    $scope.tokenizedText = selectedTokenList[0].static.text;
+
+
+                    $scope.$on('receivedCursor', function(event, cursorLoc) {
+                        debugger
+                        return $q(function(resolve, reject) {
+                            var tmp = $scope.tokenizedText;
+                            tmp = tmp.substr(0, cursorLoc) + '*' + tmp.substr(cursorLoc);
+              
+                            $scope.tokenizedText = tmp;
+              
+                            resolve('success');
+                        });
+                    });
+                }
+            });
+        }
 
         function finishAll(){
             var rootUnit = DataService.getUnitById("0");
@@ -326,7 +348,6 @@
                 openAll(u);
             })
         }
-
 
         function spacePressed(){
             if(selectionHandlerService.getUnitToAddRemotes() !== "0"){
@@ -373,7 +394,6 @@
                 }
             }
         }
-
 
         function isUnitSelected(selectionList){
             var result = true;

@@ -38,7 +38,6 @@
 
         function enableRetokenizeButton(){
             var selectedTokenList = selectionHandlerService.getSelectedTokenList();
-            debugger
             if(selectedTokenList.length == 0){
                 return false;
             }
@@ -60,7 +59,6 @@
 
         function checkRetokenizeButton(data){
             if(data.name == 'Retokenize'){
-                debugger
                return  enableRetokenizeButton();
             }
             return true
