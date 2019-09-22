@@ -15,6 +15,9 @@ After settings everything up you will have a working UCCA system, listening on [
 ## Installation for Frontend Development
 If you want to develop the UCCA Frontend, the easiest way to do it so that have the Backend and Database run in Docker. So, start Docker Compose as explained in the previous section. The backend will be listening on port 8085.
 
+### Installing the tools required for development
+The frontend requires Node 8 (it does not support Node 10 or later), please install Node 8, or use nvm (or nvm-windows) to manage multiple Node installations. On Windows you also need to configure node-gyp properly. This is a bit of a pain. You need to install Python 2.7 (node-gyp does not yet support Python 3), then tell npm to use it: `npm config set python c:\python27\python.exe` . You will also need to install a C++ compiler -  Visual Studio 2015 Community or later should suffice.
+
 ### Setting up Frontend development
 Once you have the backend running, you can set up your development environment like so:
 

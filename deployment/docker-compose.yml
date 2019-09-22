@@ -3,30 +3,43 @@ version: '2'
 services:
   ucca-db:
     image: uccaproject/ucca-db
+    container_name: UCCA-DB
     expose:
       - "5432"
     ports:
       - "15432:5432"
     volumes:
       - ucca-volume:/var/lib/postgresql/data
+    networks:
+        - UCCA
 
   ucca-backend:
     image: uccaproject/ucca-backend
+    container_name: UCCA-Backend
     expose:
       - "8000"
     ports:
       - "8085:8000"
     depends_on:
       - ucca-db  
+    networks:
+        - UCCA
 
   ucca-webserver:
     image: uccaproject/ucca-frontend
+    container_name: UCCA-Frontend
     expose:
       - "80"
     ports:
       - "6080:80"
     depends_on:
       - ucca-backend
+    networks:
+        - UCCA
+
         
 volumes:
   ucca-volume:
+
+networks:
+    UCCA:
