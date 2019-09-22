@@ -309,7 +309,16 @@
                 controller:function($scope, selectionHandlerService,$q){
                     var selectedTokenList = selectionHandlerService.getSelectedTokenList();
                     $scope.tokenizedText = selectedTokenList[0].static.text;
-
+                    
+                    $scope.$on('deleteStar', function(event, cursorLoc) {
+                        debugger
+                        return $q(function(resolve, reject) {
+                            var tmp = $scope.tokenizedText;
+                            tmp=tmp.replace("*",'');
+                            $scope.tokenizedText = tmp;
+                            resolve('success');
+                        });
+                    });
 
                     $scope.$on('receivedCursor', function(event, cursorLoc) {
                         debugger
