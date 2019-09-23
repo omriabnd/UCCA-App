@@ -32,11 +32,37 @@
     }
 
     /** @ngInject */
-    function ItemController($scope, DataService) {
+    function ItemController($scope, DataService,selectionHandlerService) {
+        //test debo
+
+
+        function enableRetokenizeButton(){
+            var selectedTokenList = selectionHandlerService.getSelectedTokenList();
+            if(selectedTokenList.length == 0){
+                return false;
+            }
+            else {
+                var selectionList = selectionHandlerService.getSelectedTokenList();
+                var tokenIntUnit = selectionList[0].inChildUnitTreeId ;
+                if(tokenIntUnit==null){
+                    return true;
+                }
+                else {return false}
+            }
+        }
         // Injecting $scope just for comparison
         var vm = this;
         var annotationPageVM = $scope.$parent.vm;
         vm.itemClicked = itemClicked;
+        vm.checkRetokenizeButton = checkRetokenizeButton
+        vm.enableRetokenizeButton=enableRetokenizeButton
+
+        function checkRetokenizeButton(data){
+            if(data.name == 'Retokenize'){
+               return  enableRetokenizeButton();
+            }
+            return true
+        }
         
         if(vm.itemObject.showWhenFull){
             vm.checkIfTaskHasComment = checkIfTaskHasComment;

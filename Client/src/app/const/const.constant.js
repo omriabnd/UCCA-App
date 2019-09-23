@@ -181,6 +181,12 @@
 				name:"Help",
 				tooltip:"?: Help",
 				executeFunction:"viewUserManual"
+			},
+			{
+				id:11,
+				name:"Retokenize",
+				tooltip:"?: Retokenize",
+				executeFunction:"retokenize"
 			}
 		],
 		PASSAGE_TYPE:{
