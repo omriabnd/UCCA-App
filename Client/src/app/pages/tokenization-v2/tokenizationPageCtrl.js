@@ -35,9 +35,8 @@
 
       uccaFactory.originalText = $scope.originalText;
 
-
-      uccaFactory.setOriginalTextNoSpaces();
-      uccaFactory.setOriginalTextSpaceMap();
+      // uccaFactory.setOriginalTextNoSpaces();
+      // uccaFactory.setOriginalTextSpaceMap();
 
       console.log(uccaFactory.originalText, uccaFactory.originalTextNoSpaces, uccaFactory.originalTextSpaceMap);
 
@@ -74,7 +73,7 @@
        *
        * */
 
-      $scope.originalTokens = uccaFactory.getTokensFromText($scope.originalText);
+      // $scope.originalTokens = uccaFactory.getTokensFromText($scope.originalText);
 
       $scope.tokenizedText = passageFromTokens;
 
