@@ -320,14 +320,26 @@
                         });
                     });
 
-                    $scope.$on('receivedCursor', function(event, cursorLoc) {
+                    $scope.$on('cursorMovedRight', function(event, cursorLoc) {
+                        debugger
+                        return $q(function(resolve, reject) {
+                            resolve('success');
+                        });
+                    });
+                    
+                    $scope.$on('cursorMovedLeft', function(event, cursorLoc) {
+                        debugger
+                        return $q(function(resolve, reject) {
+                            resolve('success');
+                        });
+                    });
+
+                    $scope.$on('addSpace', function(event, cursorLoc) {
                         debugger
                         return $q(function(resolve, reject) {
                             var tmp = $scope.tokenizedText;
                             tmp = tmp.substr(0, cursorLoc) + '*' + tmp.substr(cursorLoc);
-              
                             $scope.tokenizedText = tmp;
-              
                             resolve('success');
                         });
                     });
