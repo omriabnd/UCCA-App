@@ -6,7 +6,7 @@
      *
      */
     angular.module('zAdmin.pages.tokenization-v2')
-        .directive('tokenizerBehaviour', function ($timeout, $rootScope, uccaFactory) {
+        .directive('retokenizerBehaviour', function ($timeout, $rootScope, uccaFactory) {
             return {
                 link: link,
                 restrict: 'A',
@@ -27,7 +27,7 @@
                             return false;
                         }
 
-                        else clickOnTokenText(evt, el);
+                        else {clickOnTokenText(evt, el)};
                     } else {
                         console.log('space not allowed', evt);
                         event.preventDefault();
@@ -50,12 +50,46 @@
                      *
                      * Merge tokens
                      */
+                    if (evt.keyCode == 37){
+                        var promise = $timeout(function () {
+                            $rootScope.$apply($rootScope.$broadcast('cursorMovedLeft', cursorLocation));
+                        }, 5);
+                        promise.then(function () {
+                            el[0].selectionStart = uccaFactory.oldCursorLocation - 1;
+                            el[0].selectionEnd = uccaFactory.oldCursorLocation - 1;
+                        }, function () {
+                            console.error('Error during the tokenization')
+                        });
+                    }
 
+                    if (evt.keyCode == 39){
+                        var promise = $timeout(function () {
+                            $rootScope.$apply($rootScope.$broadcast('cursorMovedRight', cursorLocation));
+                        }, 5);
+
+                        promise.then(function () {
+                            el[0].selectionStart = uccaFactory.oldCursorLocation + 1;
+                            el[0].selectionEnd = uccaFactory.oldCursorLocation + 1;
+                        }, function () {
+                            console.error('Error during the tokenization')
+                        });
+                    }
                     if (evt.keyCode == 8) {
 
                         if (cursorLocation) {
 
                             if (charPrevious != "\n" && charPrevious.trim() == "*") {
+
+                                var promise = $timeout(function () {
+                                    $rootScope.$apply($rootScope.$broadcast('deleteStar', cursorLocation));
+                                }, 5);
+    
+                                promise.then(function () {
+                                    el[0].selectionStart = uccaFactory.oldCursorLocation + 1;
+                                    el[0].selectionEnd = uccaFactory.oldCursorLocation + 1;
+                                }, function () {
+                                    console.error('Error during the tokenization')
+                                });
 
                             } else {
                                 //if not space is deleted - do not allow
@@ -63,7 +97,7 @@
                                 evt.preventDefault();
                                 return false;
                             }
-                        }
+                        } 
                         else {
                             console.log('not space * no delete');
                             evt.preventDefault();
@@ -85,11 +119,12 @@
                             console.log('empty one');
                             evt.preventDefault();
                             return false;
-                        }
+                        } 
                         else {
                             var promise = $timeout(function () {
-                                $rootScope.$apply($rootScope.$broadcast('receivedCursor', cursorLocation));
-                            }, 1);
+                                $rootScope.$apply($rootScope.$broadcast('addSpace', cursorLocation));
+                            }, 5);
+
                             promise.then(function () {
                                 el[0].selectionStart = uccaFactory.oldCursorLocation + 1;
                                 el[0].selectionEnd = uccaFactory.oldCursorLocation + 1;

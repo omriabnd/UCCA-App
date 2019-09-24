@@ -138,8 +138,6 @@
 		    return 1;
 		}
 		
-                
-
                 if (!!sceneRole) {
                     var functionRoles = reOrderings[sceneRole.name];
                     if( !!functionRoles){
@@ -220,11 +218,16 @@
         }
 
         function addUserComment(){
+            debugger
             open('app/pages/annotation/templates/commentOnUnitModal.html','sm','',vm)
         }
 
         function viewUserManual(){
             open('app/pages/annotation/templates/user_manual_v1.html','lg','',vm)
+        }
+        function retokenize(){
+            debugger
+            open('app/pages/annotation/templates/retokenizeModal.html','lg','',vm)
         }
         
 
@@ -300,53 +303,7 @@
                 }
             }
         }
-        // test debo
-        function retokenize(){
-            $uibModal.open({
-                animation: true,
-                templateUrl: 'app/pages/retokenize/retokenizeModal.html',
-                size: 'md',
-                controller:function($scope, selectionHandlerService,$q){
-                    var selectedTokenList = selectionHandlerService.getSelectedTokenList();
-                    $scope.tokenizedText = selectedTokenList[0].static.text;
-                    
-                    $scope.$on('deleteStar', function(event, cursorLoc) {
-                        debugger
-                        return $q(function(resolve, reject) {
-                            var tmp = $scope.tokenizedText;
-                            tmp=tmp.replace("*",'');
-                            $scope.tokenizedText = tmp;
-                            resolve('success');
-                        });
-                    });
-
-                    $scope.$on('cursorMovedRight', function(event, cursorLoc) {
-                        debugger
-                        return $q(function(resolve, reject) {
-                            resolve('success');
-                        });
-                    });
-                    
-                    $scope.$on('cursorMovedLeft', function(event, cursorLoc) {
-                        debugger
-                        return $q(function(resolve, reject) {
-                            resolve('success');
-                        });
-                    });
-
-                    $scope.$on('addSpace', function(event, cursorLoc) {
-                        debugger
-                        return $q(function(resolve, reject) {
-                            var tmp = $scope.tokenizedText;
-                            tmp = tmp.substr(0, cursorLoc) + '*' + tmp.substr(cursorLoc);
-                            $scope.tokenizedText = tmp;
-                            resolve('success');
-                        });
-                    });
-                }
-            });
-        }
-
+       
         function finishAll(){
             var rootUnit = DataService.getUnitById("0");
             var hashTables = DataService.hashTables;
@@ -556,14 +513,18 @@
         }
 
         function open(page, size,message,vm) {
+            debugger
             var remoteOriginalId = $rootScope.clckedLine;
             var viewModal = vm;
             $uibModal.open({
                 animation: true,
                 templateUrl: page,
                 size: size,
-                controller: function($scope){
+                controller: function($scope,selectionHandlerService,$q){
+                    var selectedTokenList = selectionHandlerService.getSelectedTokenList();
+                    $scope.tokenizedText = selectedTokenList[0].static.text;
                     $scope.vm = viewModal;
+                    console.log("viewModal", viewModal)
                     if(DataService.serverData){
                         $scope.comment = DataService.serverData.user_comment;
                     }
@@ -573,7 +534,7 @@
                     $scope.saveComment = function(){
                         DataService.serverData.user_comment = $scope.comment;
                     }
-
+                    debugger
                     var remoteOriginalTreeId = remoteOriginalId;
                     $scope.deleteAllRemoteInstanceOfThisUnit = function(){
 
@@ -586,6 +547,47 @@
                         DataService.deleteUnit($scope.vm.dataBlock.tree_id);
                         // selCtrl.updateUI(DataService.getUnitById($("[unit-wrapper-id="+$rootScope.clickedUnit+"]").attr('child-unit-id')));
                     };
+                    $scope.$on('deleteStar', function(event, cursorLoc) {
+                        debugger
+                        return $q(function(resolve, reject) {
+                            var tmp = $scope.tokenizedText;
+                            tmp=tmp.replace("*",'');
+                            $scope.tokenizedText = tmp;
+                            resolve('success');
+                        });
+                    });  
+                    
+                    $scope.$on('cursorMovedRight', function(event, cursorLoc) {
+                        debugger
+                        return $q(function(resolve, reject) {
+                            resolve('success');
+                        });
+                    });
+
+                    $scope.$on('cursorMovedLeft', function(event, cursorLoc) {
+                        debugger
+                        return $q(function(resolve, reject) {
+                            resolve('success');
+                        });
+                    });
+
+                    $scope.$on('addSpace', function(event, cursorLoc) {
+                        debugger
+                        return $q(function(resolve, reject) {
+                            var tmp = $scope.tokenizedText;
+                            tmp = tmp.substr(0, cursorLoc) + '*' + tmp.substr(cursorLoc);
+                            $scope.tokenizedText = tmp;
+                            resolve('success');
+                        });
+                    });
+                    $scope.saveRetokenization = function(){
+                        var tokenWithoutChanges = $scope.tokenizedText.replace("*",'');
+                        // trouver dans la liste de token le token en question et le modifier 
+                        var tokenToUpdate = DataService.serverData.tokens.filter(function(item){ return item.text === tokenWithoutChanges;})[0];
+                        tokenToUpdate.text=$scope.tokenizedText;
+                        console.log("tokenToUpdate]",tokenToUpdate)
+
+                    }
                 }
             }).result.then(function(okRes){
 
