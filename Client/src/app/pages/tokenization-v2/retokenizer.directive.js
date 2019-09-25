@@ -18,7 +18,6 @@
                 console.log('tokenizerBehaviour', el);
 
                 $(el).on('keydown', function (evt) {
-                    debugger
                     if (evt.keyCode == 32 || evt.keyCode == 8 || (evt.keyCode >= 37 && evt.keyCode <= 40)) {
                         //if there is a selection
 
@@ -37,7 +36,6 @@
 
                 function clickOnTokenText(evt, el) {
                     var charPrevious, charNext;
-                    debugger
                     var text = $(el).val();
                     var cursorLocation = $(el).prop("selectionStart");
                     uccaFactory.setCursorLocation(cursorLocation);
