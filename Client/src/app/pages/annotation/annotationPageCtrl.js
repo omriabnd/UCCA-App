@@ -586,8 +586,9 @@
                             var splittedTokens = $scope.tokenizedText.split('*');
                             unit.tokens.splice(tokenIndex, 1);
                             var count = preToken.static.start_index
+                            var negativeId = -1;
                             for (var i = 0; i < splittedTokens.length; i++) {
-                                debugger
+                                // debugger
 
                                 var token = angular.copy(preToken);
 
@@ -597,6 +598,8 @@
                                     token.leftBorder = false;
                                 }
 
+                                token.static.id = negativeId;
+                                negativeId -= 1;
                                 token.static.text = splittedTokens[i];
                                 token.static.start_index = count
                                 count = count + token.static.text.length - 1
