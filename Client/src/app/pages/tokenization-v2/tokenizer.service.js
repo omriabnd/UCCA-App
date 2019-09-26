@@ -124,7 +124,6 @@
 
                     tokens.push(token);
                 }
-                debugger
                 return tokens;
             }
 
