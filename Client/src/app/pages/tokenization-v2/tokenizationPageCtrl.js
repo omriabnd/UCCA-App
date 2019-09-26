@@ -55,11 +55,10 @@
           }
       });
 
-      $scope.$on('receivedCursor', function(event, cursorLoc) {
-          debugger
+       $scope.$on('receivedCursor', function(event, cursorLoc) {
           return $q(function(resolve, reject) {
               var tmp = $scope.tokenizedText;
-              tmp = tmp.substr(0, cursorLoc) + '*' + tmp.substr(cursorLoc);
+              tmp = tmp.substr(0, cursorLoc) + '*' + tmp.substr(cursorLoc + 1);
 
               $scope.tokenizedText = tmp;
 
