@@ -14,7 +14,7 @@ from uccaApp.util.exceptions import SaveTaskTypeDeniedException, CantChangeSubmi
     DiscrepancyBetweenTaskIdsException, RemoteIsNotOpen
 from uccaApp.util.functions import get_value_or_none, active_obj_or_raise_exeption
 from uccaApp.util.tokenizer import isPunct
-from uccaApp.models import Annotation_Remote_Units_Annotation_Units, Annotation_Json
+from uccaApp.models import Annotation_Remote_Units_Annotation_Units, Annotation_Json, Tokens_Json
 from uccaApp.models import Annotation_Units_Tokens
 from uccaApp.models import Categories
 from uccaApp.models import Tokens, Annotation_Units
@@ -71,20 +71,33 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             return obj.user_comment
 
     def get_tokens(self, obj):
-        if (obj.type == Constants.TASK_TYPES_JSON['TOKENIZATION']):
-            tokens = Tokens.objects.all().filter(task_id=obj.id).order_by('start_index')
+        if obj.tokens_json:
+            data = json.loads(obj.tokens_json.tokens_json)
         else:
-            # get the tokens array from the root tokenization task
+            data = self._get_tokens(obj)
+            data_json = json.dumps(data)
+            tj = Tokens_Json.objects.create(task=obj, tokens_json=data_json)
+            obj.tokens_json = tj
+            obj.save()
+        return data
+
+    def _get_tokens(self, obj):
+        obj_tokens = Tokens.objects.all().filter(task_id=obj.id).order_by('start_index')
+        if (obj_tokens or obj.type == Constants.TASK_TYPES_JSON['TOKENIZATION']):
+            tokens = obj_tokens
+        elif obj.type == Constants.TASK_TYPES_JSON['REVIEW']:
+            parent_task = obj.parent_task
+            tokens = Tokens.objects.all().filter(task_id=parent_task).order_by("start_index")
+        else:
             root_tokeniztion_task_id = self.get_root_task(obj)
             tokens = Tokens.objects.all().filter(task_id=root_tokeniztion_task_id).order_by("start_index")
-
         tokens_json = []
         for index,t in enumerate(tokens):
             cur_json = TokensSerializer(t,context={'index_in_task':index}).data
-            #cur_json['index_in_task'] = index
             tokens_json.append(cur_json)
-
         return tokens_json
+
+
 
     def get_annotation_units(self, obj):
         logger.info("get_annotation_units accessed")
@@ -209,6 +222,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
     def reset(self,instance):
         # TODO: Clear instance.annotation_json
         instance.annotation_json = None
+        instance.tokens_json = None
         instance.status = Constants.TASK_STATUS_JSON['NOT_STARTED']
         instance.user_comment = ''
         if (instance.type == Constants.TASK_TYPES_JSON['TOKENIZATION']):
@@ -222,18 +236,24 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         print('save_draft')
         if (instance.type == Constants.TASK_TYPES_JSON['TOKENIZATION']):
             self.save_tokenization_task(instance)
-        elif (instance.type == Constants.TASK_TYPES_JSON['ANNOTATION']):
+        elif instance.type in [Constants.TASK_TYPES_JSON['ANNOTATION'],Constants.TASK_TYPES_JSON['REVIEW']]:
             self.validate_annotation_task(instance)
             data_json = json.dumps(self.initial_data['annotation_units'])
             aj = Annotation_Json.objects.create(task=instance, annotation_json=data_json)
             instance.annotation_json = aj
+            tokens_json = json.dumps(self.initial_data['tokens'])
+            tj = Tokens_Json.objects.create(task=instance, tokens_json=tokens_json)
+            instance.tokens_json = tj
             instance.user_comment = self.initial_data['user_comment']
-        elif (instance.type == Constants.TASK_TYPES_JSON['REVIEW']):
-            self.validate_annotation_task(instance)
-            data_json = json.dumps(self.initial_data['annotation_units'])
-            aj = Annotation_Json.objects.create(task=instance, annotation_json=data_json)
-            instance.annotation_json = aj
-            instance.user_comment = self.initial_data['user_comment']
+        # elif (instance.type == Constants.TASK_TYPES_JSON['REVIEW']):
+        #     self.validate_annotation_task(instance)
+        #     data_json = json.dumps(self.initial_data['annotation_units'])
+        #     aj = Annotation_Json.objects.create(task=instance, annotation_json=data_json)
+        #     instance.annotation_json = aj
+        #     tokens_json = json.dumps(self.initial_data['tokens'])
+        #     tj = Tokens_Json.objects.create(task=instance, tokens_json=tokens_json)
+        #     instance.tokens_json = tj
+        #     instance.user_comment = self.initial_data['user_comment']
         instance.save()
 
     def reset_tokenization_task(self,instance):
@@ -243,6 +263,23 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
     def reset_annotation_task(self,instance):
         self.check_if_parent_task_ok_or_exception(instance)
         instance.tokens_set.all().delete()
+
+    def save_tokens(self, instance):
+        instance.tokens_set.all().delete()
+        tokens = []
+        old_to_new_token_id_map = dict()
+        for token in self.initial_data['tokens']:
+            newToken = Tokens()
+            newToken.task_id_id = instance
+            newToken.text = token['text']
+            newToken.require_annotation = not isPunct(newToken.text)
+            newToken.start_index = token['start_index']
+            newToken.end_index = token['end_index']
+            instance.tokens_set.add(newToken,bulk=False)
+            old_to_new_token_id_map[token['id']] = newToken.id
+            tokens.append(newToken)
+        return tokens, old_to_new_token_id_map
+
 
     def save_tokenization_task(self,instance):
         print('save_tokenization_task - start')
@@ -257,6 +294,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             newToken.end_index = token['end_index']
             instance.tokens_set.add(newToken,bulk=False)
         print('save_tokenization_task - end')
+
 
     # def save_annotation_task(self, instance):
     #     # TODO: Split into validate_annotation_task and save_annotation_task
@@ -376,8 +414,8 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         remote_units_array = []
         instance.user_comment = self.initial_data['user_comment']
 
-        tokens = self.initial_data['tokens']
-        tokens_id_to_startindex = dict([(x['id'], x['start_index']) for x in tokens])
+        # save the new tokens instead of the old ones
+        tokens, old_to_new_token_id_map= self.save_tokens(instance)
 
         all_tree_ids = []  # a list of all tree_ids by their order in the input
         annotation_unit_map = {}  # tree_id -> annotation_unit object
@@ -410,7 +448,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
                 remote_units_array.append(annotation_unit)
             else:  # not a remote unit
                 instance.annotation_units_set.add(annotation_unit, bulk=False)
-                self.save_children_tokens(annotation_unit, get_value_or_none('children_tokens', au), tokens_id_to_startindex)
+                self.save_children_tokens(annotation_unit, get_value_or_none('children_tokens', au), old_to_new_token_id_map)
                 self.save_annotation_categories(annotation_unit, get_value_or_none('categories', au))
 
         for annotation_unit in remote_units_array:
@@ -560,10 +598,9 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         remote_unit.save()
         return remote_unit
 
-    def save_children_tokens(self,annotation_unit,tokens,id_to_start_index):
+    def save_children_tokens(self,annotation_unit,tokens,old_to_new_token_id_map):
         if tokens != None:
-            print('save_children_tokens - start')
-            annotation_units = [Annotation_Units_Tokens(unit_id=annotation_unit, token_id_id = t['id']) for t in tokens]
+            annotation_units = [Annotation_Units_Tokens(unit_id=annotation_unit, token_id_id = old_to_new_token_id_map[t['id']]) for t in tokens]
             Annotation_Units_Tokens.objects.bulk_create(annotation_units)
             # for t in tokens:
             #     annotation_units_token = Annotation_Units_Tokens()
@@ -571,7 +608,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             #     # annotation_units_token.token_id = Tokens.objects.get(id=t['id'])
             #     annotation_units_token.token_id_id = t['id']
             #     annotation_units_token.save()
-            print('save_children_tokens - end')
+
 
     def save_annotation_categories(self,annotation_unit,categories):
         print('save_annotation_categories - start')

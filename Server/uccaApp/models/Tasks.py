@@ -33,7 +33,9 @@ class Tasks(models.Model):
     parent_obsoleted_by = models.IntegerField(null=True,default=None)
 
     annotation_json = models.ForeignKey("Annotation_Json", null=True)
-    
+    tokens_json = models.ForeignKey("Tokens_Json", null=True)
+
+
     """
     def get_out_of_date(self):
         if self.project.layer.type != Constants.LAYER_TYPES_JSON['ROOT'] and \
