@@ -79,7 +79,6 @@
                 this.oldCursorLocation = cur;
             }
 
-
             /**
              *
              * function that create the tokens on each change
@@ -90,6 +89,7 @@
              *
              * First token start at 0 index
              */
+
             function getTokensFromText(text){
                 var processText = text.replace(/\n/g, " \n ");
 
@@ -124,10 +124,8 @@
 
                     tokens.push(token);
                 }
-
                 return tokens;
             }
-
 
             function isRequiredAnnotation(str) {
                 var punct_regexp = /[^\'-\/;\:!\?\(\)\[\]\"\{\}\+&<>—“”\.,\n\s]/;
@@ -140,6 +138,7 @@
              * @param task_id
              * @returns {task_object}
              */
+            
             function getTaskData(task_id){
                 return apiService.tokenization.getTaskData(task_id);
             }

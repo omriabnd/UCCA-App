@@ -7,13 +7,13 @@
         .controller('AnnotationPageCtrl', AnnotationPageCtrl);
 
     /** @ngInject */
-    function AnnotationPageCtrl(DefaultHotKeys,TaskMetaData,AnnotationTextService,DataService, $rootScope,$scope,hotkeys,HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService,$timeout,$state, selectionHandlerService,$uibModal) {
+    function AnnotationPageCtrl(DefaultHotKeys, TaskMetaData, AnnotationTextService, DataService, $rootScope, $scope, hotkeys, HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService, $timeout, $state, selectionHandlerService, $uibModal) {
         var vm = this;
         vm.tokenizationTask = TaskMetaData.Task;
         $rootScope.direction = TaskMetaData.Task.passage.text_direction.toLowerCase();
         $rootScope.disableRemotes = TaskMetaData.Layer.disable_remotes;
         $rootScope.requireAllTokensCovered = TaskMetaData.Layer.require_all_tokens_covered;
-       // vm.annotationTokens = tokensInStaticFormat(); // vm.tokenizationTask.tokens;
+        // vm.annotationTokens = tokensInStaticFormat(); // vm.tokenizationTask.tokens;
         vm.annotationTokens = DataService.tree.tokens;
         vm.categories = TaskMetaData.Categories;
         vm.defaultHotKeys = DefaultHotKeys;
@@ -48,31 +48,31 @@
         vm.loadModalFailed = false;
 
         if ($rootScope.disableRemotes) { // Remove implicit option
-            var index = vm.definitions.findIndex(function(a) {return  a.name === 'Implicit'});
+            var index = vm.definitions.findIndex(function (a) { return a.name === 'Implicit' });
             vm.definitions.splice(index, 1);
         }
 
-        try{
+        try {
             vm.categoryReorderings = JSON.parse(TaskMetaData.Task.project.layer.category_reorderings);
-        } catch(SyntaxError){
+        } catch (SyntaxError) {
             vm.categoryReorderings = {};
         }
 
         vm.fontSizes = [
             // this sets the different font sizes in the annotation page
-            {preview:"AAAA",name:"Big",size:1.2},
-            {preview:"AAA",name:"big",size:1},
-            {preview:"AA",name:"normal",size:0.9},
-            {preview:"A",name:"small",size:0.8}
+            { preview: "AAAA", name: "Big", size: 1.2 },
+            { preview: "AAA", name: "big", size: 1 },
+            { preview: "AA", name: "normal", size: 0.9 },
+            { preview: "A", name: "small", size: 0.8 }
         ];
 
         init();
 
-        function getParentCategory(unit){
-            if (!!unit && !!unit.categories){
-                for(var i=0; i<unit.categories.length; i++){
+        function getParentCategory(unit) {
+            if (!!unit && !!unit.categories) {
+                for (var i = 0; i < unit.categories.length; i++) {
                     var category = unit.categories[i];
-                    if(category.fromParentLayer){
+                    if (category.fromParentLayer) {
                         return category;
                     }
                 }
@@ -80,7 +80,7 @@
             return null;
         }
 
-        $scope.sortByPrototypes = function(category){	    
+        $scope.sortByPrototypes = function (category) {
             if (Core.isEmptyObject(vm.categoryReorderings)) {
                 return;
             }
@@ -90,35 +90,35 @@
 
             var selectedTokenList = selectionHandlerService.getSelectedTokenList();
 
-	    if (selectedTokenList != undefined && selectedTokenList.length > 0) {
-		selectedUnit = DataService.getUnitById(selectedTokenList[0].inChildUnitTreeId);
-	    } else if (selectedUnitId != undefined && selectedUnitId != 0) {
-		selectedTokenList = selectedUnit.tokens;
-	    }
-	    
+            if (selectedTokenList != undefined && selectedTokenList.length > 0) {
+                selectedUnit = DataService.getUnitById(selectedTokenList[0].inChildUnitTreeId);
+            } else if (selectedUnitId != undefined && selectedUnitId != 0) {
+                selectedTokenList = selectedUnit.tokens;
+            }
 
-	    if (selectedTokenList === undefined) {
-		selectedTokenList = [];
-	    }
+
+            if (selectedTokenList === undefined) {
+                selectedTokenList = [];
+            }
 
             var selectedTokens = selectedTokenList.map(function (token) {
                 return token.static.text.toLowerCase();
             }).join("_");
 
-	    console.log(selectedTokens);
+            console.log(selectedTokens);
 
-	    
-            if (!!selectedTokens){
-		
+
+            if (!!selectedTokens) {
+
                 var parentCategoryName = "";
                 var sceneRole;
 
-                if (!!selectedUnit){
+                if (!!selectedUnit) {
                     var parentCategory = getParentCategory(selectedUnit);
                     parentCategoryName = !!parentCategory ? parentCategory.name : "";
                     var unitCategories = selectedUnit.categories;
 
-                    for (var i=0; i<unitCategories.length; i++) {
+                    for (var i = 0; i < unitCategories.length; i++) {
                         var cat = unitCategories[i];
                         if (cat.name === category.name) {
                             return -1;
@@ -129,20 +129,18 @@
                     }
                 }
                 var reOrderings;
-		if (vm.categoryReorderings[parentCategoryName] != undefined) {
-		    reOrderings = vm.categoryReorderings[parentCategoryName][selectedTokens];
-		    if (!reOrderings) {
-			reOrderings = vm.categoryReorderings[parentCategoryName][""];
-		    }
-		} else {
-		    return 1;
-		}
-		
-                
+                if (vm.categoryReorderings[parentCategoryName] != undefined) {
+                    reOrderings = vm.categoryReorderings[parentCategoryName][selectedTokens];
+                    if (!reOrderings) {
+                        reOrderings = vm.categoryReorderings[parentCategoryName][""];
+                    }
+                } else {
+                    return 1;
+                }
 
                 if (!!sceneRole) {
                     var functionRoles = reOrderings[sceneRole.name];
-                    if( !!functionRoles){
+                    if (!!functionRoles) {
                         var index = functionRoles.indexOf(category.name);
                         return index > -1 ? index : vm.categories.length;
                     }
@@ -153,11 +151,11 @@
             return 1;
         }
 
-        $scope.fromParentLayer = function(cat){
+        $scope.fromParentLayer = function (cat) {
             return cat.fromParentLayer;
         }
 
-        $scope.notFromParentLayer = function(cat){
+        $scope.notFromParentLayer = function (cat) {
             return !cat.fromParentLayer;
         }
 
@@ -170,9 +168,9 @@
         //     return tokens;
         // }
 
-        function toggleParents(){
+        function toggleParents() {
             $scope.showParents = !$scope.showParents;
-            $rootScope.$broadcast("ToggleParents",{});
+            $rootScope.$broadcast("ToggleParents", {});
         }
         //debo
         // function checkRetokenizeButton(data){
@@ -181,11 +179,11 @@
         //     }
         // }
 
-        function init(){
+        function init() {
 
-            selectionHandlerService.updateSelectedUnit("0",false);
-            $(document).on('keydown', function(e) {
-                if(!$(e.target).hasClass('unit-comment-text')){
+            selectionHandlerService.updateSelectedUnit("0", false);
+            $(document).on('keydown', function (e) {
+                if (!$(e.target).hasClass('unit-comment-text')) {
                     e.preventDefault();
                     e.stopPropagation();
                     // e.stopImmediatePropagation();
@@ -196,59 +194,62 @@
                 // }
             })
 
-            $scope.$on('InsertSuccess', function(event, args) {
-                if(args.dataBlock.id === 0 ){
+            $scope.$on('InsertSuccess', function (event, args) {
+                if (args.dataBlock.id === 0) {
                     vm.dataTree.AnnotationUnits = args.dataBlock.AnnotationUnits;
-                }else{
+                } else {
                 }
             });
 
-            $scope.$on('ResetSuccess', function(event, args) {
+            $scope.$on('ResetSuccess', function (event, args) {
                 vm.categories = TaskMetaData.Categories;
-                bindCategoriesHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService);
-                bindReceivedDefaultHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService && !hotkeys.fromParentLayer);
+                bindCategoriesHotKeys(hotkeys, $scope, $rootScope, vm, HotKeysManager, DataService);
+                bindReceivedDefaultHotKeys(hotkeys, $scope, $rootScope, vm, HotKeysManager, DataService && !hotkeys.fromParentLayer);
             });
 
-            $scope.$on('FailedToLoadTemplate', function(event, args) {
+            $scope.$on('FailedToLoadTemplate', function (event, args) {
                 vm.loadModalFailed = true;
             });
 
-            $timeout(function(){$rootScope.$hideSideBar = true;});
-            bindCategoriesHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService);
-            bindReceivedDefaultHotKeys(hotkeys,$scope,$rootScope,vm,HotKeysManager,DataService && !hotkeys.fromParentLayer);
+            $timeout(function () { $rootScope.$hideSideBar = true; });
+            bindCategoriesHotKeys(hotkeys, $scope, $rootScope, vm, HotKeysManager, DataService);
+            bindReceivedDefaultHotKeys(hotkeys, $scope, $rootScope, vm, HotKeysManager, DataService && !hotkeys.fromParentLayer);
             Core.scrollToTop();
         }
 
-        function addUserComment(){
-            open('app/pages/annotation/templates/commentOnUnitModal.html','sm','',vm)
+        function addUserComment() {
+            open('app/pages/annotation/templates/commentOnUnitModal.html', 'sm', '', vm)
         }
 
-        function viewUserManual(){
-            open('app/pages/annotation/templates/user_manual_v1.html','lg','',vm)
+        function viewUserManual() {
+            open('app/pages/annotation/templates/user_manual_v1.html', 'lg', '', vm)
         }
-        
-
-
-        function setFontSize(fontSize){
-            $('.main-body').css({'font-size':fontSize.size+'em'})
+        function retokenize() {
+            open('app/pages/annotation/templates/retokenizeModal.html', 'lg', '', vm)
         }
 
-        function inRemoteMode (){
+
+
+        function setFontSize(fontSize) {
+            $('.main-body').css({ 'font-size': fontSize.size + 'em' })
+        }
+
+        function inRemoteMode() {
             return selectionHandlerService.getUnitToAddRemotes() !== "0";
         }
 
-        function submitTask(){
+        function submitTask() {
             vm.loadModalFailed = false;
             var finishAllResult = vm.checkSubmissionRestrictions();
-            if(finishAllResult){
+            if (finishAllResult) {
                 vm.submittingTask = true;
-                return DataService.saveTask().then(function(){
-                    return DataService.submitTask().then(function(res){
+                return DataService.saveTask().then(function () {
+                    return DataService.submitTask().then(function (res) {
                         vm.submittingTask = false;
                         vm.submitFailed = false;
-                        Core.showNotification('success','Annotation Task Submitted.');
+                        Core.showNotification('success', 'Annotation Task Submitted.');
                         goToMainMenu(res)
-                    }, function(error) {
+                    }, function (error) {
                         if (error.data === null && error.status === -1 && error.statusText === "") {
                             // vm.noConnection = true;
                             vm.submitFailed = true;
@@ -256,7 +257,7 @@
                         vm.submittingTask = false;
                     });
                     vm.submittingTask = false;
-                }, function(error) {
+                }, function (error) {
                     if (error.data === null && error.status === -1 && error.statusText === "") {
                         // vm.noConnection = true;
                         vm.submitFailed = true;
@@ -267,12 +268,12 @@
         }
 
 
-        function checkSubmissionRestrictions(){
+        function checkSubmissionRestrictions() {
             var rootUnit = DataService.getUnitById("0");
             var hashTables = DataService.hashTables;
             if (restrictionsValidatorService.evaluateSubmissionRestrictions(rootUnit)) {
                 selectionHandlerService.updateSelectedUnit(0);
-                Core.showNotification('success','Finish All was successful');
+                Core.showNotification('success', 'Finish All was successful');
                 return true;
             }
             return false;
@@ -300,45 +301,11 @@
                 }
             }
         }
-        // test debo
-        function retokenize(){
-            $uibModal.open({
-                animation: true,
-                templateUrl: 'app/pages/retokenize/retokenizeModal.html',
-                size: 'md',
-                controller:function($scope, selectionHandlerService,$q){
-                    var selectedTokenList = selectionHandlerService.getSelectedTokenList();
-                    $scope.tokenizedText = selectedTokenList[0].static.text;
-                    
-                    $scope.$on('deleteStar', function(event, cursorLoc) {
-                        debugger
-                        return $q(function(resolve, reject) {
-                            var tmp = $scope.tokenizedText;
-                            tmp=tmp.replace("*",'');
-                            $scope.tokenizedText = tmp;
-                            resolve('success');
-                        });
-                    });
 
-                    $scope.$on('receivedCursor', function(event, cursorLoc) {
-                        debugger
-                        return $q(function(resolve, reject) {
-                            var tmp = $scope.tokenizedText;
-                            tmp = tmp.substr(0, cursorLoc) + '*' + tmp.substr(cursorLoc);
-              
-                            $scope.tokenizedText = tmp;
-              
-                            resolve('success');
-                        });
-                    });
-                }
-            });
-        }
-
-        function finishAll(){
+        function finishAll() {
             var rootUnit = DataService.getUnitById("0");
             var hashTables = DataService.hashTables;
-            var finishAllResult = restrictionsValidatorService.evaluateFinishAll(rootUnit,hashTables);
+            var finishAllResult = restrictionsValidatorService.evaluateFinishAll(rootUnit, hashTables);
             if (finishAllResult) {
                 selectionHandlerService.updateSelectedUnit(0);
                 Core.showNotification('success', 'Finish All was successful');
@@ -353,18 +320,18 @@
                 unit = DataService.tree;
             }
             unit.gui_status = 'OPEN';
-            unit.AnnotationUnits.forEach(function(u) {
+            unit.AnnotationUnits.forEach(function (u) {
                 openAll(u);
             })
         }
 
-        function spacePressed(){
-            if(selectionHandlerService.getUnitToAddRemotes() !== "0"){
-                $rootScope.unitClicked($rootScope.currentVm,selectionHandlerService.getSelectedUnitId(),null)
-            }else{
+        function spacePressed() {
+            if (selectionHandlerService.getUnitToAddRemotes() !== "0") {
+                $rootScope.unitClicked($rootScope.currentVm, selectionHandlerService.getSelectedUnitId(), null)
+            } else {
                 var selectionList = selectionHandlerService.getSelectedTokenList();
-                if(isUnitSelected(selectionList)){
-                    if(DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
+                if (isUnitSelected(selectionList)) {
+                    if (DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT) {
                         Core.showAlert("Cant delete annotation units from refinement layer")
                         console.log('ALERT - deleteFromTree -  prevent delete from tree when refinement layer');
                         return false;
@@ -377,24 +344,23 @@
                     var unitId = selectionList[0].inChildUnitTreeId;
                     var currentUnit = DataService.getUnitById(unitId);
 
-                    if(currentUnit.cloned_to_tree_ids){
+                    if (currentUnit.cloned_to_tree_ids) {
                         vm.dataBlock = currentUnit;
-                        open('app/pages/annotation/templates/deleteAllRemoteModal.html','md', currentUnit.cloned_to_tree_ids.length, vm);
+                        open('app/pages/annotation/templates/deleteAllRemoteModal.html', 'md', currentUnit.cloned_to_tree_ids.length, vm);
                     }
-                    else
-                        {
-                        if(currentUnit.unitType === "REMOTE"){
+                    else {
+                        if (currentUnit.unitType === "REMOTE") {
                             var remoteUnit = DataService.getUnitById(currentUnit.cloned_from_tree_id);
                             DataService.deleteRemoteUnit(currentUnit);
                         }
                         var parentUnit = DataService.getParentUnitId(unitId);
-                        DataService.deleteUnit(unitId).then(function(res){
+                        DataService.deleteUnit(unitId).then(function (res) {
                             selectionHandlerService.updateSelectedUnit(parentUnit);
                         })
                     }
                 }
-                else if(selectionList.length){
-                    if(DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
+                else if (selectionList.length) {
+                    if (DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT) {
                         Core.showAlert("Cant create annotation units int refinement layer")
                         console.log('ALERT - spacePressed -  prevent insert to tree when refinement layer');
                         return false;
@@ -404,46 +370,46 @@
             }
         }
 
-        function isUnitSelected(selectionList){
+        function isUnitSelected(selectionList) {
             var result = true;
 
-            if(selectionList.length === 0) return false;
+            if (selectionList.length === 0) return false;
 
-            var tokenIntUnit = selectionList[0].inChildUnitTreeId ;
-            selectionList.forEach(function(token){
-                if(tokenIntUnit !== token.inChildUnitTreeId ){
+            var tokenIntUnit = selectionList[0].inChildUnitTreeId;
+            selectionList.forEach(function (token) {
+                if (tokenIntUnit !== token.inChildUnitTreeId) {
                     result = false;
                 }
             });
 
-            if(tokenIntUnit === null){
+            if (tokenIntUnit === null) {
                 return false;
             }
-            if(result){
+            if (result) {
                 return DataService.getUnitById(tokenIntUnit);
             }
             return result;
         }
 
-        function goToMainMenu(res){
+        function goToMainMenu(res) {
             var projectId = this ? this.tokenizationTask.project.id : res.data.project.id;
             var layerType = this ? this.tokenizationTask.project.layer.type : res.data.project.layer.type;
             url: '/project/:id/tasks/:layerType',
-                $state.go('projectTasks',{
-                    id:projectId,
-                    layerType:layerType,
-                    refresh:true
+                $state.go('projectTasks', {
+                    id: projectId,
+                    layerType: layerType,
+                    refresh: true
                 });
-            $timeout(function(){$rootScope.$hideSideBar = false;})
+            $timeout(function () { $rootScope.$hideSideBar = false; })
         }
 
-        function resetAllAnnotations(res){
-            console.log('DataService',DataService);
-            Core.promptAlert('Are you sure you want to delete all the annotation units?').result.then(function(res){
-                if(res){
+        function resetAllAnnotations(res) {
+            console.log('DataService', DataService);
+            Core.promptAlert('Are you sure you want to delete all the annotation units?').result.then(function (res) {
+                if (res) {
                     $rootScope.resetAllAnnotations = true;
                     console.log("reset All Annotations");
-                    DataService.resetTree().then(function(res){
+                    DataService.resetTree().then(function (res) {
                         if (res) {
                             window.location.reload(true);
                             //$state.transitionTo($state.current, $state.$current.params, { reload: true, inherit: true, notify: true });
@@ -456,25 +422,25 @@
             })
         }
 
-        function saveTask(){
+        function saveTask() {
             if (navigator.onLine) {
                 console.log("navigator.onLine")
             } else {
                 console.log(" -- navigator.offLine")
             }
 
-            window.addEventListener('online',  function(e) { console.log('online'); });
-            window.addEventListener('offline', function(e) { console.log('offline'); });
+            window.addEventListener('online', function (e) { console.log('online'); });
+            window.addEventListener('offline', function (e) { console.log('offline'); });
 
 
             vm.loadModalFailed = false;
             vm.savingTask = true;
-            return DataService.saveTask().then(function(res){
+            return DataService.saveTask().then(function (res) {
                 vm.savingTask = false;
                 // vm.noConnection = false;
                 vm.saveFailed = false;
-                Core.showNotification('success','Annotation Task Saved.');
-            }, function(error) {
+                Core.showNotification('success', 'Annotation Task Saved.');
+            }, function (error) {
                 console.log("Save task error:", error);
                 if (error.data === null && error.status === -1 && error.statusText === "") {
                     // vm.noConnection = true;
@@ -485,9 +451,9 @@
             vm.savingTask = false;
         }
 
-        function bindCategoriesHotKeys(hotkeys,scope,rootScope,vm,HotKeysManager,dataService){
-            function sortedIndexedHotkey(index){
-                return function() {
+        function bindCategoriesHotKeys(hotkeys, scope, rootScope, vm, HotKeysManager, dataService) {
+            function sortedIndexedHotkey(index) {
+                return function () {
                     var functionToExecute = HotKeysManager.executeOperation($scope.sortedCategories[index]);
                     selectionHandlerService[functionToExecute]($scope.sortedCategories[index]);
                     $rootScope.$broadcast("ResetSuccess");
@@ -495,24 +461,24 @@
             }
 
             // bind the top 9 sorted categories with the keyboard shortcuts 1-9
-            for (i=0; i<9; i++){
-                var hotkey = "" + (i+1);
+            for (i = 0; i < 9; i++) {
+                var hotkey = "" + (i + 1);
                 HotKeysManager.addHotKey(hotkey);
                 hotkeys.del(hotkey);
                 hotkeys.add({
                     combo: hotkey,
-                    description: hotkey+'th category in sorted list',
+                    description: hotkey + 'th category in sorted list',
                     action: 'keydown',
                     callback: sortedIndexedHotkey(i)
                 });
             }
 
-            TaskMetaData.Categories.forEach(function(categoryObj){
-                if(!categoryObj.shortcut_key && !!vm.defaultCategoryHotkeys[categoryObj.name]){
+            TaskMetaData.Categories.forEach(function (categoryObj) {
+                if (!categoryObj.shortcut_key && !!vm.defaultCategoryHotkeys[categoryObj.name]) {
                     categoryObj['shortcut_key'] = vm.defaultCategoryHotkeys[categoryObj.name];
                 }
 
-                if(categoryObj.shortcut_key && !categoryObj.fromParentLayer){
+                if (categoryObj.shortcut_key && !categoryObj.fromParentLayer) {
                     categoryObj.shortcut_key = categoryObj.shortcut_key.toString().toLowerCase();
                     HotKeysManager.addHotKey(categoryObj.shortcut_key);
                     hotkeys.del(categoryObj.shortcut_key.toString().toLowerCase());
@@ -520,22 +486,22 @@
                         combo: categoryObj.shortcut_key,
                         description: categoryObj.description,
                         action: 'keydown',
-                        callback: function() {
+                        callback: function () {
                             var functionToExecute = HotKeysManager.executeOperation(categoryObj);
                             selectionHandlerService[functionToExecute](categoryObj);
                             $rootScope.$broadcast("ResetSuccess");
                         }
                     });
 
-                    HotKeysManager.addHotKey('shift+'+categoryObj.shortcut_key.toString().toLowerCase());
+                    HotKeysManager.addHotKey('shift+' + categoryObj.shortcut_key.toString().toLowerCase());
                     hotkeys.del(categoryObj.shortcut_key.toString().toLowerCase());
                     hotkeys.add({
-                        combo: 'shift+'+categoryObj.shortcut_key,
-                        description: 'Remote category '+categoryObj.name,
+                        combo: 'shift+' + categoryObj.shortcut_key,
+                        description: 'Remote category ' + categoryObj.name,
                         action: 'keydown',
-                        callback: function() {
+                        callback: function () {
                             var functionToExecute = HotKeysManager.executeOperation(categoryObj);
-                            $rootScope.$broadcast("CreateRemoteUnit",{unitId: selectionHandlerService.getSelectedUnitId(),category:categoryObj});
+                            $rootScope.$broadcast("CreateRemoteUnit", { unitId: selectionHandlerService.getSelectedUnitId(), category: categoryObj });
                             // vm.keyController[0]['addAsRemoteUnit'](categoryObj);
                         }
                     });
@@ -543,27 +509,31 @@
             });
         }
 
-        function open(page, size,message,vm) {
+        function open(page, size, message, vm) {
             var remoteOriginalId = $rootScope.clckedLine;
             var viewModal = vm;
             $uibModal.open({
                 animation: true,
                 templateUrl: page,
                 size: size,
-                controller: function($scope){
+                controller: function ($scope, selectionHandlerService, $q) {
+                    var selectedTokenList = selectionHandlerService.getSelectedTokenList();
+                    $scope.tokenizedText = selectedTokenList[0].static.text;
+                    // $scope.tokenizedId = selectedTokenList[0].static.id;
+                    $scope.tokenizedAnnotationUnits = selectedTokenList[0].unitTreeId
                     $scope.vm = viewModal;
-                    if(DataService.serverData){
+                    console.log("viewModal", viewModal)
+                    if (DataService.serverData) {
                         $scope.comment = DataService.serverData.user_comment;
                     }
 
                     $scope.message = message//.length;
 
-                    $scope.saveComment = function(){
+                    $scope.saveComment = function () {
                         DataService.serverData.user_comment = $scope.comment;
                     }
-
                     var remoteOriginalTreeId = remoteOriginalId;
-                    $scope.deleteAllRemoteInstanceOfThisUnit = function(){
+                    $scope.deleteAllRemoteInstanceOfThisUnit = function () {
 
                         // New Remote
                         var clonedList = angular.copy($scope.vm.dataBlock.cloned_to_tree_ids);
@@ -574,23 +544,95 @@
                         DataService.deleteUnit($scope.vm.dataBlock.tree_id);
                         // selCtrl.updateUI(DataService.getUnitById($("[unit-wrapper-id="+$rootScope.clickedUnit+"]").attr('child-unit-id')));
                     };
-                }
-            }).result.then(function(okRes){
+                    $scope.$on('deleteStar', function (event, cursorLoc) {
+                        return $q(function (resolve, reject) {
+                            var tmp = $scope.tokenizedText;
+                            tmp = tmp.replace("*", '');
+                            $scope.tokenizedText = tmp;
+                            resolve('success');
+                        });
+                    });
 
-            },function(abortRes){
+                    $scope.$on('cursorMovedRight', function (event, cursorLoc) {
+                        return $q(function (resolve, reject) {
+                            resolve('success');
+                        });
+                    });
+
+                    $scope.$on('cursorMovedLeft', function (event, cursorLoc) {
+                        return $q(function (resolve, reject) {
+                            resolve('success');
+                        });
+                    });
+
+                    $scope.$on('addSpace', function (event, cursorLoc) {
+                        return $q(function (resolve, reject) {
+                            var tmp = $scope.tokenizedText;
+                            tmp = tmp.substr(0, cursorLoc) + '*' + tmp.substr(cursorLoc);
+                            $scope.tokenizedText = tmp;
+                            resolve('success');
+                        });
+                    });
+
+                    $scope.saveRetokenization = function () {
+
+                        var myId = selectedTokenList[0].unitTreeId
+                        updateTokens(DataService.getUnitById(myId));
+                        console.log(DataService.tree)
+
+                        function updateTokens(unit) {
+                            var tokenIndex = unit.tokens.map(function (x) { return x.static.id; }).indexOf(selectedTokenList[0].static.id);
+                            var preToken = angular.copy(unit.tokens[tokenIndex]);
+                            var splittedTokens = $scope.tokenizedText.split('*');
+                            unit.tokens.splice(tokenIndex, 1);
+                            var count = preToken.static.start_index
+                            var negativeId = -1;
+                            for (var i = 0; i < splittedTokens.length; i++) {
+                                // debugger
+
+                                var token = angular.copy(preToken);
+
+                                if (i === 0) {
+                                    token.rightBorder = false;
+                                } else if (i === splittedTokens.length - 1) {
+                                    token.leftBorder = false;
+                                }
+
+                                token.static.id = negativeId;
+                                negativeId -= 1;
+                                token.static.text = splittedTokens[i];
+                                token.static.start_index = count
+                                count = count + token.static.text.length - 1
+                                token.static.end_index = count
+                                count = count + 1
+                                unit.tokens.splice(tokenIndex, 0, token);
+                                tokenIndex++;
+                            }
+
+                            if (unit.parent_tree_id !== undefined) {
+                                updateTokens(DataService.getUnitById(unit.parent_tree_id));
+                            }
+
+                        }
+                    }
+                }
+
+            }).result.then(function (okRes) {
+
+            }, function (abortRes) {
 
             });
         };
 
-        function bindReceivedDefaultHotKeys(hotkeys,scope,rootScope,vm,HotKeysManager,dataService){
-            vm.defaultHotKeys.ManualHotKeys.forEach(function(hotKeyObj){
+        function bindReceivedDefaultHotKeys(hotkeys, scope, rootScope, vm, HotKeysManager, dataService) {
+            vm.defaultHotKeys.ManualHotKeys.forEach(function (hotKeyObj) {
 
                 HotKeysManager.addHotKey(hotKeyObj.combo);
                 hotkeys.add({
                     combo: hotKeyObj.combo,
                     description: hotKeyObj.description,
                     action: hotKeyObj.action,
-                    callback: function(e) {
+                    callback: function (e) {
                         var functionToExecute = HotKeysManager.executeOperation(hotKeyObj);
                         vm[functionToExecute]();
                         e.preventDefault()
@@ -598,7 +640,7 @@
                 })
 
             });
-            vm.defaultHotKeys.DefaultHotKeysWithClick.forEach(function(hotKeyObj){
+            vm.defaultHotKeys.DefaultHotKeysWithClick.forEach(function (hotKeyObj) {
 
                 HotKeysManager.addHotKey(hotKeyObj.combo);
 
@@ -606,8 +648,8 @@
                     combo: hotKeyObj.combo,
                     description: hotKeyObj.description,
                     action: 'keyup',
-                    callback: function(e) {
-                        HotKeysManager.updatePressedHotKeys(hotKeyObj,false);
+                    callback: function (e) {
+                        HotKeysManager.updatePressedHotKeys(hotKeyObj, false);
                         e.preventDefault()
                     }
                 })
@@ -615,20 +657,20 @@
                     combo: hotKeyObj.combo,
                     description: hotKeyObj.description,
                     action: 'keydown',
-                    callback: function(e) {
-                        HotKeysManager.updatePressedHotKeys(hotKeyObj,true);
+                    callback: function (e) {
+                        HotKeysManager.updatePressedHotKeys(hotKeyObj, true);
                         e.preventDefault()
                     }
                 })
             });
-            vm.defaultHotKeys.DefaultHotKeys.forEach(function(hotKeyObj){
+            vm.defaultHotKeys.DefaultHotKeys.forEach(function (hotKeyObj) {
 
                 HotKeysManager.addHotKey(hotKeyObj.combo);
                 hotkeys.add({
                     combo: hotKeyObj.combo,
                     description: hotKeyObj.description,
                     action: hotKeyObj.action,
-                    callback: function(e) {
+                    callback: function (e) {
                         var functionToExecute = HotKeysManager.executeOperation(hotKeyObj);
                         var selectedUnitId = selectionHandlerService.getSelectedUnitId();
                         // If direction is rtl- opposite right and left
@@ -639,8 +681,8 @@
                                 functionToExecute = functionToExecute.replace("Left", "Right");
                             }
                         }
-                        switch(functionToExecute){
-                            case 'abortRemoteMode':{
+                        switch (functionToExecute) {
+                            case 'abortRemoteMode': {
                                 if (selectionHandlerService.selectedTokenList.length) {
                                     selectionHandlerService.clearTokenList();
                                 } else {
@@ -649,68 +691,68 @@
                                 }
                                 break;
                             }
-                            case 'moveRight':{
+                            case 'moveRight': {
                                 // DataService.getUnitById(selectedUnitId).cursorLocation++;
 
-                                $rootScope.$broadcast("moveRight",{unitId: selectedUnitId, unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
+                                $rootScope.$broadcast("moveRight", { unitId: selectedUnitId, unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation });
                                 break;
                             }
-                            case 'moveToNextRelevant':{
+                            case 'moveToNextRelevant': {
                                 // DataService.getUnitById(selectedUnitId).cursorLocation++;
 
-                                $rootScope.$broadcast("moveToNextRelevant",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
+                                $rootScope.$broadcast("moveToNextRelevant", { unitId: selectedUnitId, unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation });
                                 break;
                             }
-                            case 'moveRightWithShift':{
+                            case 'moveRightWithShift': {
                                 if (DataService.getUnitById(selectedUnitId).unitType === 'REMOTE' || DataService.getUnitById(selectedUnitId).unitType === 'IMPLICIT') {
                                     return
                                 }
                                 // DataService.getUnitById(selectedUnitId).cursorLocation++;
-                                $rootScope.$broadcast("moveRight",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
+                                $rootScope.$broadcast("moveRight", { unitId: selectedUnitId, unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation });
                                 break;
                             }
-                            case 'moveRightWithCtrl':{
-                                $rootScope.$broadcast("moveRight",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
+                            case 'moveRightWithCtrl': {
+                                $rootScope.$broadcast("moveRight", { unitId: selectedUnitId, unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation });
                                 break;
                             }
-                            case 'moveLeft':{
+                            case 'moveLeft': {
                                 // DataService.getUnitById(selectedUnitId).cursorLocation--;
-                                $rootScope.$broadcast("moveLeft",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
+                                $rootScope.$broadcast("moveLeft", { unitId: selectedUnitId, unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation });
                                 break;
                             }
-                            case 'moveLeftWithShift':{
+                            case 'moveLeftWithShift': {
                                 if (DataService.getUnitById(selectedUnitId).unitType === 'REMOTE' || DataService.getUnitById(selectedUnitId).unitType === 'IMPLICIT') {
                                     return
                                 }
                                 // DataService.getUnitById(selectedUnitId).cursorLocation--;
-                                $rootScope.$broadcast("moveLeft",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
+                                $rootScope.$broadcast("moveLeft", { unitId: selectedUnitId, unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation });
                                 break;
                             }
-                            case 'moveLeftWithCtrl':{
+                            case 'moveLeftWithCtrl': {
                                 // DataService.getUnitById(selectedUnitId).cursorLocation--;
-                                $rootScope.$broadcast("moveLeft",{unitId: selectedUnitId,unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation});
+                                $rootScope.$broadcast("moveLeft", { unitId: selectedUnitId, unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation });
                                 break;
                             }
-                            case 'moveDown':{
+                            case 'moveDown': {
                                 // if(selectedUnitId.length === 1 && parseInt(selectedUnitId) >= DataService.tree.AnnotationUnits.length){
                                 //     break;
                                 // }
                                 var nextUnit = DataService.getNextUnit(selectedUnitId);
                                 var nextSibling = DataService.getSibling(selectedUnitId);
 
-                                if(nextUnit === -1 && nextSibling === undefined){
+                                if (nextUnit === -1 && nextSibling === undefined) {
                                     return;
                                 }
 
-                                while(nextUnit !== -1 && DataService.getUnitById(nextUnit).gui_status === "HIDDEN"){
+                                while (nextUnit !== -1 && DataService.getUnitById(nextUnit).gui_status === "HIDDEN") {
                                     nextUnit = DataService.getNextUnit(nextUnit);
                                 }
 
-                                if(nextSibling && nextSibling.gui_status !== "HIDDEN" && DataService.getParentUnit(nextSibling.tree_id).gui_status === "OPEN"){
+                                if (nextSibling && nextSibling.gui_status !== "HIDDEN" && DataService.getParentUnit(nextSibling.tree_id).gui_status === "OPEN") {
                                     selectionHandlerService.updateSelectedUnit(nextSibling.tree_id);
                                     // DataService.getUnitById(nextSibling.tree_id).gui_status = "OPEN";
-                                }else{
-                                    if(nextUnit && nextUnit !== -1){
+                                } else {
+                                    if (nextUnit && nextUnit !== -1) {
                                         selectionHandlerService.updateSelectedUnit(nextUnit);
                                         // DataService.getUnitById(nextUnit).gui_status = "OPEN";
                                     }
@@ -723,7 +765,7 @@
                             case 'moveUp': {
                                 var splitedID = selectedUnitId.split("-");
                                 if (splitedID.length > 1 && splitedID[splitedID.length - 1] === "1") {
-                                    var parentId = splitedID.slice(0,splitedID.length-1).join('-');
+                                    var parentId = splitedID.slice(0, splitedID.length - 1).join('-');
 
                                     selectionHandlerService.updateSelectedUnit(parentId);
                                     DataService.getUnitById(parentId).gui_status = "OPEN";
@@ -748,16 +790,16 @@
 
                                 var prevSibling = DataService.getPrevSibling(selectedUnitId);
 
-                                while(prevSibling.gui_status === "HIDDEN" && prevSibling.tree_id !== '0'){
-                                    if(prevSibling.tree_id == "1"){
+                                while (prevSibling.gui_status === "HIDDEN" && prevSibling.tree_id !== '0') {
+                                    if (prevSibling.tree_id == "1") {
                                         prevSibling = DataService.getUnitById("0")
-                                    }else{
+                                    } else {
                                         prevSibling = DataService.getPrevSibling(prevSibling.tree_id)
                                     }
                                 }
 
-                                while(prevSibling.tree_id != "0" && prevSibling.gui_status !== "COLLAPSE" && prevSibling.AnnotationUnits.length > 0){
-                                     prevSibling = prevSibling.AnnotationUnits[prevSibling.AnnotationUnits.length - 1];
+                                while (prevSibling.tree_id != "0" && prevSibling.gui_status !== "COLLAPSE" && prevSibling.AnnotationUnits.length > 0) {
+                                    prevSibling = prevSibling.AnnotationUnits[prevSibling.AnnotationUnits.length - 1];
                                 }
 
 
@@ -787,47 +829,47 @@
 
                                 break;
                             }
-                            case 'deleteFromTree':{
+                            case 'deleteFromTree': {
                                 var selectedUnitId = selectionHandlerService.getSelectedUnitId();
                                 var currentUnit = DataService.getUnitById(selectedUnitId);
-                                if(DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT){
+                                if (DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT) {
                                     Core.showAlert("Cant delete annotation units from refinement layer")
                                     console.log('ALERT - deleteFromTree -  prevent delete from tree when refinement layer');
                                     return selectedUnitId;
                                 }
 
-                                if(selectedUnitId !== '0'){
+                                if (selectedUnitId !== '0') {
                                     var currentUnit = DataService.getUnitById(selectedUnitId);
 
-                                    if(currentUnit.cloned_to_tree_ids){
-                                        open('app/pages/annotation/templates/deleteAllRemoteModal.html','md', currentUnit.cloned_to_tree_ids.length,vm);
-                                    }else{
-                                        if(currentUnit.unitType === "REMOTE"){
+                                    if (currentUnit.cloned_to_tree_ids) {
+                                        open('app/pages/annotation/templates/deleteAllRemoteModal.html', 'md', currentUnit.cloned_to_tree_ids.length, vm);
+                                    } else {
+                                        if (currentUnit.unitType === "REMOTE") {
                                             var remoteUnit = DataService.getUnitById(currentUnit.cloned_from_tree_id);
 
                                             // New Remote
                                             DataService.deleteRemoteUnit(currentUnit);
                                         }
                                         var parentUnit = DataService.getParentUnitId(selectedUnitId);
-                                        DataService.deleteUnit(selectedUnitId).then(function(res){
+                                        DataService.deleteUnit(selectedUnitId).then(function (res) {
                                             selectionHandlerService.updateSelectedUnit(parentUnit);
                                         })
                                     }
                                 }
                                 break;
                             }
-                            case 'checkRestrictionForCurrentUnit':{
-                                if(selectedUnitId === "0"){
+                            case 'checkRestrictionForCurrentUnit': {
+                                if (selectedUnitId === "0") {
                                     return;
                                 }
-                                $rootScope.$broadcast("checkRestrictionForCurrentUnit",{unitId: selectedUnitId});
+                                $rootScope.$broadcast("checkRestrictionForCurrentUnit", { unitId: selectedUnitId });
                                 break;
                             }
-                            case 'resetAllAnnotations':{
+                            case 'resetAllAnnotations': {
                                 DataService.resetTree();
                                 break;
                             }
-                            case 'addImplicitUnit':{
+                            case 'addImplicitUnit': {
                                 $rootScope.addImplicitUnit();
                                 break;
                             }
@@ -835,7 +877,7 @@
                             //     restrictionsValidatorService.closeModal();
                             //     break;
                             // }
-                            default:{
+                            default: {
                                 vm[functionToExecute]();
                                 break;
                             }
