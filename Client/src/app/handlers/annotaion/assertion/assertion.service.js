@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     angular.module('zAdmin.annotation.assertion')
@@ -27,20 +27,20 @@
          * This function has been copied from the DataService because of the opposite dependency.
          * DataService has been dependent on AssertionService.
          */
-        function getUnitById(unitID){
-            if(unitID == -1){
+        function getUnitById(unitID) {
+            if (unitID == -1) {
                 return null
-            }else if(!unitID || unitID == 0){
+            } else if (!unitID || unitID == 0) {
                 return AssertionService.tree;
-            }else{
+            } else {
                 var splittedUnitId = unitID.toString().split("-");
                 var tempUnit = AssertionService.tree;
 
-                for(var i=0; i<splittedUnitId.length; i++){
-                    var unitIdToFind = splittedUnitId.slice(0,i+1).join("-");
+                for (var i = 0; i < splittedUnitId.length; i++) {
+                    var unitIdToFind = splittedUnitId.slice(0, i + 1).join("-");
 
-                    var unitIndex = tempUnit.AnnotationUnits.findIndex(function(unit){
-                        if(unit == undefined){
+                    var unitIndex = tempUnit.AnnotationUnits.findIndex(function (unit) {
+                        if (unit == undefined) {
                             return false;
                         }
                         return unit.tree_id == unitIdToFind
@@ -141,13 +141,44 @@
                 throw "Cloned from tree id " + unit.cloned_from_tree_id + " is not points at an existing unit in the tree";
             }
         }
+        /***
+         * Check duplicate_indexes:
+         * status should be HIDDEN only if the unit is immediately below unit 0,
+         * and in remote and implicit unit, status should be OPEN
+         * @param tokens
+         */
 
+        function checkDuplicateIndex(unit) {
+            var startIndexArray = unit.tokens.map(function (item) {
+                return item.static.start_index;
+            });
+            var endIndexArray = unit.tokens.map(function (item) {
+                return item.static.end_index;
+            });
+                var counts = [];
+                for(var i = 0; i <= unit.tokens.length; i++) {
+                    if(counts[startIndexArray[i]] === undefined) {
+                        counts[startIndexArray[i]] = 1;
+                    } else {
+                        throw "Duplicate start indexes in unit " + unit.id;
+                    }
+                    if(counts[endIndexArray[i]] === undefined) {
+                        counts[endIndexArray[i]] = 1;
+                    } else {
+                        throw "Duplicate start indexes in unit " + unit.id;
+                    }
+                }
+                return false;
+            }
+           
+        
         /***
          * Check gui_status:
          * status should be HIDDEN only if the unit is immediately below unit 0,
          * and in remote and implicit unit, status should be OPEN
          * @param unit
          */
+
         function checkGuiStatus(unit) {
             if (unit.gui_status === 'HIDDEN') {
                 if (unit.tree_id.indexOf('-') > -1) {
@@ -184,6 +215,7 @@
                 checkParentTreeId(annotationUnits[i].parent_tree_id, annotationUnits[i].tree_id);
                 checkClonedId(annotationUnits[i]);
                 checkGuiStatus(annotationUnits[i]);
+                checkDuplicateIndex(annotationUnits[i])
 
                 // Check tokenMap and tokens
                 checkIfTokensExist(annotationUnits[i]);
@@ -233,18 +265,18 @@
                 }
 
                 var index = AssertionService.unitsIdsList[i].lastIndexOf("-");
-                var lastDigit = AssertionService.unitsIdsList[i].slice(index+1);
+                var lastDigit = AssertionService.unitsIdsList[i].slice(index + 1);
                 var res = '';
 
                 if (lastDigit - 1) { // If lastDigit > 2, sub the last digit (i-j-k -> i-j-(k-1) )
-                    var prefix = AssertionService.unitsIdsList[i].slice(0, index+1);
+                    var prefix = AssertionService.unitsIdsList[i].slice(0, index + 1);
                     var digit = parseInt(lastDigit);
-                    res = prefix.concat(digit-1);
+                    res = prefix.concat(digit - 1);
                 } else { // If lastDigit is '1', slice the last digit (i-j-1 -> i-j )
                     res = AssertionService.unitsIdsList[i].slice(0, index);
                 }
 
-                if(_countInArray(AssertionService.unitsIdsList, res) < 1) {
+                if (_countInArray(AssertionService.unitsIdsList, res) < 1) {
                     throw "There is a gap, unit " + res + " is not exist in the tree";
                 }
 
@@ -290,10 +322,10 @@
                         throw "The ids at place " + i + " are different between token map and tokens";
                     }
                     if (children_tokens[i].id !== tokenMap[children_tokens[i].id].id) {
-                        throw "The map of id = " + children_tokens[i].id +" does not point to the token with this id";
+                        throw "The map of id = " + children_tokens[i].id + " does not point to the token with this id";
                     }
                 }
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
         }
@@ -350,7 +382,7 @@
 
         // check if there is a unit that contains this token
         function _checkIfThereIsUnitWithThisToken(unit, token, inChildUnitTreeId) {// flag- inChildUnitTreeId value
-            for (var index = 0 ; index < unit.AnnotationUnits.length; index++) {
+            for (var index = 0; index < unit.AnnotationUnits.length; index++) {
                 for (var tokenIndex = 0; tokenIndex < unit.AnnotationUnits[index].tokens.length; tokenIndex++) {
                     if (unit.AnnotationUnits[index].tokens[tokenIndex].static.id === token.static.id) {
                         if (!inChildUnitTreeId) { // If inChildUnitTreeId is null
@@ -429,7 +461,7 @@
                     throw "The ids at place " + i + " are different between token map and tokens";
                 }
                 if (unit.tokens[i].static.id !== unit.tokenMap[unit.tokens[i].static.id].id) {
-                    throw "The map of id = " + unit.tokens[i].static.id +" does not point to the token with this id";
+                    throw "The map of id = " + unit.tokens[i].static.id + " does not point to the token with this id";
                 }
             }
         }
@@ -536,11 +568,11 @@
                     if (!tokens[t].indexInUnit) {
                         throw "indexInUnit isn't exists in token " + tokens[t].static.text + " t = " + t + " in unit " + unit.tree_id;
                     }
-                    throw "indexInUnit should be the same as the index of the token inside the unit.tokens, unit = " + unit.tree_id + ", token = " + tokens[t].static.text + ", t = " + t + ", indexInUnit = "+ tokens[t].indexInUnit;
+                    throw "indexInUnit should be the same as the index of the token inside the unit.tokens, unit = " + unit.tree_id + ", token = " + tokens[t].static.text + ", t = " + t + ", indexInUnit = " + tokens[t].indexInUnit;
                 }
 
                 /*** Check unitTreeId ***/
-                    // unitTreeId: the same as the tree_id of the unit the token is in
+                // unitTreeId: the same as the tree_id of the unit the token is in
                 var unitTreeId = tokens[t].unitTreeId;
                 if (unitTreeId !== unit.tree_id) {
                     throw "unitTreeId should be the same as the tree_id of the unit the token is in";
@@ -573,28 +605,28 @@
                 // If it's an implicit unit don't check it because implicit unit doesn't have children_tokens
                 if (serverData.annotation_units[i].type === 'IMPLICIT') {
                     if (serverData.annotation_units[i].children_tokens && serverData.annotation_units[i].children_tokens.length) {
-                        throw "Annotation unit "+ i + " is an implicit unit, it should not have children tokens";
+                        throw "Annotation unit " + i + " is an implicit unit, it should not have children tokens";
                     }
                     return;
                 }
                 // Check if children_tokens exist
                 if (!serverData.annotation_units[i].children_tokens.length) {
-                    throw "Annotation unit "+ i + " doesn't have children tokens";
+                    throw "Annotation unit " + i + " doesn't have children tokens";
                 }
                 var childrenTokensIdsList = [];
                 // Check if children token in the tokens of the task
                 for (var j = 0; j < serverData.annotation_units[i].children_tokens.length; j++) {
                     if (!treeTokensIdsList.includes(serverData.annotation_units[i].children_tokens[j].id)) {
-                        throw "Token " +  serverData.annotation_units[i].children_tokens[j].id + " doesn't exist in the tokens of the task";
+                        throw "Token " + serverData.annotation_units[i].children_tokens[j].id + " doesn't exist in the tokens of the task";
                     }
 
                     // build children_tokens ids list
                     childrenTokensIdsList.push(serverData.annotation_units[i].children_tokens[j].id);
                 }
                 // Check no duplicates in childrenTokensIdsList
-                for (var  k = childrenTokensIdsList.length-1; k < 0; k--) {
-                    if (k && childrenTokensIdsList[k] <= childrenTokensIdsList[k-1]) {
-                        throw "Tokens " + childrenTokensIdsList[k] + ", " + childrenTokensIdsList[k-1] + " are duplicated or not sorted";
+                for (var k = childrenTokensIdsList.length - 1; k < 0; k--) {
+                    if (k && childrenTokensIdsList[k] <= childrenTokensIdsList[k - 1]) {
+                        throw "Tokens " + childrenTokensIdsList[k] + ", " + childrenTokensIdsList[k - 1] + " are duplicated or not sorted";
                     }
                 }
             }
@@ -690,7 +722,7 @@
 
             if (unit.unitType !== 'REMOTE') {
                 if (unit.cloned_from_tree_id) {
-                    throw "Unit " + unit.tree_id + " is " + unit.unitType +" unit, but it has a cloned from tree id = " + unit.cloned_from_tree_id;
+                    throw "Unit " + unit.tree_id + " is " + unit.unitType + " unit, but it has a cloned from tree id = " + unit.cloned_from_tree_id;
                 }
             }
 
@@ -794,7 +826,7 @@
                 if (serverData.project.layer.slotted) {
                     checkSlotLayer(tree)
                 }
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
         }
