@@ -588,7 +588,7 @@
                             var count = preToken.static.start_index
                             var negativeId = -1;
                             for (var i = 0; i < splittedTokens.length; i++) {
-                                // debugger
+                                debugger
 
                                 var token = angular.copy(preToken);
 
@@ -599,12 +599,13 @@
                                 }
 
                                 token.static.id = negativeId;
+                                console.log("token.static.id" , token.static.id);
                                 negativeId -= 1;
                                 token.static.text = splittedTokens[i];
-                                token.static.start_index = count
-                                count = count + token.static.text.length - 1
-                                token.static.end_index = count
-                                count = count + 1
+                                token.static.start_index = count;
+                                count = count + token.static.text.length - 1;
+                                token.static.end_index = count;
+                                count = count + 1;
                                 unit.tokens.splice(tokenIndex, 0, token);
                                 tokenIndex++;
                             }

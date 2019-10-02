@@ -155,17 +155,20 @@
             var endIndexArray = unit.tokens.map(function (item) {
                 return item.static.end_index;
             });
-                var counts = [];
+            debugger
+                var countsStart = [];
+                var countsEnd = [];
                 for(var i = 0; i <= unit.tokens.length; i++) {
-                    if(counts[startIndexArray[i]] === undefined) {
-                        counts[startIndexArray[i]] = 1;
+                    if(countsStart[startIndexArray[i]] === undefined) {
+                        countsStart[startIndexArray[i]] = 1;
+                        console.log(countsStart)
                     } else {
-                        throw "Duplicate start indexes in unit " + unit.id;
+                        throw "Duplicate start indexes in unit " + unit.tree_id;
                     }
-                    if(counts[endIndexArray[i]] === undefined) {
-                        counts[endIndexArray[i]] = 1;
+                    if(countsEnd[endIndexArray[i]] === undefined) {
+                        countsEnd[endIndexArray[i]] = 1;
                     } else {
-                        throw "Duplicate start indexes in unit " + unit.id;
+                        throw "Duplicate end indexes in unit " + unit.tree_id;
                     }
                 }
                 return false;
