@@ -224,7 +224,8 @@
                                 break;
                             }
                         }
-                        !tokenInUnit ? parentUnit.tokens[elementPos]['inChildUnitTreeId'] = null : '';
+                        // !tokenInUnit ? parentUnit.tokens[elementPos]['inChildUnitTreeId'] = null : '';
+                       // !tokenInUnit ? parentUnit.tokens[elementPos].inChildUnitTreeId = null : '';
                     });
                 }
 

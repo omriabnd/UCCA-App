@@ -210,7 +210,8 @@
             trace("DataService - createTokensHashByTokensArrayForPassage");
             DataService.tree.tokenMap = tokensArrayToHash(annotationTokensArray);
             // TODO: Need send children_tokens instead of tokens ?
-            AssertionService.checkTokenMap(DataService.tree.tokenMap, annotationTokensArray);
+            debugger
+            //AssertionService.checkTokenMap(DataService.tree.tokenMap, annotationTokensArray);
         }
 
         /**

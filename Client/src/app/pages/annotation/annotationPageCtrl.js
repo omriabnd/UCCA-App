@@ -575,18 +575,34 @@
                     });
 
                     $scope.saveRetokenization = function () {
+                        // check if this unit was already retokenized 
+                        // if yes set the idcounter to the minimum of the ids of the tokens that it contains
+                        // if not set the idcounter at -1
+                        // send the idcounter as parameter
+                        // console.log(selectedTokenList)
+                        var myId = selectedTokenList[0].unitTreeId;
+                        // console.log(DataService.getUnitById(myId))
+                        if(DataService.getUnitById(myId).tokens.length!=0){
+                            var map2 = DataService.getUnitById(myId).tokens.map(x => x.static.id);
+                            var countId = Math.min(...map2);
+                            if(countId>0){
+                                countId=-1
+                            }
+                        }
+                        else {
+                            countId=-1;
+                        }
+                        updateTokens(DataService.getUnitById(myId),countId);
+                       
 
-                        var myId = selectedTokenList[0].unitTreeId
-                        updateTokens(DataService.getUnitById(myId));
-                        console.log(DataService.tree)
-
-                        function updateTokens(unit) {
+                        function updateTokens(unit,countId) {
+                            // get the idcounter from the parameter 
                             var tokenIndex = unit.tokens.map(function (x) { return x.static.id; }).indexOf(selectedTokenList[0].static.id);
                             var preToken = angular.copy(unit.tokens[tokenIndex]);
                             var splittedTokens = $scope.tokenizedText.split('*');
                             unit.tokens.splice(tokenIndex, 1);
                             var count = preToken.static.start_index
-                            var negativeId = -1;
+                            //var countId = -1;
                             for (var i = 0; i < splittedTokens.length; i++) {
                                 debugger
 
@@ -598,9 +614,9 @@
                                     token.leftBorder = false;
                                 }
 
-                                token.static.id = negativeId;
+                                token.static.id = countId;
                                 console.log("token.static.id" , token.static.id);
-                                negativeId -= 1;
+                                countId -= 1;
                                 token.static.text = splittedTokens[i];
                                 token.static.start_index = count;
                                 count = count + token.static.text.length - 1;
@@ -609,9 +625,10 @@
                                 unit.tokens.splice(tokenIndex, 0, token);
                                 tokenIndex++;
                             }
+                            console.log(DataService.tree)
 
                             if (unit.parent_tree_id !== undefined) {
-                                updateTokens(DataService.getUnitById(unit.parent_tree_id));
+                                updateTokens(DataService.getUnitById(unit.parent_tree_id),countId);
                             }
 
                         }

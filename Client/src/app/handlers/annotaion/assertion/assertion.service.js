@@ -147,7 +147,22 @@
          * and in remote and implicit unit, status should be OPEN
          * @param tokens
          */
-
+        function checkDuplicateId(unit){
+            debugger
+            var counts = [];
+            var tokenId = unit.tokens.map(function (item) {
+                return item.static.id;
+            });
+            for(var i = 0; i <= unit.tokens.length; i++) {
+                if(counts[tokenId[i]] === undefined) {
+                    counts[tokenId[i]] = 1;
+                   // console.log(counts)
+                } else {
+                    throw "Duplicate id in unit " + unit.tree_id;
+                }
+        }
+        return false;
+    }
         function checkDuplicateIndex(unit) {
             var startIndexArray = unit.tokens.map(function (item) {
                 return item.static.start_index;
@@ -161,7 +176,7 @@
                 for(var i = 0; i <= unit.tokens.length; i++) {
                     if(countsStart[startIndexArray[i]] === undefined) {
                         countsStart[startIndexArray[i]] = 1;
-                        console.log(countsStart)
+                      //  console.log(countsStart)
                     } else {
                         throw "Duplicate start indexes in unit " + unit.tree_id;
                     }
@@ -174,7 +189,6 @@
                 return false;
             }
            
-        
         /***
          * Check gui_status:
          * status should be HIDDEN only if the unit is immediately below unit 0,
@@ -218,7 +232,9 @@
                 checkParentTreeId(annotationUnits[i].parent_tree_id, annotationUnits[i].tree_id);
                 checkClonedId(annotationUnits[i]);
                 checkGuiStatus(annotationUnits[i]);
-                checkDuplicateIndex(annotationUnits[i])
+                checkDuplicateId(annotationUnits[i]);
+                checkDuplicateIndex(annotationUnits[i]);
+                
 
                 // Check tokenMap and tokens
                 checkIfTokensExist(annotationUnits[i]);
@@ -306,6 +322,7 @@
          * @param children_tokens
          */
         function checkTokenMap(tokenMap, children_tokens) {
+            debugger
             // Check that all the IDs on the children's list also exist on the tokens list
             // Check that the MAP of a specific ID points to the token with that specific ID in map list
 
@@ -451,6 +468,7 @@
 
         // Checking the tokens against the tokenMap
         function checkTokensAndTokenMap(unit) {
+
             // tokenMap - tokens object: {id: token, id: token, ...}
             if (!unit.tokens.length) {
                 throw "There is no token list in unit " + unit.tree_id;
@@ -813,7 +831,7 @@
                 checkAnnotationUnits(tree.AnnotationUnits);
 
                 // Check tokens fields (with static)
-                checkTokens(tree, tree.tokens);
+                //checkTokens(tree, tree.tokens);
 
                 // TODO- delete DataService.serverData, change tokens in DataService.tree to children_tokens, and then check tree.children_tokens (email, March 27)
                 // Check children tokens
