@@ -575,62 +575,61 @@
                     });
 
                     $scope.saveRetokenization = function () {
-                        // check if this unit was already retokenized 
-                        // if yes set the idcounter to the minimum of the ids of the tokens that it contains
-                        // if not set the idcounter at -1
-                        // send the idcounter as parameter
-                        // console.log(selectedTokenList)
+                        
                         var myId = selectedTokenList[0].unitTreeId;
-                        // console.log(DataService.getUnitById(myId))
-                        if(DataService.getUnitById(myId).tokens.length!=0){
+
+                        if (DataService.getUnitById(myId).tokens.length != 0) {
                             var map2 = DataService.getUnitById(myId).tokens.map(x => x.static.id);
-                            var countId = Math.min(...map2);
-                            if(countId>0){
-                                countId=-1
+                            var countId = Math.min(...map2)-1;
+                            if (countId > 0) {
+                                countId = -1
                             }
                         }
-                        else {
-                            countId=-1;
-                        }
-                        updateTokens(DataService.getUnitById(myId),countId);
-                       
 
-                        function updateTokens(unit,countId) {
-                            // get the idcounter from the parameter 
+                        else {
+                            countId = -1;
+                        }
+
+                        updateTokens(DataService.getUnitById(myId), countId);
+
+                        function updateTokens(unit, countId) {
                             var tokenIndex = unit.tokens.map(function (x) { return x.static.id; }).indexOf(selectedTokenList[0].static.id);
                             var preToken = angular.copy(unit.tokens[tokenIndex]);
                             var splittedTokens = $scope.tokenizedText.split('*');
                             unit.tokens.splice(tokenIndex, 1);
-                            var count = preToken.static.start_index
-                            //var countId = -1;
+                            var myIndex = preToken.static.start_index;
+
                             for (var i = 0; i < splittedTokens.length; i++) {
                                 debugger
-
                                 var token = angular.copy(preToken);
-
-                                if (i === 0) {
-                                    token.rightBorder = false;
-                                } else if (i === splittedTokens.length - 1) {
-                                    token.leftBorder = false;
-                                }
-
                                 token.static.id = countId;
-                                console.log("token.static.id" , token.static.id);
+                                console.log("token.static.id", token.static.id);
                                 countId -= 1;
                                 token.static.text = splittedTokens[i];
-                                token.static.start_index = count;
-                                count = count + token.static.text.length - 1;
-                                token.static.end_index = count;
-                                count = count + 1;
+                                token.static.start_index = myIndex;
+                                myIndex = myIndex + token.static.text.length - 1;
+                                token.static.end_index = myIndex;
+                                myIndex = myIndex + 1;
                                 unit.tokens.splice(tokenIndex, 0, token);
                                 tokenIndex++;
                             }
-                            console.log(DataService.tree)
+
+                            console.log(DataService.tree);
 
                             if (unit.parent_tree_id !== undefined) {
-                                updateTokens(DataService.getUnitById(unit.parent_tree_id),countId);
-                            }
+ 
+                                var map3 = DataService.getUnitById(unit.parent_tree_id).tokens.map(x => x.static.id);
+                                var map2 = DataService.getUnitById(myId).tokens.map(x => x.static.id);
 
+                                var found = map2.filter(r=> map3.includes(r))
+
+                                if(found.length!=0){
+                                    countId = Math.min(...found)-1;
+                                }
+                                else countId = Math.max(...map2);
+
+                                updateTokens(DataService.getUnitById(unit.parent_tree_id), countId);
+                            }
                         }
                     }
                 }
