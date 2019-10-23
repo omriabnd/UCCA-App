@@ -1,4 +1,5 @@
 
+
 /* Copyright (C) 2017 Omri Abend, The Rachel and Selim Benin School of Computer Science and Engineering, The Hebrew University. */
 (function () {
     'use strict';
@@ -575,24 +576,40 @@
                     });
 
                     $scope.saveRetokenization = function () {
-                        
-                        var myId = selectedTokenList[0].unitTreeId;
+                        debugger
+                        var mySelectedToken = selectedTokenList[0].unitTreeId;
 
-                        if (DataService.getUnitById(myId).tokens.length != 0) {
-                            var map2 = DataService.getUnitById(myId).tokens.map(x => x.static.id);
-                            var countId = Math.min(...map2)-1;
-                            if (countId > 0) {
-                                countId = -1
+                        if (DataService.getUnitById(mySelectedToken).tokens.length != 0) {
+                            var myUnitIds = DataService.getUnitById(mySelectedToken).tokens.map(x => x.static.id);
+                            var countId = Math.min(...myUnitIds);
+
+                            if(DataService.getUnitById(mySelectedToken).parent_tree_id != undefined){
+                            var myParentUnitIds = DataService.getUnitById(DataService.getUnitById(mySelectedToken).parent_tree_id).tokens.map(x => x.static.id);
+                            var countDi = Math.min(...myParentUnitIds);
+                            var z = Math.min(countId,countDi);
+                            }
+
+                            else {
+                                var z = countId;
+                            }
+                            if (z > 0) {// matsav ou on a encore rien modifie
+                            updateTokens(DataService.getUnitById(mySelectedToken), -1);
+                            }
+                            else {//on a deja modifie
+                                  // envoye avc un count special
+                            countId = z-1;
+                            updateTokens(DataService.getUnitById(mySelectedToken), countId);
                             }
                         }
 
-                        else {
+                        else {// a quoi ca sert ?
                             countId = -1;
                         }
 
-                        updateTokens(DataService.getUnitById(myId), countId);
+                        //updateTokens(DataService.getUnitById(mySelectedToken), countId);
 
                         function updateTokens(unit, countId) {
+
                             var tokenIndex = unit.tokens.map(function (x) { return x.static.id; }).indexOf(selectedTokenList[0].static.id);
                             var preToken = angular.copy(unit.tokens[tokenIndex]);
                             var splittedTokens = $scope.tokenizedText.split('*');
@@ -618,15 +635,15 @@
 
                             if (unit.parent_tree_id !== undefined) {
  
-                                var map3 = DataService.getUnitById(unit.parent_tree_id).tokens.map(x => x.static.id);
-                                var map2 = DataService.getUnitById(myId).tokens.map(x => x.static.id);
+                                var myParentUnitIds = DataService.getUnitById(unit.parent_tree_id).tokens.map(x => x.static.id);
+                                var myUnitIds = DataService.getUnitById(mySelectedToken).tokens.map(x => x.static.id);
 
-                                var found = map2.filter(r=> map3.includes(r))
+                                var found = myUnitIds.filter(r=> myParentUnitIds.includes(r))
 
                                 if(found.length!=0){
                                     countId = Math.min(...found)-1;
                                 }
-                                else countId = Math.max(...map2);
+                                else countId = Math.max(...myUnitIds);// je crois ici min
 
                                 updateTokens(DataService.getUnitById(unit.parent_tree_id), countId);
                             }

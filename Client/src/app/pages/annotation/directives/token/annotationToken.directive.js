@@ -325,7 +325,10 @@
             if (!token.unit || index === undefined || !token.unit.tokens[index + 1]) {
                 return false;
             }
-            return token.static.index_in_task + 1 !== token.unit.tokens[index + 1].static.index_in_task;
+            // console.log("token.static.end_index",token.static.end_index)
+            // console.log("token.unit.tokens[index + 1].start_index",token.unit.tokens[index + 1].static.start_index);
+            return token.unit.tokens[index + 1].static.start_index > token.static.end_index +2
+            // return token.static.index_in_task + 1 !== token.unit.tokens[index + 1].static.index_in_task;
         }
 
 	function relevant(token){
