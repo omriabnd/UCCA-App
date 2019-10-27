@@ -6,7 +6,6 @@
 
     /** @ngInject */
     function unitCursorDirective($rootScope,selectionHandlerService,HotKeysManager,DataService) {
-
         var directive = {
             restrict:'E',
             template:'<span class="unit-cursor" ng-class="{no_cursor:!vm.isCursorUnitClicked(vm,$parent.$index)}">|</span>',
@@ -25,7 +24,11 @@
         return directive;
 
         function setCursorPosition($scope, location) {
+            console.log("setCursorPosition")
+            console.log("$scope.vm.cursorLocation",$scope.vm.cursorLocation)
             $scope.vm.cursorLocation = location;
+            //var cursorLocation = getCursorPos();
+            console.log("cursorLocation",cursorLocation)
         }
 
         function getUnitTokens($scope) {
@@ -39,6 +42,7 @@
             $scope.vm.cursorUpdated = false;
 
             $scope.$on('moveCursor', function(event, args) {
+                //console.log("moveCursor")
                 if(args.unitTreeId.toString() === $scope.vm.unitId.toString() ){
 
                     var unitTokens = getUnitTokens($scope);
@@ -63,22 +67,37 @@
             });
 
             $scope.$on('tokenIsClicked', function(event, args) {
-                // var ctrlPressed = HotKeysManager.checkIfHotKeyIsPressed('ctrl');
-                // var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
-
-                if(args.holdCursor) {
-                    // Don't move the cursor
-                    return;
-                }
-
+                 var mousemode = HotKeysManager.getMouseMode()
+                 // THIS CODE DOES NOT DO ANYTHING
+                // if(args.holdCursor) {
+                //     // Don't move the cursor
+                //     return;
+                // }
                 if(args.token && args.unitTreeId.toString() === $scope.vm.unitId.toString() ){
+                    
                     var unitTokens = getUnitTokens($scope);
-
                     var unitNode = DataService.getUnitById(args.unitTreeId);
+
                     var elementPos = unitNode.tokens.map(function(x) {return x.static.id; }).indexOf(args.token.static.id);
+                    console.log("elementPos",elementPos,unitNode.tokens[elementPos].static.text)
+                    
+                    //console.log(unitNode.tokens[elementPos].static.text)
+                    //console.log("args.moveLeft",args.moveLeft)
+                    //console.log("args",args)
+                    
+                    
                     if(elementPos > -1){
-                        !args.moveLeft ? $(elem).insertAfter( unitTokens[elementPos] ) : $(elem).insertBefore( unitTokens[elementPos] );
-                        !args.moveLeft ? setCursorPosition($scope, elementPos + 1) : setCursorPosition($scope, elementPos);
+                        //si le cursor avance de gauche a droite continuer a selectioner
+                        //si le curseur avance de la droite vers la gauche recommencer 
+                        //la selection a zero a partir du plus a droite 
+                        $(elem).insertAfter( unitTokens[elementPos] )
+                        //var elementPos1=-1545
+                        setCursorPosition($scope, args.cursorLocation)
+                        console.log("args.cursorLocation",args.cursorLocation)
+                        //args.moveLeft does not exist!!!!!!!!!!!!!!!!!
+                        // console.log(!args.moveLeft)
+                        //!args.moveLeft ? $(elem).insertAfter( unitTokens[elementPos] ) : $(elem).insertBefore( unitTokens[elementPos] );
+                        // args.moveLeft ? setCursorPosition($scope, elementPos -5) : setCursorPosition($scope, elementPos);//+1
                     }
                 }
             });

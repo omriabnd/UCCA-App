@@ -120,14 +120,16 @@
         }
 
         function addOnHover(vm){
+            console.log("addOnHover")
             //selectionHandlerService.getMouseMode()
+            //console.log("HotKeysManager.checkIfHotKeyIsPressed('shift')",HotKeysManager.checkIfHotKeyIsPressed('shift'))
             if(HotKeysManager.checkIfHotKeyIsPressed('shift')){
 
                 var startToken = selectionHandlerService.getSelectedToken();
-
+                //console.log("startToken",startToken.static)
                 if(startToken){
                     var tokenArray = [];
-                    if(startToken.indexInUnit <= vm.token.indexInUnit){
+                    if(startToken.indexInUnit <= vm.token.indexInUnit){// left to right
                         var selectedUnitId = selectionHandlerService.getSelectedUnitId();
                         var selectedUnit = DataService.getUnitById(selectedUnitId);
 
@@ -135,6 +137,7 @@
                             if(selectedUnit.tokens[i] === undefined){
                                 break;
                             }
+                            console.log("ou la annotationtokendirective 138")
                             $rootScope.$broadcast('tokenIsClicked', {
                                 token: selectedUnit.tokens[i],
                                 unitTreeId: selectedUnit.tokens[i].unitTreeId  || "0",
@@ -142,15 +145,18 @@
                                 doNotRemoveExistingToken: true
                             });
                         }
-                    }else{
+                    }else{//right to left
                         var selectedUnitId = selectionHandlerService.getSelectedUnitId();
                         var selectedUnit = DataService.getUnitById(selectedUnitId);
-
+                       
                         for(var i=vm.token.indexInUnit; i<=startToken.indexInUnit; i++){
-                            if(selectedUnit.tokens[i] === undefined){
+                         console.log("vm.token",vm.token)
+                         //for(var i=startToken.indexInUnit; i<=vm.token.indexInUnit; i++){
+                        if(selectedUnit.tokens[i] === undefined){
                                 break;
                             }
                             $rootScope.$broadcast('tokenIsClicked', {
+                                cursorLocation:vm.token.indexInUnit,
                                 token: selectedUnit.tokens[i],
                                 unitTreeId: selectedUnit.tokens[i].unitTreeId || "0",
                                 selectAllTokenInUnit: false,
