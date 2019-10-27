@@ -612,7 +612,7 @@
                 return false;
             }
 
-            return //{rcode: "NOT_COMPLETE"}
+            return {rcode: "NOT_COMPLETE"}
         }
 
 
@@ -646,8 +646,8 @@
                 return false;
             }
             if (!checkIfAllTokenThatRequireAnnotationIsInUnit(mainPassage)) {
-                // showErrorModal(errorMessages['NOT_COMPLETE']);
-                // return false;
+                showErrorModal(errorMessages['NOT_COMPLETE']);
+                return false;
             }
             return true;
         }
@@ -685,7 +685,7 @@
                 }
             }
             if (!hasNonDefault) {
-             //   return {rcode: "NO_VALID_CATEGORY"};
+                return {rcode: "NO_VALID_CATEGORY"};
             }
             return null;
         }
