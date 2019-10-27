@@ -124,7 +124,8 @@
                         var lastInChildUnit = token.inChildUnitTreeId;
                         if (!nextToken.inChildUnitTreeId) {
                             // set cursor to next  token
-                            setCursorPosition($scope, $scope.vm.cursorLocation);
+                            
+                            setCursorPosition($scope, $scope.vm.cursorLocation-1);//demand from the annotator , not to move +1 after the unselect
                         }
                         else {
                             var tokenPosition = tokenUnit.tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
@@ -133,6 +134,7 @@
                                 if (tokenUnit.tokens[pos].inChildUnitTreeId !== lastInChildUnit) {
                                     // set cursor to these token position
                                     setCursorPosition($scope, pos);
+                                    console.log("pos")
                                     break;
                                 }
                             }
