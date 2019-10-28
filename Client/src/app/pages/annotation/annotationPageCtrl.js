@@ -240,6 +240,7 @@
         }
 
         function submitTask() {
+            debugger
             vm.loadModalFailed = false;
             var finishAllResult = vm.checkSubmissionRestrictions();
             if (finishAllResult) {
@@ -576,16 +577,17 @@
                     });
 
                     $scope.saveRetokenization = function () {
-                        debugger
+                        debugger 
                         var mySelectedToken = selectedTokenList[0].unitTreeId;
 
                         if (DataService.getUnitById(mySelectedToken).tokens.length != 0) {
-                            var myUnitIds = DataService.getUnitById(mySelectedToken).tokens.map(x => x.static.id);
-                            var countId = Math.min(...myUnitIds);
+                           
+                            var myUnitIds = DataService.getUnitById(mySelectedToken).tokens.map(function(x) {return x.static.id; });
+                            var countId = Math.min(myUnitIds);
 
                             if(DataService.getUnitById(mySelectedToken).parent_tree_id != undefined){
-                            var myParentUnitIds = DataService.getUnitById(DataService.getUnitById(mySelectedToken).parent_tree_id).tokens.map(x => x.static.id);
-                            var countDi = Math.min(...myParentUnitIds);
+                            var myParentUnitIds = DataService.getUnitById(DataService.getUnitById(mySelectedToken).parent_tree_id).tokens.map(function(x) {return x.static.id;});
+                            var countDi = Math.min.apply(Math,myParentUnitIds);
                             var z = Math.min(countId,countDi);
                             }
 
@@ -635,15 +637,17 @@
 
                             if (unit.parent_tree_id !== undefined) {
  
-                                var myParentUnitIds = DataService.getUnitById(unit.parent_tree_id).tokens.map(x => x.static.id);
-                                var myUnitIds = DataService.getUnitById(mySelectedToken).tokens.map(x => x.static.id);
-
-                                var found = myUnitIds.filter(r=> myParentUnitIds.includes(r))
+                                var myParentUnitIds = DataService.getUnitById(unit.parent_tree_id).tokens.map(function(x) {return x.static.id; });
+                                var myUnitIds = DataService.getUnitById(mySelectedToken).tokens.map(function(x) {return x.static.id; });
+                                
+                                var found = myUnitIds.filter(function includesId(x) {
+                                    return myParentUnitIds.includes(x);
+                                })
 
                                 if(found.length!=0){
-                                    countId = Math.min(...found)-1;
+                                    countId = Math.min(found)-1;
                                 }
-                                else countId = Math.max(...myUnitIds);// je crois ici min
+                                else countId = Math.max.apply(Math ,myUnitIds);// je crois ici min
 
                                 updateTokens(DataService.getUnitById(unit.parent_tree_id), countId);
                             }

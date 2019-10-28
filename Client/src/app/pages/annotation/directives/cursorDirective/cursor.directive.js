@@ -28,7 +28,7 @@
             console.log("$scope.vm.cursorLocation",$scope.vm.cursorLocation)
             $scope.vm.cursorLocation = location;
             //var cursorLocation = getCursorPos();
-            console.log("cursorLocation",cursorLocation)
+            //console.log("cursorLocation",cursorLocation)
         }
 
         function getUnitTokens($scope) {
