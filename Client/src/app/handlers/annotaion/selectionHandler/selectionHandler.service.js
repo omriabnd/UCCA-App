@@ -7,7 +7,7 @@
         .service('selectionHandlerService', selectionHandlerService);
 
     /** @ngInject */
-    function selectionHandlerService(DataService, $rootScope,$q,Core, AssertionService, restrictionsValidatorService) {
+    function selectionHandlerService(HotKeysManager,DataService, $rootScope,$q,Core, AssertionService, restrictionsValidatorService) {
         trace("selectionHandlerService is here");
         var selectedTokenList = [];
         var keyboardSelectedTokens = [];
@@ -393,8 +393,11 @@
 
             // TODO: Remove this function, the mouseDown variable and getMouseMode
             toggleMouseUpDown: function(){
+                console.log("toggleMouseUpDown")
+                console.log(this.mouseDown)
                 trace("selectionHandlerService - toggleMouseUpDown");
                 this.mouseDown = !this.mouseDown;
+                HotKeysManager.setMouseMode(this.mouseDown)
             },
 
             getMouseMode: function(){

@@ -867,6 +867,10 @@
         }
 
         function unitClicked(vm, index, event){
+            console.log("unitClicked")
+            //DEBO
+            HotKeysManager.setMouseMode(!HotKeysManager.getMouseMode())
+            console.log("mousemode1",HotKeysManager.getMouseMode())
             trace("annotationUnitDirective - unitClicked");
             if(selectionHandlerService.getUnitToAddRemotes() !== "0" && selectionHandlerService.getUnitToAddRemotes() !== index){
                 var unitUsed = DataService.getUnitById(selectionHandlerService.getUnitToAddRemotes()).AnnotationUnits.map(function(x) {return x.cloned_from_tree_id; }).indexOf(vm.unit.tree_id);
