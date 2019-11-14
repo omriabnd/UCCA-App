@@ -15,7 +15,6 @@
 
             function link(scope, el, attr) {
 
-                console.log('tokenizerBehaviour', el);
 
                 $(el).on('keydown', function (evt) {
                     // debugger

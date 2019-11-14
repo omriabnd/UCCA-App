@@ -393,8 +393,8 @@
 
             // TODO: Remove this function, the mouseDown variable and getMouseMode
             toggleMouseUpDown: function(){
-                console.log("toggleMouseUpDown")
-                console.log(this.mouseDown)
+                //console.log("toggleMouseUpDown")
+                //console.log(this.mouseDown)
                 trace("selectionHandlerService - toggleMouseUpDown");
                 this.mouseDown = !this.mouseDown;
                 HotKeysManager.setMouseMode(this.mouseDown)

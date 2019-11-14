@@ -58,7 +58,8 @@
         }
 
 
-        function AnnotationTokenController() {
+        function AnnotationTokenController($scope) {
+            console.log("on each update")
             var vm = this;
             vm.token['inChildUnitTreeId'] === undefined ? vm.token['inChildUnitTreeId'] = null : '';
             vm.tokenIsClicked = directive.tokenClicked;
@@ -120,9 +121,8 @@
         }
 
         function addOnHover(vm){
-            console.log("addOnHover")
+
             //selectionHandlerService.getMouseMode()
-            //console.log("HotKeysManager.checkIfHotKeyIsPressed('shift')",HotKeysManager.checkIfHotKeyIsPressed('shift'))
             if(HotKeysManager.checkIfHotKeyIsPressed('shift')){
 
                 var startToken = selectionHandlerService.getSelectedToken();
@@ -172,7 +172,7 @@
         }
 
         function initToken(vm,index){
-            console.log(index);
+            console.log(index)
         }
 
         function tokenClicked(vm,doNotUpdateSelectedToken){

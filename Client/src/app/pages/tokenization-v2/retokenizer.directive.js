@@ -7,15 +7,14 @@
      */
     angular.module('zAdmin.pages.tokenization-v2')
         .directive('retokenizerBehaviour', function ($timeout, $rootScope, uccaFactory) {
+
             return {
                 link: link,
                 restrict: 'A',
                 scope: {},
             }
-
             function link(scope, el, attr) {
 
-                console.log('tokenizerBehaviour', el);
 
                 $(el).on('keydown', function (evt) {
                     if (evt.keyCode == 32 || evt.keyCode == 8 || (evt.keyCode >= 37 && evt.keyCode <= 40)) {

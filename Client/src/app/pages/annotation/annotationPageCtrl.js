@@ -240,7 +240,7 @@
         }
 
         function submitTask() {
-            debugger
+            //debugger
             vm.loadModalFailed = false;
             var finishAllResult = vm.checkSubmissionRestrictions();
             if (finishAllResult) {
@@ -514,17 +514,18 @@
         function open(page, size, message, vm) {
             var remoteOriginalId = $rootScope.clckedLine;
             var viewModal = vm;
+            console.log("1",vm.annotationTokens)
             $uibModal.open({
                 animation: true,
                 templateUrl: page,
                 size: size,
-                controller: function ($scope, selectionHandlerService, $q) {
+                controller: function ($scope, selectionHandlerService, $q,AnnotationTextService) {
                     var selectedTokenList = selectionHandlerService.getSelectedTokenList();
                     $scope.tokenizedText = selectedTokenList[0].static.text;
                     // $scope.tokenizedId = selectedTokenList[0].static.id;
                     $scope.tokenizedAnnotationUnits = selectedTokenList[0].unitTreeId
                     $scope.vm = viewModal;
-                    console.log("viewModal", viewModal)
+                    //console.log("viewModal", viewModal)
                     if (DataService.serverData) {
                         $scope.comment = DataService.serverData.user_comment;
                     }
@@ -577,81 +578,45 @@
                     });
 
                     $scope.saveRetokenization = function () {
-                        debugger 
-                        var mySelectedToken = selectedTokenList[0].unitTreeId;
+                        var mySelectedToken = selectedTokenList[0];
+                        var unit = DataService.getUnitById(mySelectedToken.unitTreeId);
+                        var splittedTokens = $scope.tokenizedText.split('*');
+                        var tokenIndex = unit.tokens.map(function (x) { return x.static.id; }).indexOf(mySelectedToken.static.id);
+                        var originalToken = angular.copy(unit.tokens[tokenIndex]);
+                        var myIndex = originalToken.static.start_index;
+                        var counter = -1;
+                        var tokenIndexInUnit = originalToken.indexInUnit;
+                        var indexInTask = originalToken.static.index_in_task;
+                        unit.tokens.splice(tokenIndex, 1);//remove the original in the tree
+                        for (var i = 0; i < splittedTokens.length; i++) {
+                            var token = angular.copy(originalToken);
+                            token.static.text = splittedTokens[i];
+                            token.static.id = counter;
+                            token.static.start_index = myIndex;
+                            token.static.splitByTokenization = true ;
+                            myIndex = myIndex + token.static.text.length - 1;
+                            token.static.end_index = myIndex;
+                            var a = tokenIndexInUnit + i;
+                            var b = indexInTask + i
+                            token.indexInUnit = a;
+                            token.static.index_in_task = b
+                            myIndex = myIndex + 1;
+                            counter -= 1;
+                            DataService.tree.tokens.splice(tokenIndex, 0, token);
+                            tokenIndex++;
+                            AnnotationTextService.updateMyTokens(DataService.tree)//appel au service
 
-                        if (DataService.getUnitById(mySelectedToken).tokens.length != 0) {
-                           
-                            var myUnitIds = DataService.getUnitById(mySelectedToken).tokens.map(function(x) {return x.static.id; });
-                            var countId = Math.min(myUnitIds);
 
-                            if(DataService.getUnitById(mySelectedToken).parent_tree_id != undefined){
-                            var myParentUnitIds = DataService.getUnitById(DataService.getUnitById(mySelectedToken).parent_tree_id).tokens.map(function(x) {return x.static.id;});
-                            var countDi = Math.min.apply(Math,myParentUnitIds);
-                            var z = Math.min(countId,countDi);
-                            }
-
-                            else {
-                                var z = countId;
-                            }
-                            if (z > 0) {// matsav ou on a encore rien modifie
-                            updateTokens(DataService.getUnitById(mySelectedToken), -1);
-                            }
-                            else {//on a deja modifie
-                                  // envoye avc un count special
-                            countId = z-1;
-                            updateTokens(DataService.getUnitById(mySelectedToken), countId);
-                            }
                         }
-
-                        else {// a quoi ca sert ?
-                            countId = -1;
+                        // update in others tokens the indexes(in task in unit)
+                        for (var i = tokenIndex; i < unit.tokens.length; i++) {
+                            DataService.tree.tokens[tokenIndex].indexInUnit += 1
+                            DataService.tree.tokens[tokenIndex].static.index_in_task += 1
                         }
+                        console.log(DataService.tree)
+                        console.log("4",vm.annotationTokens)
 
-                        //updateTokens(DataService.getUnitById(mySelectedToken), countId);
-
-                        function updateTokens(unit, countId) {
-
-                            var tokenIndex = unit.tokens.map(function (x) { return x.static.id; }).indexOf(selectedTokenList[0].static.id);
-                            var preToken = angular.copy(unit.tokens[tokenIndex]);
-                            var splittedTokens = $scope.tokenizedText.split('*');
-                            unit.tokens.splice(tokenIndex, 1);
-                            var myIndex = preToken.static.start_index;
-
-                            for (var i = 0; i < splittedTokens.length; i++) {
-                                debugger
-                                var token = angular.copy(preToken);
-                                token.static.id = countId;
-                                console.log("token.static.id", token.static.id);
-                                countId -= 1;
-                                token.static.text = splittedTokens[i];
-                                token.static.start_index = myIndex;
-                                myIndex = myIndex + token.static.text.length - 1;
-                                token.static.end_index = myIndex;
-                                myIndex = myIndex + 1;
-                                unit.tokens.splice(tokenIndex, 0, token);
-                                tokenIndex++;
-                            }
-
-                            console.log(DataService.tree);
-
-                            if (unit.parent_tree_id !== undefined) {
- 
-                                var myParentUnitIds = DataService.getUnitById(unit.parent_tree_id).tokens.map(function(x) {return x.static.id; });
-                                var myUnitIds = DataService.getUnitById(mySelectedToken).tokens.map(function(x) {return x.static.id; });
-                                
-                                var found = myUnitIds.filter(function includesId(x) {
-                                    return myParentUnitIds.includes(x);
-                                })
-
-                                if(found.length!=0){
-                                    countId = Math.min(found)-1;
-                                }
-                                else countId = Math.max.apply(Math ,myUnitIds);// je crois ici min
-
-                                updateTokens(DataService.getUnitById(unit.parent_tree_id), countId);
-                            }
-                        }
+                        
                     }
                 }
 
@@ -660,8 +625,10 @@
             }, function (abortRes) {
 
             });
+            console.log("2",vm.annotationTokens)
         };
 
+        console.log("3",vm.annotationTokens)
         function bindReceivedDefaultHotKeys(hotkeys, scope, rootScope, vm, HotKeysManager, dataService) {
             vm.defaultHotKeys.ManualHotKeys.forEach(function (hotKeyObj) {
 

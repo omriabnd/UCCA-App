@@ -148,7 +148,7 @@
          * @param tokens
          */
         function checkDuplicateId(unit){
-            debugger
+            //debugger
             var counts = [];
             var tokenId = unit.tokens.map(function (item) {
                 return item.static.id;
@@ -170,7 +170,7 @@
             var endIndexArray = unit.tokens.map(function (item) {
                 return item.static.end_index;
             });
-            debugger
+            //debugger
                 var countsStart = [];
                 var countsEnd = [];
                 for(var i = 0; i <= unit.tokens.length; i++) {
@@ -322,7 +322,7 @@
          * @param children_tokens
          */
         function checkTokenMap(tokenMap, children_tokens) {
-            debugger
+            //debugger
             // Check that all the IDs on the children's list also exist on the tokens list
             // Check that the MAP of a specific ID points to the token with that specific ID in map list
 

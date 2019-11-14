@@ -187,7 +187,7 @@
                     DataService.createHashTables();
                     DataService.createTokensHashByTokensArrayForPassage(taskResponse.tokens);
 
-                    debugger
+                    //debugger
                     //AssertionService.checkTokenMap(DataService.tree.tokenMap, taskResponse.tokens);
                     if($rootScope.isSlottedLayerProject){
                        for(var i =0; i < DataService.serverData.annotation_units.length; i++){
