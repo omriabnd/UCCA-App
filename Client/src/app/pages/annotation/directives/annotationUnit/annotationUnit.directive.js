@@ -30,7 +30,7 @@
 
         return directive;
 
-        function AnnotationUnitController(DataService) {
+        function AnnotationUnitController(DataService,$scope) {
             trace("annotationUnitDirective - AnnotationUnitController");
             var vm = this;
             vm.unitClicked = unitClicked;
@@ -56,6 +56,17 @@
             vm.showClusterButton = $rootScope.isSlottedLayerProject;
             vm.direction = $rootScope.direction;
             vm.disableRemotes = $rootScope.disableRemotes;
+            $scope.$on('retokenization', function(events, args){
+                // For some reason, Angular does not detect changes in 
+                // the token array properly. $scope.$apply does not work,
+                // because it doesn't recalculate the bound properties.
+                // This is a severe measure to convince it that it needs to reapply the changes.
+                var oldTokens = vm.tokens;
+                vm.tokens = []
+                setTimeout(function() {
+                    vm.tokens = oldTokens;
+                }, 0);
+              })
         }
 
         function annotationUnitDirectiveLink($scope, elem, attrs,$rootScope) {

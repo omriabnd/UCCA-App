@@ -48,6 +48,7 @@
         vm.submitFailed = false;
         vm.loadModalFailed = false;
 
+
         if ($rootScope.disableRemotes) { // Remove implicit option
             var index = vm.definitions.findIndex(function (a) { return a.name === 'Implicit' });
             vm.definitions.splice(index, 1);
@@ -68,6 +69,7 @@
         ];
 
         init();
+
 
         function getParentCategory(unit) {
             if (!!unit && !!unit.categories) {
@@ -514,18 +516,15 @@
         function open(page, size, message, vm) {
             var remoteOriginalId = $rootScope.clckedLine;
             var viewModal = vm;
-            console.log("1",vm.annotationTokens)
             $uibModal.open({
                 animation: true,
                 templateUrl: page,
                 size: size,
-                controller: function ($scope, selectionHandlerService, $q,AnnotationTextService) {
+                controller: function ($scope, selectionHandlerService, $q, AnnotationTextService) {
                     var selectedTokenList = selectionHandlerService.getSelectedTokenList();
                     $scope.tokenizedText = selectedTokenList[0].static.text;
-                    // $scope.tokenizedId = selectedTokenList[0].static.id;
                     $scope.tokenizedAnnotationUnits = selectedTokenList[0].unitTreeId
                     $scope.vm = viewModal;
-                    //console.log("viewModal", viewModal)
                     if (DataService.serverData) {
                         $scope.comment = DataService.serverData.user_comment;
                     }
@@ -591,22 +590,21 @@
                         for (var i = 0; i < splittedTokens.length; i++) {
                             var token = angular.copy(originalToken);
                             token.static.text = splittedTokens[i];
+                            if(i!=0){
+                            token.static.splitByTokenization = true;
+                            }
                             token.static.id = counter;
                             token.static.start_index = myIndex;
-                            token.static.splitByTokenization = true ;
                             myIndex = myIndex + token.static.text.length - 1;
                             token.static.end_index = myIndex;
                             var a = tokenIndexInUnit + i;
                             var b = indexInTask + i
                             token.indexInUnit = a;
-                            token.static.index_in_task = b
+                            token.static.index_in_task = b;
                             myIndex = myIndex + 1;
                             counter -= 1;
                             DataService.tree.tokens.splice(tokenIndex, 0, token);
                             tokenIndex++;
-                            AnnotationTextService.updateMyTokens(DataService.tree)//appel au service
-
-
                         }
                         // update in others tokens the indexes(in task in unit)
                         for (var i = tokenIndex; i < unit.tokens.length; i++) {
@@ -614,21 +612,20 @@
                             DataService.tree.tokens[tokenIndex].static.index_in_task += 1
                         }
                         console.log(DataService.tree)
-                        console.log("4",vm.annotationTokens)
-
-                        
+                        $rootScope.$broadcast("retokenization");
                     }
+
                 }
+
 
             }).result.then(function (okRes) {
 
             }, function (abortRes) {
 
             });
-            console.log("2",vm.annotationTokens)
+
         };
 
-        console.log("3",vm.annotationTokens)
         function bindReceivedDefaultHotKeys(hotkeys, scope, rootScope, vm, HotKeysManager, dataService) {
             vm.defaultHotKeys.ManualHotKeys.forEach(function (hotKeyObj) {
 

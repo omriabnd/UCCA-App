@@ -16,7 +16,6 @@
     function AnnotationTextService(apiService, ENV_CONST,$rootScope,DataService) {
        console.log("on each update AnnotationTextService")
         var textService = {
-            updateMyTokens :updateMyTokens,
             getAnnotationTask: getAnnotationTask,
             getProjectLayer:getProjectLayer,
             assignColorsToCategories: assignColorsToCategories,

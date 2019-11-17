@@ -45,6 +45,7 @@
 
         function getAnnotationTask(AnnotationTextService,$stateParams,DataService,restrictionsValidatorService,selectionHandlerService,$rootScope,$timeout, AssertionService) {
             return AnnotationTextService.getAnnotationTask($stateParams.taskId).then(function(taskResponse){
+                console.log("annotation page module ")
                 // TODO: Move this into its own function
 
                 // --- Process Categorties and Layers ---
@@ -265,8 +266,10 @@
                       // Build token array includes static fields
                     staticTokens.push(selectionHandlerService.copyTokenToStaticFormat(tokens[i]));
                 }
+               
                 return staticTokens;
             }
+            
         }
 
         function replaceEnterWithBr(tokensArray){
