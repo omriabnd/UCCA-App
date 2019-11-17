@@ -41,7 +41,10 @@
             if(selectedTokenList.length == 0){
                 return false;
             }
-            else {
+            else if(selectedTokenList.length >1){
+                    return false;
+                }
+                else{
                 var selectionList = selectionHandlerService.getSelectedTokenList();
                 var tokenIntUnit = selectionList[0].inChildUnitTreeId ;
                 if(tokenIntUnit==null){

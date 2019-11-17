@@ -521,8 +521,41 @@
                 templateUrl: page,
                 size: size,
                 controller: function ($scope, selectionHandlerService, $q, AnnotationTextService) {
+                   debugger
                     var selectedTokenList = selectionHandlerService.getSelectedTokenList();
-                    $scope.tokenizedText = selectedTokenList[0].static.text;
+                    function allRetokenizedTokens(token){
+                        debugger
+                        var originalToken= angular.copy(token)
+                        var array=[];
+                        if(token.static.splitByTokenization==false && DataService.tree.tokens.find(x =>x.indexInUnit==token.indexInUnit+1).static.splitByTokenization==false){
+                            return token.static.text;
+                        }
+                        if(token.static.splitByTokenization==false){
+                            var flag= true
+                        }
+                        array.push(token)
+                        while (DataService.tree.tokens.find(x =>x.indexInUnit==token.indexInUnit+1).static.splitByTokenization==true){
+                            token=DataService.tree.tokens.find(x =>x.indexInUnit==token.indexInUnit+1)
+                            array.push(token)
+                        }
+                        var token=originalToken;
+                        while(DataService.tree.tokens.find(x =>x.indexInUnit==token.indexInUnit-1).static.splitByTokenization==true){
+                        token=DataService.tree.tokens.find(x =>x.indexInUnit==token.indexInUnit-1)
+                        array.push(token)      
+                        }
+                        if (flag!=true){
+                        array.push(DataService.tree.tokens.find(x =>x.indexInUnit==token.indexInUnit-1))
+                        }
+                        array.sort((a,b) => (a.indexInUnit > b.indexInUnit) ? 1 : ((b.indexInUnit > a.indexInUnit) ? -1 : 0)); 
+                        var tmpArr=[];
+                        for (var i=0; i<array.length;i++){
+                            tmpArr[i]=array[i].static.text
+                        }
+                        var newString=tmpArr.join('*');
+                        return newString
+                    }
+                    var a = allRetokenizedTokens(selectedTokenList[0])
+                    $scope.tokenizedText = a ;
                     $scope.tokenizedAnnotationUnits = selectedTokenList[0].unitTreeId
                     $scope.vm = viewModal;
                     if (DataService.serverData) {
@@ -606,10 +639,11 @@
                             DataService.tree.tokens.splice(tokenIndex, 0, token);
                             tokenIndex++;
                         }
+                        debugger
                         // update in others tokens the indexes(in task in unit)
                         for (var i = tokenIndex; i < unit.tokens.length; i++) {
-                            DataService.tree.tokens[tokenIndex].indexInUnit += 1
-                            DataService.tree.tokens[tokenIndex].static.index_in_task += 1
+                            DataService.tree.tokens[tokenIndex].indexInUnit += splittedTokens.length-1
+                            DataService.tree.tokens[tokenIndex].static.index_in_task += splittedTokens.length-1
                         }
                         console.log(DataService.tree)
                         $rootScope.$broadcast("retokenization");
