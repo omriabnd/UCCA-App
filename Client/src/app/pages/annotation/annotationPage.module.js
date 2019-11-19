@@ -171,17 +171,18 @@
                 // we here add the createdByTokenization field for each token
                 // first, sort tokens by start_index
                 DataService.serverData.tokens.sort(function(t1,t2){return t1.start_index - t2.start_index;});
-
+                // this definition of splitByTokenization is false 
                 // second, define createdByTokenization
                 // TODO: Find what createdByTokenization is used for.
-                for (var index=1; index < DataService.serverData.tokens.length; index++) {
-                    //createdByTokenization is True for tokens which don't start at the beginning of an original word
-                    //in the passage text. For example, if "don't" is split to "do" and "n't" then "n't" has createdByTokenization=true
-                    DataService.serverData.tokens[index].splitByTokenization =
-                        DataService.serverData.tokens[index].require_annotation &&
-                        (DataService.serverData.tokens[index].start_index == DataService.serverData.tokens[index-1].end_index+1) &&
-                        DataService.serverData.tokens[index-1].text !== '\n';
-                }
+                // for (var index=1; index < DataService.serverData.tokens.length; index++) {
+                //     debugger
+                //     //createdByTokenization is True for tokens which don't start at the beginning of an original word
+                //     //in the passage text. For example, if "don't" is split to "do" and "n't" then "n't" has createdByTokenization=true
+                //     DataService.serverData.tokens[index].splitByTokenization =
+                //         DataService.serverData.tokens[index].require_annotation &&
+                //         (DataService.serverData.tokens[index].start_index == DataService.serverData.tokens[index-1].end_index+1 )&&
+                //         DataService.serverData.tokens[index-1].text !== '\n';
+                // }
                 
                 if(!!DataService.serverData.annotation_units){
                     DataService.categories = allCategories;
