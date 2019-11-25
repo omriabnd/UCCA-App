@@ -57,11 +57,22 @@
             vm.direction = $rootScope.direction;
             vm.disableRemotes = $rootScope.disableRemotes;
             $scope.$on('retokenization', function(events, args){
+            if (args.counter==1){
+                //update unitTreeId
+                
+                //args.newToken.forEach(element => element.static.unitTreeId=1);
+                //args.newToken.forEach(element => element.unitTreeId=1);
+                vm.tokens=args.newToken
+                console.log(vm.tokens)
+                //vm.tokens.static.unitTreeId=args.oldToken.tree_id
+            }
+            args.counter++;
                 // For some reason, Angular does not detect changes in 
                 // the token array properly. $scope.$apply does not work,
                 // because it doesn't recalculate the bound properties.
                 // This is a severe measure to convince it that it needs to reapply the changes.
                 var oldTokens = vm.tokens;
+                console.log(vm.tokens)
                 vm.tokens = []
                 setTimeout(function() {
                     vm.tokens = oldTokens;

@@ -17,6 +17,12 @@
                 "cwd": "${workspaceFolder}/Server"
             },
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "dev-server",
+            "path": "Client/",
+            "problemMatcher": []
         }
     ]
 }

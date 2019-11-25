@@ -512,7 +512,12 @@
                 }
             });
         }
-
+/*
+*
+*
+*
+*
+*/
         function open(page, size, message, vm) {
             var remoteOriginalId = $rootScope.clckedLine;
             var viewModal = vm;
@@ -521,14 +526,17 @@
                 templateUrl: page,
                 size: size,
                 controller: function ($scope, selectionHandlerService, $q) {
-                   debugger
-                    var selectedTokenList = selectionHandlerService.getSelectedTokenList();
+                    var selectedToken = selectionHandlerService.getSelectedTokenList();
+                    function whatIfPassage(token){
+                        if (token.static.index_in_task==token.indexInUnit){
+                            return token.indexInUnit;
+                        }
+                            return token.static.index_in_task;
+                    }
                     function allRetokenizedTokens(token){
-                        debugger
-                        // help functions
                         function findNextToken(list,token){
                             for(var i=0;i<list.length;i++){
-                                if (list[i].indexInUnit==token.indexInUnit+1){
+                                if (whatIfPassage(list[i])==whatIfPassage(token)+1){
                                     return list[i];
                                 }
 
@@ -537,7 +545,7 @@
                         }
                         function findPrevToken(list,token){
                             for(var i=0;i<list.length;i++){
-                                if (list[i].indexInUnit==token.indexInUnit-1){
+                                if (whatIfPassage(list[i])==whatIfPassage(token)-1){
                                     return list[i];
                                 }
                                 
@@ -549,7 +557,7 @@
                         var array=[];
                         // case 0: this token was not a retokenized token 
                         if((token.static.splitByTokenization==null ||token.static.splitByTokenization==false) && ((findNextToken(DataService.tree.tokens,token)==null)||(findNextToken(DataService.tree.tokens,token).static.splitByTokenization==false))){
-                            returnArray.push(token.static.text,token.indexInUnit,token.indexInUnit);
+                            returnArray.push(token.static.text,whatIfPassage(token),whatIfPassage(token));
                             return returnArray;
                         }
                         // case 1: this token was a part of a retokenized token
@@ -575,10 +583,10 @@
                         }
                         // sort the array wich the part of the original tokens sorted by indexInUniy
                         array.sort(function (a, b) {
-                            if (a.indexInUnit > b.indexInUnit) {
+                            if (whatIfPassage(a) > whatIfPassage(b)) {
                                 return 1;
                             }
-                            if (b.indexInUnit > a.indexInUnit) {
+                            if (whatIfPassage(b) > whatIfPassage(a)) {
                                 return -1;
                             }
                             return 0;
@@ -592,17 +600,18 @@
                         var newString=tmpArr.join('*');
                         // return the string + the indexes of the first part 
                         // of the original token and the index of the last part
-                        returnArray.push(newString,array[0].indexInUnit,array[array.length-1].indexInUnit);
+                        returnArray.push(newString,whatIfPassage(array[0]),whatIfPassage(array[array.length-1]));
                         return returnArray
                     }
                     
-                    var a = allRetokenizedTokens(selectedTokenList[0])
+                    var a = allRetokenizedTokens(selectedToken[0])
+                    
                     // if the token selected was never splitted
                         $scope.tokenizedText = a[0]; 
                           var firstIndex=a[1];
                           var lastIndex=a[2];
                         
-                    $scope.tokenizedAnnotationUnits = selectedTokenList[0].unitTreeId
+                    $scope.tokenizedAnnotationUnits = selectedToken[0].unitTreeId
                     $scope.vm = viewModal;
                     if (DataService.serverData) {
                         $scope.comment = DataService.serverData.user_comment;
@@ -653,17 +662,15 @@
                     });
 
                     $scope.saveRetokenization = function () {
-                        var mySelectedToken = selectedTokenList[0];
-                        var difference = lastIndex-firstIndex +1
-                        var unit = DataService.getUnitById(mySelectedToken.unitTreeId);
+                        var difference = lastIndex-firstIndex +1;
                         var splittedTokens = $scope.tokenizedText.split('*');
-                        var tokenIndex = unit.tokens.map(function (x) { return x.indexInUnit; }).indexOf(firstIndex);
-                        var originalToken = angular.copy(unit.tokens[tokenIndex]);
+                        var tokenIndex = DataService.tree.tokens.map(function (x) { return whatIfPassage(x); }).indexOf(firstIndex);
+                        var originalToken = angular.copy(DataService.tree.tokens[tokenIndex]);
                         var myIndex = originalToken.static.start_index;
-                        var tokenIndexInUnit = originalToken.indexInUnit;
                         var indexInTask = originalToken.static.index_in_task;
                         // set the counter for ids
-                        var idList = unit.tokens.map(function (x) { return x.static.id; })
+                        var idList = DataService.tree.tokens.map(function (x) { return x.static.id; })
+
                         if (Math.min(...idList)>0){
                            var counter = -1; 
                         }
@@ -671,47 +678,68 @@
                             var counter=Math.min(...idList)-1
                         }
                         // remove the original in the tree
-                        unit.tokens.splice(tokenIndex, difference);
+                        DataService.tree.tokens.splice(tokenIndex, difference);
+var d=[];
                         // replace the modified token in the tree
                         for (var i = 0; i < splittedTokens.length; i++) {
+                            debugger
                             var token = angular.copy(originalToken);
                             token.static.text = splittedTokens[i];
-                            // if(splittedTokens.length==1){ // the token is entire
-                            //     token.static.splitByTokenization = false;
-                            // }
-                            // else if(i!=0){ //all the part of the token except the first one
-                            // token.static.splitByTokenization = true;
-                            // }
-                            // else { // first part of the token
-                            //     token.static.splitByTokenization = false;
-                            // }
+                            if(splittedTokens.length==1){ // the token is entire
+                                token.static.splitByTokenization = false;
+                            }
+                            else if(i!=0){ //all the part of the token except the first one
+                            token.static.splitByTokenization = true;
+                            }
+                            else { // first part of the token
+                                token.static.splitByTokenization = false;
+                            }
                             // set the fields of the new token/s
                             token.static.id = counter;
                             token.static.start_index = myIndex;
                             myIndex = myIndex + token.static.text.length - 1;
                             token.static.end_index = myIndex;
-                            token.indexInUnit = tokenIndexInUnit + i;            
+                            token.indexInUnit = whatIfPassage(token) + i;            
                             token.static.index_in_task = indexInTask + i;
-                            myIndex = myIndex + 2;
+                            token.unitTreeId = 0;                            
+                            myIndex = myIndex + 1;
                             counter -= 1;
                             // replace the token in the tree
                             DataService.tree.tokens.splice(tokenIndex, 0, token);
+                            DataService.tree.tokens[tokenIndex].unitTreeId="0";
+                            debugger
+                            console.log( DataService.tree)
+                            d.push(DataService.tree.tokens[tokenIndex])
+                            console.log(d)
                             tokenIndex++;
                         }
                         var index2=firstIndex;
-                        var tokenIndex2 = unit.tokens.map(function (x) { return x.indexInUnit; }).indexOf(firstIndex);
+                        var tokenIndex2 = DataService.tree.tokens.map(function (x) { return whatIfPassage(x); }).indexOf(firstIndex);
 
                         // update in others tokens the indexes(in task in unit)
-                        for (var i = tokenIndex2; i < unit.tokens.length; i++) {
+                        for (var i = tokenIndex2; i < DataService.tree.tokens.length; i++) {
                             DataService.tree.tokens[i].indexInUnit =index2;
                             DataService.tree.tokens[i].static.index_in_task =index2;
-                            DataService.tree.tokens[i].static.start_index = DataService.tree.tokens[i-1].static.end_index +2;
+                            if(i==0){
+                                DataService.tree.tokens[i].static.start_index = 0;
+                            }
+                            else{
+                                if(DataService.tree.tokens[i].static.splitByTokenization==true){
+                                    DataService.tree.tokens[i].static.start_index = DataService.tree.tokens[i-1].static.end_index +1;
+                                }
+                                else{
+                                    DataService.tree.tokens[i].static.start_index = DataService.tree.tokens[i-1].static.end_index +2;
+                                }
+                            }
                             DataService.tree.tokens[i].static.end_index = DataService.tree.tokens[i].static.start_index + DataService.tree.tokens[i].static.text.length -1; 
                             index2++;
                         }
+                        debugger
+                        console.log("my d ",d)
                         console.log("TREEEEEE",DataService.tree);
+                        $rootScope.$broadcast("retokenization",{oldToken:DataService.tree.AnnotationUnits[0], newToken:d, counter:0});
                         // update the ui
-                        $rootScope.$broadcast("retokenization");
+                       
                     }
                 }
             
