@@ -733,12 +733,13 @@
                         var indexInTask = originalToken.static.index_in_task;
                         // set the counter for ids
                         var idList = DataService.tree.tokens.map(function (x) { return x.static.id; })
-
-                        if (Math.min(...idList) > 0) {
+                        console.log("my list0000000000000000000000000000000",idList,Object.values(idList),Math.min.apply(Math, idList))
+                        if (Math.min.apply(Math, idList) > 0) {
+                            debugger
                             var counter = -1;
                         }
                         else {
-                            var counter = Math.min(...idList) - 1
+                            var counter = Math.min.apply(Math, idList) - 1
                         }
                         // remove the original in the tree
                         DataService.tree.tokens.splice(tokenIndex, difference);
