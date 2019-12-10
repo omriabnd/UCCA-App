@@ -51,12 +51,13 @@
 
             vm.dataBlock['cursorLocation'] = 0;
             vm.dataBlock.tree_id !== "0" ? updateStartEndIndexForTokens(vm.dataBlock.tokens) : '';
-
             vm.dataBlock.categoriesTooltip = categoriesTooltip(vm);
             vm.showClusterButton = $rootScope.isSlottedLayerProject;
             vm.direction = $rootScope.direction;
             vm.disableRemotes = $rootScope.disableRemotes;
             $scope.$on('retokenization', function (events, args) {
+                console.log("vm.token", vm.tokens)
+                console.log('args',args.oldToken,args.newToken)
                 // if not in the passage we have to make some changes
                 if (vm.tokens[0].unitTreeId != 0) {
                     //case we are splitting 
@@ -112,10 +113,22 @@
             })
             $scope.$on('retokenizationPassage', function (events, args) {
 
+                if (vm.tokens[0].unitTreeId != 0) {//update in the children the indexintask same as passage
+                    debugger
+                    for (var i=0;i<vm.tokens.length;i++){
+                        for (var j=0; j<args.passageTokens.length; j++){
+                            if (vm.tokens[i].static.id==args.passageTokens[j].static.id){
+                                vm.tokens[i].static.index_in_task=args.passageTokens[j].static.index_in_task;
+                            }   
+                        }
+                    }
+                }
+
                 // For some reason, Angular does not detect changes in 
                 // the token array properly. $scope.$apply does not work,
                 // because it doesn't recalculate the bound properties.
                 // This is a severe measure to convince it that it needs to reapply the changes.
+                
                 var oldTokens = vm.tokens;
                 vm.tokens = []
                 setTimeout(function () {
