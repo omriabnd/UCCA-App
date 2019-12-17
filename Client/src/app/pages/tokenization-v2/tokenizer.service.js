@@ -18,15 +18,16 @@
 
             var service = {
                 oldCursorLocation: 0,
-                getTokensFromText: getTokensFromText,
+                
                 // originalText: originalText,
                 // originalTextNoSpaces: originalTextNoSpaces,
                 // setOriginalTextNoSpaces: setOriginalTextNoSpaces,
                 // setOriginalTokens: setOriginalTokens,
                 // originalTextSpaceMap: originalTextSpaceMap,
                 // setOriginalTextSpaceMap: setOriginalTextSpaceMap,
-                getTaskData:getTaskData,
                 // getTaskPassage:getTaskPassage,
+                getTaskData:getTaskData,
+                getTokensFromText: getTokensFromText,
                 saveTask:saveTask,
                 setCursorLocation:setCursorLocation,
                 buildSpaceMap:buildSpaceMap

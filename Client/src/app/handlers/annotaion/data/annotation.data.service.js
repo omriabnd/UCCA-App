@@ -1161,6 +1161,7 @@
          * @param shouldSubmit - shouldSubmit(submit or draft)
          */
         function saveTask(shouldSubmit){
+            debugger
             trace("DataService - saveTask");
             annotation_units = [];
             var tokensCopy = angular.copy(DataService.tree.tokens);

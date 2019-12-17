@@ -8,7 +8,7 @@
         .controller('AnnotationPageCtrl', AnnotationPageCtrl);
 
     /** @ngInject */
-    function AnnotationPageCtrl(DefaultHotKeys, TaskMetaData, AnnotationTextService, DataService, $rootScope, $scope, hotkeys, HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService, $timeout, $state, selectionHandlerService, $uibModal) {
+    function AnnotationPageCtrl(DefaultHotKeys,uccaFactory, TaskMetaData, DataService, $rootScope, $scope, hotkeys, HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService, $timeout, $state, selectionHandlerService, $uibModal) {
         var vm = this;
         vm.tokenizationTask = TaskMetaData.Task;
         $rootScope.direction = TaskMetaData.Task.passage.text_direction.toLowerCase();
@@ -427,6 +427,7 @@
         }
 
         function saveTask() {
+            debugger
             if (navigator.onLine) {
                 console.log("navigator.onLine")
             } else {
@@ -512,13 +513,8 @@
                 }
             });
         }
-        /*
-        *
-        *
-        *
-        *
-        */
-        function open(page, size, message, vm) {
+
+        function open(page, size, vm) {
             var remoteOriginalId = $rootScope.clckedLine;
             var viewModal = vm;
             $uibModal.open({
@@ -528,7 +524,7 @@
                 controller: function ($scope, selectionHandlerService, $q) {
                     var tokenUnit
                     var selectedToken = selectionHandlerService.getSelectedTokenList();
-                    function check(listOfTokens,token) {
+                    function getTokenUnit(listOfTokens,token) {
                         debugger
                         if (listOfTokens.length != 0) {
                             for (var i = 0; i < listOfTokens.length; i++) {
@@ -536,7 +532,7 @@
                                     tokenUnit = listOfTokens[i].tokens;
 
                                 }
-                                check(listOfTokens[i].AnnotationUnits,token);
+                                getTokenUnit(listOfTokens[i].AnnotationUnits,token);
                             }
                             return tokenUnit;
                         }
@@ -545,22 +541,12 @@
                     function getIndexInTask(token) {
                         return token.static.index_in_task;
                     }
-                    function updateTree(token) {//recursive function
-                        if (token.unitTreeId == 0) {
-                            if (DataService.tree.AnnotationUnits.length != 0) {
-                                for (var j = 0; j < DataService.tree.AnnotationUnits.length; i++) {
-                                    if (DataService.tree.AnnotationUnits[j].length != 0) {
-                                    }
-                                }
-                            }
-                        }
-                    }
                     function getEntireTokenFromAPart(token) {
 
                         var tokenUnit;
                         if (token.unitTreeId != 0) {
                             debugger
-                            tokenUnit = check(DataService.tree.AnnotationUnits,token)
+                            tokenUnit = getTokenUnit(DataService.tree.AnnotationUnits,token)
                         }
                         else { tokenUnit = DataService.tree.tokens }
                         console.log("tokenUnit", tokenUnit)
@@ -596,17 +582,17 @@
                         }
                         return null;
                     }
-                    function allRetokenizedTokens(token) {
+                    function getAllRetokenizedTokens(token) {
 
                         var returnArray = [];
-                        var originalToken = angular.copy(token)
+                        var originalToken = angular.copy(token);
                         console.log("token", token)
                         console.log("token.unitTreeId", token.unitTreeId)
                         //var myTree=angular.copy(DataService.tree)
                         var tokenUnit;
                         if (token.unitTreeId != 0) {
                             debugger
-                            tokenUnit = check(DataService.tree.AnnotationUnits,token)
+                            tokenUnit = getTokenUnit(DataService.tree.AnnotationUnits,token)
                         }
                         else { tokenUnit = DataService.tree.tokens }
                         console.log("tokenUnit", tokenUnit)
@@ -666,7 +652,7 @@
                     }
 
 
-                    var a = allRetokenizedTokens(selectedToken[0])
+                    var a = getAllRetokenizedTokens(selectedToken[0])
 
                     // if the token selected was never splitted
                     $scope.tokenizedText = a[0];
@@ -730,10 +716,8 @@
                         var tokenIndex = DataService.tree.tokens.map(function (x) { return getIndexInTask(x); }).indexOf(firstIndex);
                         var originalToken = angular.copy(DataService.tree.tokens[tokenIndex]);
                         var myIndex = originalToken.static.start_index;
-                        var indexInTask = originalToken.static.index_in_task;
                         // set the counter for ids
                         var idList = DataService.tree.tokens.map(function (x) { return x.static.id; })
-                        console.log("my list0000000000000000000000000000000",idList,Object.values(idList),Math.min.apply(Math, idList))
                         if (Math.min.apply(Math, idList) > 0) {
                             debugger
                             var counter = -1;
@@ -811,7 +795,6 @@
                             debugger
                             $rootScope.$broadcast("retokenization", { oldToken: getEntireTokenFromAPart(selectedToken[0]), newToken: newTokenArray });
                         }
-                        console.log("TREEEEEE", DataService.tree);
                     }
                 }
 

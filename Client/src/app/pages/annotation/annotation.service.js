@@ -22,7 +22,8 @@
             assignAbbreviationToCategories: assignAbbreviationToCategories,
             assignNameToCategories: assignNameToCategories,
             toggleAnnotationUnitView: toggleAnnotationUnitView,
-            isRTL: isRTL
+            isRTL: isRTL,
+            retokenizeTokens:retokenizeTokens,
         };
 
         return textService;
@@ -36,6 +37,9 @@
             return apiService.annotation.getTaskData(task_id).then(function(response) {
                 return response.data
             });
+        }
+        function retokenizeTokens(){
+            return true
         }
         
         function getProjectLayer(layer_id){
