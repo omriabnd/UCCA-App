@@ -58,9 +58,11 @@
                     }
 
                     function getIndexInTask(token) {
-                        return token.static.index_in_task;
-                    }
+                        debugger
+                        return token.static.index_in_task;}
+
                     function getEntireTokenFromAPart(token) {
+                        debugger
 
                         var tokenUnit;
                         if (token.unitTreeId != 0) {
@@ -77,7 +79,8 @@
                             mergeArray.push(newToken, token)
                             return mergeArray
                         }
-                        else if (token.static.splitByTokenization == false && findNextToken(tokenUnit, token).static.splitByTokenization == true) {
+                        else if (token.static.splitByTokenization == false && findNextToken(tokenUnit, token)!=undefined &&findNextToken(tokenUnit, token).static.splitByTokenization == true) {
+                            //console.log("+++++++++++++++++++++je rentre ici combien de fois ")
                             var mergeArray = []
                             mergeArray.push(token, findNextToken(tokenUnit, token))
                             return mergeArray
@@ -102,6 +105,7 @@
                         return null;
                     }
                     function getAllRetokenizedTokens(token) {
+                        debugger
 
                         var returnArray = [];
                         var originalToken = angular.copy(token);

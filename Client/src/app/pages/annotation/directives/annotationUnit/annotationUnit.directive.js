@@ -56,6 +56,7 @@
             vm.direction = $rootScope.direction;
             vm.disableRemotes = $rootScope.disableRemotes;
             $scope.$on('retokenization', function (events, args) {
+                debugger
                 console.log("vm.token", vm.tokens)
                 console.log('args',args.oldToken,args.newToken)
                 // if not in the passage we have to make some changes
@@ -88,6 +89,21 @@
                                 }
                             }
                         }
+                        else{
+                            // update some fields like indexintask maybe other
+                            // vm.token => token from annotation unit which was not retokenized 
+                            //old and new token => only the retokenized token 
+                            // we have to update the vm.token according to passage 
+                            // go in the passage look for the id of vm.token get it's index in task and give it to vm.token
+
+                            console.log(DataService.tree,'check if it is already updated ')
+                            for( var i=0; i<DataService.tree.tokens.length;i++){
+                                if (vm.tokens[0].static.id==DataService.tree.tokens[i].static.id){
+                                    //maybe here we need angular copy 
+                                    vm.tokens[0].static.index_in_task=DataService.tree.tokens[i].static.index_in_task
+                                }
+                            }
+                        }
                     }
                     //case we are joining
                     else { 
@@ -100,7 +116,9 @@
                             }
                         }
                     }
+                console.log('vm.tokens',vm.tokens,'tree', DataService.tree)
                 }
+
                 // For some reason, Angular does not detect changes in 
                 // the token array properly. $scope.$apply does not work,
                 // because it doesn't recalculate the bound properties.
