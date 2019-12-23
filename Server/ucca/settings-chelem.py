@@ -1,7 +1,7 @@
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ucca-dev',
+        'NAME': 'ucca_new',
         'OPTIONS': {
             'options': '-c search_path=django,ucca'
         },
