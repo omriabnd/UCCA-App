@@ -7,7 +7,7 @@
       .controller('TokenizationPageCtrl', TokenizationPageCtrl);
 
   /** @ngInject */
-  function TokenizationPageCtrl($scope, uccaFactory, TokenizationTask, Core, $state, $timeout, $rootScope) {
+  function TokenizationPageCtrl($scope, uccaFactory, TokenizationTask, Core, $state, $timeout, $rootScope, $q) {
       $scope.saveChanges = saveChanges;
       $scope.submitTask = submitTask;
 
@@ -36,8 +36,8 @@
       uccaFactory.originalText = $scope.originalText;
 
 
-      uccaFactory.setOriginalTextNoSpaces();
-      uccaFactory.setOriginalTextSpaceMap();
+      // uccaFactory.setOriginalTextNoSpaces();
+      // uccaFactory.setOriginalTextSpaceMap();
 
       console.log(uccaFactory.originalText, uccaFactory.originalTextNoSpaces, uccaFactory.originalTextSpaceMap);
 
@@ -56,6 +56,17 @@
           }
       });
 
+      $scope.$on('receivedCursor', function(event, cursorLoc) {
+          return $q(function(resolve, reject) {
+              var tmp = $scope.tokenizedText;
+              tmp = tmp.substr(0, cursorLoc) + '*' + tmp.substr(cursorLoc + 1);
+
+              $scope.tokenizedText = tmp;
+
+              resolve('success');
+          });
+      });
+
       /**
        *
        *
@@ -63,7 +74,7 @@
        *
        * */
 
-      $scope.originalTokens = uccaFactory.getTokensFromText($scope.originalText);
+      // $scope.originalTokens = uccaFactory.getTokensFromText($scope.originalText);
 
       $scope.tokenizedText = passageFromTokens;
 
@@ -72,8 +83,15 @@
         var tokensArr = tokensArray;
         var output = '';
         tokensArray.forEach(function(token,index){
-          output += (token.text) + (index == tokensArr.length-1 ? '' : ' ');
-        })
+            output += (token.text);
+            if (index === tokensArr.length-1) {
+                return output;
+            } else if (token.end_index+1 === tokensArray[index+1].start_index && token.text !== '\n') {
+                output += '*';
+            } else {
+                output += ' ';
+            }
+        });
         return output;
       }
 

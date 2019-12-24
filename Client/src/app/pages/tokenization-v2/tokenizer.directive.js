@@ -6,12 +6,13 @@
      *
      */
     angular.module('zAdmin.pages.tokenization-v2')
-        .directive('tokenizerBehaviour', function($timeout){
+        .directive('tokenizerBehaviour', function($timeout,$rootScope, uccaFactory){
             return {
                 link: link,
                 restrict: 'A',
                 scope: {},
             }
+
 
             function link(scope, el, attr){
 
@@ -48,6 +49,7 @@
                     var text = $(el).val();
 
                     var cursorLocation = $(el).prop("selectionStart");
+                    uccaFactory.setCursorLocation(cursorLocation);
                     charPrevious = text.substring((cursorLocation), cursorLocation-1);
                     charNext = text.substring((cursorLocation), cursorLocation+1);
 
@@ -66,20 +68,21 @@
                         if(cursorLocation){
 
                             console.log('charPrevious', charPrevious);
-                            if(charPrevious != "\n" && charPrevious.trim()==""){
+                            if(charPrevious != "\n" && charPrevious.trim()=="*"){
 
-                                console.log('deleted char isSpace');
+                                console.log('deleted char is *');
 
+                                // Delete only * and not space
                                 text = text.slice(cursorLocation-1,1);
 
                             }else {
                                 //if not space is deleted - do not allow
-                                console.log('not space no delete');
+                                console.log('not space * no delete');
                                 evt.preventDefault();
                                 return false;
                             }
                         } else {
-                            console.log('not space no delete');
+                            console.log('not space * no delete');
                             evt.preventDefault();
                             return false;
                         }
@@ -96,7 +99,7 @@
                     if (evt.keyCode == 32){
 
 
-                        if(charPrevious.trim()=="" || charNext.trim()==""){
+                        if(charPrevious.trim()=="" || charNext.trim()=="" || charPrevious.trim()=="*" || charNext.trim()=="*"){
                             evt.preventDefault();
                             return false;
                         }
@@ -104,23 +107,26 @@
 
                         if(text.trim()==""){
                             console.log('empty one');
-                            event.preventDefault();
+                            evt.preventDefault();
                             return false;
                         } else {
 
-
-                            $timeout(function(){
-                                scope.$apply();
+                            var promise = $timeout(function(){
+                                $rootScope.$apply($rootScope.$broadcast('receivedCursor', cursorLocation));
                             },1);
 
+                            promise.then(function() {
+                                el[0].selectionStart = uccaFactory.oldCursorLocation +1;
+                                el[0].selectionEnd = uccaFactory.oldCursorLocation +1;
+                            }, function() {
+                              console.error('Error during the tokenization')
+                            });
                         }
-
                     }
-
                 }
 
 
             }
-        
+
     })
 })();

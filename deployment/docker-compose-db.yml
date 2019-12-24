@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  ucca-db:
+    image: uccaproject/ucca-db
+    expose:
+      - "5432"
+    ports:
+      - "15432:5432"
+    volumes:
+      - ucca-volume:/var/lib/postgresql/data
+        
+volumes:
+  ucca-volume:
