@@ -8,7 +8,7 @@
         .controller('AnnotationPageCtrl', AnnotationPageCtrl);
 
     /** @ngInject */
-    function AnnotationPageCtrl(DefaultHotKeys,uccaFactory, TaskMetaData, DataService, $rootScope, $scope, hotkeys, HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService, $timeout, $state, selectionHandlerService, $uibModal) {
+    function AnnotationPageCtrl(DefaultHotKeys,uccaFactory,AnnotationTextService, TaskMetaData, DataService, $rootScope, $scope, hotkeys, HotKeysManager, Definitions, ENV_CONST, Core, restrictionsValidatorService, $timeout, $state, selectionHandlerService, $uibModal) {
         var vm = this;
         vm.tokenizationTask = TaskMetaData.Task;
         $rootScope.direction = TaskMetaData.Task.passage.text_direction.toLowerCase();

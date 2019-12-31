@@ -7,6 +7,7 @@
         
 
     function navBarItemDirective() {
+        debugger
         var directive = {
             restrict:'E',
             templateUrl:'app/pages/annotation/directives/nav-bar-item/navBarItem.html',

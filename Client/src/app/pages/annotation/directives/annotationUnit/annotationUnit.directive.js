@@ -968,7 +968,7 @@
         function unitClicked(vm, index, event) {
             console.log("unitClicked")
             //DEBO
-            HotKeysManager.setMouseMode(!HotKeysManager.getMouseMode())
+            //HotKeysManager.setMouseMode(!HotKeysManager.getMouseMode())
             console.log("mousemode1", HotKeysManager.getMouseMode())
             trace("annotationUnitDirective - unitClicked");
             if (selectionHandlerService.getUnitToAddRemotes() !== "0" && selectionHandlerService.getUnitToAddRemotes() !== index) {

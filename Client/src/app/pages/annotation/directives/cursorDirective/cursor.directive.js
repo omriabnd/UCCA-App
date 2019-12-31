@@ -68,12 +68,11 @@
             });
 
             $scope.$on('tokenIsClicked', function(event, args) {
-                 var mousemode = HotKeysManager.getMouseMode()
-                 // THIS CODE DOES NOT DO ANYTHING
-                // if(args.holdCursor) {
-                //     // Don't move the cursor
-                //     return;
-                // }
+                 //var mousemode = HotKeysManager.getMouseMode()
+                if(args.holdCursor) {
+                    // Don't move the cursor
+                    return;
+                }
                 if(args.token && args.unitTreeId.toString() === $scope.vm.unitId.toString() ){
                     
                     var unitTokens = getUnitTokens($scope);
@@ -83,6 +82,8 @@
 
                     
                     if(elementPos > -1){
+                        !args.moveLeft ? $(elem).insertAfter( unitTokens[elementPos] ) : $(elem).insertBefore( unitTokens[elementPos] );
+                        !args.moveLeft ? setCursorPosition($scope, elementPos + 1) : setCursorPosition($scope, elementPos);
                         console.log('dans token is clicked on')
                         debugger
                         console.log(args)
