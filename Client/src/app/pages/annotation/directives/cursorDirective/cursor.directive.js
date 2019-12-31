@@ -68,7 +68,7 @@
             });
 
             $scope.$on('tokenIsClicked', function(event, args) {
-                 //var mousemode = HotKeysManager.getMouseMode()
+                //var mousemode = HotKeysManager.getMouseMode()
                 if(args.holdCursor) {
                     // Don't move the cursor
                     return;
@@ -87,13 +87,14 @@
                         console.log('dans token is clicked on')
                         debugger
                         console.log(args)
-                        $(elem).insertAfter( unitTokens[elementPos] )
-                        setCursorPosition($scope, args.cursorLocation)
+                        //$(elem).insertAfter( unitTokens[elementPos] )
+                        //setCursorPosition($scope, args.cursorLocation)
                     }
                 }
             });
 
             $scope.$on('moveRight', function(event, args) {
+                debugger
                 console.log('dans move right on')
                 var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
@@ -106,6 +107,7 @@
                         }
                         var token = $scope.vm.cursorLocation == tokenUnit.tokens.length ? tokenUnit.tokens[$scope.vm.cursorLocation - 1] : tokenUnit.tokens[$scope.vm.cursorLocation];
                          if(shiftPressed){
+                             console.log('shift pressed ')
                              selectionHandlerService.keyboardToggleTokenSelection(token);
                         }else{
                             $(elem).insertAfter( unitTokens[$scope.vm.cursorLocation] );
@@ -134,8 +136,9 @@
 
                         var lastInChildUnit = token.inChildUnitTreeId;
                         if (!nextToken.inChildUnitTreeId) {
+                            console.log('in the if ')
                             // set cursor to next  token
-                            setCursorPosition($scope, $scope.vm.cursorLocation-1);//demand from the annotator , not to move +1 after the unselect
+                            setCursorPosition($scope, $scope.vm.cursorLocation);
                         }
                         else {
                             var tokenPosition = tokenUnit.tokens.map(function(x) {return x.static.id; }).indexOf(token.static.id);
@@ -143,6 +146,7 @@
                             for (var pos = tokenPosition; pos < tokenUnit.tokens.length; pos++) {
                                 if (tokenUnit.tokens[pos].inChildUnitTreeId !== lastInChildUnit) {
                                     // set cursor to these token position
+                                    console.log('pos', pos)
                                     setCursorPosition($scope, pos);
                                     break;
                                 }
@@ -150,9 +154,13 @@
                         }
 
                         if($scope.vm.cursorLocation === unitTokens.length) {
+                            console.log('insert after')
                             $(elem).insertAfter( unitTokens[unitTokens.length - 1] )
+                            
                         } else {
+                            console.log('insert before')
                             $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
+                            
                         }
                     }
                 }else if($scope.vm.cursorUpdated){
@@ -161,6 +169,7 @@
             });
 
             $scope.$on('moveLeft', function(event, args) {
+                console.log('dans move left on')
                 var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
                 if(args.unitId === $scope.vm.unitId.toString() &&  !$scope.vm.cursorUpdated){
@@ -175,12 +184,13 @@
                         }
                         var token = $scope.vm.cursorLocation == tokenUnit.tokens.length ? tokenUnit.tokens[$scope.vm.cursorLocation -1] : tokenUnit.tokens[$scope.vm.cursorLocation];
                         if(shiftPressed){
+                            console.log('shift pressed ')
                             selectionHandlerService.keyboardToggleTokenSelection(token);
                         }else{
                             $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
                             !ctrlPressed ? selectionHandlerService.clearTokenList() : $scope.vm.cursorUpdated = true;
                         }
-
+                    
                         var unitToCheckIn = DataService.getUnitById(args.unitId);
 
                         var sameParentTokens = unitToCheckIn.tokens.filter(function(element,index,array){
@@ -230,6 +240,7 @@
             });
 
             $scope.$on('moveToNextRelevant', function(event, args) {
+                console.log('move to next relevant')
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
 
                 if(args.unitId === $scope.vm.unitId.toString()  && !$scope.vm.cursorUpdated){
