@@ -706,7 +706,6 @@
                 })
             });
             vm.defaultHotKeys.DefaultHotKeys.forEach(function (hotKeyObj) {
-
                 HotKeysManager.addHotKey(hotKeyObj.combo);
                 hotkeys.add({
                     combo: hotKeyObj.combo,
@@ -735,7 +734,7 @@
                             }
                             case 'moveRight': {
                                 // DataService.getUnitById(selectedUnitId).cursorLocation++;
-
+                                debugger
                                 $rootScope.$broadcast("moveRight", { unitId: selectedUnitId, unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation });
                                 break;
                             }

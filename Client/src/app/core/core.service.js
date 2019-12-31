@@ -337,6 +337,7 @@
 			// call it from controller this way: vm.autoExecute = Core.autoExecute.apply(this,vm.smartTableStructure);
 			var vm = this;
 			var args = Array.prototype.slice.call(arguments);
+			console.log(args)
 			args.filter(function (item, index) {
 				if (item.autoExecute) {
 					console.log("item", item);

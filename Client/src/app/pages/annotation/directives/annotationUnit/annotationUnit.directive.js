@@ -870,6 +870,7 @@
         }
 
         function toggleMouseUp(event) {
+
             trace("annotationUnitDirective - toggleMouseUp");
             HotKeysManager.updatePressedHotKeys({ combo: 'shift' }, false);
             HotKeysManager.updatePressedHotKeys({ combo: 'ctrl' }, false);
@@ -884,8 +885,9 @@
 
                     tokenGroup.forEach(function (tokenInGroup) {
                         var elementPos = selectedTokensList.map(function (x) { return x.static.id; }).indexOf(tokenInGroup.static.id);
-                        if (elementPos === -1) {
+                        if (elementPos === -1) {  console.log('tokenis clicked broad')
                             $rootScope.$broadcast('tokenIsClicked', { token: tokenInGroup, unitTreeId: tokenInGroup.unitTreeId, selectAllTokenInUnit: true });
+                      
                         }
                     })
                 }

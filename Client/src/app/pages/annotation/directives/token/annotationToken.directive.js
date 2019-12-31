@@ -136,14 +136,14 @@
                         for(var i=startToken.indexInUnit; i<=vm.token.indexInUnit; i++){
                             if(selectedUnit.tokens[i] === undefined){
                                 break;
-                            }
-                            console.log("ou la annotationtokendirective 138")
+                            }  console.log('dans add on hover')
                             $rootScope.$broadcast('tokenIsClicked', {
                                 token: selectedUnit.tokens[i],
                                 unitTreeId: selectedUnit.tokens[i].unitTreeId  || "0",
                                 selectAllTokenInUnit: false,
                                 doNotRemoveExistingToken: true
                             });
+                          
                         }
                     }else{//right to left
                         var selectedUnitId = selectionHandlerService.getSelectedUnitId();
@@ -154,7 +154,7 @@
                          //for(var i=startToken.indexInUnit; i<=vm.token.indexInUnit; i++){
                         if(selectedUnit.tokens[i] === undefined){
                                 break;
-                            }
+                            }console.log('dans add on hover')
                             $rootScope.$broadcast('tokenIsClicked', {
                                 cursorLocation:vm.token.indexInUnit,
                                 token: selectedUnit.tokens[i],
@@ -162,6 +162,7 @@
                                 selectAllTokenInUnit: false,
                                 doNotRemoveExistingToken: true
                             });
+                            
                         }
                     }
 
@@ -192,17 +193,20 @@
             !doNotUpdateSelectedToken ? selectionHandlerService.setSelectedToken(vm.token) : '';
 
             var tokenInUnit = DataService.getUnitById(vm.token.inChildUnitTreeId);
+            debugger
             if(vm.token.inChildUnitTreeId !== null && tokenInUnit){
                 var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
                 !ctrlPressed ? selectionHandlerService.clearTokenList() : '';
                 var parentUnit = DataService.getUnitById(vm.token.unitTreeId);
                 var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inChildUnitTreeId === vm.token.inChildUnitTreeId; });
 
-                tokenGroup.forEach(function(token){
+                tokenGroup.forEach(function(token){console.log('dans token clicked')
                     $rootScope.$broadcast('tokenIsClicked',{token: token, unitTreeId: token.unitTreeId,selectAllTokenInUnit: true});
+                
                 })
-            }else{
+            }else{console.log('dans token clicked')
                 $rootScope.$broadcast('tokenIsClicked',{token: vm.token, unitTreeId: vm.unitTreeId, selectAllTokenInUnit: false});
+                
             }
         }
 
@@ -237,13 +241,14 @@
                 var tokenUnit = DataService.getUnitById(unitId);
                 if(tokenUnit && tokenUnit.tree_id !== '0'){
                     var parentID = DataService.getParentUnitId(tokenUnit.tree_id);
-                    for(var i=0; i<tokenUnit.tokens.length; i++, index++) {
+                    for(var i=0; i<tokenUnit.tokens.length; i++, index++) {  console.log('dans mouse up from token')
                         $rootScope.$broadcast('tokenIsClicked', {
                             token: tokenUnit.tokens[i],
                             unitTreeId: parentID || "0",
                             selectAllTokenInUnit: true,
                             doNotRemoveExistingToken: true
                         });
+                      
                     }
 
                     var parentUnit = DataService.getParentUnit(tokenUnit.tokens[0].unitTreeId);
@@ -257,6 +262,7 @@
                             token: parentUnit.tokens[elementPos],
                             unitTreeId: DataService.getParentUnitId(tokenUnit.tokens[0].unitTreeId) || "0"
                         });
+                        console.log('movecursor')
                     }
                 }
             });

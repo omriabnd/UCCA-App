@@ -24,7 +24,8 @@
         return directive;
 
         function setCursorPosition($scope, location) {
-
+            debugger
+            console.log('dans set cursor ppostion')
             $scope.vm.cursorLocation = location;
 
         }
@@ -35,12 +36,14 @@
         }
 
         function unitCursorDirectiveLink($scope, elem, attrs) {
+            debugger
+            console.log('dans unit cursor directive link')
             $scope.vm = $scope.cursorCtrl;
             setCursorPosition($scope, 0);
             $scope.vm.cursorUpdated = false;
 
             $scope.$on('moveCursor', function(event, args) {
-                //console.log("moveCursor")
+                console.log("moveCursor on")
                 if(args.unitTreeId.toString() === $scope.vm.unitId.toString() ){
 
                     var unitTokens = getUnitTokens($scope);
@@ -80,6 +83,9 @@
 
                     
                     if(elementPos > -1){
+                        console.log('dans token is clicked on')
+                        debugger
+                        console.log(args)
                         $(elem).insertAfter( unitTokens[elementPos] )
                         setCursorPosition($scope, args.cursorLocation)
                     }
@@ -87,6 +93,7 @@
             });
 
             $scope.$on('moveRight', function(event, args) {
+                console.log('dans move right on')
                 var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
                 if(args.unitId === $scope.vm.unitId.toString()  && !$scope.vm.cursorUpdated){
@@ -286,8 +293,9 @@
                             unit.gui_status = "OPEN";
 
                             selectionHandlerService.clearTokenList();
-                            unit.tokens.forEach(function(curr_token){
+                            unit.tokens.forEach(function(curr_token){    console.log('dans move to next relevant broad')
                                 $rootScope.$broadcast('tokenIsClicked',{token: curr_token, unitTreeId: $scope.vm.unitId, moveLeft: false, selectAllTokenInUnit: true});
+                        
                             });
 
                             var nextLocation = unitToCheckIn.tokens.map(function(x) {return x.static.id; }).indexOf(unit.tokens[unit.tokens.length-1].static.id) + 1;
