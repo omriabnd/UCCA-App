@@ -59,7 +59,6 @@
 
 
         function AnnotationTokenController($scope) {
-            console.log("on each update")
             var vm = this;
             vm.token['inChildUnitTreeId'] === undefined ? vm.token['inChildUnitTreeId'] = null : '';
             vm.tokenIsClicked = directive.tokenClicked;
@@ -136,7 +135,7 @@
                         for(var i=startToken.indexInUnit; i<=vm.token.indexInUnit; i++){
                             if(selectedUnit.tokens[i] === undefined){
                                 break;
-                            }  console.log('dans add on hover')
+                            } 
                             $rootScope.$broadcast('tokenIsClicked', {
                                 token: selectedUnit.tokens[i],
                                 unitTreeId: selectedUnit.tokens[i].unitTreeId  || "0",
@@ -150,11 +149,10 @@
                         var selectedUnit = DataService.getUnitById(selectedUnitId);
                        
                         for(var i=vm.token.indexInUnit; i<=startToken.indexInUnit; i++){
-                         console.log("vm.token",vm.token)
                          //for(var i=startToken.indexInUnit; i<=vm.token.indexInUnit; i++){
                         if(selectedUnit.tokens[i] === undefined){
                                 break;
-                            }console.log('dans add on hover')
+                            }
                             $rootScope.$broadcast('tokenIsClicked', {
                                 cursorLocation:vm.token.indexInUnit,
                                 token: selectedUnit.tokens[i],
@@ -173,7 +171,6 @@
         }
 
         function initToken(vm,index){
-            console.log(index)
         }
 
         function tokenClicked(vm,doNotUpdateSelectedToken){
@@ -193,18 +190,17 @@
             !doNotUpdateSelectedToken ? selectionHandlerService.setSelectedToken(vm.token) : '';
 
             var tokenInUnit = DataService.getUnitById(vm.token.inChildUnitTreeId);
-            debugger
             if(vm.token.inChildUnitTreeId !== null && tokenInUnit){
                 var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
                 !ctrlPressed ? selectionHandlerService.clearTokenList() : '';
                 var parentUnit = DataService.getUnitById(vm.token.unitTreeId);
                 var tokenGroup = parentUnit.tokens.filter(function(x) {return x.inChildUnitTreeId === vm.token.inChildUnitTreeId; });
 
-                tokenGroup.forEach(function(token){console.log('dans token clicked')
+                tokenGroup.forEach(function(token){
                     $rootScope.$broadcast('tokenIsClicked',{token: token, unitTreeId: token.unitTreeId,selectAllTokenInUnit: true});
                 
                 })
-            }else{console.log('dans token clicked')
+            }else{
                 $rootScope.$broadcast('tokenIsClicked',{token: vm.token, unitTreeId: vm.unitTreeId, selectAllTokenInUnit: false});
                 
             }
@@ -241,7 +237,7 @@
                 var tokenUnit = DataService.getUnitById(unitId);
                 if(tokenUnit && tokenUnit.tree_id !== '0'){
                     var parentID = DataService.getParentUnitId(tokenUnit.tree_id);
-                    for(var i=0; i<tokenUnit.tokens.length; i++, index++) {  console.log('dans mouse up from token')
+                    for(var i=0; i<tokenUnit.tokens.length; i++, index++) {  
                         $rootScope.$broadcast('tokenIsClicked', {
                             token: tokenUnit.tokens[i],
                             unitTreeId: parentID || "0",
@@ -262,7 +258,6 @@
                             token: parentUnit.tokens[elementPos],
                             unitTreeId: DataService.getParentUnitId(tokenUnit.tokens[0].unitTreeId) || "0"
                         });
-                        console.log('movecursor')
                     }
                 }
             });

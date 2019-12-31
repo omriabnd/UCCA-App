@@ -24,8 +24,6 @@
         return directive;
 
         function setCursorPosition($scope, location) {
-            debugger
-            console.log('dans set cursor ppostion')
             $scope.vm.cursorLocation = location;
 
         }
@@ -36,14 +34,11 @@
         }
 
         function unitCursorDirectiveLink($scope, elem, attrs) {
-            debugger
-            console.log('dans unit cursor directive link')
             $scope.vm = $scope.cursorCtrl;
             setCursorPosition($scope, 0);
             $scope.vm.cursorUpdated = false;
 
             $scope.$on('moveCursor', function(event, args) {
-                console.log("moveCursor on")
                 if(args.unitTreeId.toString() === $scope.vm.unitId.toString() ){
 
                     var unitTokens = getUnitTokens($scope);
@@ -60,7 +55,6 @@
             });
 
             $scope.$on('resetCursor_'+$scope.vm.unitId, function(event, args) {
-                console.log("hey, reset cursor", $scope.vm.unitId);
 
                 var unitTokens = getUnitTokens($scope);
                 setCursorPosition($scope, 0);
@@ -84,9 +78,6 @@
                     if(elementPos > -1){
                         !args.moveLeft ? $(elem).insertAfter( unitTokens[elementPos] ) : $(elem).insertBefore( unitTokens[elementPos] );
                         !args.moveLeft ? setCursorPosition($scope, elementPos + 1) : setCursorPosition($scope, elementPos);
-                        console.log('dans token is clicked on')
-                        debugger
-                        console.log(args)
                         //$(elem).insertAfter( unitTokens[elementPos] )
                         //setCursorPosition($scope, args.cursorLocation)
                     }
@@ -94,8 +85,6 @@
             });
 
             $scope.$on('moveRight', function(event, args) {
-                debugger
-                console.log('dans move right on')
                 var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
                 if(args.unitId === $scope.vm.unitId.toString()  && !$scope.vm.cursorUpdated){
@@ -107,7 +96,6 @@
                         }
                         var token = $scope.vm.cursorLocation == tokenUnit.tokens.length ? tokenUnit.tokens[$scope.vm.cursorLocation - 1] : tokenUnit.tokens[$scope.vm.cursorLocation];
                          if(shiftPressed){
-                             console.log('shift pressed ')
                              selectionHandlerService.keyboardToggleTokenSelection(token);
                         }else{
                             $(elem).insertAfter( unitTokens[$scope.vm.cursorLocation] );
@@ -136,7 +124,6 @@
 
                         var lastInChildUnit = token.inChildUnitTreeId;
                         if (!nextToken.inChildUnitTreeId) {
-                            console.log('in the if ')
                             // set cursor to next  token
                             setCursorPosition($scope, $scope.vm.cursorLocation);
                         }
@@ -146,7 +133,6 @@
                             for (var pos = tokenPosition; pos < tokenUnit.tokens.length; pos++) {
                                 if (tokenUnit.tokens[pos].inChildUnitTreeId !== lastInChildUnit) {
                                     // set cursor to these token position
-                                    console.log('pos', pos)
                                     setCursorPosition($scope, pos);
                                     break;
                                 }
@@ -154,11 +140,9 @@
                         }
 
                         if($scope.vm.cursorLocation === unitTokens.length) {
-                            console.log('insert after')
                             $(elem).insertAfter( unitTokens[unitTokens.length - 1] )
                             
                         } else {
-                            console.log('insert before')
                             $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
                             
                         }
@@ -169,7 +153,6 @@
             });
 
             $scope.$on('moveLeft', function(event, args) {
-                console.log('dans move left on')
                 var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
                 if(args.unitId === $scope.vm.unitId.toString() &&  !$scope.vm.cursorUpdated){
@@ -184,7 +167,6 @@
                         }
                         var token = $scope.vm.cursorLocation == tokenUnit.tokens.length ? tokenUnit.tokens[$scope.vm.cursorLocation -1] : tokenUnit.tokens[$scope.vm.cursorLocation];
                         if(shiftPressed){
-                            console.log('shift pressed ')
                             selectionHandlerService.keyboardToggleTokenSelection(token);
                         }else{
                             $(elem).insertBefore( unitTokens[$scope.vm.cursorLocation] );
@@ -240,7 +222,6 @@
             });
 
             $scope.$on('moveToNextRelevant', function(event, args) {
-                console.log('move to next relevant')
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
 
                 if(args.unitId === $scope.vm.unitId.toString()  && !$scope.vm.cursorUpdated){
@@ -296,7 +277,6 @@
                         var unit = nextUnit;
 
 
-                        console.log(unit);
 
                         if(unit !== null && unit.tree_id !== "0"){
                             if(!!oldUnit && (!oldUnit.parent_tree_id || oldUnit.parent_tree_id === "0")){
@@ -305,7 +285,7 @@
                             unit.gui_status = "OPEN";
 
                             selectionHandlerService.clearTokenList();
-                            unit.tokens.forEach(function(curr_token){    console.log('dans move to next relevant broad')
+                            unit.tokens.forEach(function(curr_token){  
                                 $rootScope.$broadcast('tokenIsClicked',{token: curr_token, unitTreeId: $scope.vm.unitId, moveLeft: false, selectAllTokenInUnit: true});
                         
                             });
