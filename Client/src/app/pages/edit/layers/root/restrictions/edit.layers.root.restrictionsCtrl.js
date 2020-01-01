@@ -20,7 +20,19 @@
         var parentCtrl = $scope.$parent.vm;
 
         vm.restrictionsTypes = ENV_CONST.RESTRICTIONS_TYPE;
-        vm.restrictionType = $state.params.chosenItem != null ? $state.params.chosenItem.type : defaultType;
+        //vm.restrictionType = $state.params.chosenItem != null ? $state.params.chosenItem.type : defaultType;
+        if ($state.params.chosenItem) {
+            for (var restriction_type in ENV_CONST.RESTRICTIONS_TYPE) {
+                if (ENV_CONST.RESTRICTIONS_TYPE[restriction_type].key == $state.params.chosenItem.type) {
+                    vm.restrictionType = ENV_CONST.RESTRICTIONS_TYPE[restriction_type];
+                }
+            }
+
+        }
+        else {
+            vm.restrictionType = defaultType;
+        }
+
 
         vm.smartTableData = EditTableData;
 
@@ -46,7 +58,7 @@
         });
 
         vm.affectedSmartTableData = angular.copy(vm.smartTableData);
-
+        debugger;
 
         vm.affectedSmartTableData.forEach(function(field,index){
             if($state.params.chosenItem){
@@ -72,6 +84,7 @@
             }
         }
         function toggleInCategoryToGroupOne(category,categoryValue){
+            debugger;
             if(categoryValue){
                 categoryOneArray.push(category);
             }else{
