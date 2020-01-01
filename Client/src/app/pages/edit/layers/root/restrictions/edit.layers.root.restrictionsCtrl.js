@@ -58,7 +58,6 @@
         });
 
         vm.affectedSmartTableData = angular.copy(vm.smartTableData);
-        debugger;
 
         vm.affectedSmartTableData.forEach(function(field,index){
             if($state.params.chosenItem){
@@ -84,7 +83,6 @@
             }
         }
         function toggleInCategoryToGroupOne(category,categoryValue){
-            debugger;
             if(categoryValue){
                 categoryOneArray.push(category);
             }else{
