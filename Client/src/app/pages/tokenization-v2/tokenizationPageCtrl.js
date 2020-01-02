@@ -122,8 +122,7 @@
       }
 
       function saveChanges(mode){
-        removeSpaceTokenAndUpdatePassage()
-        $scope.tokenizationTask.tokens = $scope.savedTokens;
+        $scope.tokenizationTask.tokens = removeSpaceTokenAndUpdatePassage();
         $scope.tokenizationTask.passage.text = $scope.tokenizedText;
         mode = mode ? mode : 'draft';
         return uccaFactory.saveTask(mode,$scope.tokenizationTask).then(function(response){
