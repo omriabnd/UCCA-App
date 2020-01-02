@@ -95,8 +95,8 @@
       }
       function removeSpaceTokenAndUpdatePassage(){
         for (var i=0; i<$scope.savedTokens.length;i++){
-            let token=$scope.savedTokens[i]
-            let tokenStartIndex=token.start_index;
+            var token=$scope.savedTokens[i]
+            var tokenStartIndex=token.start_index;
             if (token.text==' '){
                 $scope.savedTokens.splice(i,1);
                 $scope.savedTokens=updatePassageIndexes($scope.savedTokens,i,tokenStartIndex)
