@@ -93,6 +93,26 @@
         });
         return output;
       }
+      function removeSpaceTokenAndUpdatePassage(){
+        for (var i=0; i<$scope.savedTokens.length;i++){
+            let token=$scope.savedTokens[i]
+            let tokenStartIndex=token.start_index;
+            if (token.text==' '){
+                $scope.savedTokens.splice(i,1);
+                $scope.savedTokens=updatePassageIndexes($scope.savedTokens,i,tokenStartIndex)
+            }
+            return $scope.savedTokens;
+        }
+      }
+      function updatePassageIndexes(passage,index, tokenStartIndex){
+          myIndex=tokenStartIndex
+        for (var i = index ;i<passage.length;i++){
+            passage[i].start_index=myIndex
+            passage[i].end_index=passage[i].start_index+passage[i].text.length-1
+            myIndex+=2
+        }
+        return passage
+      }
 
       function submitTask(){
           return saveChanges("submit").then(function(res){
@@ -102,6 +122,7 @@
       }
 
       function saveChanges(mode){
+        removeSpaceTokenAndUpdatePassage()
         $scope.tokenizationTask.tokens = $scope.savedTokens;
         $scope.tokenizationTask.passage.text = $scope.tokenizedText;
         mode = mode ? mode : 'draft';

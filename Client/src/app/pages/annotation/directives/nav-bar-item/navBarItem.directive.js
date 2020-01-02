@@ -39,8 +39,12 @@
 
         function enableRetokenizeButton(){
             var selectedTokenList = selectionHandlerService.getSelectedTokenList();
+            
             if(selectedTokenList.length == 0){
                 return false;
+            }
+            if (selectedTokenList[0].unitTreeId!=0){
+                return false
             }
             else if(selectedTokenList.length >1){
                     return false;
