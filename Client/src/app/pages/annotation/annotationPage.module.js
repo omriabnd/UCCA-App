@@ -44,8 +44,9 @@
         };
 
         function getAnnotationTask(AnnotationTextService,$stateParams,DataService,restrictionsValidatorService,selectionHandlerService,$rootScope,$timeout, AssertionService) {
+          
             return AnnotationTextService.getAnnotationTask($stateParams.taskId).then(function(taskResponse){
-                console.log("annotation page module ")
+          
                 // TODO: Move this into its own function
 
                 // --- Process Categorties and Layers ---
@@ -80,7 +81,6 @@
                     	// cat.refinementCategory = true;
                     	})
                 }
-
                 var refinedCategories = [];
                 var refinementCategories = allCategories;
 
@@ -88,7 +88,6 @@
                 currentLayer.categories.forEach(function(category){
 	                category.fromParentLayer = false;
                 });
-                
                 while( !!currentLayer.parent ){
                     currentLayer.parent.categories.forEach(function(category){
 	                        category.fromParentLayer = true;
@@ -104,7 +103,6 @@
                     currentLayer = currentLayer.parent;
                 }
 //                allCategories = allCategories.concat(refinedCategories);
-
                 // sort and move the parent category to locat upper then the children categories
                 if(!!taskResponse.project.layer.parent){
                     allCategories.forEach(function(cat,index){
@@ -117,7 +115,6 @@
                 
                 allCategories.forEach(function(category,index){
                     category['callbackFunction'] = 'toggleCategory';
-                    
                     if(category.parent && category.parent.id){
                         // move the child category to be after its parent
                         // allCategories.move(index,allCategories.findIndex(cat => cat.id==category.parent.id)+1);
@@ -174,9 +171,7 @@
                 // this definition of splitByTokenization is working only for tokens retokenized from tokenization task ...
                 // second, define createdByTokenization
                 // TODO: Find what createdByTokenization is used for.
-                console.log("tree before ",DataService.tree,"server data before", DataService.serverData.tokens)
                 for (var index=1; index < DataService.serverData.tokens.length; index++) {
-                    console.log("enter here !")
                     //createdByTokenization is True for tokens which don't start at the beginning of an original word
                     //in the passage text. For example, if "don't" is split to "do" and "n't" then "n't" has createdByTokenization=true
                     DataService.serverData.tokens[index].splitByTokenization =
@@ -184,8 +179,6 @@
                         (DataService.serverData.tokens[index].start_index == DataService.serverData.tokens[index-1].end_index+1 )&&
                         DataService.serverData.tokens[index-1].text !== '\n';
                 }
-                console.log("tree after ",DataService.tree,"server data after",DataService.serverData.tokens)
-                
                 if(!!DataService.serverData.annotation_units){
                     DataService.categories = allCategories;
                     DataService.createHashTables();

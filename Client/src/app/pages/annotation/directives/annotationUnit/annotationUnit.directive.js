@@ -56,9 +56,6 @@
             vm.direction = $rootScope.direction;
             vm.disableRemotes = $rootScope.disableRemotes;
             $scope.$on('retokenization', function (events, args) {
-                debugger
-                console.log("vm.token", vm.tokens)
-                console.log('args',args.oldToken,args.newToken)
                 // if not in the passage we have to make some changes
                 if (vm.tokens[0].unitTreeId != 0) {
                     //case we are splitting 
@@ -96,7 +93,6 @@
                             // we have to update the vm.token according to passage 
                             // go in the passage look for the id of vm.token get it's index in task and give it to vm.token
 
-                            console.log(DataService.tree,'check if it is already updated ')
                             for( var i=0; i<DataService.tree.tokens.length;i++){
                                 if (vm.tokens[0].static.id==DataService.tree.tokens[i].static.id){
                                     //maybe here we need angular copy 
@@ -116,7 +112,6 @@
                             }
                         }
                     }
-                console.log('vm.tokens',vm.tokens,'tree', DataService.tree)
                 }
 
                 // For some reason, Angular does not detect changes in 
@@ -132,7 +127,6 @@
             $scope.$on('retokenizationPassage', function (events, args) {
 
                 if (vm.tokens[0].unitTreeId != 0) {//update in the children the indexintask same as passage
-                    debugger
                     for (var i=0;i<vm.tokens.length;i++){
                         for (var j=0; j<args.passageTokens.length; j++){
                             if (vm.tokens[i].static.id==args.passageTokens[j].static.id){
@@ -966,10 +960,8 @@
         }
 
         function unitClicked(vm, index, event) {
-            console.log("unitClicked")
             //DEBO
             //HotKeysManager.setMouseMode(!HotKeysManager.getMouseMode())
-            console.log("mousemode1", HotKeysManager.getMouseMode())
             trace("annotationUnitDirective - unitClicked");
             if (selectionHandlerService.getUnitToAddRemotes() !== "0" && selectionHandlerService.getUnitToAddRemotes() !== index) {
                 var unitUsed = DataService.getUnitById(selectionHandlerService.getUnitToAddRemotes()).AnnotationUnits.map(function (x) { return x.cloned_from_tree_id; }).indexOf(vm.unit.tree_id);

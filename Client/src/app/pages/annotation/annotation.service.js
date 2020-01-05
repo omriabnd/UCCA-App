@@ -14,7 +14,6 @@
 
     /** @ngInject */
     function AnnotationTextService(apiService, ENV_CONST,$rootScope,DataService) {
-       console.log("on each update AnnotationTextService")
         var textService = {
             getAnnotationTask: getAnnotationTask,
             getProjectLayer:getProjectLayer,
@@ -34,6 +33,7 @@
          */
 
         function getAnnotationTask(task_id){
+
             return apiService.annotation.getTaskData(task_id).then(function(response) {
                 return response.data
             });

@@ -199,6 +199,9 @@
             annotationTokensArray.forEach(function(token){
                 hash[token.id] = DataService.hashTables.tokensHashTable[token.id]
             });
+            var a = Object.values(hash).sort(function (a, b) { return a.start_index - b.start_index}
+            )
+            hash=a
             return hash;
         }
 
@@ -207,6 +210,7 @@
          * @param annotationTokensArray
          */
         function createTokensHashByTokensArrayForPassage(annotationTokensArray){
+            debugger
             trace("DataService - createTokensHashByTokensArrayForPassage");
             DataService.tree.tokenMap = tokensArrayToHash(annotationTokensArray);
             // TODO: Need send children_tokens instead of tokens ?
@@ -295,7 +299,6 @@
          * @returns {*}
          */
         function toggleCategoryForUnit(unitId, category,inInitStage){
-            console.log("tree=", DataService.tree);
             trace("DataService - toggleCategoryForUnit");
             return $q(function(resolve, reject) {
 
@@ -418,7 +421,6 @@
             // level is actually the parentTreeId
 
             trace("DataService - insertToTree");
-            // console.log("In insertToTree, newObject=", newObject);
 
             return $q(function(resolve, reject) {
                 if (!inInitStage && DataService.serverData.project.layer.type === ENV_CONST.LAYER_TYPE.REFINEMENT) {
@@ -426,7 +428,6 @@
                     console.log('ALERT - insertToTree -  prevent insert to tree when refinement layer');
                     reject(selectedUnitId);
                 }
-
                 var parentUnit = getUnitById(level);
 
                 if (!parentUnit.AnnotationUnits) {
@@ -443,7 +444,6 @@
                         newObject.tree_id = level + '-' + parseInt(parentUnit.AnnotationUnits.length + 1);
                     }
                 }
-
 
                 newObject.comment = newObject.comment || "";
                 newObject.cluster = newObject.cluster || "";
@@ -623,7 +623,6 @@
                     newObject.tokens.forEach(function (token) {
                         DataService.tokensWithComments.add(token.static.id);
                     });
-                    console.log(DataService.tokensWithComments);
                 }
 
                 // Check tree in AssertionService after add unit
@@ -1161,13 +1160,11 @@
          * @param shouldSubmit - shouldSubmit(submit or draft)
          */
         function saveTask(shouldSubmit){
-            debugger
             trace("DataService - saveTask");
             annotation_units = [];
             var tokensCopy = angular.copy(DataService.tree.tokens);
             tokensCopy = filterTokensAtt(tokensCopy);
             tokensCopy = filterStaticTokens(tokensCopy);// TODO-- remove static from tokens list
-
             // arrangeUnitTokens("0");
             // Update annotation_units
             var traversResult = traversInTree(DataService.tree);

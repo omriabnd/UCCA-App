@@ -108,7 +108,6 @@
                 return token.static.text.toLowerCase();
             }).join("_");
 
-            console.log(selectedTokens);
 
 
             if (!!selectedTokens) {
@@ -408,7 +407,6 @@
         }
 
         function resetAllAnnotations(res) {
-            console.log('DataService', DataService);
             Core.promptAlert('Are you sure you want to delete all the annotation units?').result.then(function (res) {
                 if (res) {
                     $rootScope.resetAllAnnotations = true;
@@ -427,11 +425,8 @@
         }
 
         function saveTask() {
-            debugger
             if (navigator.onLine) {
-                console.log("navigator.onLine")
             } else {
-                console.log(" -- navigator.offLine")
             }
 
             window.addEventListener('online', function (e) { console.log('online'); });
@@ -523,7 +518,6 @@
                 size: size,
                 controller: function ($scope, selectionHandlerService, $q) {
                     var selectedToken = selectionHandlerService.getSelectedTokenList();
-
                     $scope.tokenizedAnnotationUnits = selectedToken[0].unitTreeId
                     $scope.vm = viewModal;
                     if (DataService.serverData) {
@@ -573,7 +567,6 @@
                             resolve('success');
                         });
                     });
-
                     var tokenDataArray = uccaFactory.getAllRetokenizedTokens(selectedToken[0])
                     $scope.tokenizedText = tokenDataArray[0];
                     var firstIndex = tokenDataArray[1];
@@ -586,9 +579,10 @@
                         var originalToken = angular.copy(DataService.tree.tokens[tokenIndex]);
                         var myIndex = originalToken.static.start_index;
                         // set the counter for ids
-                        var idTokensList = DataService.tree.tokens.map(function (x) { return x.static.id; })
+                        var idTokensList = DataService.tree.tokens.map(function (x) {
+                           //TO DO : deborah check this added on 05/01
+                            if(x.static.id!=undefined){return x.static.id} })
                         if (Math.min.apply(Math, idTokensList) > 0) {
-                            debugger
                             var counter = -1;
                         }
                         else {
@@ -657,7 +651,7 @@
                         }
                     }
                 }
-
+               
             }).result.then(function (okRes) {
 
             }, function (abortRes) {
@@ -734,7 +728,6 @@
                             }
                             case 'moveRight': {
                                 // DataService.getUnitById(selectedUnitId).cursorLocation++;
-                                debugger
                                 $rootScope.$broadcast("moveRight", { unitId: selectedUnitId, unitCursorPosition: DataService.getUnitById(selectedUnitId).cursorLocation });
                                 break;
                             }

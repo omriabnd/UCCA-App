@@ -44,7 +44,6 @@
 
                     function getTokenUnit(listOfTokens,token) {
                         var tokenUnit;
-                        debugger
                         if (listOfTokens.length != 0) {
                             for (var i = 0; i < listOfTokens.length; i++) {
                                 if (listOfTokens[i].tree_id == token.unitTreeId) {
@@ -58,29 +57,22 @@
                     }
 
                     function getIndexInTask(token) {
-                        debugger
                         return token.static.index_in_task;}
 
                     function getEntireTokenFromAPart(token) {
-                        debugger
 
                         var tokenUnit;
                         if (token.unitTreeId != 0) {
-                            debugger
                             tokenUnit = getTokenUnit(DataService.tree.AnnotationUnits,token)
                         }
                         else { tokenUnit = DataService.tree.tokens }
-                        console.log("tokenUnit", tokenUnit)
-                        debugger
                         if (token.static.splitByTokenization == true) {
                             var mergeArray = []
                             var newToken = findPrevToken(tokenUnit, token)
-                            console.log(newToken)
                             mergeArray.push(newToken, token)
                             return mergeArray
                         }
                         else if (token.static.splitByTokenization == false && findNextToken(tokenUnit, token)!=undefined &&findNextToken(tokenUnit, token).static.splitByTokenization == true) {
-                            //console.log("+++++++++++++++++++++je rentre ici combien de fois ")
                             var mergeArray = []
                             mergeArray.push(token, findNextToken(tokenUnit, token))
                             return mergeArray
@@ -96,7 +88,6 @@
                         return null;
                     }
                     function findPrevToken(list, token) {
-                        debugger
                         for (var i = 0; i < list.length; i++) {
                             if (getIndexInTask(list[i]) == getIndexInTask(token) - 1) {
                                 return list[i];
@@ -105,22 +96,15 @@
                         return null;
                     }
                     function getAllRetokenizedTokens(token) {
-                        debugger
-
                         var returnArray = [];
                         var originalToken = angular.copy(token);
-                        console.log("token", token)
-                        console.log("token.unitTreeId", token.unitTreeId)
                         //var myTree=angular.copy(DataService.tree)
                         var tokenUnit;
                         if (token.unitTreeId != 0) {
-                            debugger
                             tokenUnit = getTokenUnit(DataService.tree.AnnotationUnits,token)
                         }
                         else { tokenUnit = DataService.tree.tokens }
-                        console.log("tokenUnit", tokenUnit)
                         var array = [];
-                        debugger
                         // case 0: this token was not a retokenized token 
                         if ((token.static.splitByTokenization == null || token.static.splitByTokenization == false) && ((findNextToken(tokenUnit, token) == null) || (findNextToken(tokenUnit, token).static.splitByTokenization == false) || (findNextToken(tokenUnit, token).static.splitByTokenization == null))) {
                             returnArray.push(token.static.text, getIndexInTask(token), getIndexInTask(token));
@@ -135,8 +119,6 @@
                         // push in the array all the following tokens which were splitted
                         while (findNextToken(tokenUnit, token) != null && findNextToken(tokenUnit, token).static.splitByTokenization == true) {
                             var essai = findNextToken(tokenUnit, token)
-                            console.log(essai)
-                            console.log(findNextToken(tokenUnit, token).static.splitByTokenization)
                             token = findNextToken(tokenUnit, token);
                             array.push(token);
                         }
@@ -161,7 +143,6 @@
                             return 0;
                         });
                         var tmpArr = [];
-                        debugger
                         // get the text of the part of the token
                         for (var i = 0; i < array.length; i++) {
                             tmpArr[i] = array[i].static.text

@@ -7,7 +7,6 @@
         
 
     function navBarItemDirective() {
-        debugger
         var directive = {
             restrict:'E',
             templateUrl:'app/pages/annotation/directives/nav-bar-item/navBarItem.html',
@@ -80,7 +79,6 @@
             return DataService.serverData && DataService.serverData.user_comment !== "";
         }
         function itemClicked(functionName){
-            console.log(functionName);
             if(annotationPageVM[functionName]){
                 annotationPageVM[functionName]()
             }else{

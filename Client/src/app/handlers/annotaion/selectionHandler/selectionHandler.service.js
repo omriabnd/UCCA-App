@@ -446,7 +446,6 @@
 
                     unit.categories.sort(compareSlot);
                     changeSlots(unit.categories);
-
                     unit.categories.forEach(function(category,index){
                         var cat = DataService.hashTables.categoriesHashTable[category.id];
                         if (category.slot) {
@@ -535,7 +534,6 @@
                         categories[categories.length-2] = tmp;
                     }
                 }
-
                 function initRegularUnit(unit) {
                     unit.children_tokens.forEach(function(token){
                         var parentId = unit.tree_id.indexOf('-') === -1 ? "0" : unit.tree_id.split("-").slice(0,unit.tree_id.split("-").length-1).join("-");
@@ -583,7 +581,6 @@
 
                     _handler.clearTokenList();
                 }
-
                 trace("selectionHandlerService - initTree");
                 return $q(function(resolve, reject) {
                     // First create the regular and implicit units
@@ -617,17 +614,15 @@
                             DataService.tree.tokens.push(_handler.copyTokenToStaticFormat(token));
                         });
                     }
-
                     // Add attributes to tree.tokens: indexInUnit, unitTreeId
-                    updateIndexInUnitAttribute(DataService.tree.tokens);
 
+                    updateIndexInUnitAttribute(DataService.tree.tokens);
                     // todo: check if indexInUnit updated here in unit 0 (in tree.tokens)
                     // add unitTreeId and indexInUnit attributes
                     DataService.tree.tokens.forEach(function(token, index) {
                         token['unitTreeId'] = "0";
                         token.indexInUnit = index;
                     });
-
 
                     DataService.unitType = 'REGULAR';
                     // after init the tree, is it needed?
