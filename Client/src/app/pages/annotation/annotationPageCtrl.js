@@ -14,8 +14,8 @@
         $rootScope.direction = TaskMetaData.Task.passage.text_direction.toLowerCase();
         $rootScope.disableRemotes = TaskMetaData.Layer.disable_remotes;
         $rootScope.requireAllTokensCovered = TaskMetaData.Layer.require_all_tokens_covered;
-        // vm.annotationTokens = tokensInStaticFormat(); // vm.tokenizationTask.tokens;
-        vm.annotationTokens = DataService.tree.tokens;
+        vm.annotationTokens =tokensInStaticFormat(); //vm.tokenizationTask.tokens;
+        //vm.annotationTokens = DataService.tree.tokens;
         vm.categories = TaskMetaData.Categories;
         vm.defaultHotKeys = DefaultHotKeys;
         vm.categorizedWords = [];
@@ -161,14 +161,14 @@
             return !cat.fromParentLayer;
         }
 
-        // function tokensInStaticFormat() {
-        //     var tokens = [];
-        //     for (var i = 0; i < vm.tokenizationTask.tokens.length; i++) {
-        //         // Build token array includes static fields
-        //         tokens.push(selectionHandlerService.copyTokenToStaticFormat(vm.tokenizationTask.tokens[i]));
-        //     }
-        //     return tokens;
-        // }
+        function tokensInStaticFormat() {
+            var tokens = [];
+            for (var i = 0; i < vm.tokenizationTask.tokens.length; i++) {
+                // Build token array includes static fields
+                tokens.push(selectionHandlerService.copyTokenToStaticFormat(vm.tokenizationTask.tokens[i]));
+            }
+            return tokens;
+        }
 
         function toggleParents() {
             $scope.showParents = !$scope.showParents;
@@ -567,6 +567,7 @@
                             resolve('success');
                         });
                     });
+
                     var tokenDataArray = uccaFactory.getAllRetokenizedTokens(selectedToken[0])
                     $scope.tokenizedText = tokenDataArray[0];
                     var firstIndex = tokenDataArray[1];
@@ -624,7 +625,6 @@
 
                         // update in others tokens the indexes(in passage)
                         for (var i = tokenIndex2; i < DataService.tree.tokens.length; i++) {
-
                             if (i == 0) {
                                 DataService.tree.tokens[i].static.start_index = 0;
                             }
