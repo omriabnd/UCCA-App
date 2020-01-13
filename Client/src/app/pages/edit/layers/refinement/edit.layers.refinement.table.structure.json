@@ -186,6 +186,30 @@
     "showInTable":true,
     "shouldSendToServer":true
   },
+    {
+    "key":"require_all_tokens_covered",
+    "name":"Require that all tokens are annotated",
+    "order":11,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"",
+    "value":true,
+    "showInTable":true,
+    "shouldSendToServer":true
+  },
+  {
+    "key":"disable_remotes",
+    "name":"Disable remote units",
+    "order":11,
+    "filter":true,
+    "search":true,
+    "type":"checkbox",
+    "placeholder":"",
+    "value":true,
+    "showInTable":true,
+    "shouldSendToServer":true
+  },
   {
     "key":"export",
     "order":99,

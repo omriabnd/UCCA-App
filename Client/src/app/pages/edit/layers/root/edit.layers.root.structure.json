@@ -431,6 +431,18 @@
     ]
   },
   {
+    "key":"slotted",
+    "name":"Is Slotted",
+    "order":11,
+    "filter":false,
+    "search":false,
+    "type":"checkbox",
+    "placeholder":"Is Active...",
+    "value":false,
+    "showInTable":false,
+    "shouldSendToServer":true
+  },
+  {
     "key":"created_at",
     "name":"Created at",
     "order":12,
