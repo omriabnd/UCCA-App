@@ -76,9 +76,13 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
         else:
             data = self._get_tokens(obj)
             data_json = json.dumps(data)
-            tj = Tokens_Json.objects.create(task=obj, tokens_json=data_json)
-            obj.tokens_json = tj
-            obj.save()
+            # tokenization tasks do not have a Tokens_Json
+            # There is no need for this, since the Tokens_Json is used for caching for quick GET in the annotation
+            # task.
+            if obj.type != Constants.TASK_TYPES_JSON['TOKENIZATION']:
+                tj = Tokens_Json.objects.create(task=obj, tokens_json=data_json)
+                obj.tokens_json = tj
+                obj.save()
         return data
 
     def _get_tokens(self, obj):
