@@ -210,7 +210,7 @@
              */
 
             function getTokensFromText(text){
-                var processText = text.replace(/\n/g, " \n ");
+                var processText = text.replace(/\n/g, "\n");
 
                 var tokensSplit = processText.split('*').join(' ').split(' ');
                 var textSpaceMap = buildSpaceMap(text);

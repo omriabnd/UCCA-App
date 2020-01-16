@@ -5,7 +5,7 @@
           'not-relevant': !vm.relevant(vm.token) && !showParents,
           'token-different-color': vm.hasChangeTextColorProperty(vm.token)
      }"
-    border-paint style="{{ vm.token.borderStyle }}"
+    border-paint="{{ vm.token.borderStyle }}"
     ng-init="vm.initToken(vm,$index)"
     ng-dblclick="vm.tokenDbClick(vm)">
   <span class="token"

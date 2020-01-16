@@ -48,7 +48,7 @@
        *
        */
       $scope.$watch("tokenizedText", function(tokenizedText){
-          console.log('watch tokenizedText');
+          console.log('watch tokenizedText',tokenizedText);
           if(tokenizedText) {
               $scope.savedTokens = uccaFactory.getTokensFromText(tokenizedText);
               console.log("watch",$scope.savedTokens);
@@ -79,6 +79,7 @@
 
 
       function createTextFromTokens(tokensArray){
+          debugger
         var tokensArr = tokensArray;
         var output = '';
         tokensArray.forEach(function(token,index){
@@ -94,18 +95,20 @@
         return output;
       }
       function removeSpaceTokenAndUpdatePassage(){
+          console.log(TokenizationTask.tokens)
+          debugger
         for (var i=0; i<$scope.savedTokens.length;i++){
             var token=$scope.savedTokens[i]
             var tokenStartIndex=token.start_index;
-            if (token.text==' '){
+            if (token.text==''){
                 $scope.savedTokens.splice(i,1);
                 $scope.savedTokens=updatePassageIndexes($scope.savedTokens,i,tokenStartIndex)
             }
-            return $scope.savedTokens;
-        }
+           
+        } return $scope.savedTokens;
       }
       function updatePassageIndexes(passage,index, tokenStartIndex){
-          myIndex=tokenStartIndex
+          var myIndex=tokenStartIndex
         for (var i = index ;i<passage.length;i++){
             passage[i].start_index=myIndex
             passage[i].end_index=passage[i].start_index+passage[i].text.length-1
@@ -122,7 +125,9 @@
       }
 
       function saveChanges(mode){
-        $scope.tokenizationTask.tokens = removeSpaceTokenAndUpdatePassage();
+        // if bugs with empty tokens we could use this function $scope.tokenizationTask.tokens = removeSpaceTokenAndUpdatePassage();
+        
+        $scope.tokenizationTask.tokens = $scope.savedTokens
         $scope.tokenizationTask.passage.text = $scope.tokenizedText;
         mode = mode ? mode : 'draft';
         return uccaFactory.saveTask(mode,$scope.tokenizationTask).then(function(response){
