@@ -42,7 +42,7 @@ class TasksViewSet(viewsets.ModelViewSet):
 
             # get all users tasks by user_id
             if  user_role == 'ADMIN':
-                param_user_tasks = Tasks.objects.all().order_by('-out_of_date','-updated_at')
+                param_user_tasks = Tasks.objects.all().order_by('-updated_at')
             elif user_role == 'PM' or user_role == 'PROJECT_MANAGER':
                 param_user_tasks = Tasks.objects.all().filter(created_by=self.request.user.id).order_by('-out_of_date','-updated_at')
             elif user_role == 'ANNOTATOR' or user_role == 'GUEST':
