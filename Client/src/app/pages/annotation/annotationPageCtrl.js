@@ -165,7 +165,7 @@
             var tokens = [];
             for (var i = 0; i < vm.tokenizationTask.tokens.length; i++) {
                 // Build token array includes static fields
-                tokens.push(selectionHandlerService.copyTokenToStaticFormat(vm.tokenizationTask.tokens[i]));
+                tokens.push(selectionHandlerService.copyTokenToStaticFormat(DataService.tree.tokens[i]));
             }
             return tokens;
         }
