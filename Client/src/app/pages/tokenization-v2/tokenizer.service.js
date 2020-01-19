@@ -105,7 +105,6 @@
                         }
                         else { tokenUnit = DataService.tree.tokens }
                         var array = [];
-                        console.log('case -1',token.static.text,token.static.splitByTokenization,findPrevToken(tokenUnit, token).static.require_annotation)
                         //cas -1 : this token comes after a punctuation mark 
                         if (token.static.splitByTokenization==true && findPrevToken(tokenUnit, token).static.require_annotation== false){
                         array.push(findPrevToken(tokenUnit, token))
