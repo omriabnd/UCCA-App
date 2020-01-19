@@ -126,9 +126,10 @@
 
       function saveChanges(mode){
         // if bugs with empty tokens we could use this function $scope.tokenizationTask.tokens = removeSpaceTokenAndUpdatePassage();
-        
+      
         $scope.tokenizationTask.tokens = $scope.savedTokens
         $scope.tokenizationTask.passage.text = $scope.tokenizedText;
+        console.log('---------TREE-------------',$scope.tokenizationTask.tokens)
         mode = mode ? mode : 'draft';
         return uccaFactory.saveTask(mode,$scope.tokenizationTask).then(function(response){
           Core.showNotification("success", mode == "submit" ? "Submitted" : "Task Saved");
