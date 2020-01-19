@@ -601,6 +601,8 @@
                             }
                             else if (i != 0) { //all the part of the token except the first one
                                 token.static.splitByTokenization = true;
+                                //  if the token in first index (from where we angular copy) was a pucnctuation mark 
+                                token.static.require_annotation = true ;
                             }
                             else { // first part of the token
                                 token.static.splitByTokenization = false;

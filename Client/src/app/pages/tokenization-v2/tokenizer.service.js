@@ -105,6 +105,33 @@
                         }
                         else { tokenUnit = DataService.tree.tokens }
                         var array = [];
+                        console.log('case -1',token.static.text,token.static.splitByTokenization,findPrevToken(tokenUnit, token).static.require_annotation)
+                        //cas -1 : this token comes after a punctuation mark 
+                        if (token.static.splitByTokenization==true && findPrevToken(tokenUnit, token).static.require_annotation== false){
+                        array.push(findPrevToken(tokenUnit, token))
+                        array.push(token)
+                        array.sort(function (a, b) {
+                            if (getIndexInTask(a) > getIndexInTask(b)) {
+                                return 1;
+                            }
+                            if (getIndexInTask(b) > getIndexInTask(a)) {
+                                return -1;
+                            }
+                            return 0;
+                        });
+                        var tmpArr = [];
+                        // get the text of the part of the token
+                        for (var i = 0; i < array.length; i++) {
+                            tmpArr[i] = array[i].static.text
+                        }
+                        // join the texts with a *
+                        var newString = tmpArr.join('*');
+                        console.log( getIndexInTask(findPrevToken(tokenUnit , token)))
+                        returnArray.push(newString,getIndexInTask(findPrevToken(tokenUnit , token)), getIndexInTask(token));
+                        return returnArray;
+                        }
+
+
                         // case 0: this token was not a retokenized token 
                         if ((token.static.splitByTokenization == null || token.static.splitByTokenization == false) && ((findNextToken(tokenUnit, token) == null) || (findNextToken(tokenUnit, token).static.splitByTokenization == false) || (findNextToken(tokenUnit, token).static.splitByTokenization == null))) {
                             returnArray.push(token.static.text, getIndexInTask(token), getIndexInTask(token));
