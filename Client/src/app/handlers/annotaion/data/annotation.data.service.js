@@ -210,7 +210,6 @@
          * @param annotationTokensArray
          */
         function createTokensHashByTokensArrayForPassage(annotationTokensArray){
-            debugger
             trace("DataService - createTokensHashByTokensArrayForPassage");
             DataService.tree.tokenMap = tokensArrayToHash(annotationTokensArray);
             // TODO: Need send children_tokens instead of tokens ?
