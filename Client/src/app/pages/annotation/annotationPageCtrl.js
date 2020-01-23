@@ -541,7 +541,8 @@
                     $scope.$on('deleteStar', function (event,cursorLoc) {
                         return $q(function (resolve, reject) {
                             var tmp = $scope.tokenizedText;
-                            tmp = tmp.replace("*", '');
+                            //tmp = tmp.replace("*", '');
+                            tmp = tmp.substr(0,cursorLoc-1)+tmp.substr(cursorLoc);
                             $scope.tokenizedText = tmp;
                             resolve('success');
                         });

@@ -82,8 +82,9 @@
                                 }, 5);
     
                                 promise.then(function () {
-                                    el[0].selectionStart = uccaFactory.oldCursorLocation + 1;
-                                    el[0].selectionEnd = uccaFactory.oldCursorLocation + 1;
+
+                                    el[0].selectionStart = uccaFactory.oldCursorLocation-1 ;
+                                    el[0].selectionEnd = uccaFactory.oldCursorLocation -1;
                                 }, function () {
                                     console.error('Error during the tokenization')
                                 });
