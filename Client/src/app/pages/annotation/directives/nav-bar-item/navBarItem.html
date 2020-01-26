@@ -1,4 +1,4 @@
-<div class="item-container" ng-click="vm.itemClicked(this.$parent.item.executeFunction)" >
+<div class="item-container" ng-click="vm.checkRetokenizeButton(this.$parent.item)?vm.itemClicked(this.$parent.item.executeFunction):''" >
     <a type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="top" ng-disabled="!vm.checkRetokenizeButton(this.$parent.item)" title="{{::vm.toolTip}}" ng-class="{'task-has-comment': vm.itemObject.showWhenFull && vm.checkIfTaskHasComment()}">
     	{{::this.$parent.item.name}}
     </a>
