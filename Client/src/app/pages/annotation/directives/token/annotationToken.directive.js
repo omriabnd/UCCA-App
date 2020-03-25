@@ -38,17 +38,22 @@
             $scope.$on('tokenIsClicked', function(event, args) {
                 var ctrlPressed = HotKeysManager.checkIfCtrlOrCmdPressed();
                 var shiftPressed = HotKeysManager.checkIfHotKeyIsPressed('shift');
-
                 if(args.token && args.token.static.id !== $scope.vm.token.static.id ){
-                    !ctrlPressed ? $scope.vm.tokenIsClicked = false : '';
+                   !ctrlPressed ? $scope.vm.tokenIsClicked = false : '';
                 }else if(args.unitTreeId !== undefined && (args.unitTreeId.toString() ===  $scope.vm.unitTreeId )){
                     !ctrlPressed && !shiftPressed && !args.selectAllTokenInUnit ? selectionHandlerService.clearTokenList() : '';
                     if(selectionHandlerService.isTokenInList($scope.vm.token) && !args.doNotRemoveExistingToken){
-                        selectionHandlerService.removeTokenFromList($scope.vm.token.static.id);
+                        debugger
+                        // for (var i=0;i<selectionHandlerService.selectedTokenList.length;i++){
+                        //     if($scope.vm.token.indexInUnit<selectionHandlerService.selectedTokenList[i].indexInUnit){
+                        //         selectionHandlerService.removeTokenFromList(selectionHandlerService.selectedTokenList[i]);
+                        //     }
+                        // }
+                         selectionHandlerService.removeTokenFromList($scope.vm.token.static.id);
                     }else{
-                        selectionHandlerService.addTokenToList($scope.vm.token, $scope.vm.unitTreeId, args.selectAllTokenInUnit);
+                       selectionHandlerService.addTokenToList($scope.vm.token, $scope.vm.unitTreeId, args.selectAllTokenInUnit);
                     }
-                    // $scope.vm.tokenIsClicked = true;
+                     // $scope.vm.tokenIsClicked = true;
                 }
             });
 
@@ -120,48 +125,61 @@
         }
 
         function addOnHover(vm){
-
-            //selectionHandlerService.getMouseMode()
             if(HotKeysManager.checkIfHotKeyIsPressed('shift')){
-
                 var startToken = selectionHandlerService.getSelectedToken();
-                //console.log("startToken",startToken.static)
                 if(startToken){
                     var tokenArray = [];
-                    if(startToken.indexInUnit <= vm.token.indexInUnit){// left to right
+                    if(startToken.indexInUnit < vm.token.indexInUnit){// left to right
                         var selectedUnitId = selectionHandlerService.getSelectedUnitId();
                         var selectedUnit = DataService.getUnitById(selectedUnitId);
-
+                        selectionHandlerService.clearTokenList();//מאפס את ה selection
                         for(var i=startToken.indexInUnit; i<=vm.token.indexInUnit; i++){
+
                             if(selectedUnit.tokens[i] === undefined){
                                 break;
-                            } 
-                            $rootScope.$broadcast('tokenIsClicked', {
+                            }    $rootScope.$broadcast('tokenIsClicked', {
+                                cursorLocation:vm.token.indexInUnit,
                                 token: selectedUnit.tokens[i],
                                 unitTreeId: selectedUnit.tokens[i].unitTreeId  || "0",
                                 selectAllTokenInUnit: false,
-                                doNotRemoveExistingToken: true
+                                doNotRemoveExistingToken: true,
                             });
+
+                    }
+                         
                           
-                        }
+                        }else if(startToken.indexInUnit==vm.token.indexInUnit){
+
+                            $rootScope.$broadcast('tokenIsClicked', {
+                                cursorLocation:vm.token.indexInUnit,
+                                token: startToken,
+                                unitTreeId: startToken.unitTreeId  || "0",
+                                selectAllTokenInUnit: false,
+                                doNotRemoveExistingToken: false,
+                            });
+                        
                     }else{//right to left
+                        selectionHandlerService.clearTokenList()
                         var selectedUnitId = selectionHandlerService.getSelectedUnitId();
                         var selectedUnit = DataService.getUnitById(selectedUnitId);
                        
                         for(var i=vm.token.indexInUnit; i<=startToken.indexInUnit; i++){
-                         //for(var i=startToken.indexInUnit; i<=vm.token.indexInUnit; i++){
+
                         if(selectedUnit.tokens[i] === undefined){
                                 break;
-                            }
-                            $rootScope.$broadcast('tokenIsClicked', {
+                            }   $rootScope.$broadcast('tokenIsClicked', {
                                 cursorLocation:vm.token.indexInUnit,
                                 token: selectedUnit.tokens[i],
                                 unitTreeId: selectedUnit.tokens[i].unitTreeId || "0",
                                 selectAllTokenInUnit: false,
-                                doNotRemoveExistingToken: true
+                                doNotRemoveExistingToken: true,
+                                rtl:'true'
+
                             });
-                            
                         }
+                         
+                            
+                        
                     }
 
                 }else{
@@ -201,6 +219,7 @@
                 
                 })
             }else{
+
                 $rootScope.$broadcast('tokenIsClicked',{token: vm.token, unitTreeId: vm.unitTreeId, selectAllTokenInUnit: false});
                 
             }
