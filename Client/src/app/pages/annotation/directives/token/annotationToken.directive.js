@@ -149,6 +149,8 @@
                          
                           
                         }else if(startToken.indexInUnit==vm.token.indexInUnit){
+                            selectionHandlerService.clearTokenList();//מאפס את ה selection
+
 
                             $rootScope.$broadcast('tokenIsClicked', {
                                 cursorLocation:vm.token.indexInUnit,

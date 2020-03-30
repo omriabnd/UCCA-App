@@ -77,8 +77,8 @@
                 trace("selectionHandlerService - getLastInsertedToken");
                 return this.lastSelectedToken;
             },
-
             copyTokenToStaticFormat: function(token) {
+                //TODO SOMETIMES TOKEN=NULL =>MAKES TRUBBLE
                 trace("selectionHandlerService - copyTokenToStaticFormat");
                 var newFormatToken = {static: {}};
                 Object.keys(token).forEach(function(key) {
@@ -104,9 +104,9 @@
                 if(elementPos === -1){
                     // Remove this line because removeTokenFromUnitTokens function updates inChildUnitTreeId (before adding the unit)
                     // Buggy, because it put inChildUnitTreeId field in clicked token, without crete unit to this token.
-                    // !groupUnit ? _handler.removeTokenFromUnitTokens(token) : '';
-
+                     //!groupUnit ? _handler.removeTokenFromUnitTokens(token) : '';
                     this.selectedTokenList.push(token);
+
                     sortSelectedTokenList(this.selectedTokenList);
                 }
                 this.selectedUnit = selectedUnit;
@@ -144,7 +144,7 @@
                  */
                 var elementPos = this.selectedTokenList.map(function(x) {return x.static.id; }).indexOf(tokenId);
                 //Omri: the next line is commented out as it doesn't do anything (Feb 11)
-                //var objectFound = this.selectedTokenList[elementPos];
+                // var objectFound = this.selectedTokenList[elementPos];
                 // _handler.addTokenFromUnitTokens();
                 this.selectedTokenList.splice(elementPos,1);
             },
@@ -355,9 +355,11 @@
                     this.keyboardSelectedTokens.push(token);
                 } else {
                     this.keyboardSelectedTokens.splice(elementPos,1);
+                    //this.clearTokenList();
+                    // MAKES SELECTIONS AND DESELECTION +/- WORK WITH SHIFT+ ARROW
+
                 }
 
-                // this.clearTokenList();
                 // TODO: Build a list of all tokens - in all the units of tikens in keyboardSelectedTokens
                 var shouldBeSelected = _handler.calcTokenClosure(this.keyboardSelectedTokens);
                 var currentlySelected = angular.copy(_handler.selectedTokenList);
@@ -371,7 +373,7 @@
                 shouldBeSelected.forEach(function(token) {
                     _handler.addTokenToList(token, token.unitTreeId); // addTokenToList already handles tokens already in the list
                 });
-                // Comment it- because it causes to bug: Can't continue a selection with the arrows which was first made by the mouse.
+               // Comment it- because it causes to bug: Can't continue a selection with the arrows which was first made by the mouse.
                 // currentlySelected.forEach(function(token) {
                 //     // If token is not in shouldBeSelected, remove selection from token
                 //     var elementPos = _handler.findElementPosition(shouldBeSelected, token);
@@ -393,8 +395,6 @@
 
             // TODO: Remove this function, the mouseDown variable and getMouseMode
             toggleMouseUpDown: function(){
-                //console.log("toggleMouseUpDown")
-                //console.log(this.mouseDown)
                 trace("selectionHandlerService - toggleMouseUpDown");
                 this.mouseDown = !this.mouseDown;
                 HotKeysManager.setMouseMode(this.mouseDown)
@@ -516,7 +516,6 @@
                     // selectionHandlerService.setUnitToAddRemotes("0");
                     $('.annotation-page-container').toggleClass('crosshair-cursor');
                 }
-
                 function compareSlot(a,b) {
                   if (a.slot > b.slot)
                     return -1;
@@ -524,7 +523,6 @@
                     return 1;
                   return 0;
                 }
-
                 //categories array should be: [slot:3, slot:4, ..., slot:1, slot:2]
                 function changeSlots(categories) {
                     if (categories.length >= 2 &&
@@ -535,10 +533,11 @@
                     }
                 }
                 function initRegularUnit(unit) {
-                    unit.children_tokens.forEach(function(token){
+                    debugger
+                    unit.children_tokens.forEach(function(children_token){
                         var parentId = unit.tree_id.indexOf('-') === -1 ? "0" : unit.tree_id.split("-").slice(0,unit.tree_id.split("-").length-1).join("-");
                         // Fill parent tokens, if unit=1-> fill tree.tokens
-                        _handler.addTokenToList(_handler.copyTokenToStaticFormat(DataService.hashTables.tokensHashTable[token.id]), parentId)
+                        _handler.addTokenToList(_handler.copyTokenToStaticFormat(DataService.hashTables.tokensHashTable[children_token.id]), parentId)
                     });
                     if(unit.categories.length === 0){
                         _handler.toggleCategory(null,false,unit.is_remote_copy,unit,true);
@@ -585,6 +584,8 @@
                 return $q(function(resolve, reject) {
                     // First create the regular and implicit units
                     DataService.serverData.annotation_units.forEach(function(unit,index){
+                        console.log('unit.cloned_from_tree_id',unit.cloned_from_tree_id , 'unit.tree_id',unit.tree_id )
+                        debugger
                         unit.AnnotationUnits = [];
 
                         // We're checking unit.type and not unit.unitType because the server sends unit.type

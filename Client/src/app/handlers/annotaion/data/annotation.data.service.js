@@ -223,10 +223,14 @@
          * categoriesHashTable- hash object of categories.
          */
         function createHashTables(){
+            //TODO ADD HERE (ITAY'S ADVICE )THE CHILDREN TOKENS LIST TO THE HASH TABLE
             trace("DataService - createHashTables");
             DataService.serverData.tokens.forEach(function(token){
                 DataService.hashTables.tokensHashTable[token.id] = token;
             });
+            // DataService.serverData.annotation_units.forEach(function(token){
+            //     DataService.hashTables.tokensHashTable[token.id] = token;
+            // });
 
             DataService.categories.forEach(function(category){
                 DataService.hashTables.categoriesHashTable[category.id] = category;
@@ -428,7 +432,7 @@
                     reject(selectedUnitId);
                 }
                 var parentUnit = getUnitById(level);
-
+                
                 if (!parentUnit.AnnotationUnits) {
                     parentUnit.AnnotationUnits = [];
                 }
