@@ -71,7 +71,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             return obj.user_comment
 
     def get_tokens(self, obj):
-        if obj.annotation_json:
+        if obj.annotation_json and obj.type != Constants.TASK_TYPES_JSON['TOKENIZATION']:
             #logger.info("tokens_json detected")
             #data = json.loads(obj.tokens_json.tokens_json)
             data = json.loads(obj.annotation_json.annotation_json)
