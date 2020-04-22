@@ -65,10 +65,15 @@ class Annotation_UnitsSerializer(serializers.ModelSerializer):
 
     def get_children_tokens(self, obj):
         tokens = Annotation_Units_Tokens.objects.all().filter(unit_id=obj.id).order_by('token_id__start_index')
-        tokens_json = [dict(id=token.token_id_id) for token in tokens]
-#        for t in tokens:
-#            tokens_json.append(TokensSerializer_Simplify(t.token_id).data)
+        # next line commented  out 22/4/2020
+        # tokens_json = [dict(id=token.token_id_id) for token in tokens]
+        tokens_json = []
+        for index,t in enumerate(tokens):
+            cur_json = TokensSerializer(t,context={'index_in_task':index}).data
+            tokens_json.append(cur_json)
         return tokens_json
+
+
 
 
     class Meta:
