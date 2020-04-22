@@ -71,13 +71,17 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             return obj.user_comment
 
     def get_tokens(self, obj):
-        if obj.tokens_json:
-            logger.info("tokens_json detected")
-            data = json.loads(obj.tokens_json.tokens_json)
-        else:
+        data = None
+        if obj.annotation_json and obj.type != Constants.TASK_TYPES_JSON['TOKENIZATION']:
+            #logger.info("tokens_json detected")
+            #data = json.loads(obj.tokens_json.tokens_json)
+            data = json.loads(obj.annotation_json.annotation_json)
+            logger.info(str(data))
+            if len(data) > 0:
+                data = data[0]['children_tokens']
+        if not data:
             logger.info("tokens_json not detected")
             data = self._get_tokens(obj)
-            data_json = json.dumps(data)
             # tokenization tasks do not have a Tokens_Json
             # There is no need for this, since the Tokens_Json is used for caching for quick GET in the annotation
             # task.
@@ -95,8 +99,8 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
             tokens = []
             parent_task = obj
             while len(tokens) == 0:
-                parent_task = parent_task.parent_task
                 tokens = Tokens.objects.all().filter(task_id=parent_task).order_by("start_index")
+                parent_task = parent_task.parent_task
         else:
             root_tokeniztion_task_id = self.get_root_task(obj)
             tokens = Tokens.objects.all().filter(task_id=root_tokeniztion_task_id).order_by("start_index")
