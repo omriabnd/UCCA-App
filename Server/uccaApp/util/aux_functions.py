@@ -85,19 +85,18 @@ def check_children_tokens(children_tokens_items_list):
         for child_id,child_entry in child_units:
             if child_entry[2] == None: # implicit child
                 if non_implicit_seen:
-                    raise TokensInvalid("Implicit units must be the first siblings")
+                    raise TokensInvalid("Unit ID: "+str(annotation_unit)+" child ID: "+str(child_id)+" -- Implicit units must be the first siblings")
             else: # not implicit child
                 non_implicit_seen = True
                 is_remote_child = child_entry[1]
                 if not is_remote_child:
                     if set(child_entry[2]) & observed_start_indices:
-                        raise TokensInvalid("There cannot be an overlap in the tokens of sibling non-remote units")
+                        raise TokensInvalid("Unit ID: "+str(annotation_unit)+" child ID: "+str(child_id)+" -- There cannot be an overlap in the tokens of sibling non-remote units")
                     observed_start_indices.update(child_entry[2])
                 minimal_start_index = min(child_entry[2])
                 if minimal_start_index <= last_start_index:
-                    raise TokensInvalid("Siblings are not correctly ordered by their minimal start_index")
+                    raise TokensInvalid("Unit ID: "+str(annotation_unit)+" child ID: "+str(child_id)+" -- Siblings are not correctly ordered by their minimal start_index")
                 last_start_index = minimal_start_index
-
     return True
 
     # try:
