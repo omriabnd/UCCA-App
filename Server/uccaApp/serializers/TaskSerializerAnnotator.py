@@ -485,7 +485,7 @@ class TaskSerializerAnnotator(serializers.ModelSerializer):
 
         # validating tokens
         tokens = self.initial_data['tokens']
-        if not strictly_increasing([x['start_index'] for x in tokens]):
+        if not is_increasing([x['start_index'] for x in tokens],strict=True):
             raise TokensInvalid("tokens should be ordered by their start_index")
         tokens_id_to_startindex = dict([(x['id'], x['start_index']) for x in tokens])
         children_tokens_list_for_validation = []

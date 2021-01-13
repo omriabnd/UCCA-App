@@ -49,12 +49,15 @@ def is_correct_format_tree_id_child(parent_tree_id, child_tree_id):
         return len(child_ids) == len(parent_ids)+1 and all([p==c for p,c in zip(parent_ids,child_ids)])
 
 
-def strictly_increasing(L):
+def is_increasing(L,strict=False):
     """
     Returns True if every element in L is bigger than its predecessor.
     L is a list
     """
-    return all(x<y for x, y in zip(L, L[1:]))
+    if strict:
+        return all(x<y for x, y in zip(L, L[1:]))
+    else:
+        return all(x <= y for x, y in zip(L, L[1:]))
 
 def check_children_tokens(children_tokens_items_list):
     """
@@ -69,7 +72,7 @@ def check_children_tokens(children_tokens_items_list):
         is_remote_copy = entry[1]
         children_tokens = entry[2]
         if children_tokens:
-            if not strictly_increasing(children_tokens):
+            if not is_increasing(children_tokens,strict=False):
                 print(children_tokens)
                 raise TokensInvalid("children_tokens is not properly ordered by start_index")
             if annotation_unit != '0' and not is_remote_copy and not set(children_tokens).issubset(set(children_tokens_dict[parent_tree_id][2])):
