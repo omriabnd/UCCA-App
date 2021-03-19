@@ -4,7 +4,7 @@ Django==1.10.5
 django-allauth==0.30.0
 django-filter==0.15.3
 django-rest-auth==0.9.0
-djangorestframework==3.5.3
+djangorestframework==3.11.2
 djangorestframework-filters==0.9.1
 oauthlib==2.0.1
 packaging==16.8
