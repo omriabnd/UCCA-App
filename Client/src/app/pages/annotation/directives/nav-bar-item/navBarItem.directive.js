@@ -94,6 +94,8 @@
         }
 
         function enableRetokenizeButton() {
+            debugger
+            console.log(partsOfRetokenizedToken(),selectionHandlerService.getSelectedTokenList())
             var notAParent = true
             var listOfTokens = partsOfRetokenizedToken();
             debugger
@@ -116,10 +118,21 @@
             if (selectedTokenList[0].unitTreeId != 0) {
                 return false
             }
-            // else if (selectedTokenList.length > 1) { fixing 
-            //Contracting back a tokenized word can occur only if you select one of its subparts 
+            // fixing Contracting back a tokenized word can occur only if you select one of its subparts 
+
+            // old code
+            
+            // else if (selectedTokenList.length > 1) {
             //     return false;
             // }
+
+            //new code
+            //if many tokens selected and they are not part of an original tokenized token
+
+            if(listOfTokens.length<2 && selectedTokenList.length>1){ 
+                return false
+            }
+
             else {
                 var selectionList = selectionHandlerService.getSelectedTokenList();
                 var tokenIntUnit = selectionList[0].inChildUnitTreeId;
