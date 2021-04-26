@@ -533,7 +533,6 @@
                     }
                 }
                 function initRegularUnit(unit) {
-                    debugger
                     unit.children_tokens.forEach(function(children_token){
                         var parentId = unit.tree_id.indexOf('-') === -1 ? "0" : unit.tree_id.split("-").slice(0,unit.tree_id.split("-").length-1).join("-");
                         // Fill parent tokens, if unit=1-> fill tree.tokens
@@ -585,7 +584,6 @@
                     // First create the regular and implicit units
                     DataService.serverData.annotation_units.forEach(function(unit,index){
                         console.log('unit.cloned_from_tree_id',unit.cloned_from_tree_id , 'unit.tree_id',unit.tree_id )
-                        debugger
                         unit.AnnotationUnits = [];
 
                         // We're checking unit.type and not unit.unitType because the server sends unit.type

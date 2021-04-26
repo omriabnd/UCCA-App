@@ -79,7 +79,6 @@
 
 
       function createTextFromTokens(tokensArray){
-          debugger
         var tokensArr = tokensArray;
         var output = '';
         tokensArray.forEach(function(token,index){
@@ -96,7 +95,6 @@
       }
       function removeSpaceTokenAndUpdatePassage(){
           console.log(TokenizationTask.tokens)
-          debugger
         for (var i=0; i<$scope.savedTokens.length;i++){
             var token=$scope.savedTokens[i]
             var tokenStartIndex=token.start_index;

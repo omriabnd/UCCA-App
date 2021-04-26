@@ -43,7 +43,6 @@
                 }else if(args.unitTreeId !== undefined && (args.unitTreeId.toString() ===  $scope.vm.unitTreeId )){
                     !ctrlPressed && !shiftPressed && !args.selectAllTokenInUnit ? selectionHandlerService.clearTokenList() : '';
                     if(selectionHandlerService.isTokenInList($scope.vm.token) && !args.doNotRemoveExistingToken){
-                        debugger
                         // for (var i=0;i<selectionHandlerService.selectedTokenList.length;i++){
                         //     if($scope.vm.token.indexInUnit<selectionHandlerService.selectedTokenList[i].indexInUnit){
                         //         selectionHandlerService.removeTokenFromList(selectionHandlerService.selectedTokenList[i]);

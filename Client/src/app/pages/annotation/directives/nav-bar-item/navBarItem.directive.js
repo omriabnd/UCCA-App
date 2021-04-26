@@ -96,6 +96,7 @@
         function enableRetokenizeButton() {
             var notAParent = true
             var listOfTokens = partsOfRetokenizedToken();
+            debugger
             if (listOfTokens != undefined) {
                 for (var i = 0; i < listOfTokens.length; i++) {
                     if (listOfTokens[i].inChildUnitTreeId != null) {
@@ -115,9 +116,10 @@
             if (selectedTokenList[0].unitTreeId != 0) {
                 return false
             }
-            else if (selectedTokenList.length > 1) {
-                return false;
-            }
+            // else if (selectedTokenList.length > 1) { fixing 
+            //Contracting back a tokenized word can occur only if you select one of its subparts 
+            //     return false;
+            // }
             else {
                 var selectionList = selectionHandlerService.getSelectedTokenList();
                 var tokenIntUnit = selectionList[0].inChildUnitTreeId;
